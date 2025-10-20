@@ -1,0 +1,85 @@
+# Dependencies
+node_modules/
+*.npm
+*.yarn
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Production
+.next/
+out/
+build/
+dist/
+*.prod.js
+
+# Misc
+.DS_Store
+*.pem
+*.env
+.env.local
+.env.*.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# OS
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Build outputs
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# IDE settings
+.editorconfig
+
+# Vercel
+.vercel
+
+# Next.js
+.next/
+out/
+
+# Supabase
+supabase/.env.local
+
+# Local environment
+.env.local
+.env.*.local
+
+# macOS
+.AppleDouble
+.LSOverride
+*.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db

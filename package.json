@@ -1,0 +1,33 @@
+{
+  "name": "bilancompetence.ai",
+  "version": "0.0.1",
+  "description": "AI-powered SaaS platform for career assessment professionals in France",
+  "private": true,
+  "license": "PROPRIETARY",
+  "type": "module",
+  "author": "NETZ INFORMATIQUE",
+  "homepage": "https://github.com/lekesiz/bilancompetence.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lekesiz/bilancompetence.ai.git"
+  },
+  "workspaces": [
+    "apps/frontend",
+    "apps/backend"
+  ],
+  "scripts": {
+    "dev": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run dev",
+    "build": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run build",
+    "lint": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run lint",
+    "test": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run test",
+    "format": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run format"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0",
+    "typescript": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}
