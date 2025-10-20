@@ -9,6 +9,8 @@ import emailVerificationRoutes from './routes/emailVerification';
 import usersRoutes from './routes/users';
 import assessmentsRoutes from './routes/assessments';
 import notificationsRoutes from './routes/notifications';
+import filesRoutes from './routes/files';
+import analyticsRoutes from './routes/analytics';
 import { apiLimiter, authLimiter } from './middleware/rateLimit';
 
 // Initialize Express app
@@ -56,6 +58,8 @@ app.use('/api/email-verification', emailVerificationRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/assessments', assessmentsRoutes);
 app.use('/api/notifications', notificationsRoutes);
+app.use('/api/files', filesRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
