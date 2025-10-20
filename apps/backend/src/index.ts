@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import http from 'http';
 import authRoutes from './routes/auth';
 import dashboardRoutes from './routes/dashboard';
 import passwordResetRoutes from './routes/passwordReset';
@@ -12,11 +13,17 @@ import notificationsRoutes from './routes/notifications';
 import filesRoutes from './routes/files';
 import analyticsRoutes from './routes/analytics';
 import exportRoutes from './routes/export';
+import chatRoutes from './routes/chat';
 import { apiLimiter, authLimiter } from './middleware/rateLimit';
+import RealtimeService from './services/realtimeService';
 
 // Initialize Express app
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 3001;
+
+// Initialize Socket.io for real-time features
+const realtime = new RealtimeService(server);
 
 // Middleware - Security & Logging
 app.use(helmet());
@@ -62,6 +69,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/files', filesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/export', exportRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -82,10 +90,12 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`✅ Backend server running on http://localhost:${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
   console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔌 WebSocket server initialized for real-time features`);
+  console.log(`📡 Online users: 0`);
 });
 
 export default app;
