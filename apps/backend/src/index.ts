@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { createClient } from '@supabase/supabase-js';
+import authRoutes from './routes/auth';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL || '';
@@ -41,55 +42,8 @@ app.get('/api/version', (req, res) => {
   });
 });
 
-// Auth routes (to be implemented)
-app.post('/api/auth/register', async (req, res) => {
-  try {
-    const { email, password, full_name, role } = req.body;
-
-    // Validation will be added
-    if (!email || !password) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Email and password are required',
-      });
-    }
-
-    res.status(200).json({
-      status: 'pending',
-      message: 'Auth endpoint ready for implementation',
-    });
-  } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error',
-    });
-  }
-});
-
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Email and password are required',
-      });
-    }
-
-    res.status(200).json({
-      status: 'pending',
-      message: 'Login endpoint ready for implementation',
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error',
-    });
-  }
-});
+// Mount auth routes
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
