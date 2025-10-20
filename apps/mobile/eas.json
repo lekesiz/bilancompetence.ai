@@ -1,0 +1,66 @@
+{
+  "cli": {
+    "version": ">= 3.0.0",
+    "promptToConfigurePushNotifications": false
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "buildType": "simulator"
+      }
+    },
+    "preview2": {
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "buildType": "simulator"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "production": {
+      "ios": {
+        "buildType": "ipa"
+      },
+      "android": {
+        "buildType": "aab"
+      }
+    },
+    "staging": {
+      "extends": "production",
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "large"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "com.bilancompetence.mobile",
+        "appleId": "admin@bilancompetence.ai",
+        "appleTeamId": "XXXXXXXXXX",
+        "appleTeamName": "BilanCompetence",
+        "itcTeamId": "XXXXXXXXXX"
+      },
+      "android": {
+        "serviceAccount": "service-account.json",
+        "track": "production",
+        "releaseStatus": "completed"
+      }
+    },
+    "staging": {
+      "ios": {
+        "ascAppId": "com.bilancompetence.mobile.staging"
+      },
+      "android": {
+        "track": "internal"
+      }
+    }
+  }
+}
