@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import authRoutes from './routes/auth';
 import dashboardRoutes from './routes/dashboard';
+import passwordResetRoutes from './routes/passwordReset';
+import emailVerificationRoutes from './routes/emailVerification';
 import { apiLimiter, authLimiter } from './middleware/rateLimit';
 
 // Initialize Express app
@@ -46,6 +48,8 @@ app.get('/api/version', (req, res) => {
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/password-reset', passwordResetRoutes);
+app.use('/api/email-verification', emailVerificationRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
