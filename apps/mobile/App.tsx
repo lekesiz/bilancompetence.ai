@@ -14,6 +14,9 @@ import AssessmentDetailScreen from './screens/AssessmentDetailScreen';
 import MessagesScreen from './screens/MessagesScreen';
 import ChatDetailScreen from './screens/ChatDetailScreen';
 
+// Components
+import NotificationAlert from './components/NotificationAlert';
+
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -146,9 +149,12 @@ function RootNavigator() {
   }
 
   return (
-    <NavigationContainer>
-      {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+      {isAuthenticated && <NotificationAlert />}
+    </>
   );
 }
 
