@@ -9,6 +9,9 @@ import useAuthStore from './store/authStore';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import RecommendationsScreen from './screens/RecommendationsScreen';
+import AnalyticsScreen from './screens/AnalyticsScreen';
 import AssessmentsScreen from './screens/AssessmentsScreen';
 import AssessmentDetailScreen from './screens/AssessmentDetailScreen';
 import MessagesScreen from './screens/MessagesScreen';
@@ -119,10 +122,10 @@ function MainNavigator() {
       />
       <Tab.Screen
         name="Profile"
-        component={DashboardScreen}
+        component={ProfileScreen}
         options={{
           title: 'Profile',
-          headerTitle: 'My Profile',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>👤</Text>
           ),
