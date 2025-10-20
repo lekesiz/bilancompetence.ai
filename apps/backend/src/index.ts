@@ -2,19 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { createClient } from '@supabase/supabase-js';
 import authRoutes from './routes/auth';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import dashboardRoutes from './routes/dashboard';
+import { apiLimiter, authLimiter } from './middleware/rateLimit';
 
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// Middleware - Security & Logging
 app.use(helmet());
 app.use(cors({
   origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001'],
@@ -23,6 +19,11 @@ app.use(cors({
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Rate limiting
+app.use('/api/', apiLimiter);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -36,14 +37,15 @@ app.get('/health', (req, res) => {
 // API version endpoint
 app.get('/api/version', (req, res) => {
   res.json({
-    version: '0.0.1',
+    version: '0.1.0',
     name: 'BilanCompetence.AI Backend',
     environment: process.env.NODE_ENV || 'development',
   });
 });
 
-// Mount auth routes
+// Mount routes
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

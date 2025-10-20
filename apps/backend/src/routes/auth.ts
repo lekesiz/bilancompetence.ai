@@ -10,8 +10,15 @@ import {
   generateTokenPair,
   verifyToken,
   verifyRefreshToken,
-  createUserRecord,
 } from '../services/authService';
+import {
+  getUserByEmail,
+  getUserById,
+  createUser,
+  updateUserLastLogin,
+  createSession,
+  createAuditLog,
+} from '../services/supabaseService';
 
 const router = Router();
 
@@ -33,13 +40,23 @@ router.post('/register', async (req: Request, res: Response) => {
 
     const { email, password, full_name, role } = validation.data!;
 
-    // Check if user exists (TODO: query database)
-    // For now, just create user record
-    const passwordHash = await hashPassword(password);
-    const newUser = createUserRecord(email, passwordHash, full_name, role);
+    // Check if user already exists
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({
+        status: 'error',
+        message: 'User with this email already exists',
+      });
+    }
 
-    // TODO: Save to database
-    // await db.users.insert(newUser);
+    // Hash password
+    const passwordHash = await hashPassword(password);
+
+    // Create user in database
+    const newUser = await createUser(email, passwordHash, full_name, role);
+
+    // Create audit log
+    await createAuditLog(newUser.id, 'USER_REGISTERED', 'user', newUser.id, null, req.ip);
 
     return res.status(201).json({
       status: 'success',
@@ -50,8 +67,17 @@ router.post('/register', async (req: Request, res: Response) => {
         role: newUser.role,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Register error:', error);
+
+    // Handle duplicate email constraint
+    if (error.code === '23505') {
+      return res.status(409).json({
+        status: 'error',
+        message: 'User with this email already exists',
+      });
+    }
+
     res.status(500).json({
       status: 'error',
       message: 'Registration failed',
@@ -77,28 +103,54 @@ router.post('/login', async (req: Request, res: Response) => {
 
     const { email, password } = validation.data!;
 
-    // TODO: Query database for user
-    // const user = await db.users.findOne({ email });
+    // Query database for user
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Invalid email or password',
+      });
+    }
 
-    // For now, return mock data
-    const mockUser = {
-      id: 'mock-user-id',
-      email,
-      full_name: 'Test User',
-      role: 'BENEFICIARY' as const,
-    };
+    // Verify password
+    const passwordValid = await comparePassword(password, user.password_hash);
+    if (!passwordValid) {
+      // Log failed attempt
+      await createAuditLog(user.id, 'LOGIN_FAILED', 'user', user.id, null, req.ip);
 
-    // TODO: Verify password
-    // const passwordValid = await comparePassword(password, user.password_hash);
+      return res.status(401).json({
+        status: 'error',
+        message: 'Invalid email or password',
+      });
+    }
+
+    // Update last login time
+    await updateUserLastLogin(user.id);
 
     // Generate tokens
-    const tokens = generateTokenPair(mockUser);
+    const tokens = generateTokenPair({
+      id: user.id,
+      email: user.email,
+      full_name: user.full_name,
+      role: user.role,
+    });
+
+    // Create session
+    await createSession(user.id, tokens.refreshToken);
+
+    // Log successful login
+    await createAuditLog(user.id, 'LOGIN_SUCCESS', 'user', user.id, null, req.ip);
 
     return res.status(200).json({
       status: 'success',
       message: 'Login successful',
       data: {
-        user: mockUser,
+        user: {
+          id: user.id,
+          email: user.email,
+          full_name: user.full_name,
+          role: user.role,
+        },
         tokens,
       },
     });
