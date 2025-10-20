@@ -6,6 +6,9 @@ import authRoutes from './routes/auth';
 import dashboardRoutes from './routes/dashboard';
 import passwordResetRoutes from './routes/passwordReset';
 import emailVerificationRoutes from './routes/emailVerification';
+import usersRoutes from './routes/users';
+import assessmentsRoutes from './routes/assessments';
+import notificationsRoutes from './routes/notifications';
 import { apiLimiter, authLimiter } from './middleware/rateLimit';
 
 // Initialize Express app
@@ -50,6 +53,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/email-verification', emailVerificationRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/assessments', assessmentsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
