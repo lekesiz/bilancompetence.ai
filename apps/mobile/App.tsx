@@ -11,6 +11,8 @@ import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import AssessmentsScreen from './screens/AssessmentsScreen';
 import AssessmentDetailScreen from './screens/AssessmentDetailScreen';
+import MessagesScreen from './screens/MessagesScreen';
+import ChatDetailScreen from './screens/ChatDetailScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,6 +42,20 @@ function AssessmentStackNavigator() {
     >
       <Stack.Screen name="AssessmentsList" component={AssessmentsScreen} />
       <Stack.Screen name="AssessmentDetail" component={AssessmentDetailScreen} />
+    </Stack.Navigator>
+  );
+}
+
+// Messages Stack Navigator
+function MessagesStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="MessagesList" component={MessagesScreen} />
+      <Stack.Screen name="ChatDetail" component={ChatDetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -88,11 +104,11 @@ function MainNavigator() {
         }}
       />
       <Tab.Screen
-        name="Messages"
-        component={DashboardScreen}
+        name="MessagesTab"
+        component={MessagesStackNavigator}
         options={{
           title: 'Messages',
-          headerTitle: 'Messages',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>💬</Text>
           ),
