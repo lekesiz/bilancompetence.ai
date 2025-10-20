@@ -9,6 +9,8 @@ import useAuthStore from './store/authStore';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
+import AssessmentsScreen from './screens/AssessmentsScreen';
+import AssessmentDetailScreen from './screens/AssessmentDetailScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,6 +26,20 @@ function AuthNavigator() {
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
+    </Stack.Navigator>
+  );
+}
+
+// Assessment Stack Navigator
+function AssessmentStackNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="AssessmentsList" component={AssessmentsScreen} />
+      <Stack.Screen name="AssessmentDetail" component={AssessmentDetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -62,10 +78,10 @@ function MainNavigator() {
       />
       <Tab.Screen
         name="Assessments"
-        component={DashboardScreen}
+        component={AssessmentStackNavigator}
         options={{
           title: 'Assessments',
-          headerTitle: 'Assessments',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>📝</Text>
           ),
