@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "public": false,
+  "functions": {
+    "apps/backend/dist/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/apps/backend/dist/api/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "DATABASE_URL": "@DATABASE_URL",
+    "SUPABASE_URL": "@SUPABASE_URL",
+    "SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_KEY": "@SUPABASE_SERVICE_KEY",
+    "JWT_SECRET": "@JWT_SECRET",
+    "SENDGRID_API_KEY": "@SENDGRID_API_KEY",
+    "SENDGRID_FROM_EMAIL": "@SENDGRID_FROM_EMAIL",
+    "CORS_ORIGIN": "@CORS_ORIGIN",
+    "FRONTEND_URL": "@FRONTEND_URL"
+  }
+}
