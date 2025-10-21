@@ -89,13 +89,23 @@ app.use((req, res) => {
   });
 });
 
-// Start server
-server.listen(PORT, () => {
-  console.log(`✅ Backend server running on http://localhost:${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔌 WebSocket server initialized for real-time features`);
-  console.log(`📡 Online users: 0`);
-});
+// For serverless environments (Vercel), only start listening if not in a serverless function context
+const isVercel = !!process.env.VERCEL;
+const isNetlify = !!process.env.NETLIFY;
+const isServerless = isVercel || isNetlify;
+
+if (!isServerless) {
+  // Traditional Node.js server for local development
+  server.listen(PORT, () => {
+    console.log(`✅ Backend server running on http://localhost:${PORT}`);
+    console.log(`📍 Health check: http://localhost:${PORT}/health`);
+    console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔌 WebSocket server initialized for real-time features`);
+    console.log(`📡 Online users: 0`);
+  });
+} else {
+  console.log(`✅ Backend running in serverless mode (${isVercel ? 'Vercel' : 'Netlify'})`);
+}
 
 export default app;
+export { server };
