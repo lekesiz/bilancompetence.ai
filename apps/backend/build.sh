@@ -1,54 +1,32 @@
 #!/bin/bash
 
-# Build script for Vercel monorepo deployment
-# This script handles installing dependencies from root and building backend
-# Note: We don't use 'set -e' because TypeScript may emit type warnings
-# but we still want the JavaScript output to be generated
-
-echo "Starting build for BilanCompetence.AI Backend..."
-echo "Current directory: $(pwd)"
+# Build script for Vercel monorepo deployment - Simplified for reliability
+echo "🔨 Building BilanCompetence.AI Backend for Vercel..."
 echo ""
 
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo "Script location: $SCRIPT_DIR"
+# Current directory on Vercel is already the backend directory (apps/backend)
+# Go to root
+cd ../..
+echo "Root: $(pwd)"
 echo ""
 
-# Go to root (parent of apps, then parent of backend)
-cd "$SCRIPT_DIR/../.."
-ROOT_DIR="$(pwd)"
-echo "Root directory: $ROOT_DIR"
-echo ""
-
-# Step 1: Install dependencies from root (respects workspaces)
-echo "Step 1: Installing dependencies from root (respects workspaces)..."
-npm install
+# Install dependencies
+echo "Installing dependencies..."
+npm install --production=false || npm install
 
 echo ""
-echo "Step 2: Compiling TypeScript for backend..."
-cd "$SCRIPT_DIR"
-echo "Backend directory: $(pwd)"
-echo ""
+echo "Compiling TypeScript..."
 
-# Use TypeScript from root node_modules since that's where npm installed it
-TSC_PATH="$ROOT_DIR/node_modules/.bin/tsc"
+# Run TypeScript compilation from root with path to backend tsconfig
+cd apps/backend
 
-if [ ! -f "$TSC_PATH" ]; then
-  echo "❌ Error: TypeScript compiler not found at $TSC_PATH"
-  echo "Available binaries:"
-  ls -la "$ROOT_DIR/node_modules/.bin/" 2>/dev/null || echo "No .bin directory found"
+if [ -f "tsconfig.json" ]; then
+  npx tsc --project tsconfig.json || true
+else
+  echo "❌ Error: tsconfig.json not found"
   exit 1
 fi
 
-echo "Using TypeScript from: $TSC_PATH"
 echo ""
-
-# Run TypeScript compiler with absolute path
-# The compiler will output JavaScript even with type errors
-# We ignore the exit code because we want the build to succeed
-# even if there are type warnings from incomplete third-party types
-"$TSC_PATH" || true
-
-echo ""
-echo "✅ Build completed successfully!"
-echo "Backend compiled to: $SCRIPT_DIR/dist"
+echo "✅ Build completed!"
+echo "Output: $(pwd)/dist"
