@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "bash build.sh",
+  "buildCommand": "npm install --production=false && npx tsc",
   "outputDirectory": "dist",
   "public": false,
   "headers": [
