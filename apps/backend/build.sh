@@ -29,8 +29,21 @@ cd "$SCRIPT_DIR"
 echo "Backend directory: $(pwd)"
 echo ""
 
-# Run TypeScript compiler
-tsc
+# Use TypeScript from root node_modules since that's where npm installed it
+TSC_PATH="$ROOT_DIR/node_modules/.bin/tsc"
+
+if [ ! -f "$TSC_PATH" ]; then
+  echo "❌ Error: TypeScript compiler not found at $TSC_PATH"
+  echo "Available binaries:"
+  ls -la "$ROOT_DIR/node_modules/.bin/" 2>/dev/null || echo "No .bin directory found"
+  exit 1
+fi
+
+echo "Using TypeScript from: $TSC_PATH"
+echo ""
+
+# Run TypeScript compiler with absolute path
+"$TSC_PATH"
 
 echo ""
 echo "✅ Build completed successfully!"
