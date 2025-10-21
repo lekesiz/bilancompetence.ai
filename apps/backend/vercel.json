@@ -1,8 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "cd ../.. && npm install && cd apps/backend && tsc",
   "outputDirectory": "dist",
-  "installCommand": "npm install",
   "public": false,
   "headers": [
     {
