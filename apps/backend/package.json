@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "npx tsc",
+    "build": "./node_modules/.bin/tsc",
     "start": "node dist/index.js",
     "lint": "eslint src/**/*.ts",
-    "type-check": "npx tsc --noEmit",
+    "type-check": "./node_modules/.bin/tsc --noEmit",
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch"
