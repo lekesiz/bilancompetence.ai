@@ -22,9 +22,11 @@
     "test": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run test",
     "format": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run format"
   },
-  "devDependencies": {
-    "prettier": "^3.0.0",
+  "dependencies": {
     "typescript": "^5.2.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
   },
   "engines": {
     "node": ">=20.0.0",
