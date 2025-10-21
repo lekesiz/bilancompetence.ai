@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import useRealtime from '@/hooks/useRealtime';
-import api from '@/lib/api';
+import { api } from '@/lib/api';
 
 interface Message {
   id: string;
