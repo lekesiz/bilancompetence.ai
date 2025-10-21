@@ -221,6 +221,41 @@ class BilanAPI {
   isAuthenticated(): boolean {
     return this.accessToken !== null;
   }
+
+  /**
+   * Expose axios GET method for general API calls
+   */
+  async get<T = any>(url: string, config?: any): Promise<any> {
+    return this.api.get(url, config);
+  }
+
+  /**
+   * Expose axios POST method for general API calls
+   */
+  async post<T = any>(url: string, data?: any, config?: any): Promise<any> {
+    return this.api.post(url, data, config);
+  }
+
+  /**
+   * Expose axios PUT method for general API calls
+   */
+  async put<T = any>(url: string, data?: any, config?: any): Promise<any> {
+    return this.api.put(url, data, config);
+  }
+
+  /**
+   * Expose axios DELETE method for general API calls
+   */
+  async delete<T = any>(url: string, config?: any): Promise<any> {
+    return this.api.delete(url, config);
+  }
+
+  /**
+   * Expose axios PATCH method for general API calls
+   */
+  async patch<T = any>(url: string, data?: any, config?: any): Promise<any> {
+    return this.api.patch(url, data, config);
+  }
 }
 
 // Export singleton instance

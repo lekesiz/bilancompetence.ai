@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useAuth } from './useAuth';
+import { api } from '@/lib/api';
 
 interface Notification {
   id?: string;
@@ -27,7 +28,8 @@ interface TypingIndicator {
 }
 
 export const useRealtime = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
+  const token = api.getAccessToken();
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
