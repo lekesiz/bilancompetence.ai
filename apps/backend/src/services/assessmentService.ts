@@ -575,8 +575,8 @@ export async function saveDraftStep(
   }
 
   return {
-    progressPercentage: data.progress_percentage || progressPercentage,
-    currentStep: data.current_step || stepNumber,
+    progressPercentage: (data as any)?.progress_percentage || progressPercentage,
+    currentStep: (data as any)?.current_step || stepNumber,
   };
 }
 
@@ -595,7 +595,7 @@ export async function autoSaveDraft(
     .eq('assessment_id', assessmentId)
     .single();
 
-  const currentDraftData = existingDraft?.draft_data || {};
+  const currentDraftData = (existingDraft as any)?.draft_data || {};
   const stepKey = `step${stepNumber}`;
 
   // Merge partial data with existing step data
@@ -659,13 +659,13 @@ export async function getAssessmentProgress(assessmentId: string) {
   const completedSteps = await getCompletedSteps(assessmentId);
 
   return {
-    assessmentId: assessment.id,
-    currentStep: assessment.current_step || 0,
-    progressPercentage: assessment.progress_percentage || 0,
+    assessmentId: (assessment as any).id,
+    currentStep: (assessment as any).current_step || 0,
+    progressPercentage: (assessment as any).progress_percentage || 0,
     completedSteps: completedSteps,
-    lastSavedAt: draft?.last_saved_at || assessment.updated_at,
-    draftData: draft?.draft_data || {},
-    status: assessment.status,
+    lastSavedAt: (draft as any)?.last_saved_at || (assessment as any).updated_at,
+    draftData: (draft as any)?.draft_data || {},
+    status: (assessment as any).status,
   };
 }
 
@@ -777,9 +777,9 @@ async function getCompletedSteps(assessmentId: string): Promise<number[]> {
       .select('id')
       .eq('assessment_id', assessmentId)
       .eq('step_number', step)
-      .limit(1);
+      .limit(1) as any;
 
-    if (data && data.length > 0) {
+    if ((data as any) && (data as any).length > 0) {
       completedSteps.push(step);
     }
   }
