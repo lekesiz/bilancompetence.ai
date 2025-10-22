@@ -353,4 +353,226 @@ export async function createAuditLog(
   return data;
 }
 
+/**
+ * Bilan Service - Query operations for dashboard
+ */
+
+export async function getBilansByBeneficiary(beneficiaryId: string) {
+  const { data, error } = await supabase
+    .from('bilans')
+    .select(`
+      id,
+      status,
+      start_date,
+      expected_end_date,
+      actual_end_date,
+      duration_hours,
+      satisfaction_score,
+      created_at,
+      updated_at,
+      consultant:consultant_id(id, full_name, email)
+    `)
+    .eq('beneficiary_id', beneficiaryId)
+    .order('created_at', { ascending: false });
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getBilansByConsultant(consultantId: string) {
+  const { data, error } = await supabase
+    .from('bilans')
+    .select(`
+      id,
+      status,
+      start_date,
+      expected_end_date,
+      actual_end_date,
+      duration_hours,
+      satisfaction_score,
+      created_at,
+      updated_at,
+      beneficiary:beneficiary_id(id, full_name, email)
+    `)
+    .eq('consultant_id', consultantId)
+    .order('created_at', { ascending: false });
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getClientsByConsultant(consultantId: string) {
+  const { data, error } = await supabase
+    .from('bilans')
+    .select('beneficiary:beneficiary_id(id, full_name, email)')
+    .eq('consultant_id', consultantId)
+    .select('beneficiary')
+    .distinct();
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  // Extract unique beneficiaries
+  const beneficiaries = data?.map(b => b.beneficiary).filter(Boolean) || [];
+  return beneficiaries;
+}
+
+export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
+  const { data, error } = await supabase
+    .from('recommendations')
+    .select(`
+      id,
+      type,
+      title,
+      description,
+      match_score,
+      priority,
+      created_at,
+      updated_at,
+      bilan:bilan_id(id, status)
+    `)
+    .in('bilan_id',
+      supabase
+        .from('bilans')
+        .select('id')
+        .eq('beneficiary_id', beneficiaryId)
+    )
+    .order('priority', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function getAllBilans() {
+  const { data, error } = await supabase
+    .from('bilans')
+    .select(`
+      id,
+      status,
+      start_date,
+      expected_end_date,
+      satisfaction_score,
+      created_at,
+      beneficiary:beneficiary_id(id, full_name, email),
+      consultant:consultant_id(id, full_name, email)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  return data || [];
+}
+
+export async function countBilansByStatus(status: string) {
+  const { count, error } = await supabase
+    .from('bilans')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', status);
+
+  if (error) {
+    throw error;
+  }
+
+  return count || 0;
+}
+
+export async function getOrganizationStats(organizationId: string) {
+  try {
+    // Get all users in organization
+    const { count: totalUsers, error: usersError } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', organizationId);
+
+    // Get all bilans in organization
+    const { count: totalAssessments, error: assessmentsError } = await supabase
+      .from('bilans')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', organizationId);
+
+    // Get active consultants (have at least one bilan)
+    const { data: activeConsultants, error: consultantsError } = await supabase
+      .from('bilans')
+      .select('consultant_id', { head: false })
+      .eq('organization_id', organizationId)
+      .select('consultant_id')
+      .distinct();
+
+    // Get completed bilans
+    const { count: completedBilans, error: completedError } = await supabase
+      .from('bilans')
+      .select('id', { count: 'exact', head: true })
+      .eq('organization_id', organizationId)
+      .eq('status', 'COMPLETED');
+
+    // Get average satisfaction
+    const { data: satisfactionData, error: satisfactionError } = await supabase
+      .from('bilans')
+      .select('satisfaction_score')
+      .eq('organization_id', organizationId)
+      .not('satisfaction_score', 'is', null);
+
+    const avgSatisfaction = satisfactionData && satisfactionData.length > 0
+      ? satisfactionData.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / satisfactionData.length
+      : 0;
+
+    return {
+      totalUsers: totalUsers || 0,
+      totalAssessments: totalAssessments || 0,
+      totalConsultants: activeConsultants?.length || 0,
+      completedBilans: completedBilans || 0,
+      averageSatisfaction: Math.round(avgSatisfaction * 10) / 10,
+      successRate: totalAssessments
+        ? Math.round((completedBilans || 0) / totalAssessments * 100)
+        : 0,
+    };
+  } catch (error) {
+    console.error('Error getting organization stats:', error);
+    throw error;
+  }
+}
+
+/**
+ * Recent Activity Service
+ */
+
+export async function getRecentActivityByOrganization(organizationId: string, limit: number = 20) {
+  const { data, error } = await supabase
+    .from('audit_logs')
+    .select(`
+      id,
+      user:user_id(id, full_name, email),
+      action,
+      entity_type,
+      created_at
+    `)
+    .in('user_id',
+      supabase
+        .from('users')
+        .select('id')
+        .eq('organization_id', organizationId)
+    )
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  return data || [];
+}
+
 export default supabase;

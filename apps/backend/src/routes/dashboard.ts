@@ -1,6 +1,15 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware, requireRole } from '../middleware/auth';
-import { getUserById } from '../services/supabaseService';
+import {
+  getUserById,
+  getBilansByBeneficiary,
+  getRecommendationsByBeneficiary,
+  getBilansByConsultant,
+  getClientsByConsultant,
+  getAllBilans,
+  getOrganizationStats,
+  getRecentActivityByOrganization,
+} from '../services/supabaseService';
 
 const router = Router();
 
@@ -49,16 +58,46 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
 /**
  * GET /api/dashboard/beneficiary
  * Beneficiary dashboard (assessments, recommendations)
+ *
+ * Returns:
+ * - bilans: All career assessments for the beneficiary
+ * - recommendations: AI recommendations based on assessments
+ * - stats: Count of completed/pending bilans
  */
 router.get('/beneficiary', authMiddleware, requireRole('BENEFICIARY'), async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    // Get beneficiary's bilans
+    const bilans = await getBilansByBeneficiary(req.user.id);
+
+    // Get recommendations for beneficiary
+    const recommendations = await getRecommendationsByBeneficiary(req.user.id);
+
+    // Calculate stats
+    const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
+    const pendingBilans = bilans.filter(b => b.status !== 'COMPLETED' && b.status !== 'ARCHIVED').length;
+
     return res.status(200).json({
       status: 'success',
       data: {
-        assessments: [],
-        recommendations: [],
-        completedBilans: 0,
-        pendingBilans: 0,
+        bilans,
+        recommendations,
+        stats: {
+          totalBilans: bilans.length,
+          completedBilans,
+          pendingBilans,
+          averageSatisfaction: bilans.length > 0
+            ? Math.round(
+                bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / bilans.length * 10
+              ) / 10
+            : 0,
+        },
       },
     });
   } catch (error) {
@@ -73,16 +112,48 @@ router.get('/beneficiary', authMiddleware, requireRole('BENEFICIARY'), async (re
 /**
  * GET /api/dashboard/consultant
  * Consultant dashboard (manage assessments, clients)
+ *
+ * Returns:
+ * - bilans: All bilans assigned to this consultant
+ * - clients: Unique beneficiaries working with this consultant
+ * - stats: Count of active/completed assessments
  */
 router.get('/consultant', authMiddleware, requireRole('CONSULTANT'), async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    // Get consultant's bilans
+    const bilans = await getBilansByConsultant(req.user.id);
+
+    // Get unique clients
+    const clients = await getClientsByConsultant(req.user.id);
+
+    // Calculate stats
+    const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
+    const activeBilans = bilans.filter(b => b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION').length;
+    const averageSatisfaction = bilans.length > 0
+      ? Math.round(
+          bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / bilans.length * 10
+        ) / 10
+      : 0;
+
     return res.status(200).json({
       status: 'success',
       data: {
-        clients: [],
-        assessments: [],
-        totalClients: 0,
-        assessmentsCompleted: 0,
+        bilans,
+        clients,
+        stats: {
+          totalBilans: bilans.length,
+          activeBilans,
+          completedBilans,
+          totalClients: clients.length,
+          averageSatisfaction,
+        },
       },
     });
   } catch (error) {
@@ -97,17 +168,40 @@ router.get('/consultant', authMiddleware, requireRole('CONSULTANT'), async (req:
 /**
  * GET /api/dashboard/admin
  * Admin dashboard (organization management, analytics)
+ *
+ * Returns:
+ * - stats: Organization-wide statistics
+ * - recentActivity: Last 20 activities in organization
  */
 router.get('/admin', authMiddleware, requireRole('ORG_ADMIN'), async (req: Request, res: Response) => {
   try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    // Get user to extract organization_id (currently using user ID as proxy)
+    const user = await getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found',
+      });
+    }
+
+    // Get organization stats
+    const stats = await getOrganizationStats(user.id);
+
+    // Get recent activity
+    const recentActivity = await getRecentActivityByOrganization(user.id, 20);
+
     return res.status(200).json({
       status: 'success',
       data: {
-        totalUsers: 0,
-        totalAssessments: 0,
-        totalRecommendations: 0,
-        activeConsultants: 0,
-        recentActivity: [],
+        stats,
+        recentActivity,
       },
     });
   } catch (error) {
@@ -121,16 +215,42 @@ router.get('/admin', authMiddleware, requireRole('ORG_ADMIN'), async (req: Reque
 
 /**
  * GET /api/dashboard/stats
- * Get dashboard statistics
+ * Get user-specific statistics (joined date, last active, etc.)
+ *
+ * Returns:
+ * - userRole: User's role in the system
+ * - joinedAt: User account creation date
+ * - lastActive: User's last login
+ * - email: User's email address
  */
 router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    // Get user from database
+    const user = await getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found',
+      });
+    }
+
     return res.status(200).json({
       status: 'success',
       data: {
-        userRole: req.user?.role,
-        joinedAt: new Date(),
-        lastActive: new Date(),
+        userId: user.id,
+        userRole: user.role,
+        email: user.email,
+        fullName: user.full_name,
+        joinedAt: user.created_at,
+        lastActive: user.last_login_at,
+        emailVerified: !!user.email_verified_at,
       },
     });
   } catch (error) {
