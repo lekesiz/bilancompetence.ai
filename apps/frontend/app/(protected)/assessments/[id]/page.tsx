@@ -22,6 +22,8 @@ interface Assessment {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
+type ReportType = 'preliminary' | 'investigation' | 'conclusion';
+
 export default function AssessmentPage() {
   const params = useParams();
   const router = useRouter();
@@ -31,6 +33,10 @@ export default function AssessmentPage() {
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pdfDownloading, setPdfDownloading] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const [reportType, setReportType] = useState<ReportType>('preliminary');
+  const [showReportTypeSelector, setShowReportTypeSelector] = useState(false);
 
   useEffect(() => {
     fetchAssessment();
@@ -67,6 +73,117 @@ export default function AssessmentPage() {
       'COMPLETED': 'bg-green-200 text-green-800',
     };
     return colors[status] || 'bg-gray-200 text-gray-800';
+  };
+
+  /**
+   * Handle PDF download - fetches PDF from backend and triggers browser download
+   */
+  const handleDownloadPDF = async () => {
+    try {
+      setPdfDownloading(true);
+      setPdfError(null);
+
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setPdfError('Authentication required. Please log in again.');
+        return;
+      }
+
+      // Build API endpoint with report type
+      const apiEndpoint = `${API_URL}/api/export/assessment/${assessmentId}/pdf?type=${reportType}`;
+
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Handle error responses
+      if (!response.ok) {
+        let errorMessage = 'Failed to generate PDF';
+
+        if (response.status === 401) {
+          errorMessage = 'Authentication failed. Please log in again.';
+        } else if (response.status === 403) {
+          errorMessage = 'You do not have permission to download this assessment.';
+        } else if (response.status === 404) {
+          errorMessage = 'Assessment not found.';
+        } else if (response.status === 400) {
+          errorMessage = 'Invalid report type selected.';
+        } else if (response.status === 500) {
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || 'Server error while generating PDF.';
+          } catch {
+            errorMessage = 'Server error while generating PDF.';
+          }
+        }
+
+        setPdfError(errorMessage);
+        return;
+      }
+
+      // Get the PDF blob from response
+      const blob = await response.blob();
+
+      // Verify we got a valid PDF
+      if (blob.type !== 'application/pdf' || blob.size === 0) {
+        setPdfError('Invalid PDF file received from server.');
+        return;
+      }
+
+      // Create blob URL and trigger download
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Extract filename from Content-Disposition header if available
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'assessment.pdf';
+
+      if (contentDisposition) {
+        // Parse filename from header: attachment; filename="Assessment_Preliminary_550e8400_2025-10-22.pdf"
+        const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      } else {
+        // Fallback filename if header not present
+        const timestamp = new Date().toISOString().split('T')[0];
+        const reportLabel = reportType.charAt(0).toUpperCase() + reportType.slice(1);
+        filename = `Assessment_${reportLabel}_${assessmentId.slice(0, 8)}_${timestamp}.pdf`;
+      }
+
+      // Create hidden link element and trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up blob URL
+      window.URL.revokeObjectURL(blobUrl);
+
+      // Reset state
+      setShowReportTypeSelector(false);
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to download PDF';
+      setPdfError(errorMessage);
+      console.error('PDF download error:', err);
+    } finally {
+      setPdfDownloading(false);
+    }
+  };
+
+  /**
+   * Check if PDF download is allowed for this assessment
+   */
+  const canDownloadPDF = () => {
+    if (!assessment) return false;
+    // Allow download for non-draft assessments
+    return assessment.status !== 'DRAFT' && assessment.status !== 'IN_PROGRESS';
   };
 
   if (loading) {
@@ -111,10 +228,125 @@ export default function AssessmentPage() {
               <h1 className="text-3xl font-bold text-gray-800">{assessment.title}</h1>
               <p className="text-gray-600 mt-2">{assessment.description}</p>
             </div>
-            <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(assessment.status)}`}>
-              {assessment.status.replace(/_/g, ' ')}
-            </span>
+            <div className="flex items-center gap-3">
+              {/* PDF Download Button */}
+              {canDownloadPDF() && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowReportTypeSelector(!showReportTypeSelector)}
+                    disabled={pdfDownloading}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    {pdfDownloading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Generating...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        <span>Download PDF</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Report Type Dropdown */}
+                  {showReportTypeSelector && !pdfDownloading && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                      <div className="p-3 border-b border-gray-300">
+                        <p className="text-sm font-semibold text-gray-700 mb-2">Select Report Type</p>
+                        {/* Preliminary Option */}
+                        <label className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                          <input
+                            type="radio"
+                            name="reportType"
+                            value="preliminary"
+                            checked={reportType === 'preliminary'}
+                            onChange={(e) => setReportType(e.target.value as ReportType)}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm text-gray-700">Preliminary Report</span>
+                        </label>
+
+                        {/* Investigation Option */}
+                        <label className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                          <input
+                            type="radio"
+                            name="reportType"
+                            value="investigation"
+                            checked={reportType === 'investigation'}
+                            onChange={(e) => setReportType(e.target.value as ReportType)}
+                            className="w-4 h-4"
+                            disabled={assessment.status === 'PRELIMINARY'}
+                          />
+                          <span className={`text-sm ${assessment.status === 'PRELIMINARY' ? 'text-gray-400' : 'text-gray-700'}`}>
+                            Investigation Report
+                          </span>
+                        </label>
+
+                        {/* Conclusion Option */}
+                        <label className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                          <input
+                            type="radio"
+                            name="reportType"
+                            value="conclusion"
+                            checked={reportType === 'conclusion'}
+                            onChange={(e) => setReportType(e.target.value as ReportType)}
+                            className="w-4 h-4"
+                            disabled={assessment.status !== 'COMPLETED'}
+                          />
+                          <span className={`text-sm ${assessment.status !== 'COMPLETED' ? 'text-gray-400' : 'text-gray-700'}`}>
+                            Conclusion Report
+                          </span>
+                        </label>
+                      </div>
+
+                      <div className="p-3 border-t border-gray-300 flex gap-2">
+                        <button
+                          onClick={handleDownloadPDF}
+                          disabled={pdfDownloading}
+                          className="flex-1 bg-green-600 text-white px-3 py-2 rounded font-semibold hover:bg-green-700 disabled:opacity-50 transition text-sm"
+                        >
+                          Download
+                        </button>
+                        <button
+                          onClick={() => setShowReportTypeSelector(false)}
+                          className="flex-1 bg-gray-300 text-gray-800 px-3 py-2 rounded font-semibold hover:bg-gray-400 transition text-sm"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(assessment.status)}`}>
+                {assessment.status.replace(/_/g, ' ')}
+              </span>
+            </div>
           </div>
+
+          {/* PDF Error Message */}
+          {pdfError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 flex items-start gap-3">
+              <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-red-800">PDF Download Failed</h3>
+                <p className="text-sm text-red-700 mt-1">{pdfError}</p>
+              </div>
+              <button
+                onClick={() => setPdfError(null)}
+                className="text-red-600 hover:text-red-800 font-semibold text-sm"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
 
           {/* Status Info */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
