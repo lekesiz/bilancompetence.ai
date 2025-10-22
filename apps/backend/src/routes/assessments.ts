@@ -4,6 +4,7 @@ import { authMiddleware, requireRole } from '../middleware/auth';
 import {
   createAssessment,
   getAssessment,
+  getAssessmentWithDetails,
   getUserAssessments,
   updateAssessment,
   startAssessment,
@@ -14,6 +15,20 @@ import {
   submitAnswer,
   getUserRecommendations,
   createRecommendation,
+  // Wizard functions
+  createAssessmentDraft,
+  saveDraftStep,
+  autoSaveDraft,
+  getAssessmentProgress,
+  validateAssessmentStep,
+  submitAssessment,
+  extractAndCreateCompetencies,
+  validateCompetencies,
+  workHistoryStepSchema,
+  educationStepSchema,
+  skillsStepSchema,
+  motivationsStepSchema,
+  constraintsStepSchema,
 } from '../services/assessmentService';
 import { createAuditLog } from '../services/supabaseService';
 
@@ -39,9 +54,31 @@ const submitAnswerSchema = z.object({
   answer: z.any(),
 });
 
+// Wizard step schemas
+const saveDraftStepSchema = z.object({
+  section: z.enum(['work_history', 'education', 'skills', 'motivations', 'constraints']),
+  answers: z.record(z.string(), z.any()),
+  competencies: z.array(z.object({
+    skillName: z.string().optional(),
+    skill_name: z.string().optional(),
+    selfAssessmentLevel: z.number().optional(),
+    self_assessment_level: z.number().optional(),
+    selfInterestLevel: z.number().optional(),
+    self_interest_level: z.number().optional(),
+    category: z.string().optional(),
+    context: z.string().optional(),
+  })).optional(),
+});
+
+const autoSaveSchema = z.object({
+  step_number: z.number().int().min(0).max(5),
+  partial_data: z.record(z.string(), z.any()),
+});
+
 /**
  * POST /api/assessments
- * Create new assessment
+ * Create new assessment (wizard draft or traditional)
+ * Body: { title?, description?, assessment_type: 'career' | 'skills' | 'comprehensive', consultant_id? }
  */
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -52,38 +89,44 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       });
     }
 
-    const validation = createAssessmentSchema.safeParse(req.body);
-    if (!validation.success) {
+    const { title, description, assessment_type, consultant_id } = req.body;
+
+    // Validate assessment type
+    if (!assessment_type || !['career', 'skills', 'comprehensive'].includes(assessment_type)) {
       return res.status(400).json({
         status: 'error',
-        message: 'Invalid data',
-        errors: validation.error.issues,
+        message: 'Invalid assessment_type. Must be one of: career, skills, comprehensive',
       });
     }
 
-    const { title, description, assessment_type, consultant_id } = validation.data;
-
-    const assessment = await createAssessment(
+    // Use wizard draft creation (automatically creates draft record)
+    const assessment = await createAssessmentDraft(
       req.user.id,
       assessment_type,
-      title,
-      description,
-      consultant_id
+      title
     );
 
     // Log action
-    await createAuditLog(req.user.id, 'ASSESSMENT_CREATED', 'bilan', assessment.id, { title }, req.ip);
+    await createAuditLog(
+      req.user.id,
+      'ASSESSMENT_DRAFT_CREATED',
+      'bilan',
+      assessment.id,
+      { title, assessment_type },
+      req.ip
+    );
 
     return res.status(201).json({
       status: 'success',
-      message: 'Assessment created',
+      message: 'Assessment draft created',
       data: assessment,
     });
   } catch (error) {
-    console.error('Create assessment error:', error);
+    console.error('Create assessment draft error:', error);
     res.status(500).json({
       status: 'error',
-      message: 'Failed to create assessment',
+      message: 'Failed to create assessment draft',
+      error: error instanceof Error ? error.message : undefined,
     });
   }
 });
@@ -119,17 +162,25 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
 /**
  * GET /api/assessments/:id
- * Get assessment details
+ * Get assessment details with all related data (questions, answers, draft, competencies)
  */
 router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const assessment = await getAssessment(id);
+    const assessment = await getAssessmentWithDetails(id);
     if (!assessment) {
       return res.status(404).json({
         status: 'error',
         message: 'Assessment not found',
+      });
+    }
+
+    // Check authorization
+    if (assessment.beneficiary_id !== req.user?.id && assessment.consultant_id !== req.user?.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Unauthorized access to this assessment',
       });
     }
 
@@ -396,6 +447,219 @@ router.get('/recommendations', authMiddleware, async (req: Request, res: Respons
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch recommendations',
+    });
+  }
+});
+
+/**
+ * ============================================
+ * WIZARD ENDPOINTS - Phase 2 Implementation
+ * ============================================
+ */
+
+/**
+ * POST /api/assessments/:id/steps/:stepNumber
+ * Save individual step with validation
+ * Body: { section, answers: {questionId: value, ...}, competencies?: [...] }
+ */
+router.post('/:id/steps/:stepNumber', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    const { id, stepNumber } = req.params;
+    const stepNum = parseInt(stepNumber, 10);
+
+    if (isNaN(stepNum) || stepNum < 1 || stepNum > 5) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid step number. Must be 1-5',
+      });
+    }
+
+    const validation = saveDraftStepSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data',
+        errors: validation.error.issues.map(e => e.message),
+      });
+    }
+
+    const { section, answers, competencies } = validation.data;
+
+    // Verify assessment belongs to user
+    const assessment = await getAssessment(id);
+    if (!assessment || assessment.beneficiary_id !== req.user.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Unauthorized',
+      });
+    }
+
+    const result = await saveDraftStep(id, stepNum, section, answers, competencies);
+
+    await createAuditLog(
+      req.user.id,
+      'ASSESSMENT_STEP_SAVED',
+      'bilan',
+      id,
+      { step: stepNum, section },
+      req.ip
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      message: `Step ${stepNum} saved`,
+      data: result,
+    });
+  } catch (error) {
+    console.error('Save draft step error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to save step',
+      error: error instanceof Error ? error.message : undefined,
+    });
+  }
+});
+
+/**
+ * POST /api/assessments/:id/auto-save
+ * Auto-save draft (incremental, without validation)
+ * Body: { step_number: number, partial_data: {...} }
+ */
+router.post('/:id/auto-save', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    const { id } = req.params;
+
+    const validation = autoSaveSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid data',
+        errors: validation.error.issues.map(e => e.message),
+      });
+    }
+
+    const { step_number, partial_data } = validation.data;
+
+    // Verify assessment belongs to user
+    const assessment = await getAssessment(id);
+    if (!assessment || assessment.beneficiary_id !== req.user.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Unauthorized',
+      });
+    }
+
+    const result = await autoSaveDraft(id, step_number, partial_data);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Auto-saved',
+      data: result,
+    });
+  } catch (error) {
+    console.error('Auto-save error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to auto-save',
+      error: error instanceof Error ? error.message : undefined,
+    });
+  }
+});
+
+/**
+ * GET /api/assessments/:id/progress
+ * Get wizard progress
+ * Response: { currentStep, progressPercentage, completedSteps, lastSavedAt, draftData, status }
+ */
+router.get('/:id/progress', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    // Verify assessment belongs to user
+    const assessment = await getAssessment(id);
+    if (!assessment || (assessment.beneficiary_id !== req.user?.id && assessment.consultant_id !== req.user?.id)) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Unauthorized',
+      });
+    }
+
+    const progress = await getAssessmentProgress(id);
+
+    return res.status(200).json({
+      status: 'success',
+      data: progress,
+    });
+  } catch (error) {
+    console.error('Get progress error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch progress',
+    });
+  }
+});
+
+/**
+ * POST /api/assessments/:id/submit
+ * Submit assessment for review
+ * Validates all steps are complete before submission
+ */
+router.post('/:id/submit', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    const { id } = req.params;
+
+    // Verify assessment belongs to user
+    const assessment = await getAssessment(id);
+    if (!assessment || assessment.beneficiary_id !== req.user.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Unauthorized',
+      });
+    }
+
+    const result = await submitAssessment(id, req.user.id);
+
+    await createAuditLog(
+      req.user.id,
+      'ASSESSMENT_SUBMITTED',
+      'bilan',
+      id,
+      { status: result.status },
+      req.ip
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Assessment submitted for review',
+      data: result,
+    });
+  } catch (error) {
+    console.error('Submit assessment error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to submit assessment';
+    res.status(400).json({
+      status: 'error',
+      message: errorMessage,
     });
   }
 });
