@@ -3,14 +3,14 @@ import {
   validateRegisterRequest,
   validateLoginRequest,
   validateRefreshRequest,
-} from '../validators/authValidator';
+} from '../validators/authValidator.js';
 import {
   hashPassword,
   comparePassword,
   generateTokenPair,
   verifyToken,
   verifyRefreshToken,
-} from '../services/authService';
+} from '../services/authService.js';
 import {
   getUserByEmail,
   getUserById,
@@ -18,7 +18,7 @@ import {
   updateUserLastLogin,
   createSession,
   createAuditLog,
-} from '../services/supabaseService';
+} from '../services/supabaseService.js';
 
 const router = Router();
 

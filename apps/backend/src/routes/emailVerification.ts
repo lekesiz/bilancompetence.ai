@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { authMiddleware } from '../middleware/auth.js';
 import {
   getUserById,
   verifyUserEmail,
@@ -7,9 +7,9 @@ import {
   getEmailVerificationToken,
   useEmailVerificationToken,
   createAuditLog,
-} from '../services/supabaseService';
-import { generateToken, sendEmailVerificationEmail, sendAccountConfirmationEmail } from '../services/emailService';
-import { emailVerificationLimiter } from '../middleware/rateLimit';
+} from '../services/supabaseService.js';
+import { generateToken, sendEmailVerificationEmail, sendAccountConfirmationEmail } from '../services/emailService.js';
+import { emailVerificationLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 

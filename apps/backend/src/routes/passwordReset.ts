@@ -3,7 +3,7 @@ import { z } from 'zod';
 import {
   hashPassword,
   comparePassword,
-} from '../services/authService';
+} from '../services/authService.js';
 import {
   getUserByEmail,
   getUserById,
@@ -12,9 +12,9 @@ import {
   getPasswordResetToken,
   usePasswordResetToken,
   createAuditLog,
-} from '../services/supabaseService';
-import { generateToken, sendPasswordResetEmail } from '../services/emailService';
-import { passwordResetLimiter } from '../middleware/rateLimit';
+} from '../services/supabaseService.js';
+import { generateToken, sendPasswordResetEmail } from '../services/emailService.js';
+import { passwordResetLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware, requireRole } from '../middleware/auth';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   getUserById,
   getBilansByBeneficiary,
@@ -9,7 +9,7 @@ import {
   getAllBilans,
   getOrganizationStats,
   getRecentActivityByOrganization,
-} from '../services/supabaseService';
+} from '../services/supabaseService.js';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware, requireRole } from '../middleware/auth';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   getUserActivityStats,
   getOrganizationStats,
@@ -9,7 +9,7 @@ import {
   getRecommendationEffectiveness,
   getSkillProficiency,
   generateReportData,
-} from '../services/analyticsService';
+} from '../services/analyticsService.js';
 
 const router = Router();
 

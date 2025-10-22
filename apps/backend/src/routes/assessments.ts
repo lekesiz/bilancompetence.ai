@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
-import { authMiddleware, requireRole } from '../middleware/auth';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   createAssessment,
   getAssessment,
@@ -29,8 +29,8 @@ import {
   skillsStepSchema,
   motivationsStepSchema,
   constraintsStepSchema,
-} from '../services/assessmentService';
-import { createAuditLog } from '../services/supabaseService';
+} from '../services/assessmentService.js';
+import { createAuditLog } from '../services/supabaseService.js';
 
 const router = Router();
 

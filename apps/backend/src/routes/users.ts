@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
-import { authMiddleware, requireRole } from '../middleware/auth';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   getUserProfile,
   updateUserProfile,
@@ -10,8 +10,8 @@ import {
   deleteUserAccount,
   exportUserData,
   getOrganizationUsers,
-} from '../services/userService';
-import { createAuditLog } from '../services/supabaseService';
+} from '../services/userService.js';
+import { createAuditLog } from '../services/supabaseService.js';
 
 const router = Router();
 

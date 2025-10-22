@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { authMiddleware } from '../middleware/auth.js';
 import {
   uploadFile,
   uploadAvatar,
@@ -8,7 +8,7 @@ import {
   uploadAssessmentDocument,
   getAssessmentDocuments,
   getDownloadUrl,
-} from '../services/fileService';
+} from '../services/fileService.js';
 
 const router = Router();
 

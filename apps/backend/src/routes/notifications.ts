@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { authMiddleware } from '../middleware/auth.js';
 import {
   getUserNotifications,
   getUnreadCount,
   markAsRead,
   markAllAsRead,
   deleteNotification,
-} from '../services/notificationService';
+} from '../services/notificationService.js';
 
 const router = Router();
 

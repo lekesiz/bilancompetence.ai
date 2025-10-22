@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware, requireRole } from '../middleware/auth';
+import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   exportAssessmentsToCSV,
   exportRecommendationsToCSV,
@@ -8,8 +8,8 @@ import {
   exportAssessmentResultsToCSV,
   exportAnalyticsSummaryToCSV,
   generateCSVFilename,
-} from '../services/csvService';
-import { getUserActivityStats } from '../services/analyticsService';
+} from '../services/csvService.js';
+import { getUserActivityStats } from '../services/analyticsService.js';
 
 const router = Router();
 
