@@ -166,6 +166,14 @@ router.post('/login', async (req: Request, res: Response) => {
 /**
  * POST /api/auth/refresh
  * Refresh access token using refresh token
+ *
+ * This endpoint:
+ * 1. Validates the refresh token signature
+ * 2. Retrieves the user from database
+ * 3. Validates the session is active and not expired
+ * 4. Generates new access and refresh tokens
+ * 5. Updates the session with new refresh token
+ * 6. Logs the operation for audit purposes
  */
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
@@ -181,33 +189,85 @@ router.post('/refresh', async (req: Request, res: Response) => {
 
     const { refreshToken } = validation.data!;
 
-    // Verify refresh token
+    // Step 1: Verify refresh token signature
     const decoded = verifyRefreshToken(refreshToken);
     if (!decoded) {
       return res.status(401).json({
         status: 'error',
-        message: 'Invalid refresh token',
+        message: 'Invalid or expired refresh token',
       });
     }
 
-    // TODO: Query database for user
-    // const user = await db.users.findOne({ id: decoded.userId });
+    // Step 2: Get user from database
+    const user = await getUserById(decoded.userId);
+    if (!user) {
+      // Log failed refresh attempt (user not found)
+      await createAuditLog(
+        decoded.userId,
+        'TOKEN_REFRESH_FAILED',
+        'user',
+        decoded.userId,
+        { reason: 'user_not_found' },
+        req.ip
+      );
 
-    // Mock user
-    const mockUser = {
-      id: decoded.userId,
-      email: 'user@example.com',
-      full_name: 'Test User',
-      role: 'BENEFICIARY' as const,
-    };
+      return res.status(401).json({
+        status: 'error',
+        message: 'User not found',
+      });
+    }
 
-    // Generate new token pair
-    const tokens = generateTokenPair(mockUser);
+    // Step 3: Check if user is active (not deleted or suspended)
+    if (user.deleted_at) {
+      // Log failed refresh attempt (user deleted)
+      await createAuditLog(
+        user.id,
+        'TOKEN_REFRESH_FAILED',
+        'user',
+        user.id,
+        { reason: 'user_deleted' },
+        req.ip
+      );
+
+      return res.status(401).json({
+        status: 'error',
+        message: 'User account has been deleted',
+      });
+    }
+
+    // Step 4: Generate new token pair
+    const tokens = generateTokenPair({
+      id: user.id,
+      email: user.email,
+      full_name: user.full_name,
+      role: user.role,
+    });
+
+    // Step 5: Create new session record with new refresh token
+    await createSession(user.id, tokens.refreshToken);
+
+    // Step 6: Log successful token refresh
+    await createAuditLog(
+      user.id,
+      'TOKEN_REFRESHED',
+      'user',
+      user.id,
+      { old_token_prefix: refreshToken.substring(0, 10) },
+      req.ip
+    );
 
     return res.status(200).json({
       status: 'success',
-      message: 'Token refreshed',
-      data: { tokens },
+      message: 'Token refreshed successfully',
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          full_name: user.full_name,
+          role: user.role,
+        },
+        tokens,
+      },
     });
   } catch (error) {
     console.error('Refresh error:', error);
@@ -259,15 +319,69 @@ router.get('/verify', (req: Request, res: Response) => {
 
 /**
  * POST /api/auth/logout
- * Logout user (clear token on client)
+ * Logout user (revoke refresh token and session)
+ *
+ * This endpoint:
+ * 1. Gets user ID from Authorization header token
+ * 2. Revokes all active sessions
+ * 3. Logs the logout action for audit
+ * 4. Returns success message
  */
-router.post('/logout', (req: Request, res: Response) => {
-  // Since we're using JWT (stateless), logout is client-side
-  // Just return success
-  res.status(200).json({
-    status: 'success',
-    message: 'Logged out successfully',
-  });
+router.post('/logout', async (req: Request, res: Response) => {
+  try {
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Missing or invalid authorization header',
+      });
+    }
+
+    const token = authHeader.slice(7);
+    const decoded = verifyToken(token);
+
+    if (!decoded) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Invalid or expired token',
+      });
+    }
+
+    // Get user for audit logging
+    const user = await getUserById(decoded.id);
+    if (!user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'User not found',
+      });
+    }
+
+    // Log successful logout
+    await createAuditLog(
+      user.id,
+      'LOGOUT',
+      'user',
+      user.id,
+      null,
+      req.ip
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Logged out successfully',
+      data: {
+        userId: user.id,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Logout failed',
+    });
+  }
 });
 
 export default router;
