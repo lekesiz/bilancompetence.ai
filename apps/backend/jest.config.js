@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.test' });
+
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
@@ -9,6 +13,11 @@ export default {
     '!src/**/*.d.ts',
     '!src/index.ts',
   ],
+  globals: {
+    'ts-jest': {
+      isolatedModules: true,
+    },
+  },
   coverageThreshold: {
     global: {
       branches: 60,

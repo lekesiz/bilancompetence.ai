@@ -411,20 +411,42 @@ export async function getClientsByConsultant(consultantId: string) {
   const { data, error } = await supabase
     .from('bilans')
     .select('beneficiary:beneficiary_id(id, full_name, email)')
-    .eq('consultant_id', consultantId)
-    .select('beneficiary')
-    .distinct();
+    .eq('consultant_id', consultantId);
 
   if (error && error.code !== 'PGRST116') {
     throw error;
   }
 
-  // Extract unique beneficiaries
-  const beneficiaries = data?.map(b => b.beneficiary).filter(Boolean) || [];
-  return beneficiaries;
+  // Extract unique beneficiaries by creating a Set of IDs
+  const uniqueMap = new Map();
+  data?.forEach(row => {
+    if (row.beneficiary && row.beneficiary.id) {
+      uniqueMap.set(row.beneficiary.id, row.beneficiary);
+    }
+  });
+
+  return Array.from(uniqueMap.values());
 }
 
 export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
+  // First, get all bilans for the beneficiary
+  const { data: bilans, error: bilansError } = await supabase
+    .from('bilans')
+    .select('id')
+    .eq('beneficiary_id', beneficiaryId);
+
+  if (bilansError) {
+    throw bilansError;
+  }
+
+  const bilanIds = bilans?.map(b => b.id) || [];
+
+  // If no bilans, return empty array
+  if (bilanIds.length === 0) {
+    return [];
+  }
+
+  // Get recommendations for all bilans
   const { data, error } = await supabase
     .from('recommendations')
     .select(`
@@ -438,12 +460,7 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
       updated_at,
       bilan:bilan_id(id, status)
     `)
-    .in('bilan_id',
-      supabase
-        .from('bilans')
-        .select('id')
-        .eq('beneficiary_id', beneficiaryId)
-    )
+    .in('bilan_id', bilanIds)
     .order('priority', { ascending: true })
     .order('created_at', { ascending: false });
 
@@ -504,12 +521,14 @@ export async function getOrganizationStats(organizationId: string) {
       .eq('organization_id', organizationId);
 
     // Get active consultants (have at least one bilan)
-    const { data: activeConsultants, error: consultantsError } = await supabase
+    const { data: bilanData, error: consultantsError } = await supabase
       .from('bilans')
-      .select('consultant_id', { head: false })
-      .eq('organization_id', organizationId)
       .select('consultant_id')
-      .distinct();
+      .eq('organization_id', organizationId)
+      .not('consultant_id', 'is', null);
+
+    // Count unique consultants
+    const uniqueConsultants = new Set(bilanData?.map(b => b.consultant_id) || []);
 
     // Get completed bilans
     const { count: completedBilans, error: completedError } = await supabase
@@ -532,7 +551,7 @@ export async function getOrganizationStats(organizationId: string) {
     return {
       totalUsers: totalUsers || 0,
       totalAssessments: totalAssessments || 0,
-      totalConsultants: activeConsultants?.length || 0,
+      totalConsultants: uniqueConsultants.size,
       completedBilans: completedBilans || 0,
       averageSatisfaction: Math.round(avgSatisfaction * 10) / 10,
       successRate: totalAssessments
@@ -550,6 +569,24 @@ export async function getOrganizationStats(organizationId: string) {
  */
 
 export async function getRecentActivityByOrganization(organizationId: string, limit: number = 20) {
+  // First, get all user IDs in the organization
+  const { data: users, error: usersError } = await supabase
+    .from('users')
+    .select('id')
+    .eq('organization_id', organizationId);
+
+  if (usersError) {
+    throw usersError;
+  }
+
+  const userIds = users?.map(u => u.id) || [];
+
+  // If no users, return empty array
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  // Get recent activity for all users
   const { data, error } = await supabase
     .from('audit_logs')
     .select(`
@@ -559,12 +596,7 @@ export async function getRecentActivityByOrganization(organizationId: string, li
       entity_type,
       created_at
     `)
-    .in('user_id',
-      supabase
-        .from('users')
-        .select('id')
-        .eq('organization_id', organizationId)
-    )
+    .in('user_id', userIds)
     .order('created_at', { ascending: false })
     .limit(limit);
 
