@@ -423,12 +423,20 @@ export default function AssessmentPage() {
             <p className="text-green-800 text-sm mb-4">
               Your assessment has been reviewed and recommendations are ready.
             </p>
-            <button
-              onClick={() => router.push(`/assessments/${assessmentId}/results`)}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition"
-            >
-              View Recommendations
-            </button>
+            <div className="flex gap-3 flex-wrap">
+              <button
+                onClick={() => router.push(`/assessments/${assessmentId}/results`)}
+                className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+              >
+                View Assessment Results
+              </button>
+              <button
+                onClick={() => router.push('/recommendations')}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+              >
+                📊 Explore Job Recommendations
+              </button>
+            </div>
           </div>
         )}
 

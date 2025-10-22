@@ -50,6 +50,18 @@ export default function ProtectedLayout({
             Dashboard
           </a>
           <a
+            href="/recommendations"
+            className="block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
+          >
+            📊 Job Recommendations
+          </a>
+          <a
+            href="/saved-jobs"
+            className="block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
+          >
+            📌 Saved Jobs
+          </a>
+          <a
             href="/profile"
             className="block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
           >

@@ -14,6 +14,7 @@ import filesRoutes from './routes/files.js';
 import analyticsRoutes from './routes/analytics.js';
 import exportRoutes from './routes/export.js';
 import chatRoutes from './routes/chat.js';
+import recommendationsRoutes from './routes/recommendations.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import RealtimeService from './services/realtimeService.js';
 
@@ -70,6 +71,7 @@ app.use('/api/files', filesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/recommendations', recommendationsRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
