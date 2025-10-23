@@ -10,21 +10,12 @@ import { format, addDays } from 'date-fns';
 import { Search, Calendar, Clock, MapPin, Video, Phone, ChevronRight } from 'lucide-react';
 import { toastSuccess, toastError } from '@/components/ui/Toast';
 import { useAvailableSlotsForConsultant } from '@/hooks/useScheduling';
+import { AvailabilitySlot } from '@/lib/schedulingAPI';
 
 interface ConsultantSlot {
   consultant_id: string;
   consultant_name?: string;
-  slots: AvailableSlot[];
-}
-
-interface AvailableSlot {
-  id: string;
-  start_time: string;
-  end_time: string;
-  date: string;
-  duration_minutes: number;
-  max_concurrent_bookings: number;
-  timezone: string;
+  slots: AvailabilitySlot[];
 }
 
 interface BeneficiarySessionBrowserProps {
@@ -51,7 +42,7 @@ export default function BeneficiarySessionBrowser({
     from: format(new Date(), 'yyyy-MM-dd'),
     to: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
   });
-  const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
   const [selectedConsultantId, setSelectedConsultantId] = useState<string | null>(null);
 
   // Fetch available slots for selected consultant
@@ -70,7 +61,7 @@ export default function BeneficiarySessionBrowser({
     setSelectedSlot(null);
   };
 
-  const handleSlotSelect = (slot: AvailableSlot) => {
+  const handleSlotSelect = (slot: AvailabilitySlot) => {
     setSelectedSlot(slot);
   };
 
@@ -84,7 +75,7 @@ export default function BeneficiarySessionBrowser({
       consultantId: selectedConsultantId,
       startTime: selectedSlot.start_time,
       endTime: selectedSlot.end_time,
-      date: selectedSlot.date,
+      date: (selectedSlot as any).date || selectedSlot.date_specific || '',
       durationMinutes: selectedSlot.duration_minutes,
     });
 
@@ -224,8 +215,9 @@ export default function BeneficiarySessionBrowser({
             {selectedConsultantId && !isLoading ? (
               <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
                 {availableSlots && availableSlots.length > 0 ? (
-                  availableSlots.map((slot: AvailableSlot) => {
-                    const slotDateTime = new Date(`${slot.date}T${slot.start_time}`);
+                  availableSlots.map((slot: AvailabilitySlot) => {
+                    const slotDate = (slot as any).date || slot.date_specific || '';
+                    const slotDateTime = new Date(`${slotDate}T${slot.start_time}`);
                     const isSelected = selectedSlot?.id === slot.id;
 
                     return (
@@ -287,7 +279,7 @@ export default function BeneficiarySessionBrowser({
           <h3 className="font-semibold text-gray-900 mb-3">Selected Slot</h3>
           <div className="space-y-2 text-sm text-gray-700 mb-4">
             <p>
-              <strong>Date:</strong> {format(new Date(`${selectedSlot.date}T${selectedSlot.start_time}`), 'EEEE, MMMM d, yyyy')}
+              <strong>Date:</strong> {format(new Date(`${(selectedSlot as any).date || selectedSlot.date_specific}T${selectedSlot.start_time}`), 'EEEE, MMMM d, yyyy')}
             </p>
             <p>
               <strong>Time:</strong> {selectedSlot.start_time} - {selectedSlot.end_time}

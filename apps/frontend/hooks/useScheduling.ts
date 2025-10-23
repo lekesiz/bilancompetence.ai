@@ -147,6 +147,7 @@ export function useAvailableSlotsForConsultant(
     queryKey: ['available-slots', consultantId, filters],
     queryFn: () => {
       if (!organizationId) throw new Error('Organization ID required');
+      if (!consultantId) throw new Error('Consultant ID required');
       return schedulingAPI.getAvailableSlotsForConsultant(organizationId, consultantId, filters);
     },
     enabled: enabled && !!organizationId && !!consultantId,

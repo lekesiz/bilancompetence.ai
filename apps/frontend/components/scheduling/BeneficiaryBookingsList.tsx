@@ -67,7 +67,7 @@ export default function BeneficiaryBookingsList({
     try {
       await cancelBooking({
         bookingId,
-        data: { cancellation_reason: cancellationReason },
+        reason: cancellationReason,
       });
       toastSuccess('Booking cancelled successfully');
       setShowCancelForm(null);

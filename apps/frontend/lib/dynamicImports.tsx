@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Dynamic Import Strategy for Code Splitting
  * P2.2: Code Splitting & Lazy Loading
@@ -39,14 +41,14 @@ const DefaultErrorComponent = ({ error }: { error: Error }) => (
 export function createDynamicComponent<P = {}>(
   importFn: () => Promise<{ default: React.ComponentType<P> }>,
   options?: {
-    loading?: React.ComponentType;
+    loading?: React.ComponentType<any>;
     error?: React.ComponentType<{ error: Error }>;
     ssr?: boolean;
     delay?: number;
   }
 ) {
   return dynamic(importFn, {
-    loading: options?.loading || DefaultLoadingComponent,
+    loading: (options?.loading as any) || DefaultLoadingComponent,
     ssr: options?.ssr !== false,
   });
 }
@@ -55,35 +57,36 @@ export function createDynamicComponent<P = {}>(
  * Heavy component imports (lazily loaded)
  * These are imported on-demand when needed
  */
-export const DynamicChart = createDynamicComponent(
-  () => import('@/components/Chart'),
-  { ssr: false }
-);
-
-export const DynamicAnalytics = createDynamicComponent(
-  () => import('@/components/Analytics'),
-  { ssr: false }
-);
-
-export const DynamicAssessmentWizard = createDynamicComponent(
-  () => import('@/components/assessments/AssessmentWizard'),
-  { ssr: true }
-);
-
-export const DynamicConsultantDashboard = createDynamicComponent(
-  () => import('@/components/dashboard/ConsultantDashboard'),
-  { ssr: false }
-);
-
-export const DynamicBeneficiarySchedule = createDynamicComponent(
-  () => import('@/components/scheduling/BeneficiarySchedulePage'),
-  { ssr: false }
-);
-
-export const DynamicQualiopisModule = createDynamicComponent(
-  () => import('@/components/qualiopi/QualipisModule'),
-  { ssr: false }
-);
+// Note: These components can be added back once the components are implemented
+// export const DynamicChart = createDynamicComponent(
+//   () => import('@/components/Chart'),
+//   { ssr: false }
+// );
+//
+// export const DynamicAnalytics = createDynamicComponent(
+//   () => import('@/components/Analytics'),
+//   { ssr: false }
+// );
+//
+// export const DynamicAssessmentWizard = createDynamicComponent(
+//   () => import('@/components/assessments/AssessmentWizard'),
+//   { ssr: true }
+// );
+//
+// export const DynamicConsultantDashboard = createDynamicComponent(
+//   () => import('@/components/dashboard/ConsultantDashboard'),
+//   { ssr: false }
+// );
+//
+// export const DynamicBeneficiarySchedule = createDynamicComponent(
+//   () => import('@/components/scheduling/BeneficiarySchedulePage'),
+//   { ssr: false }
+// );
+//
+// export const DynamicQualiopisModule = createDynamicComponent(
+//   () => import('@/components/qualiopi/QualipisModule'),
+//   { ssr: false }
+// );
 
 /**
  * Preload component to start loading before it's needed

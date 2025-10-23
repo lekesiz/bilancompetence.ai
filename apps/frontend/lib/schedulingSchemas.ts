@@ -71,7 +71,19 @@ export const createAvailabilitySlotSchema = z
 
 export type CreateAvailabilitySlotInput = z.infer<typeof createAvailabilitySlotSchema>;
 
-export const updateAvailabilitySlotSchema = createAvailabilitySlotSchema.partial();
+// Create update schema by making all fields optional
+export const updateAvailabilitySlotSchema = z.object({
+  slot_type: z.enum(['ONE_TIME', 'RECURRING']).optional(),
+  date_specific: dateString.optional(),
+  day_of_week: z.number().min(0).max(6).optional(),
+  start_time: timeString.optional(),
+  end_time: timeString.optional(),
+  duration_minutes: z.number().positive().optional(),
+  max_concurrent_bookings: z.number().min(1).max(5).optional(),
+  timezone: z.string().optional(),
+  is_recurring: z.boolean().optional(),
+  recurring_until: dateString.optional(),
+});
 
 export type UpdateAvailabilitySlotInput = z.infer<typeof updateAvailabilitySlotSchema>;
 
