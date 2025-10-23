@@ -141,14 +141,16 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
 
       // Get progress info
       await getProgress(assessmentId);
+      toast.success('Assessment loaded successfully!');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load assessment';
       setState(prev => ({ ...prev, error: errorMessage }));
+      toast.error(errorMessage);
       throw error;
     } finally {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, []);
+  }, [getProgress]);
 
   /**
    * Save a complete step with validation
@@ -162,49 +164,45 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
       setState(prev => ({ ...prev, isSaving: true, error: null }));
 
       try {
-        const response = await fetch(
-          `${API_URL}/api/assessments/${state.assessmentId}/steps/${stepNumber}`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...getAuthHeader(),
+        const response = await api.post(`/api/assessments/${state.assessmentId}/wizard/save-step`, {
+          step_number: stepNumber,
+          section,
+          answers,
+          competencies,
+        });
+
+        if (response.status === 'success' && response.data) {
+          const data = response.data;
+
+          setState(prev => ({
+            ...prev,
+            progressPercentage: data.progressPercentage || prev.progressPercentage,
+            currentStep: data.currentStep || prev.currentStep,
+            status: 'IN_PROGRESS',
+            lastSavedAt: new Date().toISOString(),
+            unsavedChanges: false,
+            draftData: {
+              ...prev.draftData,
+              [`step${stepNumber}`]: answers,
             },
-            body: JSON.stringify({ section, answers, competencies }),
-          }
-        );
+          }));
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to save step');
+          // Get updated progress info
+          await getProgress(state.assessmentId);
+          toast.success('Step saved successfully!');
+        } else {
+          throw new Error(response.message || 'Failed to save step');
         }
-
-        const data = await response.json();
-
-        setState(prev => ({
-          ...prev,
-          progressPercentage: data.data.progressPercentage,
-          currentStep: data.data.currentStep,
-          status: 'IN_PROGRESS',
-          lastSavedAt: new Date().toISOString(),
-          unsavedChanges: false,
-          draftData: {
-            ...prev.draftData,
-            [`step${stepNumber}`]: answers,
-          },
-        }));
-
-        // Get updated progress info
-        await getProgress(state.assessmentId);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to save step';
         setState(prev => ({ ...prev, error: errorMessage }));
+        toast.error(errorMessage);
         throw error;
       } finally {
         setState(prev => ({ ...prev, isSaving: false }));
       }
     },
-    [state.assessmentId]
+    [state.assessmentId, getProgress]
   );
 
   /**
@@ -217,23 +215,17 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
       }
 
       try {
-        const response = await fetch(
-          `${API_URL}/api/assessments/${state.assessmentId}/auto-save`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...getAuthHeader(),
-            },
-            body: JSON.stringify({ step_number: stepNumber, partial_data: partialData }),
-          }
-        );
+        const response = await api.post(`/api/assessments/${state.assessmentId}/wizard/save-step`, {
+          step_number: stepNumber,
+          section: 'auto_save',
+          answers: partialData,
+          is_auto_save: true,
+        });
 
-        if (response.ok) {
-          const data = await response.json();
+        if (response.status === 'success' && response.data) {
           setState(prev => ({
             ...prev,
-            lastSavedAt: data.data.savedAt,
+            lastSavedAt: response.data.savedAt || new Date().toISOString(),
             unsavedChanges: false,
           }));
         }
@@ -250,22 +242,19 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
    */
   const getProgress = useCallback(async (assessmentId: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/assessments/${assessmentId}/progress`, {
-        headers: getAuthHeader(),
-      });
+      const response = await api.get(`/api/assessments/${assessmentId}/progress`);
 
-      if (response.ok) {
-        const data = await response.json();
-        const progress = data.data;
+      if (response.status === 'success' && response.data) {
+        const progress = response.data;
 
         setState(prev => ({
           ...prev,
-          currentStep: progress.currentStep,
-          progressPercentage: progress.progressPercentage,
-          completedSteps: progress.completedSteps,
-          lastSavedAt: progress.lastSavedAt,
-          status: progress.status,
-          draftData: progress.draftData,
+          currentStep: progress.currentStep || prev.currentStep,
+          progressPercentage: progress.progressPercentage || prev.progressPercentage,
+          completedSteps: progress.completedSteps || prev.completedSteps,
+          lastSavedAt: progress.lastSavedAt || prev.lastSavedAt,
+          status: progress.status || prev.status,
+          draftData: progress.draftData || prev.draftData,
         }));
       }
     } catch (error) {
@@ -284,36 +273,25 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
     setState(prev => ({ ...prev, isSaving: true, error: null }));
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/assessments/${state.assessmentId}/submit`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader(),
-          },
-          body: JSON.stringify({}),
-        }
-      );
+      const response = await api.post(`/api/assessments/${state.assessmentId}/submit`, {});
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit assessment');
+      if (response.status === 'success') {
+        setState(prev => ({
+          ...prev,
+          status: 'SUBMITTED',
+          unsavedChanges: false,
+          lastSavedAt: new Date().toISOString(),
+        }));
+
+        toast.success('Assessment submitted successfully!');
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to submit assessment');
       }
-
-      const data = await response.json();
-
-      setState(prev => ({
-        ...prev,
-        status: 'SUBMITTED',
-        unsavedChanges: false,
-        lastSavedAt: new Date().toISOString(),
-      }));
-
-      return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to submit assessment';
       setState(prev => ({ ...prev, error: errorMessage }));
+      toast.error(errorMessage);
       return false;
     } finally {
       setState(prev => ({ ...prev, isSaving: false }));
