@@ -5,22 +5,22 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 // Import routes from backend
-import authRoutes from '../apps/backend/src/routes/auth.js';
-import dashboardRoutes from '../apps/backend/src/routes/dashboard.js';
-import passwordResetRoutes from '../apps/backend/src/routes/passwordReset.js';
-import emailVerificationRoutes from '../apps/backend/src/routes/emailVerification.js';
-import usersRoutes from '../apps/backend/src/routes/users.js';
-import assessmentsRoutes from '../apps/backend/src/routes/assessments.js';
-import notificationsRoutes from '../apps/backend/src/routes/notifications.js';
-import filesRoutes from '../apps/backend/src/routes/files.js';
-import analyticsRoutes from '../apps/backend/src/routes/analytics.js';
-import exportRoutes from '../apps/backend/src/routes/export.js';
-import chatRoutes from '../apps/backend/src/routes/chat.js';
-import recommendationsRoutes from '../apps/backend/src/routes/recommendations.js';
-import qualiopisRoutes from '../apps/backend/src/routes/qualiopi.js';
-import schedulingRoutes from '../apps/backend/src/routes/scheduling.js';
-import { apiLimiter, authLimiter } from '../apps/backend/src/middleware/rateLimit.js';
-import { logger } from '../apps/backend/src/utils/logger.js';
+import authRoutes from '../apps/backend/src/routes/auth';
+import dashboardRoutes from '../apps/backend/src/routes/dashboard';
+import passwordResetRoutes from '../apps/backend/src/routes/passwordReset';
+import emailVerificationRoutes from '../apps/backend/src/routes/emailVerification';
+import usersRoutes from '../apps/backend/src/routes/users';
+import assessmentsRoutes from '../apps/backend/src/routes/assessments';
+import notificationsRoutes from '../apps/backend/src/routes/notifications';
+import filesRoutes from '../apps/backend/src/routes/files';
+import analyticsRoutes from '../apps/backend/src/routes/analytics';
+import exportRoutes from '../apps/backend/src/routes/export';
+import chatRoutes from '../apps/backend/src/routes/chat';
+import recommendationsRoutes from '../apps/backend/src/routes/recommendations';
+import qualiopisRoutes from '../apps/backend/src/routes/qualiopi';
+import schedulingRoutes from '../apps/backend/src/routes/scheduling';
+import { apiLimiter, authLimiter } from '../apps/backend/src/middleware/rateLimit';
+import { logger } from '../apps/backend/src/utils/logger';
 
 // Create Express app
 const app = express();
