@@ -67,7 +67,7 @@ export default function BeneficiaryBookingsList({
     try {
       await cancelBooking({
         bookingId,
-        data: { cancellation_reason: cancellationReason },
+        reason: cancellationReason,
       });
       toast.success('Booking cancelled successfully');
       setShowCancelForm(null);
@@ -192,7 +192,7 @@ export default function BeneficiaryBookingsList({
                     <span
                       key={i}
                       className={`w-4 h-4 ${
-                        i < booking.beneficiary_rating
+                        i < (booking.beneficiary_rating || 0)
                           ? 'text-yellow-400 fill-yellow-400'
                           : 'text-gray-300'
                       }`}
@@ -200,7 +200,7 @@ export default function BeneficiaryBookingsList({
                       ★
                     </span>
                   ))}
-                  <span className="text-sm text-gray-600 ml-2">({booking.beneficiary_rating}/5)</span>
+                  <span className="text-sm text-gray-600 ml-2">({booking.beneficiary_rating || 0}/5)</span>
                 </div>
               )}
 

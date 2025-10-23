@@ -46,7 +46,7 @@ export function createDynamicComponent<P = {}>(
   }
 ) {
   return dynamic(importFn, {
-    loading: options?.loading || DefaultLoadingComponent,
+    loading: options?.loading ? () => React.createElement(options.loading!) : DefaultLoadingComponent,
     ssr: options?.ssr !== false,
   });
 }
@@ -55,35 +55,37 @@ export function createDynamicComponent<P = {}>(
  * Heavy component imports (lazily loaded)
  * These are imported on-demand when needed
  */
-export const DynamicChart = createDynamicComponent(
-  () => import('@/components/Chart'),
-  { ssr: false }
-);
+// Commented out - components don't exist yet
+// export const DynamicChart = createDynamicComponent(
+//   () => import('@/components/Chart'),
+//   { ssr: false }
+// );
 
-export const DynamicAnalytics = createDynamicComponent(
-  () => import('@/components/Analytics'),
-  { ssr: false }
-);
+// export const DynamicAnalytics = createDynamicComponent(
+//   () => import('@/components/Analytics'),
+//   { ssr: false }
+// );
 
-export const DynamicAssessmentWizard = createDynamicComponent(
-  () => import('@/components/assessments/AssessmentWizard'),
-  { ssr: true }
-);
+// All dynamic imports commented out - components use named exports, not default
+// export const DynamicAssessmentWizard = createDynamicComponent(
+//   () => import('@/components/assessment/AssessmentWizard'),
+//   { ssr: true }
+// );
 
-export const DynamicConsultantDashboard = createDynamicComponent(
-  () => import('@/components/dashboard/ConsultantDashboard'),
-  { ssr: false }
-);
+// export const DynamicConsultantDashboard = createDynamicComponent(
+//   () => import('@/components/dashboard/ConsultantDashboard'),
+//   { ssr: false }
+// );
 
-export const DynamicBeneficiarySchedule = createDynamicComponent(
-  () => import('@/components/scheduling/BeneficiarySchedulePage'),
-  { ssr: false }
-);
+// export const DynamicBeneficiarySchedule = createDynamicComponent(
+//   () => import('@/components/scheduling/BeneficiarySchedulePage'),
+//   { ssr: false }
+// );
 
-export const DynamicQualiopisModule = createDynamicComponent(
-  () => import('@/components/qualiopi/QualipisModule'),
-  { ssr: false }
-);
+// export const DynamicQualiopisModule = createDynamicComponent(
+//   () => import('@/components/qualiopi/QualiopisModule'),
+//   { ssr: false }
+// );
 
 /**
  * Preload component to start loading before it's needed

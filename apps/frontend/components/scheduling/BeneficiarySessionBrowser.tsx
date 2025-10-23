@@ -11,21 +11,9 @@ import { Search, Calendar, Clock, MapPin, Video, Phone, ChevronRight } from 'luc
 import toast from 'react-hot-toast';
 import { useAvailableSlotsForConsultant } from '@/hooks/useScheduling';
 
-interface ConsultantSlot {
-  consultant_id: string;
-  consultant_name?: string;
-  slots: AvailableSlot[];
-}
+// ConsultantSlot removed - using API types directly
 
-interface AvailableSlot {
-  id: string;
-  start_time: string;
-  end_time: string;
-  date: string;
-  duration_minutes: number;
-  max_concurrent_bookings: number;
-  timezone: string;
-}
+// Using AvailabilitySlot from schedulingAPI
 
 interface BeneficiarySessionBrowserProps {
   bilanId: string;
@@ -46,17 +34,17 @@ export default function BeneficiarySessionBrowser({
   onSlotSelected,
 }: BeneficiarySessionBrowserProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [consultantId, setConsultantId] = useState<string | undefined>();
+  const [consultantId, setConsultantId] = useState<string>('');
   const [dateRange, setDateRange] = useState({
     from: format(new Date(), 'yyyy-MM-dd'),
     to: format(addDays(new Date(), 30), 'yyyy-MM-dd'),
   });
-  const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<any | null>(null);
   const [selectedConsultantId, setSelectedConsultantId] = useState<string | null>(null);
 
   // Fetch available slots for selected consultant
   const { data: availableSlots = [], isLoading, error } = useAvailableSlotsForConsultant(
-    consultantId,
+    consultantId || '',
     {
       date_from: dateRange.from,
       date_to: dateRange.to,
@@ -70,7 +58,7 @@ export default function BeneficiarySessionBrowser({
     setSelectedSlot(null);
   };
 
-  const handleSlotSelect = (slot: AvailableSlot) => {
+  const handleSlotSelect = (slot: any) => {
     setSelectedSlot(slot);
   };
 
@@ -90,7 +78,7 @@ export default function BeneficiarySessionBrowser({
 
     toast.success('Slot selected. Please complete booking details.');
     setSelectedSlot(null);
-    setConsultantId(undefined);
+    setConsultantId('');
     setSelectedConsultantId(null);
   };
 
@@ -224,8 +212,8 @@ export default function BeneficiarySessionBrowser({
             {selectedConsultantId && !isLoading ? (
               <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
                 {availableSlots && availableSlots.length > 0 ? (
-                  availableSlots.map((slot: AvailableSlot) => {
-                    const slotDateTime = new Date(`${slot.date}T${slot.start_time}`);
+                  availableSlots.map((slot: any) => {
+                    const slotDateTime = new Date(`${slot.date_specific || format(new Date(), 'yyyy-MM-dd')}T${slot.start_time}`);
                     const isSelected = selectedSlot?.id === slot.id;
 
                     return (

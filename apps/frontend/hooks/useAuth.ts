@@ -6,6 +6,7 @@ interface UseAuthReturn {
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
+  organizationId: string | null;
   register: (email: string, password: string, fullName: string) => Promise<boolean>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -120,6 +121,7 @@ export function useAuth(): UseAuthReturn {
     isLoading,
     isAuthenticated,
     error,
+    organizationId: user?.organization_id || null,
     register,
     login,
     logout,

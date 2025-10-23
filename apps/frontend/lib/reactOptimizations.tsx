@@ -8,7 +8,7 @@
  * - List rendering optimization
  */
 
-import { memo, useMemo, useCallback, useRef, useEffect } from 'react';
+import { memo, useMemo, useCallback, useRef, useEffect, useState } from 'react';
 
 /**
  * Deep compare for memo() custom comparison
@@ -112,7 +112,7 @@ export function createOptimizedListItem<T extends { id: string | number }>(
  * Batch state updates (helps with frequent updates)
  */
 export function useBatchedState<T>(initialValue: T) {
-  const [state, setState] = React.useState(initialValue);
+  const [state, setState] = useState(initialValue);
   const batchedUpdatesRef = useRef<Partial<T>>({});
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -144,8 +144,8 @@ export function useBatchedState<T>(initialValue: T) {
  * Debounced state update (for search inputs, etc)
  */
 export function useDebouncedState<T>(initialValue: T, delayMs: number = 500) {
-  const [state, setState] = React.useState(initialValue);
-  const [debouncedState, setDebouncedState] = React.useState(initialValue);
+  const [state, setState] = useState(initialValue);
+  const [debouncedState, setDebouncedState] = useState(initialValue);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -176,7 +176,7 @@ export function useVirtualizedList<T>(
   itemHeight: number,
   containerHeight: number
 ) {
-  const [scrollTop, setScrollTop] = React.useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
 
   const startIndex = Math.floor(scrollTop / itemHeight);
   const endIndex = Math.ceil((scrollTop + containerHeight) / itemHeight);
@@ -194,7 +194,7 @@ export function useIntersectionObserver<T extends HTMLElement>(
   options?: IntersectionObserverInit
 ) {
   const ref = useRef<T>(null);
-  const [isVisible, setIsVisible] = React.useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (!ref.current) return;

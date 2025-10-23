@@ -145,10 +145,10 @@ export default function ConsultantSchedulePage() {
   const cancelMutation = useCancelBooking();
 
   // Filter bookings by status
-  const scheduledBookings = bookings.filter((b) => b.status === 'SCHEDULED');
-  const confirmedBookings = bookings.filter((b) => b.status === 'CONFIRMED');
+  const scheduledBookings = bookings.filter((b: SessionBooking) => b.status === 'SCHEDULED');
+  const confirmedBookings = bookings.filter((b: SessionBooking) => b.status === 'CONFIRMED');
   const completedBookings = bookings.filter(
-    (b) => b.status === 'COMPLETED' || b.status === 'NO_SHOW' || b.status === 'CANCELLED'
+    (b: SessionBooking) => b.status === 'COMPLETED' || b.status === 'NO_SHOW' || b.status === 'CANCELLED'
   );
 
   const handleConfirmBooking = async (bookingId: string) => {
@@ -371,7 +371,7 @@ export default function ConsultantSchedulePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {analytics.map((row) => (
+                  {analytics.map((row: SessionAnalytics) => (
                     <tr key={row.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900 font-medium">
                         {new Date(row.session_date).toLocaleDateString()}

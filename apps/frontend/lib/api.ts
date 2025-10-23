@@ -20,6 +20,7 @@ interface User {
   email: string;
   full_name: string;
   role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
+  organization_id?: string;
 }
 
 class BilanAPI {

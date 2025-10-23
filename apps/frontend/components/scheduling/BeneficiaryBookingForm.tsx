@@ -98,7 +98,7 @@ export default function BeneficiaryBookingForm({
       const response = await createBooking(bookingData);
       toast.success('Session booked successfully!');
       reset();
-      onSuccess?.(response?.data?.id);
+      onSuccess?.(response?.id || '');
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message || 'Failed to create booking. Please try again.'
