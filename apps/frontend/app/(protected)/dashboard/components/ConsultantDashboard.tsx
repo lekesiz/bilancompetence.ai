@@ -6,7 +6,9 @@ import {
   ClientCard,
   AssessmentCard,
   RecommendationsPanel,
+  ChartPlaceholder,
 } from './dashboard-components';
+import { Users, TrendingUp, Target, Award, Plus } from 'lucide-react';
 
 export function ConsultantDashboard() {
   const { data, loading, error } = useConsultantDashboardData();

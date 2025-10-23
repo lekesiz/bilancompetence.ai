@@ -55,7 +55,7 @@ export async function createNotification(
     }
 
     logger.info('Notification created successfully', { userId, type });
-    return notification as Notification;
+    return notification as unknown as Notification;
   } catch (error) {
     logAndThrow('Failed to create notification', error);
   }

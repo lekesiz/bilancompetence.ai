@@ -121,9 +121,12 @@ export class DocumentArchiveService {
 
       if (error) throw new Error(`Failed to archive document: ${error.message}`);
 
+      // Type assertion for data properties
+      const doc = data as any;
+
       // Log audit event
       await this.logAccess(
-        data.id,
+        doc.id,
         createdByUserId,
         'DOWNLOAD',
         '0.0.0.0',
@@ -132,17 +135,17 @@ export class DocumentArchiveService {
       );
 
       return {
-        id: data.id,
-        bilan_id: data.bilan_id,
-        document_type: data.document_type,
-        file_name: data.file_name,
-        file_url: data.file_url,
-        file_size: data.file_size,
-        file_hash: data.file_hash,
-        mime_type: data.mime_type,
-        created_by_name: data.users?.full_name || 'System',
-        created_at: data.created_at,
-        retention_until: data.retention_until,
+        id: doc.id,
+        bilan_id: doc.bilan_id,
+        document_type: doc.document_type,
+        file_name: doc.file_name,
+        file_url: doc.file_url,
+        file_size: doc.file_size,
+        file_hash: doc.file_hash,
+        mime_type: doc.mime_type,
+        created_by_name: doc.users?.full_name || 'System',
+        created_at: doc.created_at,
+        retention_until: doc.retention_until,
       };
     } catch (error) {
       console.error('Error in archiveDocument:', error);
@@ -436,7 +439,8 @@ export class DocumentArchiveService {
 
       if (error) throw new Error(`Document not found: ${error.message}`);
 
-      return document.file_hash === currentHash;
+      const doc = document as any;
+      return doc.file_hash === currentHash;
     } catch (error) {
       console.error('Error in verifyDocumentIntegrity:', error);
       return false;
