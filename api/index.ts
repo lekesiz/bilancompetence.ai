@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-// import { sendWelcomeEmail } from './emailHelper'; // TODO: Implement email service
+import * as nodemailer from 'nodemailer';
 
 // Initialize PostgreSQL connection pool
 const databaseUrl = process.env.DATABASE_URL || '';
@@ -22,6 +22,74 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+
+// Email configuration - using SendGrid via SMTP
+const getTransporter = () => {
+  const sendGridApiKey = process.env.SENDGRID_API_KEY;
+  const emailFrom = process.env.EMAIL_FROM || 'noreply@bilancompetence.ai';
+
+  if (sendGridApiKey) {
+    // SendGrid SMTP configuration
+    return nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'apikey',
+        pass: sendGridApiKey,
+      },
+    });
+  } else {
+    // Fallback: Return null if no email service configured
+    console.warn('SENDGRID_API_KEY not found, email service disabled');
+    return null;
+  }
+};
+
+const transporter = getTransporter();
+
+// Helper: Send welcome email
+async function sendWelcomeEmail(email: string, fullName: string): Promise<void> {
+  if (!transporter) {
+    console.warn('Email service not configured, skipping welcome email');
+    return;
+  }
+
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'https://bilancompetence.vercel.app';
+    
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || 'noreply@bilancompetence.ai',
+      to: email,
+      subject: 'Welcome to BilanCompetence!',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1>Welcome to BilanCompetence, ${fullName}!</h1>
+          <p>We're excited to have you on board.</p>
+          <h3>Getting Started:</h3>
+          <ol>
+            <li>Verify your email address</li>
+            <li>Complete your profile</li>
+            <li>Start your first assessment</li>
+          </ol>
+          <p>
+            <a href="${frontendUrl}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+              Go to Dashboard
+            </a>
+          </p>
+          <hr>
+          <p><strong>Questions?</strong> Visit our help center or contact support at hello@bilancompetence.ai</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Welcome email sent successfully to:', email);
+  } catch (error: any) {
+    console.error('Failed to send welcome email:', error.message);
+    // Don't throw - email is non-critical
+  }
+}
 
 // Helper: Generate JWT tokens
 function generateTokens(userId: string, email: string, role: string) {
@@ -239,10 +307,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('Session created successfully for user:', user.id);
 
       // Send welcome email (non-blocking)
-      // TODO: Implement email service
-      // sendWelcomeEmail(user.email, user.full_name).catch((error) => {
-      //   console.error('Welcome email failed (non-blocking):', error.message);
-      // });
+      sendWelcomeEmail(user.email, user.full_name).catch((error) => {
+        console.error('Welcome email failed (non-blocking):', error.message);
+      });
 
       // Return success response
       return res.status(201).json({
@@ -437,13 +504,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const { title, description, assessment_type } = req.body;
 
-      // Validation
-      if (!assessment_type || !['career', 'skills', 'comprehensive'].includes(assessment_type)) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Invalid assessment_type. Must be one of: career, skills, comprehensive',
-        });
-      }
+      // Validation - assessment_type is optional, defaults to 'career'
+      const validTypes = ['career', 'skills', 'comprehensive'];
+      const finalAssessmentType = assessment_type && validTypes.includes(assessment_type) 
+        ? assessment_type 
+        : 'career';
+      
+      const finalTitle = title || 'New Assessment';
+      const finalDescription = description || null;
 
       const client = await pool.connect();
       try {
@@ -467,7 +535,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           `INSERT INTO assessments (beneficiary_id, organization_id, title, assessment_type, status, current_step, progress_percentage, started_at) 
            VALUES ($1, $2, $3, $4, $5, $6, $7, NOW()) 
            RETURNING *`,
-          [authUser.userId, organizationId, 'New Assessment', 'career', 'DRAFT', 0, 0]
+          [authUser.userId, organizationId, finalTitle, finalAssessmentType, 'DRAFT', 0, 0]
         );
 
         console.log('Assessment created:', result.rows[0].id);
