@@ -1,7 +1,10 @@
 import { supabase } from './supabaseService';
+import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * User Service - User profile management
+ * Standardized error handling for all user operations
  */
 
 export interface UserProfile {
@@ -24,17 +27,29 @@ export interface UserProfile {
  * Get user profile with full details
  */
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  if (error && error.code !== 'PGRST116') {
-    throw error;
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      throw new DatabaseError('Failed to fetch user profile', error);
+    }
+
+    if (!data) {
+      logger.info('User profile not found', { userId });
+      return null;
+    }
+
+    logger.info('User profile retrieved successfully', { userId });
+    return data;
+  } catch (error) {
+    logAndThrow('Failed to get user profile', error);
   }
-
-  return data || null;
 }
 
 /**
@@ -50,54 +65,84 @@ export async function updateUserProfile(
     avatar_url?: string;
   }
 ) {
-  const { data, error } = await supabase
-    .from('users')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', userId)
-    .select()
-    .single();
+  try {
+    validateRequired({ userId, updates }, ['userId', 'updates']);
 
-  if (error) {
-    throw error;
+    if (Object.keys(updates).length === 0) {
+      throw new ValidationError('No fields provided for update');
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new DatabaseError('Failed to update user profile', error);
+    }
+
+    logger.info('User profile updated successfully', { userId, fields: Object.keys(updates) });
+    return data as UserProfile;
+  } catch (error) {
+    logAndThrow('Failed to update user profile', error);
   }
-
-  return data as UserProfile;
 }
 
 /**
  * Get user by role
  */
 export async function getUsersByRole(role: string, limit: number = 100) {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('role', role)
-    .limit(limit);
+  try {
+    validateRequired({ role }, ['role']);
 
-  if (error) {
-    throw error;
+    const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'];
+    if (!validRoles.includes(role)) {
+      throw new ValidationError(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('role', role)
+      .limit(limit);
+
+    if (error) {
+      throw new DatabaseError('Failed to fetch users by role', error);
+    }
+
+    logger.info('Users by role retrieved successfully', { role, count: data?.length || 0 });
+    return data || [];
+  } catch (error) {
+    logAndThrow('Failed to get users by role', error);
   }
-
-  return data || [];
 }
 
 /**
  * Get organization users
  */
 export async function getOrganizationUsers(organizationId: string) {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('organization_id', organizationId);
+  try {
+    validateRequired({ organizationId }, ['organizationId']);
 
-  if (error) {
-    throw error;
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('organization_id', organizationId);
+
+    if (error) {
+      throw new DatabaseError('Failed to fetch organization users', error);
+    }
+
+    logger.info('Organization users retrieved successfully', { organizationId, count: data?.length || 0 });
+    return data || [];
+  } catch (error) {
+    logAndThrow('Failed to get organization users', error);
   }
-
-  return data || [];
 }
 
 /**
@@ -107,35 +152,59 @@ export async function updateUserRole(
   userId: string,
   newRole: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN'
 ) {
-  const { data, error } = await supabase
-    .from('users')
-    .update({ role: newRole, updated_at: new Date().toISOString() })
-    .eq('id', userId)
-    .select()
-    .single();
+  try {
+    validateRequired({ userId, newRole }, ['userId', 'newRole']);
 
-  if (error) {
-    throw error;
+    const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'];
+    if (!validRoles.includes(newRole)) {
+      throw new ValidationError(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .update({ role: newRole, updated_at: new Date().toISOString() })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new DatabaseError('Failed to update user role', error);
+    }
+
+    logger.info('User role updated successfully', { userId, newRole });
+    return data as UserProfile;
+  } catch (error) {
+    logAndThrow('Failed to update user role', error);
   }
-
-  return data as UserProfile;
 }
 
 /**
  * Get user preferences
  */
 export async function getUserPreferences(userId: string) {
-  const { data, error } = await supabase
-    .from('user_preferences')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  if (error && error.code !== 'PGRST116') {
-    throw error;
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      throw new DatabaseError('Failed to fetch user preferences', error);
+    }
+
+    if (!data) {
+      logger.info('User preferences not found, returning null', { userId });
+      return null;
+    }
+
+    logger.info('User preferences retrieved successfully', { userId });
+    return data;
+  } catch (error) {
+    logAndThrow('Failed to get user preferences', error);
   }
-
-  return data;
 }
 
 /**
@@ -151,40 +220,58 @@ export async function updateUserPreferences(
     [key: string]: any;
   }
 ) {
-  // Try to update existing preferences
-  const { data: existing } = await supabase
-    .from('user_preferences')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
+  try {
+    validateRequired({ userId, preferences }, ['userId', 'preferences']);
 
-  if (existing) {
-    // Update existing
-    const { data, error } = await supabase
+    // Try to update existing preferences
+    const { data: existing, error: fetchError } = await supabase
       .from('user_preferences')
-      .update({
-        ...preferences,
-        updated_at: new Date().toISOString(),
-      })
+      .select('*')
       .eq('user_id', userId)
-      .select()
       .single();
 
-    if (error) throw error;
-    return data;
-  } else {
-    // Create new
-    const { data, error } = await supabase
-      .from('user_preferences')
-      .insert({
-        user_id: userId,
-        ...preferences,
-      })
-      .select()
-      .single();
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      throw new DatabaseError('Failed to fetch user preferences', fetchError);
+    }
 
-    if (error) throw error;
-    return data;
+    if (existing) {
+      // Update existing
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .update({
+          ...preferences,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new DatabaseError('Failed to update user preferences', error);
+      }
+
+      logger.info('User preferences updated successfully', { userId });
+      return data;
+    } else {
+      // Create new
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .insert({
+          user_id: userId,
+          ...preferences,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new DatabaseError('Failed to create user preferences', error);
+      }
+
+      logger.info('User preferences created successfully', { userId });
+      return data;
+    }
+  } catch (error) {
+    logAndThrow('Failed to update user preferences', error);
   }
 }
 
@@ -192,102 +279,161 @@ export async function updateUserPreferences(
  * Get user statistics
  */
 export async function getUserStats(userId: string) {
-  const { data: user, error: userError } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  if (userError) throw userError;
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-  // Get bilans count
-  const { data: bilans } = await supabase
-    .from('bilans')
-    .select('id')
-    .or(`beneficiary_id.eq.${userId},consultant_id.eq.${userId}`)
-    .count('exact');
+    if (userError) {
+      throw new DatabaseError('Failed to fetch user for statistics', userError);
+    }
 
-  // Get recommendations count
-  const { data: recommendations } = await supabase
-    .from('recommendations')
-    .select('id')
-    .eq('user_id', userId)
-    .count('exact');
+    if (!user) {
+      throw new NotFoundError('User');
+    }
 
-  return {
-    userId: user.id,
-    email: user.email,
-    full_name: user.full_name,
-    role: user.role,
-    assessmentCount: bilans?.length || 0,
-    recommendationCount: recommendations?.length || 0,
-    lastLogin: user.last_login_at,
-    emailVerified: !!user.email_verified_at,
-    joinedDate: user.created_at,
-  };
+    // Get bilans count
+    const { data: bilans, error: bilansError } = await supabase
+      .from('bilans')
+      .select('id')
+      .or(`beneficiary_id.eq.${userId},consultant_id.eq.${userId}`)
+      .count('exact');
+
+    if (bilansError) {
+      throw new DatabaseError('Failed to fetch assessment count', bilansError);
+    }
+
+    // Get recommendations count
+    const { data: recommendations, error: recommendationsError } = await supabase
+      .from('recommendations')
+      .select('id')
+      .eq('user_id', userId)
+      .count('exact');
+
+    if (recommendationsError) {
+      throw new DatabaseError('Failed to fetch recommendation count', recommendationsError);
+    }
+
+    const stats = {
+      userId: user.id,
+      email: user.email,
+      full_name: user.full_name,
+      role: user.role,
+      assessmentCount: bilans?.length || 0,
+      recommendationCount: recommendations?.length || 0,
+      lastLogin: user.last_login_at,
+      emailVerified: !!user.email_verified_at,
+      joinedDate: user.created_at,
+    };
+
+    logger.info('User statistics retrieved successfully', { userId });
+    return stats;
+  } catch (error) {
+    logAndThrow('Failed to get user statistics', error);
+  }
 }
 
 /**
  * Delete user account (with audit trail)
  */
 export async function deleteUserAccount(userId: string, reason?: string) {
-  // Create audit log before deletion
-  await supabase.from('audit_logs').insert({
-    user_id: userId,
-    action: 'ACCOUNT_DELETED',
-    entity_type: 'user',
-    entity_id: userId,
-    changes: { reason },
-  });
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  // Soft delete - mark as deleted instead of hard delete
-  const { data, error } = await supabase
-    .from('users')
-    .update({
-      deleted_at: new Date().toISOString(),
-      email: `deleted_${userId}@deleted.local`, // Anonymize email
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', userId)
-    .select()
-    .single();
+    // Create audit log before deletion
+    const { error: auditError } = await supabase.from('audit_logs').insert({
+      user_id: userId,
+      action: 'ACCOUNT_DELETED',
+      entity_type: 'user',
+      entity_id: userId,
+      changes: { reason },
+    });
 
-  if (error) {
-    throw error;
+    if (auditError) {
+      throw new DatabaseError('Failed to create audit log for account deletion', auditError);
+    }
+
+    // Soft delete - mark as deleted instead of hard delete
+    const { data, error } = await supabase
+      .from('users')
+      .update({
+        deleted_at: new Date().toISOString(),
+        email: `deleted_${userId}@deleted.local`, // Anonymize email
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new DatabaseError('Failed to delete user account', error);
+    }
+
+    logger.info('User account deleted successfully', { userId, reason });
+    return data;
+  } catch (error) {
+    logAndThrow('Failed to delete user account', error);
   }
-
-  return data;
 }
 
 /**
  * Export user data (GDPR)
  */
 export async function exportUserData(userId: string) {
-  // Get user profile
-  const { data: user } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  // Get user sessions
-  const { data: sessions } = await supabase
-    .from('sessions')
-    .select('*')
-    .eq('user_id', userId);
+    // Get user profile
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-  // Get user audit logs
-  const { data: auditLogs } = await supabase
-    .from('audit_logs')
-    .select('*')
-    .eq('user_id', userId);
+    if (userError) {
+      throw new DatabaseError('Failed to fetch user for export', userError);
+    }
 
-  return {
-    user,
-    sessions,
-    auditLogs,
-    exportedAt: new Date().toISOString(),
-  };
+    if (!user) {
+      throw new NotFoundError('User');
+    }
+
+    // Get user sessions
+    const { data: sessions, error: sessionsError } = await supabase
+      .from('sessions')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (sessionsError) {
+      throw new DatabaseError('Failed to fetch user sessions', sessionsError);
+    }
+
+    // Get user audit logs
+    const { data: auditLogs, error: auditError } = await supabase
+      .from('audit_logs')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (auditError) {
+      throw new DatabaseError('Failed to fetch user audit logs', auditError);
+    }
+
+    const exportData = {
+      user,
+      sessions: sessions || [],
+      auditLogs: auditLogs || [],
+      exportedAt: new Date().toISOString(),
+    };
+
+    logger.info('User data exported successfully (GDPR)', { userId });
+    return exportData;
+  } catch (error) {
+    logAndThrow('Failed to export user data', error);
+  }
 }
 
 export default {
