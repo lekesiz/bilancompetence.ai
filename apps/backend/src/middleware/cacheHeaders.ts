@@ -5,6 +5,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 
 export function cacheHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
   // Static reference data (definitions, indicators, configurations)
@@ -74,7 +75,6 @@ export function etagMiddleware(req: Request, res: Response, next: NextFunction) 
 
   res.json = function (data: any) {
     // Generate ETag for response body
-    const crypto = require('crypto');
     const etag = `W/"${crypto
       .createHash('md5')
       .update(JSON.stringify(data))
