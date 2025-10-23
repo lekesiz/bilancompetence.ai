@@ -3,15 +3,11 @@
 
 set -e
 
-echo "Installing dependencies..."
-npm install
-
 echo "Building frontend..."
-cd apps/frontend
 npm run build
 
 echo "Copying build output to root..."
-cp -r .next ../../.next
-cp -r public ../../public
+cp -r apps/frontend/.next ./.next
+cp -r apps/frontend/public ./public
 
 echo "Build complete!"
