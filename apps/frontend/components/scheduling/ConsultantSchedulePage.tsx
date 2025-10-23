@@ -145,10 +145,10 @@ export default function ConsultantSchedulePage() {
   const cancelMutation = useCancelBooking();
 
   // Filter bookings by status
-  const scheduledBookings = bookings.filter((b) => b.status === 'SCHEDULED');
-  const confirmedBookings = bookings.filter((b) => b.status === 'CONFIRMED');
+  const scheduledBookings = bookings.filter((b: SessionBooking) => b.status === 'SCHEDULED');
+  const confirmedBookings = bookings.filter((b: SessionBooking) => b.status === 'CONFIRMED');
   const completedBookings = bookings.filter(
-    (b) => b.status === 'COMPLETED' || b.status === 'NO_SHOW' || b.status === 'CANCELLED'
+    (b: SessionBooking) => b.status === 'COMPLETED' || b.status === 'NO_SHOW' || b.status === 'CANCELLED'
   );
 
   const handleConfirmBooking = async (bookingId: string) => {
