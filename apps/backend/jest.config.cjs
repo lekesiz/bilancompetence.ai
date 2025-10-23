@@ -1,8 +1,6 @@
-import dotenv from 'dotenv';
+require('dotenv').config({ path: '.env.test' });
 
-dotenv.config({ path: '.env.test' });
-
-export default {
+module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
@@ -27,3 +25,4 @@ export default {
     },
   },
 };
+
