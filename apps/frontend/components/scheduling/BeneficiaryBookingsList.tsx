@@ -10,7 +10,7 @@ import { SessionBooking } from '@/lib/schedulingAPI';
 import { useBeneficiaryBookings, useCancelBooking } from '@/hooks/useScheduling';
 import { Calendar, Clock, MapPin, Video, Phone, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { toastSuccess, toastError } from '@/components/ui/Toast';
+import toast from 'react-hot-toast';
 
 interface BeneficiaryBookingsListProps {
   beneficiaryId: string;
@@ -59,7 +59,7 @@ export default function BeneficiaryBookingsList({
 
   const handleCancelBooking = async (bookingId: string) => {
     if (!cancellationReason.trim()) {
-      toastError('Please provide a cancellation reason');
+      toast.error('Please provide a cancellation reason');
       return;
     }
 
@@ -69,11 +69,11 @@ export default function BeneficiaryBookingsList({
         bookingId,
         reason: cancellationReason,
       });
-      toastSuccess('Booking cancelled successfully');
+      toast.success('Booking cancelled successfully');
       setShowCancelForm(null);
       setCancellationReason('');
     } catch (error: any) {
-      toastError(error?.response?.data?.message || 'Failed to cancel booking');
+      toast.error(error?.response?.data?.message || 'Failed to cancel booking');
     } finally {
       setCancelingId(null);
     }
@@ -192,7 +192,7 @@ export default function BeneficiaryBookingsList({
                     <span
                       key={i}
                       className={`w-4 h-4 ${
-                        i < (booking.beneficiary_rating ?? 0)
+                        i < (booking.beneficiary_rating || 0)
                           ? 'text-yellow-400 fill-yellow-400'
                           : 'text-gray-300'
                       }`}
@@ -200,7 +200,7 @@ export default function BeneficiaryBookingsList({
                       ★
                     </span>
                   ))}
-                  <span className="text-sm text-gray-600 ml-2">({booking.beneficiary_rating ?? 0}/5)</span>
+                  <span className="text-sm text-gray-600 ml-2">({booking.beneficiary_rating || 0}/5)</span>
                 </div>
               )}
 

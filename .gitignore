@@ -85,3 +85,24 @@ supabase/.env.local
 # Windows
 Thumbs.db
 ehthumbs.db
+
+
+# Archive - old reports and logs
+_archive/
+
+# Temporary reports
+*_REPORT.md
+*_SUMMARY.md
+*_PLAN.md
+*_STATUS.md
+*_ANALYSIS.md
+*_GUIDE.md
+SPRINT*.md
+CODE_*.md
+CRITICAL_*.md
+DEPLOYMENT_*.md
+202510*.md
+
+# Disabled configs
+*.disabled
+

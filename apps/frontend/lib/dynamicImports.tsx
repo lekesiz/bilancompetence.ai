@@ -1,5 +1,3 @@
-'use client';
-
 /**
  * Dynamic Import Strategy for Code Splitting
  * P2.2: Code Splitting & Lazy Loading
@@ -41,14 +39,14 @@ const DefaultErrorComponent = ({ error }: { error: Error }) => (
 export function createDynamicComponent<P = {}>(
   importFn: () => Promise<{ default: React.ComponentType<P> }>,
   options?: {
-    loading?: React.ComponentType<any>;
+    loading?: React.ComponentType;
     error?: React.ComponentType<{ error: Error }>;
     ssr?: boolean;
     delay?: number;
   }
 ) {
   return dynamic(importFn, {
-    loading: (options?.loading as any) || DefaultLoadingComponent,
+    loading: options?.loading ? () => React.createElement(options.loading!) : DefaultLoadingComponent,
     ssr: options?.ssr !== false,
   });
 }
@@ -57,34 +55,35 @@ export function createDynamicComponent<P = {}>(
  * Heavy component imports (lazily loaded)
  * These are imported on-demand when needed
  */
-// Note: These components can be added back once the components are implemented
+// Commented out - components don't exist yet
 // export const DynamicChart = createDynamicComponent(
 //   () => import('@/components/Chart'),
 //   { ssr: false }
 // );
-//
+
 // export const DynamicAnalytics = createDynamicComponent(
 //   () => import('@/components/Analytics'),
 //   { ssr: false }
 // );
-//
+
+// All dynamic imports commented out - components use named exports, not default
 // export const DynamicAssessmentWizard = createDynamicComponent(
-//   () => import('@/components/assessments/AssessmentWizard'),
+//   () => import('@/components/assessment/AssessmentWizard'),
 //   { ssr: true }
 // );
-//
+
 // export const DynamicConsultantDashboard = createDynamicComponent(
 //   () => import('@/components/dashboard/ConsultantDashboard'),
 //   { ssr: false }
 // );
-//
+
 // export const DynamicBeneficiarySchedule = createDynamicComponent(
 //   () => import('@/components/scheduling/BeneficiarySchedulePage'),
 //   { ssr: false }
 // );
-//
+
 // export const DynamicQualiopisModule = createDynamicComponent(
-//   () => import('@/components/qualiopi/QualipisModule'),
+//   () => import('@/components/qualiopi/QualiopisModule'),
 //   { ssr: false }
 // );
 

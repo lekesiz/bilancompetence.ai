@@ -71,8 +71,8 @@ export const createAvailabilitySlotSchema = z
 
 export type CreateAvailabilitySlotInput = z.infer<typeof createAvailabilitySlotSchema>;
 
-// Create update schema by making all fields optional
-export const updateAvailabilitySlotSchema = z.object({
+// Create update schema without refinements, then make it partial
+const baseAvailabilitySlotSchema = z.object({
   slot_type: z.enum(['ONE_TIME', 'RECURRING']).optional(),
   date_specific: dateString.optional(),
   day_of_week: z.number().min(0).max(6).optional(),
@@ -84,6 +84,8 @@ export const updateAvailabilitySlotSchema = z.object({
   is_recurring: z.boolean().optional(),
   recurring_until: dateString.optional(),
 });
+
+export const updateAvailabilitySlotSchema = baseAvailabilitySlotSchema;
 
 export type UpdateAvailabilitySlotInput = z.infer<typeof updateAvailabilitySlotSchema>;
 

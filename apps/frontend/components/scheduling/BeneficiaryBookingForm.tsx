@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toastSuccess, toastError } from '@/components/ui/Toast';
+import toast from 'react-hot-toast';
 import { useCreateSessionBooking } from '@/hooks/useScheduling';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -51,8 +51,7 @@ export default function BeneficiaryBookingForm({
   onSuccess,
   onCancel,
 }: BeneficiaryBookingFormProps) {
-  const { user } = useAuth();
-  const organizationId = user?.id; // Use user ID as organization ID for now
+  const { organizationId } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { mutateAsync: createBooking } = useCreateSessionBooking();
 
@@ -75,7 +74,7 @@ export default function BeneficiaryBookingForm({
 
   const onSubmit = async (data: BeneficiaryBookingFormData) => {
     if (!organizationId) {
-      toastError('Organization context not available');
+      toast.error('Organization context not available');
       return;
     }
 
@@ -97,11 +96,11 @@ export default function BeneficiaryBookingForm({
       };
 
       const response = await createBooking(bookingData);
-      toastSuccess('Session booked successfully!');
+      toast.success('Session booked successfully!');
       reset();
-      onSuccess?.(response?.id);
+      onSuccess?.(response?.id || '');
     } catch (error: any) {
-      toastError(
+      toast.error(
         error?.response?.data?.message || 'Failed to create booking. Please try again.'
       );
     } finally {
