@@ -1,7 +1,10 @@
 import { supabase } from './supabaseService';
+import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Notification Service
+ * Standardized error handling for all notification operations
  */
 
 export interface Notification {
@@ -26,138 +29,193 @@ export async function createNotification(
   message: string,
   data?: any
 ) {
-  const { data: notification, error } = await supabase
-    .from('notifications')
-    .insert({
-      user_id: userId,
-      type,
-      title,
-      message,
-      data,
-      read: false,
-    })
-    .select()
-    .single();
+  try {
+    validateRequired({ userId, type, title, message }, ['userId', 'type', 'title', 'message']);
 
-  if (error) {
-    throw error;
+    const validTypes = ['assessment', 'recommendation', 'message', 'system'];
+    if (!validTypes.includes(type)) {
+      throw new ValidationError(`Invalid notification type. Must be one of: ${validTypes.join(', ')}`);
+    }
+
+    const { data: notification, error } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: userId,
+        type,
+        title,
+        message,
+        data,
+        read: false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new DatabaseError('Failed to create notification', error);
+    }
+
+    logger.info('Notification created successfully', { userId, type });
+    return notification as Notification;
+  } catch (error) {
+    logAndThrow('Failed to create notification', error);
   }
-
-  return notification as Notification;
 }
 
 /**
  * Get user notifications
  */
 export async function getUserNotifications(userId: string, limit: number = 50) {
-  const { data, error } = await supabase
-    .from('notifications')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  if (error) {
-    throw error;
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw new DatabaseError('Failed to fetch user notifications', error);
+    }
+
+    logger.info('User notifications retrieved successfully', { userId, count: data?.length || 0 });
+    return data || [];
+  } catch (error) {
+    logAndThrow('Failed to get user notifications', error);
   }
-
-  return data || [];
 }
 
 /**
  * Get unread notifications count
  */
 export async function getUnreadCount(userId: string) {
-  const { data, error, count } = await supabase
-    .from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId)
-    .eq('read', false);
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  if (error) {
-    throw error;
+    const { data, error, count } = await supabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('read', false);
+
+    if (error) {
+      throw new DatabaseError('Failed to fetch unread count', error);
+    }
+
+    logger.info('Unread count retrieved', { userId, count: count || 0 });
+    return count || 0;
+  } catch (error) {
+    logAndThrow('Failed to get unread count', error);
   }
-
-  return count || 0;
 }
 
 /**
  * Mark notification as read
  */
 export async function markAsRead(notificationId: string) {
-  const { data, error } = await supabase
-    .from('notifications')
-    .update({
-      read: true,
-      read_at: new Date().toISOString(),
-    })
-    .eq('id', notificationId)
-    .select()
-    .single();
+  try {
+    validateRequired({ notificationId }, ['notificationId']);
 
-  if (error) {
-    throw error;
+    const { data, error } = await supabase
+      .from('notifications')
+      .update({
+        read: true,
+        read_at: new Date().toISOString(),
+      })
+      .eq('id', notificationId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new DatabaseError('Failed to mark notification as read', error);
+    }
+
+    logger.info('Notification marked as read', { notificationId });
+    return data as Notification;
+  } catch (error) {
+    logAndThrow('Failed to mark notification as read', error);
   }
-
-  return data as Notification;
 }
 
 /**
  * Mark all notifications as read
  */
 export async function markAllAsRead(userId: string) {
-  const { error } = await supabase
-    .from('notifications')
-    .update({
-      read: true,
-      read_at: new Date().toISOString(),
-    })
-    .eq('user_id', userId)
-    .eq('read', false);
+  try {
+    validateRequired({ userId }, ['userId']);
 
-  if (error) {
-    throw error;
+    const { error } = await supabase
+      .from('notifications')
+      .update({
+        read: true,
+        read_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('read', false);
+
+    if (error) {
+      throw new DatabaseError('Failed to mark all notifications as read', error);
+    }
+
+    logger.info('All notifications marked as read', { userId });
+    return true;
+  } catch (error) {
+    logAndThrow('Failed to mark all notifications as read', error);
   }
-
-  return true;
 }
 
 /**
  * Delete notification
  */
 export async function deleteNotification(notificationId: string) {
-  const { error } = await supabase
-    .from('notifications')
-    .delete()
-    .eq('id', notificationId);
+  try {
+    validateRequired({ notificationId }, ['notificationId']);
 
-  if (error) {
-    throw error;
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('id', notificationId);
+
+    if (error) {
+      throw new DatabaseError('Failed to delete notification', error);
+    }
+
+    logger.info('Notification deleted successfully', { notificationId });
+    return true;
+  } catch (error) {
+    logAndThrow('Failed to delete notification', error);
   }
-
-  return true;
 }
 
 /**
  * Send assessment notification
  */
 export async function notifyAssessmentStarted(beneficiaryId: string, consultantId?: string) {
-  await createNotification(
-    beneficiaryId,
-    'assessment',
-    'Assessment Started',
-    'Your assessment has been started. Please complete the questions.',
-    { type: 'assessment_started' }
-  );
+  try {
+    validateRequired({ beneficiaryId }, ['beneficiaryId']);
 
-  if (consultantId) {
     await createNotification(
-      consultantId,
+      beneficiaryId,
       'assessment',
-      'New Assessment',
-      'A new assessment has been assigned to you.',
-      { type: 'new_assessment' }
+      'Assessment Started',
+      'Your assessment has been started. Please complete the questions.',
+      { type: 'assessment_started' }
     );
+
+    if (consultantId) {
+      await createNotification(
+        consultantId,
+        'assessment',
+        'New Assessment',
+        'A new assessment has been assigned to you.',
+        { type: 'new_assessment' }
+      );
+    }
+
+    logger.info('Assessment started notifications sent', { beneficiaryId, consultantId });
+  } catch (error) {
+    logAndThrow('Failed to send assessment started notifications', error);
   }
 }
 
@@ -165,22 +223,30 @@ export async function notifyAssessmentStarted(beneficiaryId: string, consultantI
  * Send assessment completion notification
  */
 export async function notifyAssessmentCompleted(beneficiaryId: string, consultantId?: string) {
-  await createNotification(
-    beneficiaryId,
-    'assessment',
-    'Assessment Completed',
-    'Your assessment has been completed. Check recommendations.',
-    { type: 'assessment_completed' }
-  );
+  try {
+    validateRequired({ beneficiaryId }, ['beneficiaryId']);
 
-  if (consultantId) {
     await createNotification(
-      consultantId,
+      beneficiaryId,
       'assessment',
       'Assessment Completed',
-      'An assessment has been completed. Review results.',
-      { type: 'assessment_completed_for_review' }
+      'Your assessment has been completed. Check recommendations.',
+      { type: 'assessment_completed' }
     );
+
+    if (consultantId) {
+      await createNotification(
+        consultantId,
+        'assessment',
+        'Assessment Completed',
+        'An assessment has been completed. Review results.',
+        { type: 'assessment_completed_for_review' }
+      );
+    }
+
+    logger.info('Assessment completed notifications sent', { beneficiaryId, consultantId });
+  } catch (error) {
+    logAndThrow('Failed to send assessment completed notifications', error);
   }
 }
 
@@ -188,39 +254,63 @@ export async function notifyAssessmentCompleted(beneficiaryId: string, consultan
  * Send recommendation notification
  */
 export async function notifyRecommendationCreated(userId: string, title: string) {
-  await createNotification(
-    userId,
-    'recommendation',
-    'New Recommendation',
-    `A new recommendation has been created: ${title}`,
-    { type: 'new_recommendation' }
-  );
+  try {
+    validateRequired({ userId, title }, ['userId', 'title']);
+
+    await createNotification(
+      userId,
+      'recommendation',
+      'New Recommendation',
+      `A new recommendation has been created: ${title}`,
+      { type: 'new_recommendation' }
+    );
+
+    logger.info('Recommendation notification sent', { userId });
+  } catch (error) {
+    logAndThrow('Failed to send recommendation notification', error);
+  }
 }
 
 /**
  * Send message notification
  */
 export async function notifyNewMessage(recipientId: string, senderName: string, messagePreview: string) {
-  await createNotification(
-    recipientId,
-    'message',
-    `Message from ${senderName}`,
-    messagePreview,
-    { type: 'new_message', sender_name: senderName }
-  );
+  try {
+    validateRequired({ recipientId, senderName, messagePreview }, ['recipientId', 'senderName', 'messagePreview']);
+
+    await createNotification(
+      recipientId,
+      'message',
+      `Message from ${senderName}`,
+      messagePreview,
+      { type: 'new_message', sender_name: senderName }
+    );
+
+    logger.info('Message notification sent', { recipientId, senderName });
+  } catch (error) {
+    logAndThrow('Failed to send message notification', error);
+  }
 }
 
 /**
  * Send system notification
  */
 export async function notifySystem(userId: string, title: string, message: string) {
-  await createNotification(
-    userId,
-    'system',
-    title,
-    message,
-    { type: 'system' }
-  );
+  try {
+    validateRequired({ userId, title, message }, ['userId', 'title', 'message']);
+
+    await createNotification(
+      userId,
+      'system',
+      title,
+      message,
+      { type: 'system' }
+    );
+
+    logger.info('System notification sent', { userId });
+  } catch (error) {
+    logAndThrow('Failed to send system notification', error);
+  }
 }
 
 /**
@@ -233,22 +323,33 @@ export async function broadcastNotification(
   message: string,
   data?: any
 ) {
-  const notifications = userIds.map((userId) => ({
-    user_id: userId,
-    type,
-    title,
-    message,
-    data,
-    read: false,
-  }));
+  try {
+    validateRequired({ userIds, type, title, message }, ['userIds', 'type', 'title', 'message']);
 
-  const { error } = await supabase.from('notifications').insert(notifications);
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      throw new ValidationError('userIds must be a non-empty array');
+    }
 
-  if (error) {
-    throw error;
+    const notifications = userIds.map((userId) => ({
+      user_id: userId,
+      type,
+      title,
+      message,
+      data,
+      read: false,
+    }));
+
+    const { error } = await supabase.from('notifications').insert(notifications);
+
+    if (error) {
+      throw new DatabaseError('Failed to broadcast notifications', error);
+    }
+
+    logger.info('Notifications broadcasted successfully', { recipientCount: userIds.length, type });
+    return true;
+  } catch (error) {
+    logAndThrow('Failed to broadcast notifications', error);
   }
-
-  return true;
 }
 
 export default {
