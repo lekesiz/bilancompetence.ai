@@ -1,7 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "bash build.sh",
-  "installCommand": "npm install",
+  "rootDirectory": "apps/frontend",
   "regions": ["iad"]
 }
 
