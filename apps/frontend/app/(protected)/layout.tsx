@@ -13,7 +13,10 @@ export default function ProtectedLayout({
   const router = useRouter();
 
   useEffect(() => {
+    // Only redirect if we're sure user is not authenticated
+    // (loading is done and still no user)
     if (!isLoading && !user) {
+      console.log('Protected route: Redirecting to login (no authenticated user)');
       router.push('/login');
     }
   }, [user, isLoading, router]);

@@ -15,7 +15,7 @@ interface UseAuthReturn {
 
 export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with true to prevent premature redirects
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -28,12 +28,16 @@ export function useAuth(): UseAuthReturn {
           if (response.status === 'success' && response.data?.user) {
             setUser(response.data.user);
             setIsAuthenticated(true);
+          } else {
+            setIsAuthenticated(false);
           }
         } catch (err) {
           console.error('Auth verification failed:', err);
           setIsAuthenticated(false);
         }
       }
+      // Always set loading to false after verification attempt
+      setIsLoading(false);
     };
 
     verifyAuth();
