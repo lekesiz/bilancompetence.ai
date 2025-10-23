@@ -16,6 +16,7 @@ import exportRoutes from './routes/export.js';
 import chatRoutes from './routes/chat.js';
 import recommendationsRoutes from './routes/recommendations.js';
 import qualiopisRoutes from './routes/qualiopi.js';
+import schedulingRoutes from './routes/scheduling.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import RealtimeService from './services/realtimeService.js';
 
@@ -74,6 +75,7 @@ app.use('/api/export', exportRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/admin/qualiopi', qualiopisRoutes);
+app.use('/api/scheduling', schedulingRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
