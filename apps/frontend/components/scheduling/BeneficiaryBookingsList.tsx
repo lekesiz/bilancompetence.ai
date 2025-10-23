@@ -10,7 +10,7 @@ import { SessionBooking } from '@/lib/schedulingAPI';
 import { useBeneficiaryBookings, useCancelBooking } from '@/hooks/useScheduling';
 import { Calendar, Clock, MapPin, Video, Phone, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import toast from 'react-hot-toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
 
 interface BeneficiaryBookingsListProps {
   beneficiaryId: string;
@@ -59,7 +59,7 @@ export default function BeneficiaryBookingsList({
 
   const handleCancelBooking = async (bookingId: string) => {
     if (!cancellationReason.trim()) {
-      toast.error('Please provide a cancellation reason');
+      toastError('Please provide a cancellation reason');
       return;
     }
 
@@ -69,11 +69,11 @@ export default function BeneficiaryBookingsList({
         bookingId,
         data: { cancellation_reason: cancellationReason },
       });
-      toast.success('Booking cancelled successfully');
+      toastSuccess('Booking cancelled successfully');
       setShowCancelForm(null);
       setCancellationReason('');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to cancel booking');
+      toastError(error?.response?.data?.message || 'Failed to cancel booking');
     } finally {
       setCancelingId(null);
     }

@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/Toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
+import { api } from '@/lib/api';
 
 interface ComplianceReport {
   report_id: string;
@@ -25,7 +26,7 @@ interface ComplianceReport {
 }
 
 export default function ReportsPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [report, setReport] = useState<ComplianceReport | null>(null);
@@ -44,6 +45,7 @@ export default function ReportsPage() {
 
   // Generate report
   const generateReport = useCallback(async () => {
+    const token = api.getAccessToken();
     if (!token) return;
 
     try {
@@ -67,18 +69,19 @@ export default function ReportsPage() {
 
       const data = await response.json();
       setReport(data);
-      toast.success('Rapor başarıyla oluşturuldu');
+      toastSuccess('Rapor başarıyla oluşturuldu');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toastError(errorMessage);
     } finally {
       setIsGenerating(false);
     }
-  }, [token, includeEvidence]);
+  }, [includeEvidence]);
 
   // Export report
   const exportReport = async () => {
+    const token = api.getAccessToken();
     if (!token || !report) return;
 
     try {
@@ -106,9 +109,9 @@ export default function ReportsPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success(`Rapor ${exportFormat.toUpperCase()} formatında indirildi`);
+      toastSuccess(`Rapor ${exportFormat.toUpperCase()} formatında indirildi`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to export report');
+      toastError(err instanceof Error ? err.message : 'Failed to export report');
     }
   };
 

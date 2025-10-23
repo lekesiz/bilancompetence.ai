@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import { Search, Calendar, Clock, MapPin, Video, Phone, ChevronRight } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
 import { useAvailableSlotsForConsultant } from '@/hooks/useScheduling';
 
 interface ConsultantSlot {
@@ -76,7 +76,7 @@ export default function BeneficiarySessionBrowser({
 
   const handleBookSlot = () => {
     if (!selectedSlot || !selectedConsultantId) {
-      toast.error('Please select a slot');
+      toastError('Please select a slot');
       return;
     }
 
@@ -88,7 +88,7 @@ export default function BeneficiarySessionBrowser({
       durationMinutes: selectedSlot.duration_minutes,
     });
 
-    toast.success('Slot selected. Please complete booking details.');
+    toastSuccess('Slot selected. Please complete booking details.');
     setSelectedSlot(null);
     setConsultantId(undefined);
     setSelectedConsultantId(null);
@@ -154,11 +154,11 @@ export default function BeneficiarySessionBrowser({
         <button
           onClick={() => {
             if (!searchTerm) {
-              toast.error('Please enter a consultant name');
+              toastError('Please enter a consultant name');
               return;
             }
             // In a real app, this would trigger a search
-            toast.success('Searching for consultants...');
+            toastSuccess('Searching for consultants...');
           }}
           className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
         >

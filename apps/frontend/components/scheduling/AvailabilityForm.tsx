@@ -8,7 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import toast from 'react-hot-toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
 import {
   createAvailabilitySlotSchema,
   CreateAvailabilitySlotInput,
@@ -119,18 +119,18 @@ export default function AvailabilityForm({
           slotId: initialSlot.id,
           data,
         });
-        toast.success('Availability slot updated successfully');
+        toastSuccess('Availability slot updated successfully');
       } else {
         // Create new
         await createMutation.mutateAsync(data);
-        toast.success('Availability slot created successfully');
+        toastSuccess('Availability slot created successfully');
         reset();
       }
 
       onSuccess?.({} as AvailabilitySlot);
     } catch (error: any) {
       const message = error.response?.data?.error || 'Failed to save availability slot';
-      toast.error(message);
+      toastError(message);
     }
   };
 

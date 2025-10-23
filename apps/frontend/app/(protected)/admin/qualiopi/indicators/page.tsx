@@ -5,7 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import IndicatorBoard from './components/IndicatorBoard';
 import IndicatorDetailModal from './components/IndicatorDetailModal';
-import { toast } from '@/components/ui/Toast';
+import { toastError } from '@/components/ui/Toast';
+import { api } from '@/lib/api';
 
 interface Indicator {
   indicator_id: number;
@@ -25,7 +26,7 @@ interface ComplianceMetrics {
 }
 
 export default function QualiopsIndicatorsPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [indicators, setIndicators] = useState<Indicator[]>([]);
@@ -45,6 +46,7 @@ export default function QualiopsIndicatorsPage() {
 
   // Fetch indicators and metrics
   const fetchData = useCallback(async () => {
+    const token = api.getAccessToken();
     if (!token) return;
 
     try {
@@ -81,18 +83,18 @@ export default function QualiopsIndicatorsPage() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toastError(errorMessage);
     } finally {
       setIsLoadingData(false);
     }
-  }, [token]);
+  }, []);
 
   // Initial data load
   useEffect(() => {
-    if (token && user) {
+    if (user && api.isAuthenticated()) {
       fetchData();
     }
-  }, [token, user, fetchData]);
+  }, [user, fetchData]);
 
   // Filter indicators
   const filteredIndicators = indicators.filter((ind) => {
@@ -234,7 +236,7 @@ export default function QualiopsIndicatorsPage() {
       {showDetailModal && selectedIndicator && (
         <IndicatorDetailModal
           indicator={selectedIndicator}
-          token={token}
+          token={api.getAccessToken() || ''}
           onClose={() => {
             setShowDetailModal(false);
             setSelectedIndicator(null);

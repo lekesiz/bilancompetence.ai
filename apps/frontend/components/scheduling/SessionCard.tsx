@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { SessionBooking } from '@/lib/schedulingAPI';
 import { format } from 'date-fns';
 import { Clock, MapPin, Video, Phone, Users, Star, X } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
 
 interface SessionCardProps {
   session: SessionBooking;
@@ -61,10 +61,10 @@ export default function SessionCard({
     setIsLoading(true);
     try {
       await onConfirm(session.id);
-      toast.success('Booking confirmed');
+      toastSuccess('Booking confirmed');
       setShowActions(false);
     } catch (error) {
-      toast.error('Failed to confirm booking');
+      toastError('Failed to confirm booking');
     } finally {
       setIsLoading(false);
     }
@@ -75,10 +75,10 @@ export default function SessionCard({
     setIsLoading(true);
     try {
       await onComplete(session.id, attended);
-      toast.success(attended ? 'Session marked as completed' : 'Session marked as no-show');
+      toastSuccess(attended ? 'Session marked as completed' : 'Session marked as no-show');
       setShowActions(false);
     } catch (error) {
-      toast.error('Failed to complete session');
+      toastError('Failed to complete session');
     } finally {
       setIsLoading(false);
     }
@@ -92,10 +92,10 @@ export default function SessionCard({
     setIsLoading(true);
     try {
       await onCancel(session.id, reason);
-      toast.success('Session cancelled');
+      toastSuccess('Session cancelled');
       setShowActions(false);
     } catch (error) {
-      toast.error('Failed to cancel session');
+      toastError('Failed to cancel session');
     } finally {
       setIsLoading(false);
     }
@@ -103,19 +103,19 @@ export default function SessionCard({
 
   const handleRate = async () => {
     if (!onRate || !rating) {
-      toast.error('Please provide a rating');
+      toastError('Please provide a rating');
       return;
     }
 
     setIsLoading(true);
     try {
       await onRate(session.id, rating, feedback);
-      toast.success('Session rated successfully');
+      toastSuccess('Session rated successfully');
       setShowRating(false);
       setRating(0);
       setFeedback('');
     } catch (error) {
-      toast.error('Failed to rate session');
+      toastError('Failed to rate session');
     } finally {
       setIsLoading(false);
     }

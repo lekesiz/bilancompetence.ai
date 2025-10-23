@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/Toast';
+import { toastError } from '@/components/ui/Toast';
+import { api } from '@/lib/api';
 
 interface ArchivedDocument {
   id: string;
@@ -27,7 +28,7 @@ interface ArchiveStats {
 }
 
 export default function ArchivePage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [documents, setDocuments] = useState<ArchivedDocument[]>([]);
@@ -49,6 +50,7 @@ export default function ArchivePage() {
 
   // Fetch documents and stats
   const fetchData = useCallback(async () => {
+    const token = api.getAccessToken();
     if (!token) return;
 
     try {
@@ -85,14 +87,15 @@ export default function ArchivePage() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toastError(errorMessage);
     } finally {
       setIsLoadingData(false);
     }
-  }, [token]);
+  }, []);
 
   // Fetch access log for document
   const fetchAccessLog = useCallback(async (docId: string) => {
+    const token = api.getAccessToken();
     if (!token) return;
 
     try {
@@ -108,15 +111,15 @@ export default function ArchivePage() {
         setAccessLog(data.data || []);
       }
     } catch (err) {
-      toast.error('Failed to fetch access log');
+      toastError('Failed to fetch access log');
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
-    if (token && user) {
+    if (user && api.isAuthenticated()) {
       fetchData();
     }
-  }, [token, user, fetchData]);
+  }, [user, fetchData]);
 
   // Filter documents
   const filteredDocuments = documents.filter((doc) => {

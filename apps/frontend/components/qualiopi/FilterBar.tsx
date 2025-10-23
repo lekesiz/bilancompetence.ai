@@ -95,7 +95,7 @@ export default function FilterBar({
                 >
                   <option value="">Seçiniz</option>
                   {filter.options?.map((opt) => (
-                    <option key={opt.key} value={opt.value}>
+                    <option key={opt.key} value={String(opt.value)}>
                       {opt.label}
                     </option>
                   ))}

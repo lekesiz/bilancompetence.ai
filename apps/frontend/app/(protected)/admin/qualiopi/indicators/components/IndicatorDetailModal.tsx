@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { toast } from '@/components/ui/Toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
 import { Indicator } from '../types';
 
 interface Evidence {
@@ -74,7 +74,7 @@ export default function IndicatorDetailModal({
         setNewStatus(data.data.status.status);
         setNotes(data.data.status.notes || '');
       } catch (err) {
-        toast.error('Failed to load indicator details');
+        toastError('Failed to load indicator details');
         onClose();
       } finally {
         setIsLoading(false);
@@ -105,10 +105,10 @@ export default function IndicatorDetailModal({
 
       if (!response.ok) throw new Error('Failed to update indicator');
 
-      toast.success(`Gösterge #${indicator.indicator_id} başarıyla güncellendi`);
+      toastSuccess(`Gösterge #${indicator.indicator_id} başarıyla güncellendi`);
       onSave();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update indicator');
+      toastError(err instanceof Error ? err.message : 'Failed to update indicator');
     } finally {
       setIsSaving(false);
     }
@@ -134,7 +134,7 @@ export default function IndicatorDetailModal({
 
       if (!response.ok) throw new Error('Failed to add evidence');
 
-      toast.success('Kanıt dosyası başarıyla eklendi');
+      toastSuccess('Kanıt dosyası başarıyla eklendi');
       setNewEvidence({
         fileName: '',
         fileUrl: '',
@@ -145,7 +145,7 @@ export default function IndicatorDetailModal({
       setShowEvidenceForm(false);
       onSave();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to add evidence');
+      toastError(err instanceof Error ? err.message : 'Failed to add evidence');
     } finally {
       setIsSaving(false);
     }

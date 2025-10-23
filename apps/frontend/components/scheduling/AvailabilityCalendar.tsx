@@ -8,8 +8,14 @@
 import React, { useState, useMemo } from 'react';
 import { AvailabilitySlot } from '@/lib/schedulingAPI';
 import { useAvailability, useDeleteAvailabilitySlot } from '@/hooks/useScheduling';
-import toast from 'react-hot-toast';
-import { ChevronLeft, ChevronRight, Trash2, Edit2 } from 'lucide-react';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
+// import { ChevronLeft, ChevronRight, Trash2, Edit2 } from 'lucide-react'; // Package not installed
+
+// Temporary icon replacements until lucide-react is installed
+const ChevronLeft = ({ className }: { className?: string }) => <span className={className}>‹</span>;
+const ChevronRight = ({ className }: { className?: string }) => <span className={className}>›</span>;
+const Trash2 = ({ className }: { className?: string }) => <span className={className}>🗑</span>;
+const Edit2 = ({ className }: { className?: string }) => <span className={className}>✏</span>;
 
 interface AvailabilityCalendarProps {
   consultantId: string;
@@ -130,11 +136,11 @@ export default function AvailabilityCalendar({
   });
 
   const recurringSlots = useMemo(() => {
-    return slots.filter((slot) => slot.is_recurring);
+    return slots.filter((slot: AvailabilitySlot) => slot.is_recurring);
   }, [slots]);
 
   const oneTimeSlots = useMemo(() => {
-    return slots.filter((slot) => !slot.is_recurring);
+    return slots.filter((slot: AvailabilitySlot) => !slot.is_recurring);
   }, [slots]);
 
   const handleDeleteSlot = async (slotId: string) => {
@@ -142,10 +148,10 @@ export default function AvailabilityCalendar({
 
     try {
       await deleteMutation.mutateAsync(slotId);
-      toast.success('Availability slot deleted');
+      toastSuccess('Availability slot deleted');
       setSelectedSlot(null);
     } catch (error) {
-      toast.error('Failed to delete availability slot');
+      toastError('Failed to delete availability slot');
     }
   };
 
@@ -208,7 +214,7 @@ export default function AvailabilityCalendar({
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="font-semibold text-gray-900 mb-3">Recurring Availability</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {recurringSlots.map((slot) => (
+              {recurringSlots.map((slot: AvailabilitySlot) => (
                 <div key={slot.id} className="p-3 bg-blue-50 rounded border border-blue-200">
                   <div className="flex justify-between items-start gap-2">
                     <div>
