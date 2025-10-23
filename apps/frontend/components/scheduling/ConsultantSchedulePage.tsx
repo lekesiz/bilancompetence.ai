@@ -371,7 +371,7 @@ export default function ConsultantSchedulePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {analytics.map((row) => (
+                  {analytics.map((row: SessionAnalytics) => (
                     <tr key={row.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900 font-medium">
                         {new Date(row.session_date).toLocaleDateString()}
