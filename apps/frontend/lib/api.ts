@@ -119,7 +119,7 @@ class BilanAPI {
     role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' = 'BENEFICIARY'
   ): Promise<ApiResponse<{ userId: string; email: string; role: string }>> {
     try {
-      const response = await this.api.post('/api/auth/register', {
+      const response = await this.api.post('/auth/register', {
         email,
         password,
         full_name: fullName,
@@ -142,7 +142,7 @@ class BilanAPI {
     password: string
   ): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
     try {
-      const response = await this.api.post('/api/auth/login', {
+      const response = await this.api.post('/auth/login', {
         email,
         password,
       });
@@ -168,7 +168,7 @@ class BilanAPI {
    */
   async logout(): Promise<void> {
     try {
-      await this.api.post('/api/auth/logout');
+      await this.api.post('/auth/logout');
     } finally {
       this.clearTokens();
     }
@@ -179,7 +179,7 @@ class BilanAPI {
    */
   async verifyToken(): Promise<ApiResponse<{ user: User }>> {
     try {
-      const response = await this.api.get('/api/auth/verify');
+      const response = await this.api.get('/auth/verify');
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -194,7 +194,7 @@ class BilanAPI {
    */
   private async refreshAccessToken(): Promise<AuthTokens> {
     try {
-      const response = await this.api.post('/api/auth/refresh', {
+      const response = await this.api.post('/auth/refresh', {
         refreshToken: this.refreshToken,
       });
 
