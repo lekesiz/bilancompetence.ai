@@ -19,6 +19,7 @@ import qualiopisRoutes from './routes/qualiopi.js';
 import schedulingRoutes from './routes/scheduling.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
+import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
 import RealtimeService from './services/realtimeService.js';
 
 // Initialize Express app
@@ -48,6 +49,9 @@ app.use('/api/auth/register', authLimiter);
 app.use('/api/', cacheHeadersMiddleware);
 app.use('/api/', etagMiddleware);
 
+// Query monitoring for performance tracking
+app.use('/api/', queryMonitoringMiddleware);
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -64,6 +68,22 @@ app.get('/api/version', (req, res) => {
     name: 'BilanCompetence.AI Backend',
     environment: process.env.NODE_ENV || 'development',
   });
+});
+
+// Performance monitoring endpoint (admin only)
+const monitoringEndpoint = createMonitoringEndpoint();
+app.get('/api/admin/monitoring/stats', (req, res) => {
+  res.json(monitoringEndpoint.stats());
+});
+
+app.get('/api/admin/monitoring/slow-queries', (req, res) => {
+  const limit = parseInt((req.query.limit as string) || '10', 10);
+  res.json(monitoringEndpoint.slowQueries(limit));
+});
+
+app.get('/api/admin/monitoring/frequent-queries', (req, res) => {
+  const limit = parseInt((req.query.limit as string) || '10', 10);
+  res.json(monitoringEndpoint.frequentQueries(limit));
 });
 
 // Mount routes
