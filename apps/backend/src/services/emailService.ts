@@ -3,17 +3,36 @@ import { randomBytes } from 'crypto';
 import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
-// Email configuration - update with SendGrid or similar
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
+// Email configuration - using SendGrid via SMTP
+const getTransporter = () => {
+  const sendGridApiKey = process.env.SENDGRID_API_KEY;
+  const emailFrom = process.env.EMAIL_FROM || 'noreply@bilancompetence.ai';
 
-// Alternative: SendGrid setup (uncomment to use)
-// const transporter = nodemailer.createTransport(sgMail);
+  if (sendGridApiKey) {
+    // SendGrid SMTP configuration
+    return nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: 'apikey',
+        pass: sendGridApiKey,
+      },
+    });
+  } else {
+    // Fallback to Gmail for development (requires less secure app access)
+    logger.warn('SENDGRID_API_KEY not found, falling back to Gmail SMTP');
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  }
+};
+
+const transporter = getTransporter();
 
 /**
  * Generate a secure token for email verification or password reset
