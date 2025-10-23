@@ -306,10 +306,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       console.log('Session created successfully for user:', user.id);
 
-      // Send welcome email (non-blocking)
-      sendWelcomeEmail(user.email, user.full_name).catch((error) => {
-        console.error('Welcome email failed (non-blocking):', error.message);
-      });
+      // Send welcome email (blocking to ensure logs appear)
+      console.log('Attempting to send welcome email to:', user.email);
+      try {
+        await sendWelcomeEmail(user.email, user.full_name);
+        console.log('✅ Welcome email sent successfully to:', user.email);
+      } catch (error: any) {
+        console.error('❌ Welcome email failed:', error.message);
+        // Don't fail registration if email fails
+      }
 
       // Return success response
       return res.status(201).json({
