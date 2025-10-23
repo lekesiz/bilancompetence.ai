@@ -1,0 +1,15 @@
+{
+  "projectId": "bilancompetence-ai-frontend",
+  "orgId": "team_lekesiz",
+  "settings": {
+    "buildCommand": "npm run build",
+    "outputDirectory": ".next",
+    "nodeVersion": "20",
+    "crons": [],
+    "framework": "nextjs",
+    "redirects": [],
+    "rewrites": [],
+    "headers": [],
+    "cleanUrls": true
+  }
+}

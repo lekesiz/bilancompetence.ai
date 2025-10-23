@@ -61,8 +61,10 @@ Thumbs.db
 # IDE settings
 .editorconfig
 
-# Vercel
+# Vercel (but keep .vercel/project.json for deployment config)
 .vercel
+!apps/**/.vercel
+!apps/**/.vercel/project.json
 
 # Next.js
 .next/
