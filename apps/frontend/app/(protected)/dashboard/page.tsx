@@ -5,21 +5,8 @@ import { Suspense } from 'react';
 import { BeneficiaryDashboard } from './components/BeneficiaryDashboard';
 import { ConsultantDashboard } from './components/ConsultantDashboard';
 import { AdminDashboard } from './components/AdminDashboard';
-
-// Loading skeleton component
-function DashboardLoading() {
-  return (
-    <div className="space-y-6 animate-pulse">
-      <div className="h-10 bg-gray-200 rounded w-1/4"></div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
-        ))}
-      </div>
-      <div className="h-64 bg-gray-200 rounded-lg"></div>
-    </div>
-  );
-}
+import { DashboardErrorBoundary } from './components/DashboardErrorBoundary';
+import { DashboardSkeleton } from './components/DashboardSkeleton';
 
 // Error boundary fallback
 function DashboardError() {
@@ -35,7 +22,7 @@ export default function DashboardPage() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <DashboardLoading />;
+    return <DashboardSkeleton />;
   }
 
   if (!user) {
@@ -47,13 +34,15 @@ export default function DashboardPage() {
     );
   }
 
-  // Render role-specific dashboard
+  // Render role-specific dashboard with error boundary
   return (
-    <Suspense fallback={<DashboardLoading />}>
-      {user.role === 'BENEFICIARY' && <BeneficiaryDashboard />}
-      {user.role === 'CONSULTANT' && <ConsultantDashboard />}
-      {user.role === 'ORG_ADMIN' && <AdminDashboard />}
-      {!['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'].includes(user.role) && <DashboardError />}
-    </Suspense>
+    <DashboardErrorBoundary>
+      <Suspense fallback={<DashboardSkeleton />}>
+        {user.role === 'BENEFICIARY' && <BeneficiaryDashboard />}
+        {user.role === 'CONSULTANT' && <ConsultantDashboard />}
+        {user.role === 'ORG_ADMIN' && <AdminDashboard />}
+        {!['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'].includes(user.role) && <DashboardError />}
+      </Suspense>
+    </DashboardErrorBoundary>
   );
 }
