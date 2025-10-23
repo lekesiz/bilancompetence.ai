@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "rootDirectory": "apps/frontend",
+  "buildCommand": "npm -r --workspace=@bilancompetence/frontend run build && cp -r apps/frontend/.next .next && test -d apps/frontend/public && cp -r apps/frontend/public ./public || true",
+  "devCommand": "npm -r --workspace=@bilancompetence/frontend run dev",
+  "installCommand": "npm install",
   "regions": ["iad"]
 }
 
