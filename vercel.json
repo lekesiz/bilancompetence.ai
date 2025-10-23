@@ -1,30 +1,17 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
+  "buildCommand": "cd apps/frontend && npm run build",
+  "devCommand": "cd apps/frontend && npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
   "projectSettings": {
     "nodeVersion": "20.x",
-    "buildCommand": "npm run build",
-    "outputDirectory": "apps/frontend/.next"
-  },
-  "env": {
-    "NEXT_PUBLIC_API_URL": {
-      "description": "Backend API URL (must be PLAINTEXT, not SECRET)"
-    },
-    "NEXT_PUBLIC_SUPABASE_URL": {
-      "description": "Supabase project URL"
-    },
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": {
-      "description": "Supabase anonymous key"
-    },
-    "NEXT_PUBLIC_APP_NAME": {
-      "description": "Application name"
-    },
-    "NEXT_PUBLIC_APP_URL": {
-      "description": "Frontend URL"
-    }
+    "buildCommand": "cd apps/frontend && npm run build",
+    "outputDirectory": "apps/frontend/.next",
+    "rootDirectory": "apps/frontend"
   },
   "public": true,
-  "regions": ["iad"]
+  "regions": ["iad"],
+  "git": {
+    "deploymentEnabled": true
+  }
 }
