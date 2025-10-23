@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { sendWelcomeEmail } from './emailHelper';
+// import { sendWelcomeEmail } from './emailHelper'; // TODO: Implement email service
 
 // Initialize PostgreSQL connection pool
 const databaseUrl = process.env.DATABASE_URL || '';
@@ -239,9 +239,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('Session created successfully for user:', user.id);
 
       // Send welcome email (non-blocking)
-      sendWelcomeEmail(user.email, user.full_name).catch((error) => {
-        console.error('Welcome email failed (non-blocking):', error.message);
-      });
+      // TODO: Implement email service
+      // sendWelcomeEmail(user.email, user.full_name).catch((error) => {
+      //   console.error('Welcome email failed (non-blocking):', error.message);
+      // });
 
       // Return success response
       return res.status(201).json({
