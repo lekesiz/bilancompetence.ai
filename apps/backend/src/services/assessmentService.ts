@@ -1,7 +1,8 @@
 import { supabase } from './supabaseService';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { parsePaginationParams, createPaginatedResponse, parseSortParams, PaginationParams, PaginatedResponse } from '../utils/pagination.js';
+import { logger } from '../utils/logger';
+import { parsePaginationParams, createPaginatedResponse, parseSortParams, PaginationParams, PaginatedResponse } from '../utils/pagination';
 
 /**
  * Assessment Service - Bilan management with Wizard support
@@ -858,17 +859,26 @@ export async function submitAssessment(
 async function getCompletedSteps(assessmentId: string): Promise<number[]> {
   const completedSteps: number[] = [];
 
-  for (let step = 1; step <= 5; step++) {
-    const { data } = await supabase
-      .from('assessment_answers')
-      .select('id')
-      .eq('assessment_id', assessmentId)
-      .eq('step_number', step)
-      .limit(1) as any;
+  try {
+    for (let step = 1; step <= 5; step++) {
+      const { data, error } = await supabase
+        .from('assessment_answers')
+        .select('id')
+        .eq('assessment_id', assessmentId)
+        .eq('step_number', step)
+        .limit(1) as any;
 
-    if ((data as any) && (data as any).length > 0) {
-      completedSteps.push(step);
+      if (error) {
+        logger.warn(`Error checking step ${step} completion`, { error: error.message });
+        continue;
+      }
+
+      if (Array.isArray(data) && data.length > 0) {
+        completedSteps.push(step);
+      }
     }
+  } catch (error) {
+    logger.error('Error getting completed steps', { error, assessmentId });
   }
 
   return completedSteps;

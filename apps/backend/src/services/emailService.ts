@@ -141,9 +141,13 @@ export async function sendPasswordResetEmail(
 /**
  * Send welcome email after successful registration
  */
-export async function sendWelcomeEmail(email: string, fullName: string) {
+export async function sendWelcomeEmail(email: string, fullName: string): Promise<void> {
   try {
     validateRequired({ email, fullName }, ['email', 'fullName']);
+
+    if (!process.env.FRONTEND_URL) {
+      throw new ValidationError('FRONTEND_URL environment variable is not set');
+    }
 
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@bilancompetence.ai',
@@ -170,8 +174,12 @@ export async function sendWelcomeEmail(email: string, fullName: string) {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    logger.info('Welcome email sent successfully', { email });
+    const result = await transporter.sendMail(mailOptions);
+    if (!result) {
+      throw new Error('Email send operation returned empty result');
+    }
+
+    logger.info('Welcome email sent successfully', { email, messageId: result.messageId || 'unknown' });
   } catch (error) {
     logAndThrow('Failed to send welcome email', error);
   }

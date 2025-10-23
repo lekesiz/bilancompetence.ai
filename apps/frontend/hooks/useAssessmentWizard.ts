@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { api } from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export interface StepData {
   [key: string]: any;
@@ -150,7 +152,7 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
     } finally {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [getProgress]);
+  }, []);
 
   /**
    * Save a complete step with validation
@@ -202,7 +204,7 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
         setState(prev => ({ ...prev, isSaving: false }));
       }
     },
-    [state.assessmentId, getProgress]
+    [state.assessmentId]
   );
 
   /**
