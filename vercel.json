@@ -1,11 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
+  "buildCommand": "bash build.sh",
   "installCommand": "npm install",
-  "outputDirectory": ".next",
-  "publicDirectory": "public",
-  "rootDirectory": "apps/frontend",
   "regions": ["iad"]
 }
 
