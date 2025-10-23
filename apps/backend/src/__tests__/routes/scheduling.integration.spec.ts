@@ -3,7 +3,7 @@
  * Tests API endpoints for availability management and booking
  */
 
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
 import express, { Express } from 'express';
 import schedulingRoutes from '../../routes/scheduling.js';
