@@ -10,7 +10,6 @@
 !README.md
 
 # Ignore build artifacts that shouldn't be cached
-.next/
 dist/
 build/
 
