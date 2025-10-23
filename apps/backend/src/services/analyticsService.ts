@@ -2,6 +2,7 @@ import { supabase } from './supabaseService';
 import { withCache } from '../utils/cache.js';
 import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
+import { BilanStatus } from '../types/enums.js';
 
 /**
  * Analytics Service - Data analysis & reporting
@@ -35,7 +36,7 @@ export async function getUserActivityStats(userId: string) {
           .from('bilans')
           .select('*', { count: 'exact', head: true })
           .eq('beneficiary_id', userId)
-          .eq('status', 'completed');
+          .eq('status', BilanStatus.COMPLETED);
 
         if (completedError) {
           throw new DatabaseError('Failed to fetch completed assessment count', completedError);
@@ -105,7 +106,7 @@ export async function getOrganizationStats(organizationId: string) {
           .from('bilans')
           .select('*', { count: 'exact', head: true })
           .eq('organization_id', organizationId)
-          .eq('status', 'completed');
+          .eq('status', BilanStatus.COMPLETED);
 
         if (completedError) {
           throw new DatabaseError('Failed to fetch completed assessment count', completedError);

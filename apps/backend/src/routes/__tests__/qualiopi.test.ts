@@ -4,15 +4,15 @@
  */
 
 import request from 'supertest';
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
 import qualiopisRouter from '../qualiopi.js';
 
 // Mock services
-vi.mock('../../services/qualioptService.js');
-vi.mock('../../services/satisfactionSurveyService.js');
-vi.mock('../../services/documentArchiveService.js');
-vi.mock('../../services/complianceReportService.js');
+jest.mock('../../services/qualioptService.js');
+jest.mock('../../services/satisfactionSurveyService.js');
+jest.mock('../../services/documentArchiveService.js');
+jest.mock('../../services/complianceReportService.js');
 
 // Test data
 const mockUser = {

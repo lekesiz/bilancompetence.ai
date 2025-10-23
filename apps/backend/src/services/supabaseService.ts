@@ -15,7 +15,23 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
  * User Service - Database operations
  */
 
-export async function getUserByEmail(email: string) {
+type UserRow = Database['public']['Tables']['users']['Row'];
+type BilanRow = Database['public']['Tables']['bilans']['Row'];
+type RecommendationRow = Database['public']['Tables']['recommendations']['Row'];
+type SessionRow = Database['public']['Tables']['sessions']['Row'];
+type AuditLogRow = Database['public']['Tables']['audit_logs']['Row'];
+type OrganizationRow = Database['public']['Tables']['organizations']['Row'];
+
+// Complex query return types with relationships
+interface BilanWithConsultant extends BilanRow {
+  consultant?: { id: string; full_name: string; email: string } | null;
+}
+
+interface BilanWithBeneficiary extends BilanRow {
+  beneficiary?: { id: string; full_name: string; email: string } | null;
+}
+
+export async function getUserByEmail(email: string): Promise<UserRow | null> {
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -26,10 +42,10 @@ export async function getUserByEmail(email: string) {
     throw error;
   }
 
-  return data || null;
+  return (data as unknown as UserRow) || null;
 }
 
-export async function getUserById(id: string) {
+export async function getUserById(id: string): Promise<UserRow | null> {
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -40,7 +56,7 @@ export async function getUserById(id: string) {
     throw error;
   }
 
-  return data || null;
+  return (data as unknown as UserRow) || null;
 }
 
 export async function createUser(
@@ -48,7 +64,7 @@ export async function createUser(
   passwordHash: string,
   fullName: string,
   role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' = 'BENEFICIARY'
-) {
+): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')
     .insert({
@@ -64,10 +80,10 @@ export async function createUser(
     throw error;
   }
 
-  return data;
+  return data as unknown as UserRow;
 }
 
-export async function updateUserEmail(userId: string, newEmail: string) {
+export async function updateUserEmail(userId: string, newEmail: string): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')
     .update({ email: newEmail, email_verified_at: null })
@@ -79,10 +95,10 @@ export async function updateUserEmail(userId: string, newEmail: string) {
     throw error;
   }
 
-  return data;
+  return data as unknown as UserRow;
 }
 
-export async function verifyUserEmail(userId: string) {
+export async function verifyUserEmail(userId: string): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')
     .update({ email_verified_at: new Date().toISOString() })
@@ -94,10 +110,10 @@ export async function verifyUserEmail(userId: string) {
     throw error;
   }
 
-  return data;
+  return data as unknown as UserRow;
 }
 
-export async function updateUserPassword(userId: string, newPasswordHash: string) {
+export async function updateUserPassword(userId: string, newPasswordHash: string): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')
     .update({ password_hash: newPasswordHash })
@@ -109,10 +125,10 @@ export async function updateUserPassword(userId: string, newPasswordHash: string
     throw error;
   }
 
-  return data;
+  return data as unknown as UserRow;
 }
 
-export async function updateUserLastLogin(userId: string) {
+export async function updateUserLastLogin(userId: string): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')
     .update({ last_login_at: new Date().toISOString() })
@@ -124,7 +140,7 @@ export async function updateUserLastLogin(userId: string) {
     throw error;
   }
 
-  return data;
+  return data as unknown as UserRow;
 }
 
 export async function createPasswordResetToken(userId: string, token: string, expiresAt: Date) {
@@ -357,7 +373,7 @@ export async function createAuditLog(
  * Bilan Service - Query operations for dashboard
  */
 
-export async function getBilansByBeneficiary(beneficiaryId: string) {
+export async function getBilansByBeneficiary(beneficiaryId: string): Promise<BilanWithConsultant[]> {
   const { data, error } = await supabase
     .from('bilans')
     .select(`
@@ -379,10 +395,10 @@ export async function getBilansByBeneficiary(beneficiaryId: string) {
     throw error;
   }
 
-  return data || [];
+  return (data as unknown as BilanWithConsultant[]) || [];
 }
 
-export async function getBilansByConsultant(consultantId: string) {
+export async function getBilansByConsultant(consultantId: string): Promise<BilanWithBeneficiary[]> {
   const { data, error } = await supabase
     .from('bilans')
     .select(`
@@ -404,7 +420,7 @@ export async function getBilansByConsultant(consultantId: string) {
     throw error;
   }
 
-  return data || [];
+  return (data as unknown as BilanWithBeneficiary[]) || [];
 }
 
 export async function getClientsByConsultant(consultantId: string) {
@@ -419,7 +435,8 @@ export async function getClientsByConsultant(consultantId: string) {
 
   // Extract unique beneficiaries by creating a Set of IDs
   const uniqueMap = new Map();
-  data?.forEach(row => {
+  const typedData = (data as unknown as BilanWithBeneficiary[]) || [];
+  typedData.forEach(row => {
     if (row.beneficiary && row.beneficiary.id) {
       uniqueMap.set(row.beneficiary.id, row.beneficiary);
     }
@@ -439,7 +456,8 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
     throw bilansError;
   }
 
-  const bilanIds = bilans?.map(b => b.id) || [];
+  const typedBilans = (bilans as unknown as BilanRow[]) || [];
+  const bilanIds = typedBilans.map(b => b.id) || [];
 
   // If no bilans, return empty array
   if (bilanIds.length === 0) {
@@ -493,7 +511,15 @@ export async function getAllBilans() {
   return data || [];
 }
 
+import { isValidBilanStatus } from '../types/enums.js';
+import { ValidationError } from '../utils/errorHandler.js';
+
 export async function countBilansByStatus(status: string) {
+  // Validate enum
+  if (!isValidBilanStatus(status)) {
+    throw new ValidationError(`Invalid bilan status: ${status}`);
+  }
+
   const { count, error } = await supabase
     .from('bilans')
     .select('id', { count: 'exact', head: true })

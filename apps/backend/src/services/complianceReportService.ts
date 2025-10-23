@@ -10,7 +10,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database';
+import { Database } from '../types/database.types';
 import QualioptService from './qualioptService';
 import SatisfactionSurveyService from './satisfactionSurveyService';
 import DocumentArchiveService from './documentArchiveService';

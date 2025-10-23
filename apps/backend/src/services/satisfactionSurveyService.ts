@@ -10,7 +10,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database';
+import { Database } from '../types/database.types';
 import crypto from 'crypto';
 import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';

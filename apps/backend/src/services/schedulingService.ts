@@ -7,6 +7,8 @@ import { supabase } from './supabaseService.js';
 import { logger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
 import { parsePaginationParams, createPaginatedResponse, PaginatedResponse } from '../utils/pagination.js';
+import { throwIfError, extractArray, extractArrayFromUnion, extractSingleRow } from '../utils/supabaseTypeGuards.js';
+import { DatabaseError } from '../utils/errorHandler.js';
 
 export interface AvailabilitySlot {
   id: string;
@@ -142,7 +144,11 @@ class SchedulingService {
         throw error;
       }
 
-      return slot;
+      if (!slot) {
+        throw new DatabaseError('Failed to create availability slot: no data returned');
+      }
+
+      return slot as unknown as AvailabilitySlot;
     } catch (error) {
       logger.error('SchedulingService.createAvailabilitySlot failed', error);
       throw error;
@@ -191,7 +197,7 @@ class SchedulingService {
         throw error;
       }
 
-      return data || [];
+      return (data as unknown as AvailabilitySlot[]) || [];
     } catch (error) {
       logger.error('SchedulingService.getAvailableSlotsForConsultant failed', error);
       throw error;
@@ -230,7 +236,8 @@ class SchedulingService {
 
       // Check if any existing bookings overlap with the proposed time
       if (conflictingBookings && conflictingBookings.length > 0) {
-        for (const booking of conflictingBookings) {
+        const typedBookings = conflictingBookings as unknown as SessionBooking[];
+        for (const booking of typedBookings) {
           const bookingStart = booking.scheduled_start_time;
           const bookingEnd = booking.scheduled_end_time;
 
@@ -268,14 +275,15 @@ class SchedulingService {
         return { valid: false, message: 'Bilan not found' };
       }
 
+      const typedBilan = bilan as any; // Type assertion for database row
       // Check if bilan is in a valid state for booking
-      if (bilan.status === 'ARCHIVED' || bilan.status === 'COMPLETED') {
+      if (typedBilan.status === 'ARCHIVED' || typedBilan.status === 'COMPLETED') {
         return { valid: false, message: 'This bilan cannot have new sessions' };
       }
 
       return {
         valid: true,
-        bilanPhase: bilan.phase,
+        bilanPhase: typedBilan.phase,
       };
     } catch (error) {
       logger.error('SchedulingService.validateBilanForBooking failed', error);
@@ -348,10 +356,11 @@ class SchedulingService {
         throw error;
       }
 
+      const typedBooking = booking as unknown as SessionBooking;
       // Create reminder entries for the booking
-      await this.createSessionReminders(booking.id, booking.scheduled_date, booking.scheduled_start_time);
+      await this.createSessionReminders(typedBooking.id, typedBooking.scheduled_date, typedBooking.scheduled_start_time);
 
-      return booking;
+      return typedBooking;
     } catch (error) {
       logger.error('SchedulingService.createSessionBooking failed', error);
       throw error;
@@ -439,7 +448,8 @@ class SchedulingService {
         throw new Error('Booking not found');
       }
 
-      if (booking.status !== 'SCHEDULED') {
+      const typedBooking = booking as unknown as SessionBooking;
+      if (typedBooking.status !== 'SCHEDULED') {
         throw new Error('Only scheduled bookings can be confirmed');
       }
 
@@ -458,7 +468,7 @@ class SchedulingService {
         throw error;
       }
 
-      return updatedBooking;
+      return updatedBooking as unknown as SessionBooking;
     } catch (error) {
       logger.error('SchedulingService.confirmBooking failed', error);
       throw error;
@@ -530,7 +540,7 @@ class SchedulingService {
           throw error;
         }
 
-        return createPaginatedResponse<SessionBooking>(data || [], pageNum, limitNum, total || 0);
+        return createPaginatedResponse<SessionBooking>((data as unknown as SessionBooking[]) || [], pageNum, limitNum, total || 0);
       }
 
       // Non-paginated response
@@ -540,7 +550,7 @@ class SchedulingService {
         throw error;
       }
 
-      return data || [];
+      return (data as unknown as SessionBooking[]) || [];
     } catch (error) {
       logger.error('SchedulingService.getBeneficiaryBookings failed', error);
       throw error;
@@ -609,7 +619,7 @@ class SchedulingService {
           throw error;
         }
 
-        return createPaginatedResponse<SessionBooking>(data || [], pageNum, limitNum, total || 0);
+        return createPaginatedResponse<SessionBooking>((data as unknown as SessionBooking[]) || [], pageNum, limitNum, total || 0);
       }
 
       // Non-paginated response
@@ -619,7 +629,7 @@ class SchedulingService {
         throw error;
       }
 
-      return data || [];
+      return (data as unknown as SessionBooking[]) || [];
     } catch (error) {
       logger.error('SchedulingService.getConsultantBookings failed', error);
       throw error;
@@ -668,12 +678,13 @@ class SchedulingService {
         throw error;
       }
 
+      const typedOriginalBooking = booking as unknown as SessionBooking;
       // Update analytics if session was completed
       if (attended) {
-        await this.updateSessionAnalytics(booking.consultant_id, booking.organization_id, booking.scheduled_date);
+        await this.updateSessionAnalytics(typedOriginalBooking.consultant_id, typedOriginalBooking.organization_id, typedOriginalBooking.scheduled_date);
       }
 
-      return updatedBooking;
+      return updatedBooking as unknown as SessionBooking;
     } catch (error) {
       logger.error('SchedulingService.completeSession failed', error);
       throw error;
@@ -701,7 +712,7 @@ class SchedulingService {
         throw error;
       }
 
-      return updatedBooking;
+      return updatedBooking as unknown as SessionBooking;
     } catch (error) {
       logger.error('SchedulingService.cancelBooking failed', error);
       throw error;
@@ -743,18 +754,20 @@ class SchedulingService {
         throw countError;
       }
 
+      const typedSessions = (sessions as unknown as SessionBooking[]) || [];
       const stats = {
-        total_sessions_scheduled: sessions?.filter((s) => s.status === 'SCHEDULED').length || 0,
-        total_sessions_completed: sessions?.filter((s) => s.status === 'COMPLETED').length || 0,
-        total_sessions_no_show: sessions?.filter((s) => s.status === 'NO_SHOW').length || 0,
-        total_sessions_cancelled: sessions?.filter((s) => s.status === 'CANCELLED').length || 0,
+        total_sessions_scheduled: typedSessions.filter((s) => s.status === 'SCHEDULED').length || 0,
+        total_sessions_completed: typedSessions.filter((s) => s.status === 'COMPLETED').length || 0,
+        total_sessions_no_show: typedSessions.filter((s) => s.status === 'NO_SHOW').length || 0,
+        total_sessions_cancelled: typedSessions.filter((s) => s.status === 'CANCELLED').length || 0,
         average_rating:
-          sessions?.filter((s) => s.beneficiary_rating).reduce((sum, s) => sum + (s.beneficiary_rating || 0), 0) /
-            (sessions?.filter((s) => s.beneficiary_rating).length || 1) || null,
+          typedSessions.filter((s) => s.beneficiary_rating).reduce((sum, s) => sum + (s.beneficiary_rating || 0), 0) /
+            (typedSessions.filter((s) => s.beneficiary_rating).length || 1) || null,
         total_hours_completed:
-          (sessions?.filter((s) => s.status === 'COMPLETED').reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0) / 60,
+          (typedSessions.filter((s) => s.status === 'COMPLETED').reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0) / 60,
       };
 
+      const typedAnalytics = existingAnalytics as unknown as SessionAnalytics;
       if (existingAnalytics) {
         // Update existing record
         await supabase
@@ -763,7 +776,7 @@ class SchedulingService {
             ...stats,
             updated_at: new Date().toISOString(),
           })
-          .eq('id', existingAnalytics.id);
+          .eq('id', typedAnalytics.id);
       } else {
         // Create new record
         await supabase
@@ -817,7 +830,7 @@ class SchedulingService {
         throw error;
       }
 
-      return data || [];
+      return (data as unknown as SessionAnalytics[]) || [];
     } catch (error) {
       logger.error('SchedulingService.getConsultantAnalytics failed', error);
       throw error;

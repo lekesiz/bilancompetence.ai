@@ -12,6 +12,7 @@ interface CardProps {
   variant?: 'default' | 'elevated' | 'outlined';
   hoverable?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
 export default function Card({
@@ -23,6 +24,7 @@ export default function Card({
   variant = 'default',
   hoverable = false,
   onClick,
+  className = '',
 }: CardProps) {
   const variantClasses = {
     default: 'bg-white border border-gray-200',
@@ -34,7 +36,7 @@ export default function Card({
 
   return (
     <div
-      className={`rounded-lg ${variantClasses[variant]} ${hoverClasses}`}
+      className={`rounded-lg ${variantClasses[variant]} ${hoverClasses} ${className}`}
       onClick={onClick}
     >
       {/* Header */}

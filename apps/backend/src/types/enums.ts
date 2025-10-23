@@ -202,8 +202,8 @@ export function isValidQuestionType(value: any): value is QuestionTypeType {
 /**
  * Helper function to get all values of an enum
  */
-export function getEnumValues<T extends Record<string, string>>(enumObj: T): T[keyof T][] {
-  return Object.values(enumObj);
+export function getEnumValues<T extends Record<string, string>>(enumObj: T): Array<T[keyof T]> {
+  return Object.values(enumObj) as Array<T[keyof T]>;
 }
 
 /**

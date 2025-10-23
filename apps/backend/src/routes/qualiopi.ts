@@ -89,7 +89,7 @@ const generateReportSchema = z.object({
 /**
  * Require admin or org admin role
  */
-const requireAdminRole = requireRole(['ADMIN', 'ORG_ADMIN']);
+const requireAdminRole = requireRole('ORG_ADMIN');
 
 /**
  * Get organization ID from authenticated user

@@ -1,0 +1,186 @@
+diff --git a/apps/backend/src/services/supabaseService.ts b/apps/backend/src/services/supabaseService.ts
+index original..fixed 100644
+--- a/apps/backend/src/services/supabaseService.ts
++++ b/apps/backend/src/services/supabaseService.ts
+@@ -18,6 +18,28 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+ /**
+  * User Service - Database operations
+  */
++
++type UserRow = Database['public']['Tables']['users']['Row'];
++type BilanRow = Database['public']['Tables']['bilans']['Row'];
++type RecommendationRow = Database['public']['Tables']['recommendations']['Row'];
++type SessionRow = Database['public']['Tables']['sessions']['Row'];
++type AuditLogRow = Database['public']['Tables']['audit_logs']['Row'];
++type OrganizationRow = Database['public']['Tables']['organizations']['Row'];
++
++// Complex query return types with relationships
++interface BilanWithConsultant extends BilanRow {
++  consultant?: { id: string; full_name: string; email: string } | null;
++}
++
++interface BilanWithBeneficiary extends BilanRow {
++  beneficiary?: { id: string; full_name: string; email: string } | null;
++}
++
++interface RecommendationWithBilan extends RecommendationRow {
++  bilan?: { id: string; status: string } | null;
++}
+
+ export async function getBilansByBeneficiary(beneficiaryId: string): Promise<BilanWithConsultant[]> {
+   const { data, error } = await supabase
+@@ -40,7 +62,7 @@ export async function getBilansByBeneficiary(beneficiaryId: string): Promise<Bi
+     throw error;
+   }
+
+-  return data || [];
++  return (data as BilanWithConsultant[]) || [];
+ }
+
+ export async function getBilansByConsultant(consultantId: string): Promise<BilanWithBeneficiary[]> {
+@@ -63,7 +85,7 @@ export async function getBilansByConsultant(consultantId: string): Promise<Bila
+     throw error;
+   }
+
+-  return data || [];
++  return (data as BilanWithBeneficiary[]) || [];
+ }
+
+ export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
+@@ -84,7 +106,7 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
+       priority,
+       created_at,
+       updated_at,
+       bilan:bilan_id(id, status)
+     `)
+     .in('bilan_id', bilanIds)
+     .order('priority', { ascending: true })
+@@ -96,7 +118,7 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
+       throw error;
+     }
+
+-    return data || [];
++    return (data as RecommendationWithBilan[]) || [];
+   }
+
+   // If no recommendations, return empty array
+@@ -127,7 +149,7 @@ export async function createPasswordResetToken(userId: string, token: string, e
+
+   if (error) {
+     throw error;
+   }
+
+-  return data;
++  return data as any; // Token type
+ }
+
+ export async function getPasswordResetToken(token: string) {
+@@ -144,7 +166,7 @@ export async function getPasswordResetToken(token: string) {
+       throw error;
+     }
+
+-    return data || null;
++    return data || null; // TokenRow | null
+   }
+
+   export async function usePasswordResetToken(tokenId: string) {
+@@ -159,7 +181,7 @@ export async function usePasswordResetToken(tokenId: string) {
+       throw error;
+     }
+
+-    return data;
++    return data as any; // Token
+   }
+
+   export async function createEmailVerificationToken(userId: string, token: string, expiresAt: Date) {
+@@ -174,7 +196,7 @@ export async function createEmailVerificationToken(userId: string, token: strin
+
+     if (error) {
+       throw error;
+     }
+
+-    return data;
++    return data as any; // Token
+   }
+
+   export async function getEmailVerificationToken(token: string) {
+@@ -189,7 +211,7 @@ export async function getEmailVerificationToken(token: string) {
+         throw error;
+       }
+
+-      return data || null;
++      return data || null; // TokenRow | null
+     }
+
+     export async function useEmailVerificationToken(tokenId: string) {
+@@ -203,7 +225,7 @@ export async function useEmailVerificationToken(tokenId: string) {
+         throw error;
+       }
+
+-      return data;
++      return data as any; // Token
+     }
+
+ /**
+@@ -250,7 +272,7 @@ export async function createOrganization(
+
+   if (error) {
+     throw error;
+   }
+
+-  return data;
++  return data as OrganizationRow;
+ }
+
+ export async function getOrganization(id: string) {
+@@ -262,7 +284,7 @@ export async function getOrganization(id: string) {
+     throw error;
+   }
+
+-  return data || null;
++  return (data as OrganizationRow) || null;
+ }
+
+ /**
+@@ -280,7 +302,7 @@ export async function createSession(userId: string, refreshToken: string) {
+
+   if (error) {
+     throw error;
+   }
+
+-  return data;
++  return data as SessionRow;
+ }
+
+ export async function getSession(sessionId: string) {
+@@ -297,7 +319,7 @@ export async function getSession(sessionId: string) {
+     throw error;
+   }
+
+-  return data || null;
++  return (data as SessionRow) || null;
+ }
+
+ export async function revokeSession(sessionId: string) {
+@@ -310,7 +332,7 @@ export async function revokeSession(sessionId: string) {
+
+   if (error) {
+     throw error;
+   }
+
+-  return data;
++  return data as SessionRow;
+ }
+
+ /**
+@@ -328,7 +350,7 @@ export async function createAuditLog(
+
+   if (error) {
+     throw error;
+   }
+
+-  return data;
++  return data as AuditLogRow;
+ }
+
+ /**

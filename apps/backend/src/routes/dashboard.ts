@@ -10,6 +10,7 @@ import {
   getOrganizationStats,
   getRecentActivityByOrganization,
 } from '../services/supabaseService.js';
+import { BilanStatus } from '../types/enums.js';
 
 const router = Router();
 
@@ -80,8 +81,8 @@ router.get('/beneficiary', authMiddleware, requireRole('BENEFICIARY'), async (re
     const recommendations = await getRecommendationsByBeneficiary(req.user.id);
 
     // Calculate stats
-    const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-    const pendingBilans = bilans.filter(b => b.status !== 'COMPLETED' && b.status !== 'ARCHIVED').length;
+    const completedBilans = bilans.filter(b => b.status === BilanStatus.COMPLETED).length;
+    const pendingBilans = bilans.filter(b => b.status !== BilanStatus.COMPLETED && b.status !== BilanStatus.ARCHIVED).length;
 
     return res.status(200).json({
       status: 'success',
@@ -134,8 +135,8 @@ router.get('/consultant', authMiddleware, requireRole('CONSULTANT'), async (req:
     const clients = await getClientsByConsultant(req.user.id);
 
     // Calculate stats
-    const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-    const activeBilans = bilans.filter(b => b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION').length;
+    const completedBilans = bilans.filter(b => b.status === BilanStatus.COMPLETED).length;
+    const activeBilans = bilans.filter(b => b.status === BilanStatus.PRELIMINARY || b.status === BilanStatus.INVESTIGATION || b.status === BilanStatus.CONCLUSION).length;
     const averageSatisfaction = bilans.length > 0
       ? Math.round(
           bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / bilans.length * 10

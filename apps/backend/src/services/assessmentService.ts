@@ -262,16 +262,21 @@ export async function createAssessmentQuestion(
   question: string,
   questionType: 'multiple_choice' | 'text' | 'rating' | 'open_ended',
   options?: string[],
-  category?: string
+  category?: string,
+  stepNumber: number = 1,
+  section: string = 'general'
 ) {
   const { data, error } = await supabase
     .from('assessment_questions')
     .insert({
-      bilan_id: assessmentId,
-      question,
+      assessment_id: assessmentId,
+      question_text: question,
       question_type: questionType,
+      step_number: stepNumber,
+      section: section,
       options,
       category,
+      order: 0,
     })
     .select()
     .single();
@@ -290,7 +295,7 @@ export async function getAssessmentQuestions(assessmentId: string) {
   const { data, error } = await supabase
     .from('assessment_questions')
     .select('*')
-    .eq('bilan_id', assessmentId)
+    .eq('assessment_id', assessmentId)
     .order('created_at', { ascending: true });
 
   if (error) {
@@ -307,15 +312,20 @@ export async function submitAnswer(
   assessmentId: string,
   questionId: string,
   userId: string,
-  answer: any
+  answer: any,
+  stepNumber: number = 1,
+  section: string = 'general'
 ) {
   const { data, error } = await supabase
     .from('assessment_answers')
     .insert({
-      bilan_id: assessmentId,
+      assessment_id: assessmentId,
       question_id: questionId,
-      user_id: userId,
-      answer,
+      answer_value: answer,
+      answer_type: typeof answer,
+      step_number: stepNumber,
+      section: section,
+      submitted_at: new Date().toISOString(),
     })
     .select()
     .single();
@@ -334,7 +344,7 @@ export async function getAssessmentAnswers(assessmentId: string) {
   const { data, error } = await supabase
     .from('assessment_answers')
     .select('*')
-    .eq('bilan_id', assessmentId);
+    .eq('assessment_id', assessmentId);
 
   if (error) {
     throw error;
@@ -351,16 +361,18 @@ export async function createRecommendation(
   assessmentId: string,
   title: string,
   description: string,
-  action_items: string[]
+  action_items: string[],
+  type: string = 'CAREER_PATH',
+  priority: number = 1
 ) {
   const { data, error } = await supabase
     .from('recommendations')
     .insert({
-      user_id: userId,
       bilan_id: assessmentId,
+      type: type,
       title,
       description,
-      action_items,
+      priority: priority,
       status: 'pending',
     })
     .select()
@@ -377,10 +389,26 @@ export async function createRecommendation(
  * Get user recommendations
  */
 export async function getUserRecommendations(userId: string) {
+  // Get bilans for this user first, then get recommendations
+  const { data: bilans, error: bilansError } = await supabase
+    .from('bilans')
+    .select('id')
+    .eq('beneficiary_id', userId);
+
+  if (bilansError) {
+    throw bilansError;
+  }
+
+  if (!bilans || bilans.length === 0) {
+    return [];
+  }
+
+  const bilanIds = bilans.map(b => b.id);
+
   const { data, error } = await supabase
     .from('recommendations')
     .select('*')
-    .eq('user_id', userId)
+    .in('bilan_id', bilanIds)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -419,31 +447,40 @@ export async function updateRecommendationStatus(
  */
 export async function getAssessmentStats(assessmentId: string) {
   // Get answers count
-  const { data: answers } = await supabase
+  const { count: answersCount, error: answersError } = await supabase
     .from('assessment_answers')
-    .select('id')
-    .eq('bilan_id', assessmentId)
-    .count('exact');
+    .select('*', { count: 'exact', head: true })
+    .eq('assessment_id', assessmentId);
+
+  if (answersError) {
+    throw answersError;
+  }
 
   // Get questions count
-  const { data: questions } = await supabase
+  const { count: questionsCount, error: questionsError } = await supabase
     .from('assessment_questions')
-    .select('id')
-    .eq('bilan_id', assessmentId)
-    .count('exact');
+    .select('*', { count: 'exact', head: true })
+    .eq('assessment_id', assessmentId);
+
+  if (questionsError) {
+    throw questionsError;
+  }
 
   // Get recommendations count
-  const { data: recommendations } = await supabase
+  const { count: recommendationsCount, error: recommendationsError } = await supabase
     .from('recommendations')
-    .select('id')
-    .eq('bilan_id', assessmentId)
-    .count('exact');
+    .select('*', { count: 'exact', head: true })
+    .eq('bilan_id', assessmentId);
+
+  if (recommendationsError) {
+    throw recommendationsError;
+  }
 
   return {
-    questionsCount: questions?.length || 0,
-    answersCount: answers?.length || 0,
-    recommendationsCount: recommendations?.length || 0,
-    completionPercentage: questions?.length ? Math.round((answers?.length || 0) / questions.length * 100) : 0,
+    questionsCount: questionsCount || 0,
+    answersCount: answersCount || 0,
+    recommendationsCount: recommendationsCount || 0,
+    completionPercentage: questionsCount ? Math.round(((answersCount || 0) / questionsCount) * 100) : 0,
   };
 }
 

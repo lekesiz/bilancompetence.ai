@@ -9,7 +9,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database';
+import { Database } from '../types/database.types';
 
 interface IndicatorStatus {
   indicator_id: number;
