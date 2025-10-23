@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { toastSuccess, toastError } from '@/components/ui/Toast';
+import { toastError, toastSuccess } from '@/components/ui/Toast';
 import { api } from '@/lib/api';
 
 interface ComplianceReport {
@@ -45,8 +45,7 @@ export default function ReportsPage() {
 
   // Generate report
   const generateReport = useCallback(async () => {
-    const token = api.getAccessToken();
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsGenerating(true);
@@ -56,18 +55,11 @@ export default function ReportsPage() {
       params.append('format', 'json');
       if (includeEvidence) params.append('includeEvidence', 'true');
 
-      const response = await fetch(`/api/admin/qualiopi/compliance-report?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
+      const response = await api.get(`/api/admin/qualiopi/compliance-report?${params}`);
+      if (response.data.status !== 'success') {
         throw new Error('Failed to generate report');
       }
-
-      const data = await response.json();
+      const data = response.data.data;
       setReport(data);
       toastSuccess('Rapor başarıyla oluşturuldu');
     } catch (err) {
@@ -81,14 +73,15 @@ export default function ReportsPage() {
 
   // Export report
   const exportReport = async () => {
-    const token = api.getAccessToken();
-    if (!token || !report) return;
+    if (!api.isAuthenticated() || !report) return;
 
     try {
       const params = new URLSearchParams();
       params.append('format', exportFormat);
       if (includeEvidence) params.append('includeEvidence', 'true');
 
+      // For file download, we need to use fetch with token manually
+      const token = api.getAccessToken();
       const response = await fetch(`/api/admin/qualiopi/compliance-report?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { toastSuccess, toastError } from '@/components/ui/Toast';
+import { toastError, toastSuccess } from '@/components/ui/Toast';
 import { Indicator } from '../types';
+import { api } from '@/lib/api';
 
 interface Evidence {
   id: string;
@@ -25,14 +26,12 @@ interface IndicatorDetail {
 
 interface IndicatorDetailModalProps {
   indicator: Indicator;
-  token: string;
   onClose: () => void;
   onSave: () => void;
 }
 
 export default function IndicatorDetailModal({
   indicator,
-  token,
   onClose,
   onSave,
 }: IndicatorDetailModalProps) {
@@ -57,19 +56,9 @@ export default function IndicatorDetailModal({
     const fetchDetails = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          `/api/admin/qualiopi/indicators/${indicator.indicator_id}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error('Failed to fetch indicator details');
-
-        const data = await response.json();
+        const response = await api.get(`/api/admin/qualiopi/indicators/${indicator.indicator_id}`);
+        if (response.data.status !== 'success') throw new Error('Failed to fetch indicator details');
+        const data = response.data;
         setDetails(data.data);
         setNewStatus(data.data.status.status);
         setNotes(data.data.status.notes || '');
@@ -82,28 +71,17 @@ export default function IndicatorDetailModal({
     };
 
     fetchDetails();
-  }, [indicator.indicator_id, token, onClose]);
+  }, [indicator.indicator_id, onClose]);
 
   // Handle status update
   const handleStatusUpdate = async () => {
     try {
       setIsSaving(true);
-      const response = await fetch(
-        `/api/admin/qualiopi/indicators/${indicator.indicator_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            status: newStatus,
-            notes,
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error('Failed to update indicator');
+      const response = await api.put(`/api/admin/qualiopi/indicators/${indicator.indicator_id}`, {
+        status: newStatus,
+        notes,
+      });
+      if (response.data.status !== 'success') throw new Error('Failed to update indicator');
 
       toastSuccess(`Gösterge #${indicator.indicator_id} başarıyla güncellendi`);
       onSave();
@@ -120,19 +98,8 @@ export default function IndicatorDetailModal({
 
     try {
       setIsSaving(true);
-      const response = await fetch(
-        `/api/admin/qualiopi/indicators/${indicator.indicator_id}/evidence`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newEvidence),
-        }
-      );
-
-      if (!response.ok) throw new Error('Failed to add evidence');
+      const response = await api.post(`/api/admin/qualiopi/indicators/${indicator.indicator_id}/evidence`, newEvidence);
+      if (response.data.status !== 'success') throw new Error('Failed to add evidence');
 
       toastSuccess('Kanıt dosyası başarıyla eklendi');
       setNewEvidence({

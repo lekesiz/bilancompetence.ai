@@ -33,26 +33,17 @@ export default function SurveysPage() {
 
   // Fetch analytics
   const fetchAnalytics = useCallback(async () => {
-    const token = api.getAccessToken();
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsLoadingData(true);
       setError(null);
 
-      const response = await fetch('/api/admin/qualiopi/surveys/analytics', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
+      const response = await api.get('/api/admin/qualiopi/surveys/analytics');
+      if (response.data.status !== 'success') {
         throw new Error('Failed to fetch analytics');
       }
-
-      const data = await response.json();
-      setAnalytics(data.data);
+      setAnalytics(response.data.data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
@@ -63,7 +54,7 @@ export default function SurveysPage() {
   }, []);
 
   useEffect(() => {
-    if (user && api.isAuthenticated()) {
+    if (api.isAuthenticated() && user) {
       fetchAnalytics();
     }
   }, [user, fetchAnalytics]);

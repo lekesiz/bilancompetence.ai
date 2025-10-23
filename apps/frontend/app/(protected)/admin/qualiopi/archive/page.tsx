@@ -50,40 +50,25 @@ export default function ArchivePage() {
 
   // Fetch documents and stats
   const fetchData = useCallback(async () => {
-    const token = api.getAccessToken();
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsLoadingData(true);
       setError(null);
 
       // Fetch stats
-      const statsResponse = await fetch('/api/admin/qualiopi/archive-stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setStats(statsData.data);
+      const statsResponse = await api.get('/api/admin/qualiopi/archive-stats');
+      if (statsResponse.data.status === 'success') {
+        setStats(statsResponse.data.data);
       }
 
       // Fetch documents
-      const docsResponse = await fetch('/api/admin/qualiopi/documents', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!docsResponse.ok) {
+      const docsResponse = await api.get('/api/admin/qualiopi/documents');
+      if (docsResponse.data.status === 'success') {
+        setDocuments(docsResponse.data.data || []);
+      } else {
         throw new Error('Failed to fetch documents');
       }
-
-      const docsData = await docsResponse.json();
-      setDocuments(docsData.data || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
@@ -95,20 +80,12 @@ export default function ArchivePage() {
 
   // Fetch access log for document
   const fetchAccessLog = useCallback(async (docId: string) => {
-    const token = api.getAccessToken();
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
-      const response = await fetch(`/api/admin/qualiopi/documents/${docId}/access-log`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAccessLog(data.data || []);
+      const response = await api.get(`/api/admin/qualiopi/documents/${docId}/access-log`);
+      if (response.data.status === 'success') {
+        setAccessLog(response.data.data || []);
       }
     } catch (err) {
       toastError('Failed to fetch access log');
@@ -116,7 +93,7 @@ export default function ArchivePage() {
   }, []);
 
   useEffect(() => {
-    if (user && api.isAuthenticated()) {
+    if (api.isAuthenticated() && user) {
       fetchData();
     }
   }, [user, fetchData]);
@@ -124,264 +101,196 @@ export default function ArchivePage() {
   // Filter documents
   const filteredDocuments = documents.filter((doc) => {
     if (filterType !== 'ALL' && doc.document_type !== filterType) return false;
-    if (searchBilanId && !doc.bilan_id.includes(searchBilanId)) return false;
+    if (searchBilanId && !doc.bilan_id.toLowerCase().includes(searchBilanId.toLowerCase())) return false;
     return true;
   });
 
-  const getDocumentTypeIcon = (type: string) => {
-    const icons: Record<string, string> = {
-      PRELIMINARY: '📋',
-      INVESTIGATION: '🔍',
-      CONCLUSION: '✅',
-      REPORT: '📊',
-      EVIDENCE: '📄',
-      OTHER: '📁',
-    };
-    return icons[type] || '📄';
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
-  };
-
+  // Loading state
   if (isLoading || isLoadingData) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-10 bg-gray-200 rounded w-1/3"></div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
-          ))}
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading archive...</p>
         </div>
       </div>
     );
   }
 
-  if (!user || !['ADMIN', 'ORG_ADMIN'].includes(user.role)) {
+  // Error state
+  if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <h2 className="text-red-800 font-semibold mb-2">Access Denied</h2>
-        <p className="text-red-600">You don't have permission to access this page.</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600">{error}</p>
+          <button
+            onClick={fetchData}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Döküman Arşivi
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Arşivlenmiş bilans dökümanlarını yönet ve erişim günlüğünü kontrol et
-          </p>
-        </div>
-        <button
-          onClick={() => fetchData()}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-        >
-          🔄 Yenile
-        </button>
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Document Archive</h1>
 
-      {/* Archive Stats */}
+      {/* Stats Section */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
-            <div className="text-sm text-blue-700 font-medium">Toplam Döküman</div>
-            <div className="text-4xl font-bold text-blue-900 mt-2">{stats.total_documents}</div>
-            <div className="text-xs text-blue-600 mt-2">
-              Toplam boyut: {formatFileSize(stats.total_size)}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-2">Total Documents</h3>
+            <p className="text-3xl font-bold text-blue-600">{stats.total_documents}</p>
           </div>
-
-          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-lg p-6">
-            <div className="text-sm text-yellow-700 font-medium">Yakında Silinecek</div>
-            <div className="text-4xl font-bold text-yellow-900 mt-2">
-              {stats.documents_expiring_soon}
-            </div>
-            <div className="text-xs text-yellow-600 mt-2">30 gün içinde</div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-2">Total Size</h3>
+            <p className="text-3xl font-bold text-blue-600">
+              {(stats.total_size / 1024 / 1024).toFixed(2)} MB
+            </p>
           </div>
-
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6">
-            <div className="text-sm text-purple-700 font-medium">Tür Bazında</div>
-            <div className="text-sm text-purple-900 mt-2 space-y-1">
-              {Object.entries(stats.by_type).slice(0, 3).map(([type, count]) => (
-                <div key={type} className="flex justify-between">
-                  <span>{type}</span>
-                  <span className="font-bold">{count}</span>
-                </div>
-              ))}
-            </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-2">Expiring Soon</h3>
+            <p className="text-3xl font-bold text-orange-600">{stats.documents_expiring_soon}</p>
           </div>
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+      <div className="bg-white p-4 rounded-lg shadow mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Döküman Türü
-            </label>
+            <label className="block text-sm font-medium mb-2">Filter by Type</label>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border rounded-lg"
             >
-              <option value="ALL">Tümü</option>
-              <option value="PRELIMINARY">📋 Ön Değerlendirme</option>
-              <option value="INVESTIGATION">🔍 İnceleme</option>
-              <option value="CONCLUSION">✅ Sonuç</option>
-              <option value="REPORT">📊 Rapor</option>
-              <option value="EVIDENCE">📄 Kanıt</option>
+              <option value="ALL">All Types</option>
+              <option value="BILAN">Bilan</option>
+              <option value="REPORT">Report</option>
+              <option value="CERTIFICATE">Certificate</option>
             </select>
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Bilans ID Ara
-            </label>
+            <label className="block text-sm font-medium mb-2">Search by Bilan ID</label>
             <input
               type="text"
-              placeholder="Bilans ID girin..."
               value={searchBilanId}
               onChange={(e) => setSearchBilanId(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter Bilan ID..."
+              className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
         </div>
       </div>
 
-      {/* Documents Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Dosya Adı</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Bilans ID</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Türü</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Boyut</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Tarih</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">İşlemler</th>
+      {/* Documents List */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                File Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Bilan ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Size
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Created
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredDocuments.map((doc) => (
+              <tr key={doc.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {doc.file_name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {doc.document_type}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {doc.bilan_id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {(doc.file_size / 1024).toFixed(2)} KB
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(doc.created_at).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <button
+                    onClick={() => {
+                      setSelectedDocument(doc);
+                      fetchAccessLog(doc.id);
+                      setShowAccessLog(true);
+                    }}
+                    className="text-blue-600 hover:text-blue-900 mr-4"
+                  >
+                    View Log
+                  </button>
+                  <a
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-600 hover:text-green-900"
+                  >
+                    Download
+                  </a>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredDocuments.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                    Döküman bulunamadı
-                  </td>
-                </tr>
-              ) : (
-                filteredDocuments.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                      <a
-                        href={doc.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {doc.file_name}
-                      </a>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 font-mono">
-                      {doc.bilan_id.substring(0, 8)}...
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className="inline-flex items-center gap-1">
-                        {getDocumentTypeIcon(doc.document_type)} {doc.document_type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {formatFileSize(doc.file_size)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {new Date(doc.created_at).toLocaleDateString('tr-TR')}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <button
-                        onClick={() => {
-                          setSelectedDocument(doc);
-                          fetchAccessLog(doc.id);
-                          setShowAccessLog(true);
-                        }}
-                        className="text-blue-600 hover:underline font-medium"
-                      >
-                        Erişim Günlüğü
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+
+        {filteredDocuments.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No documents found</p>
+          </div>
+        )}
       </div>
 
       {/* Access Log Modal */}
       {showAccessLog && selectedDocument && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            {/* Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex items-center justify-between">
-              <h2 className="text-xl font-bold">Erişim Günlüğü</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Access Log - {selectedDocument.file_name}</h2>
               <button
-                onClick={() => setShowAccessLog(false)}
-                className="text-2xl hover:opacity-75"
+                onClick={() => {
+                  setShowAccessLog(false);
+                  setSelectedDocument(null);
+                  setAccessLog([]);
+                }}
+                className="text-gray-500 hover:text-gray-700"
               >
                 ✕
               </button>
             </div>
-
-            {/* Content */}
-            <div className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">
-                {selectedDocument.file_name}
-              </h3>
-
-              {accessLog.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
-                  Henüz erişim kaydı yok
-                </p>
+            <div className="space-y-2">
+              {accessLog.length > 0 ? (
+                accessLog.map((log: any, index) => (
+                  <div key={index} className="border-b pb-2">
+                    <p className="text-sm">
+                      <span className="font-semibold">{log.accessed_by_name}</span> accessed on{' '}
+                      {new Date(log.accessed_at).toLocaleString()}
+                    </p>
+                  </div>
+                ))
               ) : (
-                <div className="space-y-3">
-                  {accessLog.map((log: any, idx) => (
-                    <div key={idx} className="bg-gray-50 border border-gray-200 rounded p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {log.accessed_by_name}
-                          </div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            {log.action === 'VIEW' && '👁️ Görüntüldü'}
-                            {log.action === 'DOWNLOAD' && '⬇️ İndirildi'}
-                            {log.action === 'SHARE' && '↗️ Paylaşıldı'}
-                            {log.action === 'DELETE_REQUEST' && '🗑️ Silme İsteği'}
-                          </div>
-                        </div>
-                        <div className="text-right text-sm text-gray-500">
-                          {new Date(log.accessed_at).toLocaleDateString('tr-TR')}
-                          {' '}
-                          {new Date(log.accessed_at).toLocaleTimeString('tr-TR')}
-                        </div>
-                      </div>
-                      {log.user_ip && (
-                        <div className="text-xs text-gray-500 mt-2 font-mono">
-                          IP: {log.user_ip}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                <p className="text-gray-500">No access log available</p>
               )}
             </div>
           </div>

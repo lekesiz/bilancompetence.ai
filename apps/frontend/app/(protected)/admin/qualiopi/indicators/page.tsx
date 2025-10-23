@@ -46,39 +46,24 @@ export default function QualiopsIndicatorsPage() {
 
   // Fetch indicators and metrics
   const fetchData = useCallback(async () => {
-    const token = api.getAccessToken();
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsLoadingData(true);
       setError(null);
 
       // Fetch indicators
-      const indicatorsResponse = await fetch('/api/admin/qualiopi/indicators', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!indicatorsResponse.ok) {
+      const indicatorsResponse = await api.get('/api/admin/qualiopi/indicators');
+      if (indicatorsResponse.data.status === 'success') {
+        setIndicators(indicatorsResponse.data.data || []);
+      } else {
         throw new Error('Failed to fetch indicators');
       }
 
-      const indicatorsData = await indicatorsResponse.json();
-      setIndicators(indicatorsData.data || []);
-
       // Fetch compliance metrics
-      const metricsResponse = await fetch('/api/admin/qualiopi/compliance', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (metricsResponse.ok) {
-        const metricsData = await metricsResponse.json();
-        setMetrics(metricsData.data);
+      const metricsResponse = await api.get('/api/admin/qualiopi/compliance');
+      if (metricsResponse.data.status === 'success') {
+        setMetrics(metricsResponse.data.data);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -91,7 +76,7 @@ export default function QualiopsIndicatorsPage() {
 
   // Initial data load
   useEffect(() => {
-    if (user && api.isAuthenticated()) {
+    if (api.isAuthenticated() && user) {
       fetchData();
     }
   }, [user, fetchData]);
@@ -236,7 +221,6 @@ export default function QualiopsIndicatorsPage() {
       {showDetailModal && selectedIndicator && (
         <IndicatorDetailModal
           indicator={selectedIndicator}
-          token={api.getAccessToken() || ''}
           onClose={() => {
             setShowDetailModal(false);
             setSelectedIndicator(null);
