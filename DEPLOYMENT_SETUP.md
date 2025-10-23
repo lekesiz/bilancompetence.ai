@@ -1,85 +1,65 @@
-# Frontend Deployment Setup Guide
+# Monorepo Deployment Setup Guide
 
-## Problem
-Frontend deployment to Vercel is not working automatically from GitHub pushes.
+## Architecture
+- **GitHub**: Single repository with frontend and backend in monorepo
+- **Vercel**: Single project that deploys both frontend and backend
+- **Backend**: Currently deployed as active Vercel project
+- **Frontend**: Deployed via same Vercel backend project
 
-## Root Cause
-The frontend project needs to be explicitly linked in Vercel dashboard as a separate project within the monorepo structure.
+This approach ensures Git and Vercel stay synchronized with same project structure.
 
-## Solution Steps
+## Deployment Strategy
 
-### Option 1: Manual Setup via Vercel Dashboard (Recommended)
+### Single Project Monorepo Deployment
 
-1. **Go to Vercel Dashboard**
-   - URL: https://vercel.com/lekesiz-projects/bilancompetence-ai-frontend
+The project is now deployed as a **single Vercel project** containing both frontend and backend:
 
-2. **Create New Project**
-   - Click "Add New Project"
-   - Connect GitHub repository: `lekesiz/bilancompetence.ai`
-   - Select the project
+1. **Vercel Project**: `bilancompetence-ai-backend`
+   - Builds entire monorepo via root `npm run build`
+   - Frontend output: `apps/frontend/.next`
+   - Backend output: `apps/backend/dist`
 
-3. **Configure Project Settings**
-   - **Project Name**: `bilancompetence-ai-frontend`
-   - **Root Directory**: `apps/frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `.next`
-   - **Install Command**: `npm install`
+2. **How it works**:
+   - Root `package.json` build script runs both `apps/frontend` and `apps/backend` builds
+   - Vercel detects and deploys both from single project
+   - `.vercelignore` manages which files are included
 
-4. **Environment Variables** (set in Vercel dashboard)
-   ```
-   NEXT_PUBLIC_API_URL=https://bilancompetence-ai-backend.vercel.app
-   NEXT_PUBLIC_SUPABASE_URL=https://ommidwwqqrhupmhaqghx.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tbWlkd3dxcXJodXBtaGFxZ2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk0MDA0MjcsImV4cCI6MjAyNDk3NjQyN30.c8uN-S0iNsWIRBMnGDMKO3tUNPP5w78kN5hgE6OgMno
-   NEXT_PUBLIC_APP_NAME=BilanCompetence.AI
-   NEXT_PUBLIC_APP_URL=https://bilancompetence.ai
-   ```
-   **IMPORTANT**: Make sure these are set as **Plaintext**, NOT Secret!
+### Current Status
 
-5. **Deploy**
-   - Click "Deploy"
-   - Vercel will build and deploy from `apps/frontend`
+✅ **Vercel Backend Project**: `bilancompetence-ai-backend`
+- **Status**: Actively deployed and working
+- **URL**: https://bilancompetence-ai-backend.vercel.app
+- **Type**: Node.js/Express backend
 
-### Option 2: Automated Setup via GitHub Secrets
+✅ **Frontend**: Also deploying via same Vercel project
+- **Built by**: Root monorepo build command
+- **Output**: `apps/frontend/.next`
+- **Serves at**: Backend project's preview/production URLs
 
-1. **Add GitHub Secrets**
-   - Go to: GitHub → Settings → Secrets and variables → Actions
-   - Add the following secrets:
-     ```
-     VERCEL_TOKEN = your-vercel-token
-     VERCEL_ORG_ID = team_lekesiz
-     VERCEL_PROJECT_ID_FRONTEND = bilancompetence-ai-frontend
-     NEXT_PUBLIC_SUPABASE_URL = https://ommidwwqqrhupmhaqghx.supabase.co
-     NEXT_PUBLIC_SUPABASE_ANON_KEY = (your-anon-key)
-     ```
+### Environment Variables
 
-2. **GitHub Actions will automatically deploy** on push to `main` branch
+Set these in Vercel dashboard for the `bilancompetence-ai-backend` project:
 
-### Option 3: Manual CLI Deployment
-
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Login to Vercel
-vercel login
-
-# Deploy frontend from project root
-./deploy-frontend.sh
+```
+NEXT_PUBLIC_API_URL=https://bilancompetence-ai-backend.vercel.app
+NEXT_PUBLIC_SUPABASE_URL=https://ommidwwqqrhupmhaqghx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tbWlkd3dxcXJodXBtaGFxZ2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk0MDA0MjcsImV4cCI6MjAyNDk3NjQyN30.c8uN-S0iNsWIRBMnGDMKO3tUNPP5w78kN5hgE6OgMno
+NEXT_PUBLIC_APP_NAME=BilanCompetence.AI
+NEXT_PUBLIC_APP_URL=https://bilancompetence.ai
 ```
 
-## Verification
+**IMPORTANT**: Set these as **Plaintext**, NOT Secret!
 
-After deployment:
+### Verification
 
-1. Visit: https://vercel.com/lekesiz-projects
-2. You should see both projects:
-   - ✅ `bilancompetence-ai-backend` (currently working)
-   - ✅ `bilancompetence-ai-frontend` (should be working after setup)
+After git push:
 
-3. Visit the frontend URL (once deployed)
-4. Check that it loads with proper env vars:
-   - API calls should go to backend URL
-   - Should not show "environment variable missing" errors
+1. Check Vercel dashboard: https://vercel.com/lekesiz-projects
+2. Look for `bilancompetence-ai-backend` project
+3. Deployment should be triggered automatically
+4. Frontend will be served from the same deployment
+
+Both frontend and backend are now part of the same Git repository and Vercel project! ✅
 
 ## Files Involved
 

@@ -31,6 +31,7 @@ import {
   constraintsStepSchema,
 } from '../services/assessmentService.js';
 import { createAuditLog } from '../services/supabaseService.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -122,7 +123,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
       data: assessment,
     });
   } catch (error) {
-    console.error('Create assessment draft error:', error);
+    logger.error('Create assessment draft error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to create assessment draft',
@@ -165,7 +166,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       data: assessments,
     });
   } catch (error) {
-    console.error('Get assessments error:', error);
+    logger.error('Get assessments error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch assessments',
@@ -202,7 +203,7 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
       data: assessment,
     });
   } catch (error) {
-    console.error('Get assessment error:', error);
+    logger.error('Get assessment error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch assessment',
@@ -240,7 +241,7 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
       data: updated,
     });
   } catch (error) {
-    console.error('Update assessment error:', error);
+    logger.error('Update assessment error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to update assessment',
@@ -272,7 +273,7 @@ router.post('/:id/start', authMiddleware, async (req: Request, res: Response) =>
       data: assessment,
     });
   } catch (error) {
-    console.error('Start assessment error:', error);
+    logger.error('Start assessment error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to start assessment',
@@ -306,7 +307,7 @@ router.post('/:id/complete', authMiddleware, async (req: Request, res: Response)
       data: assessment,
     });
   } catch (error) {
-    console.error('Complete assessment error:', error);
+    logger.error('Complete assessment error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to complete assessment',
@@ -328,7 +329,7 @@ router.get('/:id/stats', authMiddleware, async (req: Request, res: Response) => 
       data: stats,
     });
   } catch (error) {
-    console.error('Get stats error:', error);
+    logger.error('Get stats error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch statistics',
@@ -367,7 +368,7 @@ router.post('/:id/questions', authMiddleware, async (req: Request, res: Response
       data: questionData,
     });
   } catch (error) {
-    console.error('Create question error:', error);
+    logger.error('Create question error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to create question',
@@ -389,7 +390,7 @@ router.get('/:id/questions', authMiddleware, async (req: Request, res: Response)
       data: questions,
     });
   } catch (error) {
-    console.error('Get questions error:', error);
+    logger.error('Get questions error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch questions',
@@ -428,7 +429,7 @@ router.post('/:id/answers', authMiddleware, async (req: Request, res: Response) 
       data: answerData,
     });
   } catch (error) {
-    console.error('Submit answer error:', error);
+    logger.error('Submit answer error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to submit answer',
@@ -456,7 +457,7 @@ router.get('/recommendations', authMiddleware, async (req: Request, res: Respons
       data: recommendations,
     });
   } catch (error) {
-    console.error('Get recommendations error:', error);
+    logger.error('Get recommendations error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch recommendations',
@@ -531,7 +532,7 @@ router.post('/:id/steps/:stepNumber', authMiddleware, async (req: Request, res: 
       data: result,
     });
   } catch (error) {
-    console.error('Save draft step error:', error);
+    logger.error('Save draft step error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to save step',
@@ -584,7 +585,7 @@ router.post('/:id/auto-save', authMiddleware, async (req: Request, res: Response
       data: result,
     });
   } catch (error) {
-    console.error('Auto-save error:', error);
+    logger.error('Auto-save error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to auto-save',
@@ -618,7 +619,7 @@ router.get('/:id/progress', authMiddleware, async (req: Request, res: Response) 
       data: progress,
     });
   } catch (error) {
-    console.error('Get progress error:', error);
+    logger.error('Get progress error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch progress',
@@ -668,7 +669,7 @@ router.post('/:id/submit', authMiddleware, async (req: Request, res: Response) =
       data: result,
     });
   } catch (error) {
-    console.error('Submit assessment error:', error);
+    logger.error('Submit assessment error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Failed to submit assessment';
     res.status(400).json({
       status: 'error',

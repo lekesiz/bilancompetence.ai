@@ -19,6 +19,7 @@ import {
   createSession,
   createAuditLog,
 } from '../services/supabaseService.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -68,7 +69,7 @@ router.post('/register', async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    console.error('Register error:', error);
+    logger.error('Register error:', error);
 
     // Handle duplicate email constraint
     if (error.code === '23505') {
@@ -155,7 +156,7 @@ router.post('/login', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Login failed',
@@ -270,7 +271,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Refresh error:', error);
+    logger.error('Refresh error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Token refresh failed',
@@ -309,7 +310,7 @@ router.get('/verify', (req: Request, res: Response) => {
       data: { user: decoded },
     });
   } catch (error) {
-    console.error('Verify error:', error);
+    logger.error('Verify error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Token verification failed',
@@ -376,7 +377,7 @@ router.post('/logout', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Logout error:', error);
+    logger.error('Logout error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Logout failed',

@@ -1,0 +1,29 @@
+# Vercel ignore file for monorepo setup
+# This tells Vercel which files to NOT deploy
+
+# Ignore test and doc files
+**/*.test.ts
+**/*.spec.ts
+**/*.test.tsx
+**/*.spec.tsx
+**/*.md
+!README.md
+
+# Ignore build artifacts that shouldn't be cached
+.next/
+dist/
+build/
+
+# Ignore IDE and local files
+.vscode/
+.idea/
+*.swp
+*.swo
+.env.local
+.env.*.local
+
+# Ignore node_modules (Vercel installs fresh)
+# (already ignored by default)
+
+# Keep both frontend and backend source
+# Deploy both apps in monorepo

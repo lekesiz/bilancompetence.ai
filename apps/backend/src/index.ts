@@ -21,6 +21,7 @@ import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
 import RealtimeService from './services/realtimeService.js';
+import { logger } from './utils/logger.js';
 
 // Initialize Express app
 const app = express();
@@ -104,7 +105,7 @@ app.use('/api/scheduling', schedulingRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Error:', err);
+  logger.error('Error:', err);
   res.status(err.status || 500).json({
     status: 'error',
     message: err.message || 'Internal server error',
@@ -128,14 +129,14 @@ const isServerless = isVercel || isNetlify;
 if (!isServerless) {
   // Traditional Node.js server for local development
   server.listen(PORT, () => {
-    console.log(`✅ Backend server running on http://localhost:${PORT}`);
-    console.log(`📍 Health check: http://localhost:${PORT}/health`);
-    console.log(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔌 WebSocket server initialized for real-time features`);
-    console.log(`📡 Online users: 0`);
+    logger.info(`✅ Backend server running on http://localhost:${PORT}`);
+    logger.info(`📍 Health check: http://localhost:${PORT}/health`);
+    logger.info(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.info(`🔌 WebSocket server initialized for real-time features`);
+    logger.info(`📡 Online users: 0`);
   });
 } else {
-  console.log(`✅ Backend running in serverless mode (${isVercel ? 'Vercel' : 'Netlify'})`);
+  logger.info(`✅ Backend running in serverless mode (${isVercel ? 'Vercel' : 'Netlify'})`);
 }
 
 export default app;
