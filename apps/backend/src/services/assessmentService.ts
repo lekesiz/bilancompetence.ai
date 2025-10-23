@@ -109,10 +109,7 @@ export async function createAssessment(
       title,
       description,
       assessment_type: assessmentType,
-      status: 'DRAFT',
-      current_step: 0,
-      progress_percentage: 0,
-      started_at: new Date().toISOString(),
+      status: 'draft',
     })
     .select()
     .single();
@@ -501,7 +498,7 @@ export async function createAssessmentDraft(
   title?: string
 ): Promise<Assessment> {
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .insert({
       beneficiary_id: beneficiaryId,
       assessment_type: assessmentType,
@@ -509,7 +506,6 @@ export async function createAssessmentDraft(
       status: 'DRAFT',
       current_step: 0,
       progress_percentage: 0,
-      started_at: new Date().toISOString(),
     })
     .select()
     .single();
@@ -542,7 +538,7 @@ export async function createAssessmentDraft(
  */
 export async function getAssessmentWithDetails(assessmentId: string) {
   const { data: assessment, error: assessmentError } = await supabase
-    .from('bilans')
+    .from('assessments')
     .select('*')
     .eq('id', assessmentId)
     .single();
@@ -650,7 +646,7 @@ export async function saveDraftStep(
   const progressPercentage = Math.round((completedSteps.length / 5) * 100);
 
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .update({
       current_step: stepNumber,
       progress_percentage: progressPercentage,
@@ -732,7 +728,7 @@ export async function autoSaveDraft(
  */
 export async function getAssessmentProgress(assessmentId: string) {
   const { data: assessment, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .select('*')
     .eq('id', assessmentId)
     .single();
@@ -830,11 +826,10 @@ export async function submitAssessment(
 
   const now = new Date().toISOString();
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .update({
       status: 'SUBMITTED',
       submitted_at: now,
-      progress_percentage: 100,
       updated_at: now,
     })
     .eq('id', assessmentId)
