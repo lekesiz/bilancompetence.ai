@@ -6,6 +6,7 @@
 import { supabase } from './supabaseService.js';
 import { logger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
+import { parsePaginationParams, createPaginatedResponse, PaginatedResponse } from '../utils/pagination.js';
 
 export interface AvailabilitySlot {
   id: string;
@@ -467,6 +468,9 @@ class SchedulingService {
   /**
    * Get bookings for a beneficiary
    */
+  /**
+   * Get bookings for a beneficiary with optional pagination
+   */
   async getBeneficiaryBookings(
     beneficiaryId: string,
     organizationId: string,
@@ -474,9 +478,16 @@ class SchedulingService {
       status?: string;
       dateFrom?: string;
       dateTo?: string;
+      page?: number;
+      limit?: number;
     }
-  ): Promise<SessionBooking[]> {
+  ): Promise<SessionBooking[] | PaginatedResponse<SessionBooking>> {
     try {
+      const page = filters?.page;
+      const limit = filters?.limit;
+      const usePagination = page !== undefined || limit !== undefined;
+
+      // Base query
       let query = supabase
         .from('session_bookings')
         .select('*')
@@ -498,6 +509,31 @@ class SchedulingService {
         query = query.lte('scheduled_date', filters.dateTo);
       }
 
+      if (usePagination) {
+        const { page: pageNum, limit: limitNum, offset } = parsePaginationParams(page, limit);
+
+        // Get total count
+        const { count: total } = await supabase
+          .from('session_bookings')
+          .select('*', { count: 'exact', head: true })
+          .eq('beneficiary_id', beneficiaryId)
+          .eq('organization_id', organizationId)
+          .is('deleted_at', null)
+          .eq('status', filters?.status || '')
+          .gte('scheduled_date', filters?.dateFrom || '')
+          .lte('scheduled_date', filters?.dateTo || '');
+
+        // Get paginated data
+        const { data, error } = await query.range(offset, offset + limitNum - 1);
+
+        if (error) {
+          throw error;
+        }
+
+        return createPaginatedResponse<SessionBooking>(data || [], pageNum, limitNum, total || 0);
+      }
+
+      // Non-paginated response
       const { data, error } = await query;
 
       if (error) {
@@ -512,7 +548,7 @@ class SchedulingService {
   }
 
   /**
-   * Get bookings for a consultant
+   * Get bookings for a consultant with optional pagination
    */
   async getConsultantBookings(
     consultantId: string,
@@ -521,9 +557,16 @@ class SchedulingService {
       status?: string;
       dateFrom?: string;
       dateTo?: string;
+      page?: number;
+      limit?: number;
     }
-  ): Promise<SessionBooking[]> {
+  ): Promise<SessionBooking[] | PaginatedResponse<SessionBooking>> {
     try {
+      const page = filters?.page;
+      const limit = filters?.limit;
+      const usePagination = page !== undefined || limit !== undefined;
+
+      // Base query
       let query = supabase
         .from('session_bookings')
         .select('*')
@@ -545,6 +588,31 @@ class SchedulingService {
         query = query.lte('scheduled_date', filters.dateTo);
       }
 
+      if (usePagination) {
+        const { page: pageNum, limit: limitNum, offset } = parsePaginationParams(page, limit);
+
+        // Get total count
+        const { count: total } = await supabase
+          .from('session_bookings')
+          .select('*', { count: 'exact', head: true })
+          .eq('consultant_id', consultantId)
+          .eq('organization_id', organizationId)
+          .is('deleted_at', null)
+          .eq('status', filters?.status || '')
+          .gte('scheduled_date', filters?.dateFrom || '')
+          .lte('scheduled_date', filters?.dateTo || '');
+
+        // Get paginated data
+        const { data, error } = await query.range(offset, offset + limitNum - 1);
+
+        if (error) {
+          throw error;
+        }
+
+        return createPaginatedResponse<SessionBooking>(data || [], pageNum, limitNum, total || 0);
+      }
+
+      // Non-paginated response
       const { data, error } = await query;
 
       if (error) {

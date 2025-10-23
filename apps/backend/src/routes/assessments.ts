@@ -135,6 +135,15 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
  * GET /api/assessments
  * Get user's assessments
  */
+/**
+ * GET /api/assessments
+ * Get user assessments with optional pagination
+ * Query params:
+ *   - role: 'beneficiary' (default) or 'consultant'
+ *   - page: page number (optional, enables pagination)
+ *   - limit: items per page, max 100 (optional, default 20)
+ *   - sort: sort column:direction, e.g., 'created_at:desc' (optional)
+ */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
     if (!req.user) {
@@ -145,7 +154,11 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     }
 
     const role = (req.query.role as string) || 'beneficiary';
-    const assessments = await getUserAssessments(req.user.id, role as any);
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+    const sort = (req.query.sort as string) || undefined;
+
+    const assessments = await getUserAssessments(req.user.id, role as any, page, limit, sort);
 
     return res.status(200).json({
       status: 'success',

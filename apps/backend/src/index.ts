@@ -18,6 +18,7 @@ import recommendationsRoutes from './routes/recommendations.js';
 import qualiopisRoutes from './routes/qualiopi.js';
 import schedulingRoutes from './routes/scheduling.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
+import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import RealtimeService from './services/realtimeService.js';
 
 // Initialize Express app
@@ -42,6 +43,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/', apiLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
+
+// Cache headers and ETag support
+app.use('/api/', cacheHeadersMiddleware);
+app.use('/api/', etagMiddleware);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

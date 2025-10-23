@@ -1,70 +1,86 @@
 import { supabase } from './supabaseService';
+import { withCache } from '../utils/cache.js';
 
 /**
  * Analytics Service - Data analysis & reporting
+ * All analytics queries are cached for 5 minutes (300 seconds)
  */
 
 /**
- * Get user activity statistics
+ * Get user activity statistics with caching
+ * Cache TTL: 5 minutes
  */
 export async function getUserActivityStats(userId: string) {
-  // Get total assessments
-  const { data: assessments, count: assessmentCount } = await supabase
-    .from('bilans')
-    .select('*', { count: 'exact', head: true })
-    .eq('beneficiary_id', userId);
+  return withCache(
+    `analytics:user:${userId}`,
+    async () => {
+      // Get total assessments
+      const { data: assessments, count: assessmentCount } = await supabase
+        .from('bilans')
+        .select('*', { count: 'exact', head: true })
+        .eq('beneficiary_id', userId);
 
-  // Get completed assessments
-  const { data: completed, count: completedCount } = await supabase
-    .from('bilans')
-    .select('*', { count: 'exact', head: true })
-    .eq('beneficiary_id', userId)
-    .eq('status', 'completed');
+      // Get completed assessments
+      const { data: completed, count: completedCount } = await supabase
+        .from('bilans')
+        .select('*', { count: 'exact', head: true })
+        .eq('beneficiary_id', userId)
+        .eq('status', 'completed');
 
-  // Get recommendations count
-  const { data: recommendations, count: recommendationCount } = await supabase
-    .from('recommendations')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId);
+      // Get recommendations count
+      const { data: recommendations, count: recommendationCount } = await supabase
+        .from('recommendations')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId);
 
-  return {
-    totalAssessments: assessmentCount || 0,
-    completedAssessments: completedCount || 0,
-    pendingAssessments: (assessmentCount || 0) - (completedCount || 0),
-    recommendations: recommendationCount || 0,
-    completionRate: assessmentCount ? Math.round((completedCount || 0) / assessmentCount * 100) : 0,
-  };
+      return {
+        totalAssessments: assessmentCount || 0,
+        completedAssessments: completedCount || 0,
+        pendingAssessments: (assessmentCount || 0) - (completedCount || 0),
+        recommendations: recommendationCount || 0,
+        completionRate: assessmentCount ? Math.round((completedCount || 0) / assessmentCount * 100) : 0,
+      };
+    },
+    300 // 5 minutes
+  );
 }
 
 /**
- * Get organization statistics
+ * Get organization statistics with caching
+ * Cache TTL: 5 minutes
  */
 export async function getOrganizationStats(organizationId: string) {
-  // Get total users
-  const { count: userCount } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .eq('organization_id', organizationId);
+  return withCache(
+    `analytics:org:${organizationId}`,
+    async () => {
+      // Get total users
+      const { count: userCount } = await supabase
+        .from('users')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', organizationId);
 
-  // Get total assessments
-  const { count: assessmentCount } = await supabase
-    .from('bilans')
-    .select('*', { count: 'exact', head: true })
-    .eq('organization_id', organizationId);
+      // Get total assessments
+      const { count: assessmentCount } = await supabase
+        .from('bilans')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', organizationId);
 
-  // Get completed assessments
-  const { count: completedCount } = await supabase
-    .from('bilans')
-    .select('*', { count: 'exact', head: true })
-    .eq('organization_id', organizationId)
-    .eq('status', 'completed');
+      // Get completed assessments
+      const { count: completedCount } = await supabase
+        .from('bilans')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', organizationId)
+        .eq('status', 'completed');
 
-  return {
-    totalUsers: userCount || 0,
-    totalAssessments: assessmentCount || 0,
-    completedAssessments: completedCount || 0,
-    completionRate: assessmentCount ? Math.round((completedCount || 0) / assessmentCount * 100) : 0,
-  };
+      return {
+        totalUsers: userCount || 0,
+        totalAssessments: assessmentCount || 0,
+        completedAssessments: completedCount || 0,
+        completionRate: assessmentCount ? Math.round((completedCount || 0) / assessmentCount * 100) : 0,
+      };
+    },
+    300 // 5 minutes
+  );
 }
 
 /**

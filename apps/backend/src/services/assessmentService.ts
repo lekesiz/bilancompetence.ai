@@ -1,6 +1,7 @@
 import { supabase } from './supabaseService';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
+import { parsePaginationParams, createPaginatedResponse, parseSortParams, PaginationParams, PaginatedResponse } from '../utils/pagination.js';
 
 /**
  * Assessment Service - Bilan management with Wizard support
@@ -140,9 +141,55 @@ export async function getAssessment(assessmentId: string): Promise<Assessment | 
 /**
  * Get user's assessments
  */
-export async function getUserAssessments(userId: string, role: 'beneficiary' | 'consultant' = 'beneficiary') {
+/**
+ * Get user assessments with pagination support
+ * @param userId - User ID (beneficiary or consultant)
+ * @param role - User role ('beneficiary' or 'consultant')
+ * @param page - Page number (default: 1)
+ * @param limit - Items per page (default: 20, max: 100)
+ * @param sort - Sort column and direction (e.g., "created_at:desc")
+ * @returns Paginated response with assessments
+ */
+export async function getUserAssessments(
+  userId: string,
+  role: 'beneficiary' | 'consultant' = 'beneficiary',
+  page?: number,
+  limit?: number,
+  sort?: string
+): Promise<PaginatedResponse<Assessment> | Assessment[]> {
   const column = role === 'beneficiary' ? 'beneficiary_id' : 'consultant_id';
 
+  // If pagination params provided, use paginated response
+  if (page !== undefined || limit !== undefined) {
+    const { page: pageNum, limit: limitNum, offset } = parsePaginationParams(page, limit);
+    const { column: sortCol, direction } = parseSortParams(sort);
+
+    // Get total count
+    const { count: total, error: countError } = await supabase
+      .from('bilans')
+      .select('*', { count: 'exact', head: true })
+      .eq(column, userId);
+
+    if (countError) {
+      throw countError;
+    }
+
+    // Get paginated data
+    const { data, error } = await supabase
+      .from('bilans')
+      .select('*')
+      .eq(column, userId)
+      .order(sortCol, { ascending: direction === 'asc' })
+      .range(offset, offset + limitNum - 1);
+
+    if (error) {
+      throw error;
+    }
+
+    return createPaginatedResponse<Assessment>(data || [], pageNum, limitNum, total || 0);
+  }
+
+  // Fallback: return all assessments without pagination (legacy support)
   const { data, error } = await supabase
     .from('bilans')
     .select('*')
