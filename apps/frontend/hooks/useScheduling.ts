@@ -137,7 +137,7 @@ export function useDeleteAvailabilitySlot() {
  * Hook for fetching available slots for a consultant (for booking)
  */
 export function useAvailableSlotsForConsultant(
-  consultantId: string,
+  consultantId: string | undefined,
   filters?: QueryFilters,
   enabled: boolean = true
 ) {
@@ -147,6 +147,7 @@ export function useAvailableSlotsForConsultant(
     queryKey: ['available-slots', consultantId, filters],
     queryFn: () => {
       if (!organizationId) throw new Error('Organization ID required');
+      if (!consultantId) throw new Error('Consultant ID required');
       return schedulingAPI.getAvailableSlotsForConsultant(organizationId, consultantId, filters);
     },
     enabled: enabled && !!organizationId && !!consultantId,

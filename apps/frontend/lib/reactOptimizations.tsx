@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * P2.4: React Performance Optimizations
  *

@@ -8,8 +8,14 @@
 import React, { useState, useMemo } from 'react';
 import { AvailabilitySlot } from '@/lib/schedulingAPI';
 import { useAvailability, useDeleteAvailabilitySlot } from '@/hooks/useScheduling';
-import toast from 'react-hot-toast';
-import { ChevronLeft, ChevronRight, Trash2, Edit2 } from 'lucide-react';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
+// import { ChevronLeft, ChevronRight, Trash2, Edit2 } from 'lucide-react'; // Package not installed
+
+// Temporary icon replacements until lucide-react is installed
+const ChevronLeft = ({ className }: { className?: string }) => <span className={className}>‹</span>;
+const ChevronRight = ({ className }: { className?: string }) => <span className={className}>›</span>;
+const Trash2 = ({ className }: { className?: string }) => <span className={className}>🗑</span>;
+const Edit2 = ({ className }: { className?: string }) => <span className={className}>✏</span>;
 
 interface AvailabilityCalendarProps {
   consultantId: string;
@@ -142,10 +148,10 @@ export default function AvailabilityCalendar({
 
     try {
       await deleteMutation.mutateAsync(slotId);
-      toast.success('Availability slot deleted');
+      toastSuccess('Availability slot deleted');
       setSelectedSlot(null);
     } catch (error) {
-      toast.error('Failed to delete availability slot');
+      toastError('Failed to delete availability slot');
     }
   };
 

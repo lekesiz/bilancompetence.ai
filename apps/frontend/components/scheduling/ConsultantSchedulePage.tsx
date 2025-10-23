@@ -19,7 +19,7 @@ import { AvailabilitySlot, SessionBooking, SessionAnalytics } from '@/lib/schedu
 import AvailabilityForm from './AvailabilityForm';
 import AvailabilityCalendar from './AvailabilityCalendar';
 import SessionCard from './SessionCard';
-import toast from 'react-hot-toast';
+import { toastSuccess, toastError } from '@/components/ui/Toast';
 import { Calendar, Clock, BarChart3, Plus } from 'lucide-react';
 
 type TabType = 'availability' | 'sessions' | 'analytics';

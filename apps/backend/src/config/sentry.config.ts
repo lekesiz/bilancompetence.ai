@@ -1,18 +1,27 @@
 /**
  * Sentry Configuration - Backend/Server Side
  * Captures backend errors, API request issues, and database errors
+ *
+ * NOTE: This file is currently disabled because @sentry/node is not installed.
+ * The safe Sentry implementation is in utils/errors.ts using require() instead.
+ * To enable Sentry, install @sentry/node and @sentry/profiling-node packages.
  */
 
-import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
+// import * as Sentry from '@sentry/node';
+// import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 const SENTRY_DSN = process.env.SENTRY_DSN;
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
 /**
  * Initialize Sentry for the backend
+ * DISABLED: Use initSentry() from utils/errors.ts instead
  */
 export function initSentry() {
+  console.log('Sentry config disabled - use initSentry() from utils/errors.ts instead');
+  return;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) {
     console.log('Sentry DSN not provided, error tracking disabled');
     return;
@@ -46,24 +55,30 @@ export function initSentry() {
       return event;
     },
   });
+  */
 }
 
 /**
  * Express middleware for Sentry
+ * DISABLED: Sentry not installed
  */
 export function getSentryRequestHandler() {
-  return Sentry.Handlers.requestHandler();
+  return (req: any, res: any, next: any) => next();
+  // return Sentry.Handlers.requestHandler();
 }
 
 /**
  * Express error handler for Sentry
+ * DISABLED: Sentry not installed
  */
 export function getSentryErrorHandler() {
-  return Sentry.Handlers.errorHandler();
+  return (err: any, req: any, res: any, next: any) => next(err);
+  // return Sentry.Handlers.errorHandler();
 }
 
 /**
  * Capture API error with context
+ * DISABLED: Sentry not installed
  */
 export function captureApiError(
   error: Error | unknown,
@@ -76,6 +91,11 @@ export function captureApiError(
     requestData?: Record<string, any>;
   }
 ) {
+  // Log to console instead of Sentry
+  console.error('API Error:', error, context);
+  return;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) return;
 
   const sentryError = error instanceof Error ? error : new Error(String(error));
@@ -99,10 +119,12 @@ export function captureApiError(
     },
     level: context.statusCode === 401 || context.statusCode === 403 ? 'warning' : 'error',
   });
+  */
 }
 
 /**
  * Capture database error
+ * DISABLED: Sentry not installed
  */
 export function captureDatabaseError(
   error: Error | unknown,
@@ -112,6 +134,11 @@ export function captureDatabaseError(
     organizationId?: string;
   }
 ) {
+  // Log to console instead of Sentry
+  console.error('Database Error:', error, context);
+  return;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) return;
 
   const sentryError = error instanceof Error ? error : new Error(String(error));
@@ -131,10 +158,12 @@ export function captureDatabaseError(
     },
     level: 'error',
   });
+  */
 }
 
 /**
  * Capture service error
+ * DISABLED: Sentry not installed
  */
 export function captureServiceError(
   error: Error | unknown,
@@ -144,6 +173,11 @@ export function captureServiceError(
     organizationId?: string;
   }
 ) {
+  // Log to console instead of Sentry
+  console.error('Service Error:', error, context);
+  return;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) return;
 
   const sentryError = error instanceof Error ? error : new Error(String(error));
@@ -163,24 +197,34 @@ export function captureServiceError(
     },
     level: 'error',
   });
+  */
 }
 
 /**
  * Add transaction for monitoring
+ * DISABLED: Sentry not installed
  */
 export function startTransaction(name: string, op: string = 'http.server') {
+  return null;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) return null;
 
   return Sentry.startTransaction({
     name,
     op,
   });
+  */
 }
 
 /**
  * Set user context for error tracking
+ * DISABLED: Sentry not installed
  */
 export function setSentryUserContext(userId: string, context?: { organizationId?: string; role?: string }) {
+  return;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) return;
 
   Sentry.setUser({
@@ -194,15 +238,21 @@ export function setSentryUserContext(userId: string, context?: { organizationId?
   if (context?.role) {
     Sentry.setTag('userRole', context.role);
   }
+  */
 }
 
 /**
  * Clear user context
+ * DISABLED: Sentry not installed
  */
 export function clearSentryUserContext() {
+  return;
+
+  /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) return;
 
   Sentry.setUser(null);
+  */
 }
 
-export default Sentry;
+// export default Sentry; // Disabled - Sentry not installed

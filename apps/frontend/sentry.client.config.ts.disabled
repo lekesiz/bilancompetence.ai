@@ -13,86 +13,8 @@ if (SENTRY_DSN && typeof window !== 'undefined') {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: ENVIRONMENT,
-
     // Set trace sample rate for performance monitoring
     tracesSampleRate: ENVIRONMENT === 'production' ? 0.1 : 1.0,
-
-    // Set replay sample rate for session replay
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
-
-    // Integrations
-    integrations: [
-      // Performance Monitoring
-      new Sentry.Replay({
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
-      // Capture unhandled promise rejections
-      new Sentry.Integrations.GlobalHandlers({
-        onerror: true,
-        onunhandledrejection: true,
-      }),
-      // Next.js integration
-      Sentry.nextjsIntegration({
-        serverComponentContextLineCount: 5,
-      }),
-    ],
-
-    // Filter out errors from specific sources
-    denyUrls: [
-      // Browser extensions
-      /extensions\//i,
-      /^chrome:\/\//i,
-      // Third-party scripts
-      /graph\.facebook\.com/i,
-      /connect\.facebook\.net/i,
-    ],
-
-    // Ignore specific error types
-    ignoreErrors: [
-      // Random plugins/extensions
-      'top.GLOBALS',
-      // See: http://blog.errorception.com/2012/03/tale-of-unfindable-js-error.html
-      'originalCreateNotification',
-      'canvas.contentDocument',
-      'MyApp_RemoveAllHighlights',
-    ],
-
-    // Before sending event to Sentry
-    beforeSend(event, hint) {
-      // Filter out specific errors in development
-      if (ENVIRONMENT === 'development') {
-        // Log to console instead of sending to Sentry
-        console.log('Sentry Event (Dev):', event);
-      }
-
-      // Don't send if this is a known external error
-      if (hint.originalException instanceof Error) {
-        const message = hint.originalException.message;
-        if (
-          message.includes('NetworkError') ||
-          message.includes('cancelled') ||
-          message.includes('timeout')
-        ) {
-          // Return null to filter out the event
-          return null;
-        }
-      }
-
-      return event;
-    },
-
-    // Attach user context if available
-    initialScope: {
-      user: {
-        // User context will be set dynamically in middleware
-      },
-      tags: {
-        module: 'qualiopi',
-        component: 'admin',
-      },
-    },
   });
 }
 
