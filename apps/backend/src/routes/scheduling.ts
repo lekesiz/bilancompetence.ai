@@ -168,7 +168,7 @@ router.get('/availability', authMiddleware, async (req: Request, res: Response) 
  * POST /api/scheduling/availability
  * Create a new availability slot
  */
-router.post('/availability', authMiddleware, requireRole(['CONSULTANT', 'ORG_ADMIN']), async (req: Request, res: Response) => {
+router.post('/availability', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
   try {
     const organizationId = await getOrganizationId(req);
     const consultantId = (req as any).user?.id;
@@ -201,7 +201,7 @@ router.post('/availability', authMiddleware, requireRole(['CONSULTANT', 'ORG_ADM
  * PUT /api/scheduling/availability/:slotId
  * Update an availability slot
  */
-router.put('/availability/:slotId', authMiddleware, requireRole(['CONSULTANT', 'ORG_ADMIN']), async (req: Request, res: Response) => {
+router.put('/availability/:slotId', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
   try {
     const organizationId = await getOrganizationId(req);
     const { slotId } = req.params;
@@ -256,7 +256,7 @@ router.put('/availability/:slotId', authMiddleware, requireRole(['CONSULTANT', '
  * DELETE /api/scheduling/availability/:slotId
  * Delete (soft delete) an availability slot
  */
-router.delete('/availability/:slotId', authMiddleware, requireRole(['CONSULTANT', 'ORG_ADMIN']), async (req: Request, res: Response) => {
+router.delete('/availability/:slotId', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
   try {
     const organizationId = await getOrganizationId(req);
     const { slotId } = req.params;
@@ -398,8 +398,9 @@ router.get('/bookings/:bilanId', authMiddleware, async (req: Request, res: Respo
       dateTo: queryParams.data.date_to,
     });
 
-    // Filter by bilan ID
-    const bilanBookings = bookings.filter((b) => b.bilan_id === bilanId);
+    // Filter by bilan ID - Handle union type
+    const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
+    const bilanBookings = bookingList.filter((b) => b.bilan_id === bilanId);
 
     res.json({
       success: true,
@@ -433,10 +434,14 @@ router.get('/beneficiary/:beneficiaryId/bookings', authMiddleware, async (req: R
       dateTo: queryParams.data.date_to,
     });
 
+    // Handle union type for response
+    const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
+    const total = Array.isArray(bookings) ? bookings.length : ((bookings as any).count || bookingList.length);
+
     res.json({
       success: true,
-      data: bookings,
-      total: bookings.length,
+      data: bookingList,
+      total,
     });
   } catch (error) {
     logger.error(`GET /api/scheduling/beneficiary/${req.params.beneficiaryId}/bookings failed`, error);
@@ -448,7 +453,7 @@ router.get('/beneficiary/:beneficiaryId/bookings', authMiddleware, async (req: R
  * GET /api/scheduling/consultant/:consultantId/bookings
  * Get all bookings for a consultant
  */
-router.get('/consultant/:consultantId/bookings', authMiddleware, requireRole(['CONSULTANT', 'ORG_ADMIN']), async (req: Request, res: Response) => {
+router.get('/consultant/:consultantId/bookings', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
   try {
     const organizationId = await getOrganizationId(req);
     const { consultantId } = req.params;
@@ -465,10 +470,14 @@ router.get('/consultant/:consultantId/bookings', authMiddleware, requireRole(['C
       dateTo: queryParams.data.date_to,
     });
 
+    // Handle union type for response
+    const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
+    const total = Array.isArray(bookings) ? bookings.length : ((bookings as any).count || bookingList.length);
+
     res.json({
       success: true,
-      data: bookings,
-      total: bookings.length,
+      data: bookingList,
+      total,
     });
   } catch (error) {
     logger.error(`GET /api/scheduling/consultant/${req.params.consultantId}/bookings failed`, error);
@@ -480,7 +489,7 @@ router.get('/consultant/:consultantId/bookings', authMiddleware, requireRole(['C
  * PUT /api/scheduling/bookings/:bookingId/confirm
  * Confirm a booking (consultant action)
  */
-router.put('/bookings/:bookingId/confirm', authMiddleware, requireRole(['CONSULTANT', 'ORG_ADMIN']), async (req: Request, res: Response) => {
+router.put('/bookings/:bookingId/confirm', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
   try {
     const consultantId = (req as any).user?.id;
     const { bookingId } = req.params;

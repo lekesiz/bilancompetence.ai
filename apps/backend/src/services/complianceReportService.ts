@@ -115,14 +115,15 @@ export class ComplianceReportService {
       const indicatorReports = await Promise.all(
         indicators.map(async (indicator: any) => {
           const details = await this.qualioptService.getIndicatorDetails(indicator.indicator_id);
-          const evidenceItems = includeEvidence ? details.evidence : [];
+          const d = details as any;
+          const evidenceItems = includeEvidence ? d.evidence : [];
 
           return {
             indicator_id: indicator.indicator_id,
             indicator_name: indicator.name,
             status: indicator.status,
             evidence_count: indicator.evidence_count,
-            notes: details.status?.notes || null,
+            notes: d.status?.notes || null,
             evidence_items: evidenceItems.map((e: any) => ({
               file_name: e.file_name,
               file_url: e.file_url,
@@ -142,10 +143,11 @@ export class ComplianceReportService {
         indicatorReports
       );
 
+      const o = org as any;
       const report: ComplianceReport = {
         report_id: this.generateReportId(),
         generated_at: new Date().toISOString(),
-        organization_name: org.name,
+        organization_name: o.name,
         organization_id: this.organizationId,
         overall_compliance_percentage: complianceMetrics.overall_percentage,
         audit_readiness: auditReadiness.is_ready,

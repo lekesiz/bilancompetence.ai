@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { TrendingUp, TrendingDown, Users, FileText, CheckCircle, Clock } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
@@ -11,7 +12,49 @@ interface StatCardProps {
   onClick?: () => void;
   loading?: boolean;
   className?: string;
+  variant?: 'default' | 'success' | 'warning' | 'info';
+  description?: string;
 }
+
+const variantStyles = {
+  default: {
+    bg: 'bg-white',
+    border: 'border-gray-200',
+    icon: 'text-blue-600',
+    value: 'text-gray-800',
+    title: 'text-gray-500',
+  },
+  success: {
+    bg: 'bg-green-50',
+    border: 'border-green-200',
+    icon: 'text-green-600',
+    value: 'text-green-800',
+    title: 'text-green-600',
+  },
+  warning: {
+    bg: 'bg-yellow-50',
+    border: 'border-yellow-200',
+    icon: 'text-yellow-600',
+    value: 'text-yellow-800',
+    title: 'text-yellow-600',
+  },
+  info: {
+    bg: 'bg-blue-50',
+    border: 'border-blue-200',
+    icon: 'text-blue-600',
+    value: 'text-blue-800',
+    title: 'text-blue-600',
+  },
+};
+
+const getDefaultIcon = (title: string) => {
+  const lowerTitle = title.toLowerCase();
+  if (lowerTitle.includes('user') || lowerTitle.includes('client')) return <Users className="w-5 h-5" />;
+  if (lowerTitle.includes('assessment') || lowerTitle.includes('bilan')) return <FileText className="w-5 h-5" />;
+  if (lowerTitle.includes('completed') || lowerTitle.includes('finished')) return <CheckCircle className="w-5 h-5" />;
+  if (lowerTitle.includes('pending') || lowerTitle.includes('progress')) return <Clock className="w-5 h-5" />;
+  return <FileText className="w-5 h-5" />;
+};
 
 export function StatCard({
   title,
@@ -21,37 +64,58 @@ export function StatCard({
   onClick,
   loading = false,
   className = '',
+  variant = 'default',
+  description,
 }: StatCardProps) {
+  const styles = variantStyles[variant];
+  const displayIcon = icon || getDefaultIcon(title);
+
   return (
     <div
-      className={`bg-white rounded-lg shadow p-6 transition-all duration-200 ${
-        onClick ? 'cursor-pointer hover:shadow-lg' : ''
+      className={`${styles.bg} ${styles.border} border rounded-xl p-6 transition-all duration-300 ${
+        onClick ? 'cursor-pointer hover:shadow-lg hover:scale-105' : 'hover:shadow-md'
       } ${className}`}
       onClick={onClick}
     >
       {loading ? (
         <div className="space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+          <div className="flex items-center justify-between">
+            <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+            <div className="w-6 h-6 bg-gray-200 rounded animate-pulse"></div>
+          </div>
           <div className="h-8 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+          {description && <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>}
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-gray-500 text-sm font-semibold">{title}</h3>
-            {icon && <div className="text-blue-600 text-xl">{icon}</div>}
+          <div className="flex items-center justify-between mb-3">
+            <h3 className={`${styles.title} text-sm font-medium`}>{title}</h3>
+            <div className={`${styles.icon} p-2 rounded-lg bg-white shadow-sm`}>
+              {displayIcon}
+            </div>
           </div>
 
-          <div className="flex items-end justify-between">
-            <p className="text-3xl font-bold text-gray-800">{value}</p>
-            {trend && (
-              <div
-                className={`text-sm font-semibold ${
-                  trend.isPositive ? 'text-green-600' : 'text-red-600'
-                }`}
-              >
-                <span>{trend.isPositive ? '↑' : '↓'}</span>
-                <span className="ml-1">{Math.abs(trend.value)}%</span>
-              </div>
+          <div className="space-y-2">
+            <div className="flex items-end justify-between">
+              <p className={`${styles.value} text-3xl font-bold`}>{value}</p>
+              {trend && (
+                <div
+                  className={`flex items-center text-sm font-semibold ${
+                    trend.isPositive ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {trend.isPositive ? (
+                    <TrendingUp className="w-4 h-4 mr-1" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4 mr-1" />
+                  )}
+                  <span>{Math.abs(trend.value)}%</span>
+                </div>
+              )}
+            </div>
+            
+            {description && (
+              <p className="text-gray-500 text-xs">{description}</p>
             )}
           </div>
         </>

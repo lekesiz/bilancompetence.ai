@@ -176,8 +176,9 @@ export class SatisfactionSurveyService {
         throw new DatabaseError('Failed to create survey', error);
       }
 
-      logger.info('Survey created successfully', { surveyId: data.id, bilanId, beneficiaryId });
-      return data;
+      const survey = data as any;
+      logger.info('Survey created successfully', { surveyId: survey.id, bilanId, beneficiaryId });
+      return survey;
     } catch (error) {
       logAndThrow('Failed to create survey', error);
     }
@@ -259,6 +260,8 @@ export class SatisfactionSurveyService {
         throw new NotFoundError('Survey not found');
       }
 
+      const s = survey as any;
+
       // Submit responses
       const responses = Object.entries(answers).map(([questionNumber, answer]) => {
         const question = SURVEY_QUESTIONS.find((q) => q.number === parseInt(questionNumber));
@@ -267,7 +270,7 @@ export class SatisfactionSurveyService {
         }
 
         const response: any = {
-          survey_id: survey.id,
+          survey_id: s.id,
           question_number: parseInt(questionNumber),
           answer_type: question.type,
         };
@@ -298,13 +301,13 @@ export class SatisfactionSurveyService {
           status: 'COMPLETED',
           completed_at: new Date().toISOString(),
         })
-        .eq('id', survey.id);
+        .eq('id', s.id);
 
       if (updateError) {
         throw new DatabaseError('Failed to update survey status', updateError);
       }
 
-      logger.info('Survey response submitted successfully', { surveyId: survey.id, questionCount: responses.length });
+      logger.info('Survey response submitted successfully', { surveyId: s.id, questionCount: responses.length });
     } catch (error) {
       logAndThrow('Failed to submit survey response', error);
     }

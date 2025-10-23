@@ -226,8 +226,9 @@ export class QualioptService {
 
       if (error) throw new Error(`Failed to add evidence: ${error.message}`);
 
+      const audit = data as any;
       // Log audit event
-      await this.logAuditEvent('EVIDENCE_ADD', 'EVIDENCE', data?.[0]?.id, {
+      await this.logAuditEvent('EVIDENCE_ADD', 'EVIDENCE', audit?.[0]?.id, {
         indicator_id: indicatorId,
         file_name: fileName,
       });
@@ -313,12 +314,13 @@ export class QualioptService {
         console.error('Error fetching org data:', orgError);
       }
 
+      const org = orgData as any;
       return {
         overall_percentage,
         compliant_count,
         missing_count,
         under_review_count,
-        last_audit_date: orgData?.qualiopi_last_audit_date || null,
+        last_audit_date: org?.qualiopi_last_audit_date || null,
       };
     } catch (error) {
       console.error('Error in getCompliancePercentage:', error);

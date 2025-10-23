@@ -6,7 +6,9 @@ import {
   ClientCard,
   AssessmentCard,
   RecommendationsPanel,
+  ChartPlaceholder,
 } from './dashboard-components';
+import { Users, TrendingUp, Target, Award, Plus } from 'lucide-react';
 
 export function ConsultantDashboard() {
   const { data, loading, error } = useConsultantDashboardData();
@@ -33,45 +35,83 @@ export function ConsultantDashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow p-8 text-white">
-        <h1 className="text-4xl font-bold mb-2">Welcome, Consultant!</h1>
-        <p className="text-green-100">Manage your clients and their assessment progress</p>
+      <div className="bg-gradient-to-r from-green-600 via-green-700 to-emerald-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
+        <div className="relative z-10">
+          <h1 className="text-4xl font-bold mb-2">Welcome, Consultant!</h1>
+          <p className="text-green-100 text-lg">Manage your clients and their assessment progress</p>
+        </div>
       </div>
 
       {/* Quick Stats */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Overview</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <Target className="w-6 h-6 text-green-600" />
+          Overview
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title="Active Clients"
             value={stats.activeClients}
             loading={loading}
+            variant="info"
+            description="Currently managed"
+            trend={stats.activeClients > 0 ? { value: 15, isPositive: true } : undefined}
           />
           <StatCard
             title="In Progress"
             value={stats.inProgressAssessments}
             loading={loading}
+            variant="warning"
+            description="Assessments ongoing"
           />
           <StatCard
             title="Completed"
             value={stats.completedAssessments}
             loading={loading}
+            variant="success"
+            description="Successfully finished"
+            trend={stats.completedAssessments > 0 ? { value: 8, isPositive: true } : undefined}
           />
           {stats.averageSatisfaction !== undefined && (
             <StatCard
               title="Client Satisfaction"
               value={`${stats.averageSatisfaction.toFixed(1)}/5`}
               loading={loading}
+              variant="success"
+              description="Based on feedback"
+              trend={{ value: 12, isPositive: true }}
             />
           )}
         </div>
       </div>
 
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ChartPlaceholder
+          title="Client Assessment Progress"
+          chartType="bar"
+          data={assessments.length > 0 ? assessments : []}
+          loading={loading}
+        />
+        <ChartPlaceholder
+          title="Client Satisfaction Trend"
+          chartType="line"
+          data={clients.length > 0 ? clients : []}
+          loading={loading}
+        />
+      </div>
+
       {/* Clients Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Your Clients</h2>
-          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <Users className="w-6 h-6 text-green-600" />
+            Your Clients
+          </h2>
+          <button className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+            <Plus className="w-5 h-5" />
             Invite New Client
           </button>
         </div>

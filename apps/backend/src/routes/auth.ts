@@ -19,6 +19,7 @@ import {
   createSession,
   createAuditLog,
 } from '../services/supabaseService.js';
+import { sendWelcomeEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
 
 const router = Router();
@@ -58,6 +59,12 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Create audit log
     await createAuditLog(newUser.id, 'USER_REGISTERED', 'user', newUser.id, null, req.ip);
+
+    // Send welcome email in the background (don't wait for it)
+    sendWelcomeEmail(newUser.email, newUser.full_name).catch((error) => {
+      logger.error('Failed to send welcome email', { email: newUser.email, error });
+      // Don't fail the registration if email fails
+    });
 
     return res.status(201).json({
       status: 'success',

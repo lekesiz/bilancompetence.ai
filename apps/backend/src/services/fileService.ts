@@ -73,7 +73,7 @@ export async function uploadFile(
     }
 
     logger.info('File uploaded successfully', { userId, fileName, fileSize: file.length });
-    return fileData as FileMetadata;
+    return fileData as unknown as FileMetadata;
   } catch (error) {
     logAndThrow('Failed to upload file', error);
   }
