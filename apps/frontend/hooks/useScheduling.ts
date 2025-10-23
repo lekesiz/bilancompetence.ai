@@ -137,7 +137,7 @@ export function useDeleteAvailabilitySlot() {
  * Hook for fetching available slots for a consultant (for booking)
  */
 export function useAvailableSlotsForConsultant(
-  consultantId: string,
+  consultantId: string | undefined,
   filters?: QueryFilters,
   enabled: boolean = true
 ) {
