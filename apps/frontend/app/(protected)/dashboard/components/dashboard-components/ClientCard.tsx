@@ -1,25 +1,39 @@
 import { Client } from '../../types';
+import { User, Mail, Calendar, Eye, MessageCircle, FileText, CheckCircle, Clock, XCircle } from 'lucide-react';
 
 interface ClientCardProps {
   client: Client;
   onView?: () => void;
   onMessage?: () => void;
   onAssignAssessment?: () => void;
+  variant?: 'default' | 'compact';
 }
 
-const statusColors = {
-  ACTIVE: 'bg-green-100 text-green-800',
-  INACTIVE: 'bg-gray-100 text-gray-800',
-  COMPLETED: 'bg-blue-100 text-blue-800',
+const statusConfig = {
+  ACTIVE: {
+    label: 'Active',
+    color: 'bg-green-100 text-green-800 border-green-200',
+    icon: <CheckCircle className="w-4 h-4" />,
+  },
+  INACTIVE: {
+    label: 'Inactive',
+    color: 'bg-gray-100 text-gray-800 border-gray-200',
+    icon: <Clock className="w-4 h-4" />,
+  },
+  COMPLETED: {
+    label: 'Completed',
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    icon: <CheckCircle className="w-4 h-4" />,
+  },
 };
 
-const statusLabels = {
-  ACTIVE: 'Active',
-  INACTIVE: 'Inactive',
-  COMPLETED: 'Completed',
-};
-
-export function ClientCard({ client, onView, onMessage, onAssignAssessment }: ClientCardProps) {
+export function ClientCard({ 
+  client, 
+  onView, 
+  onMessage, 
+  onAssignAssessment, 
+  variant = 'default' 
+}: ClientCardProps) {
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -29,30 +43,48 @@ export function ClientCard({ client, onView, onMessage, onAssignAssessment }: Cl
     });
   };
 
+  const status = statusConfig[client.status];
+  const isCompact = variant === 'compact';
+
   return (
-    <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+    <div className={`bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 ${
+      isCompact ? 'p-4' : ''
+    }`}>
+      {/* Header */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-800 mb-1">{client.name}</h3>
-          <p className="text-sm text-gray-500">{client.email}</p>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+              {client.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className={`font-semibold text-gray-800 truncate ${
+                isCompact ? 'text-base' : 'text-lg'
+              }`}>
+                {client.name}
+              </h3>
+              <p className="text-sm text-gray-500 truncate">{client.email}</p>
+            </div>
+          </div>
         </div>
-        <span
-          className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-2 ${
-            statusColors[client.status]
-          }`}
-        >
-          {statusLabels[client.status]}
+        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium border whitespace-nowrap ml-2 ${
+          status.color
+        }`}>
+          {status.icon}
+          {status.label}
         </span>
       </div>
 
       {/* Client info */}
-      <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
-        <div className="flex justify-between text-sm">
+      <div className="space-y-3 mb-4 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-2 text-sm">
+          <Mail className="w-4 h-4 text-gray-400" />
           <span className="text-gray-600">Contact:</span>
           <span className="text-gray-800 font-medium">{client.contact}</span>
         </div>
         {client.lastAssessmentDate && (
-          <div className="flex justify-between text-sm">
+          <div className="flex items-center gap-2 text-sm">
+            <Calendar className="w-4 h-4 text-gray-400" />
             <span className="text-gray-600">Last Assessment:</span>
             <span className="text-gray-800 font-medium">{formatDate(client.lastAssessmentDate)}</span>
           </div>
@@ -64,8 +96,9 @@ export function ClientCard({ client, onView, onMessage, onAssignAssessment }: Cl
         {onView && (
           <button
             onClick={onView}
-            className="w-full px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors text-sm"
           >
+            <Eye className="w-4 h-4" />
             View Client
           </button>
         )}
@@ -73,8 +106,9 @@ export function ClientCard({ client, onView, onMessage, onAssignAssessment }: Cl
         {onMessage && (
           <button
             onClick={onMessage}
-            className="w-full px-4 py-2 text-green-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-green-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-sm"
           >
+            <MessageCircle className="w-4 h-4" />
             Message
           </button>
         )}
@@ -82,8 +116,9 @@ export function ClientCard({ client, onView, onMessage, onAssignAssessment }: Cl
         {onAssignAssessment && (
           <button
             onClick={onAssignAssessment}
-            className="w-full px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg font-medium transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-purple-600 hover:bg-purple-50 rounded-lg font-medium transition-colors text-sm"
           >
+            <FileText className="w-4 h-4" />
             Assign Assessment
           </button>
         )}
