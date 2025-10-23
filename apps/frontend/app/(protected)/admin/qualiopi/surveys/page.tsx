@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/Toast';
+import { toastError } from '@/components/ui/Toast';
+import { api } from '@/lib/api';
 
 interface SurveyAnalytics {
   total_sent: number;
@@ -16,7 +17,7 @@ interface SurveyAnalytics {
 }
 
 export default function SurveysPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [analytics, setAnalytics] = useState<SurveyAnalytics | null>(null);
@@ -32,39 +33,31 @@ export default function SurveysPage() {
 
   // Fetch analytics
   const fetchAnalytics = useCallback(async () => {
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsLoadingData(true);
       setError(null);
 
-      const response = await fetch('/api/admin/qualiopi/surveys/analytics', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
+      const response = await api.get('/api/admin/qualiopi/surveys/analytics');
+      if (response.data.status !== 'success') {
         throw new Error('Failed to fetch analytics');
       }
-
-      const data = await response.json();
-      setAnalytics(data.data);
+      setAnalytics(response.data.data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toastError(errorMessage);
     } finally {
       setIsLoadingData(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
-    if (token && user) {
+    if (api.isAuthenticated() && user) {
       fetchAnalytics();
     }
-  }, [token, user, fetchAnalytics]);
+  }, [user, fetchAnalytics]);
 
   if (isLoading || isLoadingData) {
     return (

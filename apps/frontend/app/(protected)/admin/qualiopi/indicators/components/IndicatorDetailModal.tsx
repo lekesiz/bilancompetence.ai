@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { toast } from '@/components/ui/Toast';
+import { toastError, toastSuccess } from '@/components/ui/Toast';
 import { Indicator } from '../types';
+import { api } from '@/lib/api';
 
 interface Evidence {
   id: string;
@@ -25,14 +26,12 @@ interface IndicatorDetail {
 
 interface IndicatorDetailModalProps {
   indicator: Indicator;
-  token: string;
   onClose: () => void;
   onSave: () => void;
 }
 
 export default function IndicatorDetailModal({
   indicator,
-  token,
   onClose,
   onSave,
 }: IndicatorDetailModalProps) {
@@ -57,24 +56,14 @@ export default function IndicatorDetailModal({
     const fetchDetails = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          `/api/admin/qualiopi/indicators/${indicator.indicator_id}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error('Failed to fetch indicator details');
-
-        const data = await response.json();
+        const response = await api.get(`/api/admin/qualiopi/indicators/${indicator.indicator_id}`);
+        if (response.data.status !== 'success') throw new Error('Failed to fetch indicator details');
+        const data = response.data;
         setDetails(data.data);
         setNewStatus(data.data.status.status);
         setNotes(data.data.status.notes || '');
       } catch (err) {
-        toast.error('Failed to load indicator details');
+        toastError('Failed to load indicator details');
         onClose();
       } finally {
         setIsLoading(false);
@@ -82,33 +71,22 @@ export default function IndicatorDetailModal({
     };
 
     fetchDetails();
-  }, [indicator.indicator_id, token, onClose]);
+  }, [indicator.indicator_id, onClose]);
 
   // Handle status update
   const handleStatusUpdate = async () => {
     try {
       setIsSaving(true);
-      const response = await fetch(
-        `/api/admin/qualiopi/indicators/${indicator.indicator_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            status: newStatus,
-            notes,
-          }),
-        }
-      );
+      const response = await api.put(`/api/admin/qualiopi/indicators/${indicator.indicator_id}`, {
+        status: newStatus,
+        notes,
+      });
+      if (response.data.status !== 'success') throw new Error('Failed to update indicator');
 
-      if (!response.ok) throw new Error('Failed to update indicator');
-
-      toast.success(`Gösterge #${indicator.indicator_id} başarıyla güncellendi`);
+      toastSuccess(`Gösterge #${indicator.indicator_id} başarıyla güncellendi`);
       onSave();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update indicator');
+      toastError(err instanceof Error ? err.message : 'Failed to update indicator');
     } finally {
       setIsSaving(false);
     }
@@ -120,21 +98,10 @@ export default function IndicatorDetailModal({
 
     try {
       setIsSaving(true);
-      const response = await fetch(
-        `/api/admin/qualiopi/indicators/${indicator.indicator_id}/evidence`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newEvidence),
-        }
-      );
+      const response = await api.post(`/api/admin/qualiopi/indicators/${indicator.indicator_id}/evidence`, newEvidence);
+      if (response.data.status !== 'success') throw new Error('Failed to add evidence');
 
-      if (!response.ok) throw new Error('Failed to add evidence');
-
-      toast.success('Kanıt dosyası başarıyla eklendi');
+      toastSuccess('Kanıt dosyası başarıyla eklendi');
       setNewEvidence({
         fileName: '',
         fileUrl: '',
@@ -145,7 +112,7 @@ export default function IndicatorDetailModal({
       setShowEvidenceForm(false);
       onSave();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to add evidence');
+      toastError(err instanceof Error ? err.message : 'Failed to add evidence');
     } finally {
       setIsSaving(false);
     }

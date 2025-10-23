@@ -5,7 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import IndicatorBoard from './components/IndicatorBoard';
 import IndicatorDetailModal from './components/IndicatorDetailModal';
-import { toast } from '@/components/ui/Toast';
+import { toastError } from '@/components/ui/Toast';
+import { api } from '@/lib/api';
 
 interface Indicator {
   indicator_id: number;
@@ -25,7 +26,7 @@ interface ComplianceMetrics {
 }
 
 export default function QualiopsIndicatorsPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [indicators, setIndicators] = useState<Indicator[]>([]);
@@ -45,54 +46,40 @@ export default function QualiopsIndicatorsPage() {
 
   // Fetch indicators and metrics
   const fetchData = useCallback(async () => {
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsLoadingData(true);
       setError(null);
 
       // Fetch indicators
-      const indicatorsResponse = await fetch('/api/admin/qualiopi/indicators', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!indicatorsResponse.ok) {
+      const indicatorsResponse = await api.get('/api/admin/qualiopi/indicators');
+      if (indicatorsResponse.data.status === 'success') {
+        setIndicators(indicatorsResponse.data.data || []);
+      } else {
         throw new Error('Failed to fetch indicators');
       }
 
-      const indicatorsData = await indicatorsResponse.json();
-      setIndicators(indicatorsData.data || []);
-
       // Fetch compliance metrics
-      const metricsResponse = await fetch('/api/admin/qualiopi/compliance', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (metricsResponse.ok) {
-        const metricsData = await metricsResponse.json();
-        setMetrics(metricsData.data);
+      const metricsResponse = await api.get('/api/admin/qualiopi/compliance');
+      if (metricsResponse.data.status === 'success') {
+        setMetrics(metricsResponse.data.data);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toastError(errorMessage);
     } finally {
       setIsLoadingData(false);
     }
-  }, [token]);
+  }, []);
 
   // Initial data load
   useEffect(() => {
-    if (token && user) {
+    if (api.isAuthenticated() && user) {
       fetchData();
     }
-  }, [token, user, fetchData]);
+  }, [user, fetchData]);
 
   // Filter indicators
   const filteredIndicators = indicators.filter((ind) => {
@@ -234,7 +221,6 @@ export default function QualiopsIndicatorsPage() {
       {showDetailModal && selectedIndicator && (
         <IndicatorDetailModal
           indicator={selectedIndicator}
-          token={token}
           onClose={() => {
             setShowDetailModal(false);
             setSelectedIndicator(null);

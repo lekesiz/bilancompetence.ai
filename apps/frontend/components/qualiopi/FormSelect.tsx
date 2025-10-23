@@ -11,7 +11,7 @@ interface SelectOption {
   disabled?: boolean;
 }
 
-interface FormSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface FormSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   label?: string;
   error?: string;
   helperText?: string;

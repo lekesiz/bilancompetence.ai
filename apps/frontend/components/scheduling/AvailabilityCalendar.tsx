@@ -130,11 +130,11 @@ export default function AvailabilityCalendar({
   });
 
   const recurringSlots = useMemo(() => {
-    return slots.filter((slot) => slot.is_recurring);
+    return slots.filter((slot: AvailabilitySlot) => slot.is_recurring);
   }, [slots]);
 
   const oneTimeSlots = useMemo(() => {
-    return slots.filter((slot) => !slot.is_recurring);
+    return slots.filter((slot: AvailabilitySlot) => !slot.is_recurring);
   }, [slots]);
 
   const handleDeleteSlot = async (slotId: string) => {
@@ -208,7 +208,7 @@ export default function AvailabilityCalendar({
           <div className="bg-white p-4 rounded-lg shadow">
             <h3 className="font-semibold text-gray-900 mb-3">Recurring Availability</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
-              {recurringSlots.map((slot) => (
+              {recurringSlots.map((slot: AvailabilitySlot) => (
                 <div key={slot.id} className="p-3 bg-blue-50 rounded border border-blue-200">
                   <div className="flex justify-between items-start gap-2">
                     <div>

@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { toast } from '@/components/ui/Toast';
+import { toastError, toastSuccess } from '@/components/ui/Toast';
+import { api } from '@/lib/api';
 
 interface ComplianceReport {
   report_id: string;
@@ -25,7 +26,7 @@ interface ComplianceReport {
 }
 
 export default function ReportsPage() {
-  const { user, token, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [report, setReport] = useState<ComplianceReport | null>(null);
@@ -44,7 +45,7 @@ export default function ReportsPage() {
 
   // Generate report
   const generateReport = useCallback(async () => {
-    if (!token) return;
+    if (!api.isAuthenticated()) return;
 
     try {
       setIsGenerating(true);
@@ -54,38 +55,33 @@ export default function ReportsPage() {
       params.append('format', 'json');
       if (includeEvidence) params.append('includeEvidence', 'true');
 
-      const response = await fetch(`/api/admin/qualiopi/compliance-report?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
+      const response = await api.get(`/api/admin/qualiopi/compliance-report?${params}`);
+      if (response.data.status !== 'success') {
         throw new Error('Failed to generate report');
       }
-
-      const data = await response.json();
+      const data = response.data.data;
       setReport(data);
-      toast.success('Rapor başarıyla oluşturuldu');
+      toastSuccess('Rapor başarıyla oluşturuldu');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toastError(errorMessage);
     } finally {
       setIsGenerating(false);
     }
-  }, [token, includeEvidence]);
+  }, [includeEvidence]);
 
   // Export report
   const exportReport = async () => {
-    if (!token || !report) return;
+    if (!api.isAuthenticated() || !report) return;
 
     try {
       const params = new URLSearchParams();
       params.append('format', exportFormat);
       if (includeEvidence) params.append('includeEvidence', 'true');
 
+      // For file download, we need to use fetch with token manually
+      const token = api.getAccessToken();
       const response = await fetch(`/api/admin/qualiopi/compliance-report?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -106,9 +102,9 @@ export default function ReportsPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success(`Rapor ${exportFormat.toUpperCase()} formatında indirildi`);
+      toastSuccess(`Rapor ${exportFormat.toUpperCase()} formatında indirildi`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to export report');
+      toastError(err instanceof Error ? err.message : 'Failed to export report');
     }
   };
 
