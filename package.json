@@ -16,11 +16,11 @@
     "apps/backend"
   ],
   "scripts": {
-    "dev": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run dev",
-    "build": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run build",
-    "lint": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run lint",
-    "test": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run test",
-    "format": "npm -r --workspace=@bilancompetence/frontend --workspace=@bilancompetence/backend run format"
+    "dev": "npm -r --workspace=@bilancompetence/frontend run dev",
+    "build": "npm -r --workspace=@bilancompetence/frontend run build",
+    "lint": "npm -r --workspace=@bilancompetence/frontend run lint",
+    "test": "npm -r --workspace=@bilancompetence/frontend run test",
+    "format": "npm -r --workspace=@bilancompetence/frontend run format"
   },
   "dependencies": {
     "typescript": "^5.2.0"
