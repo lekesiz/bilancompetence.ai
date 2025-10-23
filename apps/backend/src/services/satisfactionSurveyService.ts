@@ -12,6 +12,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/database';
 import crypto from 'crypto';
+import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import { logger } from '../utils/logger.js';
 
 interface SurveyQuestion {
   number: number;
@@ -151,6 +153,8 @@ export class SatisfactionSurveyService {
    */
   async createSurvey(bilanId: string, beneficiaryId: string): Promise<SurveyInstance> {
     try {
+      validateRequired({ bilanId, beneficiaryId }, ['bilanId', 'beneficiaryId']);
+
       const surveyToken = this.generateSurveyToken();
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30); // Survey expires in 30 days
@@ -168,12 +172,14 @@ export class SatisfactionSurveyService {
         .select()
         .single();
 
-      if (error) throw new Error(`Failed to create survey: ${error.message}`);
+      if (error) {
+        throw new DatabaseError('Failed to create survey', error);
+      }
 
+      logger.info('Survey created successfully', { surveyId: data.id, bilanId, beneficiaryId });
       return data;
     } catch (error) {
-      console.error('Error in createSurvey:', error);
-      throw error;
+      logAndThrow('Failed to create survey', error);
     }
   }
 
@@ -182,6 +188,8 @@ export class SatisfactionSurveyService {
    */
   async sendSurvey(surveyId: string): Promise<void> {
     try {
+      validateRequired({ surveyId }, ['surveyId']);
+
       const { data: survey, error: fetchError } = await this.supabase
         .from('satisfaction_surveys')
         .select(
@@ -199,7 +207,13 @@ export class SatisfactionSurveyService {
         .eq('id', surveyId)
         .single();
 
-      if (fetchError) throw new Error(`Failed to fetch survey: ${fetchError.message}`);
+      if (fetchError) {
+        throw new DatabaseError('Failed to fetch survey', fetchError);
+      }
+
+      if (!survey) {
+        throw new NotFoundError('Survey not found');
+      }
 
       // Mark survey as sent
       const { error: updateError } = await this.supabase
@@ -210,15 +224,16 @@ export class SatisfactionSurveyService {
         })
         .eq('id', surveyId);
 
-      if (updateError) throw new Error(`Failed to update survey status: ${updateError.message}`);
+      if (updateError) {
+        throw new DatabaseError('Failed to update survey status', updateError);
+      }
 
       // TODO: Implement email sending via SendGrid or similar
       // Generate survey link: /survey/${survey.survey_token}
       // Send email to beneficiary
-      console.log(`Survey ${surveyId} sent to beneficiary`);
+      logger.info('Survey sent successfully', { surveyId });
     } catch (error) {
-      console.error('Error in sendSurvey:', error);
-      throw error;
+      logAndThrow('Failed to send survey', error);
     }
   }
 
@@ -227,6 +242,8 @@ export class SatisfactionSurveyService {
    */
   async submitResponse(surveyToken: string, answers: Record<number, any>): Promise<void> {
     try {
+      validateRequired({ surveyToken, answers }, ['surveyToken', 'answers']);
+
       // Find survey by token
       const { data: survey, error: fetchError } = await this.supabase
         .from('satisfaction_surveys')
@@ -234,13 +251,20 @@ export class SatisfactionSurveyService {
         .eq('survey_token', surveyToken)
         .single();
 
-      if (fetchError) throw new Error(`Invalid survey token`);
-      if (!survey) throw new Error(`Survey not found`);
+      if (fetchError) {
+        throw new ValidationError('Invalid survey token');
+      }
+
+      if (!survey) {
+        throw new NotFoundError('Survey not found');
+      }
 
       // Submit responses
       const responses = Object.entries(answers).map(([questionNumber, answer]) => {
         const question = SURVEY_QUESTIONS.find((q) => q.number === parseInt(questionNumber));
-        if (!question) throw new Error(`Invalid question number: ${questionNumber}`);
+        if (!question) {
+          throw new ValidationError(`Invalid question number: ${questionNumber}`);
+        }
 
         const response: any = {
           survey_id: survey.id,
@@ -263,7 +287,9 @@ export class SatisfactionSurveyService {
         .from('survey_responses')
         .insert(responses);
 
-      if (insertError) throw new Error(`Failed to save responses: ${insertError.message}`);
+      if (insertError) {
+        throw new DatabaseError('Failed to save responses', insertError);
+      }
 
       // Mark survey as completed
       const { error: updateError } = await this.supabase
@@ -274,10 +300,13 @@ export class SatisfactionSurveyService {
         })
         .eq('id', survey.id);
 
-      if (updateError) throw new Error(`Failed to update survey status: ${updateError.message}`);
+      if (updateError) {
+        throw new DatabaseError('Failed to update survey status', updateError);
+      }
+
+      logger.info('Survey response submitted successfully', { surveyId: survey.id, questionCount: responses.length });
     } catch (error) {
-      console.error('Error in submitResponse:', error);
-      throw error;
+      logAndThrow('Failed to submit survey response', error);
     }
   }
 
@@ -302,7 +331,9 @@ export class SatisfactionSurveyService {
         .eq('satisfaction_surveys.organization_id', this.organizationId)
         .eq('answer_type', 'SCORE');
 
-      if (error) throw new Error(`Failed to fetch NPS data: ${error.message}`);
+      if (error) {
+        throw new DatabaseError('Failed to fetch NPS data', error);
+      }
 
       const responses = data || [];
       const promoters = responses.filter((r: any) => r.score_value >= 9).length;
@@ -311,6 +342,7 @@ export class SatisfactionSurveyService {
 
       const nps_score = total > 0 ? Math.round(((promoters - detractors) / total) * 100) : 0;
 
+      logger.info('NPS calculated successfully', { nps_score, total_respondents: total });
       return {
         promoters,
         detractors,
@@ -319,8 +351,7 @@ export class SatisfactionSurveyService {
         total_respondents: total,
       };
     } catch (error) {
-      console.error('Error in calculateNPS:', error);
-      throw error;
+      logAndThrow('Failed to calculate NPS', error);
     }
   }
 
@@ -335,7 +366,9 @@ export class SatisfactionSurveyService {
         .select('id, status, bilans (consultant_id)')
         .eq('organization_id', this.organizationId);
 
-      if (surveyError) throw new Error(`Failed to fetch surveys: ${surveyError.message}`);
+      if (surveyError) {
+        throw new DatabaseError('Failed to fetch surveys', surveyError);
+      }
 
       const total_sent = (surveys || []).filter((s: any) => s.status !== 'PENDING').length;
       const total_responded = (surveys || []).filter((s: any) => s.status === 'COMPLETED').length;
@@ -360,7 +393,9 @@ export class SatisfactionSurveyService {
         )
         .eq('satisfaction_surveys.organization_id', this.organizationId);
 
-      if (responseError) throw new Error(`Failed to fetch responses: ${responseError.message}`);
+      if (responseError) {
+        throw new DatabaseError('Failed to fetch responses', responseError);
+      }
 
       const questionsData: QuestionAnalytics[] = SURVEY_QUESTIONS.map((q) => {
         const questionResponses = (responses || []).filter(
@@ -387,6 +422,7 @@ export class SatisfactionSurveyService {
         .filter((q) => q.type === 'SCORE')
         .reduce((sum, q) => sum + (q.average_score || 0), 0) / (questionsData.filter((q) => q.type === 'SCORE').length || 1);
 
+      logger.info('Survey analytics retrieved successfully', { total_sent, total_responded, response_rate });
       return {
         total_sent,
         total_responded,
@@ -397,8 +433,7 @@ export class SatisfactionSurveyService {
         consultant_performance: consultantPerformance,
       };
     } catch (error) {
-      console.error('Error in getAnalytics:', error);
-      throw error;
+      logAndThrow('Failed to get survey analytics', error);
     }
   }
 
@@ -421,7 +456,9 @@ export class SatisfactionSurveyService {
         .eq('organization_id', this.organizationId)
         .eq('status', 'COMPLETED');
 
-      if (error) throw new Error(`Failed to fetch consultant data: ${error.message}`);
+      if (error) {
+        throw new DatabaseError('Failed to fetch consultant data', error);
+      }
 
       const consultantMap = new Map<string, { scores: number[]; name: string }>();
 
@@ -437,15 +474,17 @@ export class SatisfactionSurveyService {
         }
       });
 
-      return Array.from(consultantMap.entries()).map(([id, data]) => ({
+      const performance = Array.from(consultantMap.entries()).map(([id, data]) => ({
         consultant_id: id,
         consultant_name: data.name,
         average_score: data.scores.length > 0 ? Math.round(data.scores.reduce((a, b) => a + b) / data.scores.length) : 0,
         survey_count: data.scores.length,
       }));
+
+      logger.info('Consultant performance retrieved successfully', { consultantCount: performance.length });
+      return performance;
     } catch (error) {
-      console.error('Error in getConsultantPerformance:', error);
-      throw error;
+      logAndThrow('Failed to get consultant performance', error);
     }
   }
 
@@ -469,12 +508,15 @@ export class SatisfactionSurveyService {
         .lt('expires_at', new Date().toISOString())
         .select();
 
-      if (error) throw new Error(`Failed to update expired surveys: ${error.message}`);
+      if (error) {
+        throw new DatabaseError('Failed to update expired surveys', error);
+      }
 
-      return (data || []).length;
+      const expiredCount = (data || []).length;
+      logger.info('Expired surveys marked successfully', { expiredCount });
+      return expiredCount;
     } catch (error) {
-      console.error('Error in markExpiredSurveys:', error);
-      throw error;
+      logAndThrow('Failed to mark expired surveys', error);
     }
   }
 }

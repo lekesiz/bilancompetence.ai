@@ -14,6 +14,8 @@ import { Database } from '../types/database';
 import QualioptService from './qualioptService';
 import SatisfactionSurveyService from './satisfactionSurveyService';
 import DocumentArchiveService from './documentArchiveService';
+import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import { logger } from '../utils/logger.js';
 
 interface IndicatorReport {
   indicator_id: number;
@@ -95,7 +97,13 @@ export class ComplianceReportService {
         .eq('id', this.organizationId)
         .single();
 
-      if (orgError) throw new Error(`Failed to fetch organization: ${orgError.message}`);
+      if (orgError) {
+        throw new DatabaseError('Failed to fetch organization', orgError);
+      }
+
+      if (!org) {
+        throw new NotFoundError('Organization not found');
+      }
 
       // Get compliance metrics
       const complianceMetrics = await this.qualioptService.getCompliancePercentage();
@@ -164,10 +172,14 @@ export class ComplianceReportService {
         },
       };
 
+      logger.info('Compliance report generated successfully', {
+        reportId: report.report_id,
+        compliancePercentage: report.overall_compliance_percentage,
+        auditReady: report.audit_readiness
+      });
       return report;
     } catch (error) {
-      console.error('Error in generateReport:', error);
-      throw error;
+      logAndThrow('Failed to generate compliance report', error);
     }
   }
 
@@ -283,20 +295,20 @@ export class ComplianceReportService {
    */
   async generatePDFReport(report: ComplianceReport): Promise<Buffer> {
     try {
+      validateRequired({ report }, ['report']);
+
       // TODO: Implement PDF generation using pdfkit or similar
       // For now, return a placeholder
-      console.log('PDF report generation requested for report:', report.report_id);
-
       // In production, you would use:
       // const PDFDocument = require('pdfkit');
       // const doc = new PDFDocument();
       // ... add content to doc ...
       // return doc.end();
 
+      logger.info('PDF report generation requested', { reportId: report.report_id });
       return Buffer.from('PDF report placeholder');
     } catch (error) {
-      console.error('Error in generatePDFReport:', error);
-      throw error;
+      logAndThrow('Failed to generate PDF report', error);
     }
   }
 
@@ -305,10 +317,13 @@ export class ComplianceReportService {
    */
   exportAsJSON(report: ComplianceReport): string {
     try {
-      return JSON.stringify(report, null, 2);
+      validateRequired({ report }, ['report']);
+
+      const jsonString = JSON.stringify(report, null, 2);
+      logger.info('Report exported as JSON', { reportId: report.report_id });
+      return jsonString;
     } catch (error) {
-      console.error('Error in exportAsJSON:', error);
-      throw error;
+      logAndThrow('Failed to export report as JSON', error);
     }
   }
 
@@ -317,6 +332,8 @@ export class ComplianceReportService {
    */
   exportAsCSV(report: ComplianceReport): string {
     try {
+      validateRequired({ report }, ['report']);
+
       const rows: string[] = [];
 
       // Header
@@ -343,10 +360,11 @@ export class ComplianceReportService {
         rows.push(`${ind.indicator_id},"${ind.indicator_name}",${ind.status},${ind.evidence_count},"${notes}"`);
       });
 
-      return rows.join('\n');
+      const csvString = rows.join('\n');
+      logger.info('Report exported as CSV', { reportId: report.report_id, rowCount: rows.length });
+      return csvString;
     } catch (error) {
-      console.error('Error in exportAsCSV:', error);
-      throw error;
+      logAndThrow('Failed to export report as CSV', error);
     }
   }
 
@@ -355,6 +373,8 @@ export class ComplianceReportService {
    */
   async storeReport(report: ComplianceReport): Promise<void> {
     try {
+      validateRequired({ report }, ['report']);
+
       const { error } = await this.supabase.from('qualiopi_reports').insert({
         organization_id: this.organizationId,
         report_data: report,
@@ -364,11 +384,13 @@ export class ComplianceReportService {
       });
 
       if (error) {
-        console.warn('Note: qualiopi_reports table may not exist yet', error);
+        logger.warn('Note: qualiopi_reports table may not exist yet', { error: error.message });
+      } else {
+        logger.info('Report stored successfully', { reportId: report.report_id });
       }
     } catch (error) {
-      console.error('Error storing report:', error);
       // Don't throw - this is a non-critical operation
+      logger.error('Error storing report (non-critical)', { error });
     }
   }
 }
