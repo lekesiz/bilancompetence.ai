@@ -172,7 +172,7 @@ export async function getFileMetadata(fileId: string): Promise<FileMetadata | nu
     }
 
     logger.info('File metadata retrieved successfully', { fileId });
-    return data;
+    return data as unknown as FileMetadata;
   } catch (error) {
     logAndThrow('Failed to get file metadata', error);
   }

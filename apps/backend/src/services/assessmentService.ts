@@ -118,7 +118,7 @@ export async function createAssessment(
     throw error;
   }
 
-  return data as Assessment;
+  return data as unknown as Assessment;
 }
 
 /**
@@ -135,7 +135,7 @@ export async function getAssessment(assessmentId: string): Promise<Assessment | 
     throw error;
   }
 
-  return data || null;
+  return (data as unknown as Assessment) || null;
 }
 
 /**
@@ -186,7 +186,7 @@ export async function getUserAssessments(
       throw error;
     }
 
-    return createPaginatedResponse<Assessment>(data || [], pageNum, limitNum, total || 0);
+    return createPaginatedResponse<Assessment>((data as unknown as Assessment[]) || [], pageNum, limitNum, total || 0);
   }
 
   // Fallback: return all assessments without pagination (legacy support)
@@ -200,7 +200,7 @@ export async function getUserAssessments(
     throw error;
   }
 
-  return data || [];
+  return (data as unknown as Assessment[]) || [];
 }
 
 /**
@@ -221,7 +221,7 @@ export async function updateAssessment(assessmentId: string, updates: any) {
     throw error;
   }
 
-  return data as Assessment;
+  return data as unknown as Assessment;
 }
 
 /**
@@ -403,7 +403,8 @@ export async function getUserRecommendations(userId: string) {
     return [];
   }
 
-  const bilanIds = bilans.map(b => b.id);
+  const typedBilans = bilans as any[];
+  const bilanIds = typedBilans.map(b => b.id);
 
   const { data, error } = await supabase
     .from('recommendations')
@@ -515,10 +516,11 @@ export async function createAssessmentDraft(
 
   // Create accompanying draft record
   if (data) {
+    const typedData = data as any;
     await supabase
       .from('assessment_drafts')
       .insert({
-        assessment_id: data.id,
+        assessment_id: typedData.id,
         current_step_number: 0,
         draft_data: {},
         auto_save_enabled: true,
@@ -528,7 +530,7 @@ export async function createAssessmentDraft(
       .single();
   }
 
-  return data as Assessment;
+  return data as unknown as Assessment;
 }
 
 /**
@@ -576,8 +578,9 @@ export async function getAssessmentWithDetails(assessmentId: string) {
     .eq('assessment_id', assessmentId)
     .single();
 
+  const typedAssessment = assessment as any;
   return {
-    ...assessment,
+    ...typedAssessment,
     questions: questions || [],
     answers: answers || [],
     competencies: competencies || [],

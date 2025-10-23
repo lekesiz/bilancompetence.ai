@@ -194,7 +194,8 @@ export async function exportAssessmentResultsToCSV(assessmentId: string): Promis
 
     // Create result rows
     const results = questions.map((q: any) => {
-      const answer = answers?.find((a: any) => a.question_id === q.id);
+      const typedAnswers = (answers as any[]) || [];
+      const answer = typedAnswers.find((a: any) => a.question_id === q.id);
       return {
         question_id: q.id,
         question: q.question,

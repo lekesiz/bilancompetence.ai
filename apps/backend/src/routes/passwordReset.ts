@@ -121,7 +121,8 @@ router.post('/confirm', async (req: Request, res: Response) => {
     }
 
     // Get user
-    const user = await getUserById(resetTokenRecord.user_id);
+    const typedResetToken = resetTokenRecord as any;
+    const user = await getUserById(typedResetToken.user_id);
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -145,7 +146,7 @@ router.post('/confirm', async (req: Request, res: Response) => {
     await updateUserPassword(user.id, newPasswordHash);
 
     // Mark token as used
-    await usePasswordResetToken(resetTokenRecord.id);
+    await usePasswordResetToken(typedResetToken.id);
 
     // Log action
     await createAuditLog(user.id, 'PASSWORD_RESET_COMPLETED', 'user', user.id, null, req.ip);
@@ -186,11 +187,12 @@ router.post('/validate-token', async (req: Request, res: Response) => {
       });
     }
 
+    const typedToken = resetTokenRecord as any;
     return res.status(200).json({
       status: 'success',
       message: 'Token is valid',
       data: {
-        email: (await getUserById(resetTokenRecord.user_id))?.email,
+        email: (await getUserById(typedToken.user_id))?.email,
       },
     });
   } catch (error) {

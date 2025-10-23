@@ -171,15 +171,16 @@ export async function getAssessmentAnalytics(assessmentId: string) {
       throw new DatabaseError('Failed to fetch question count', questionError);
     }
 
+    const typedAssessment = assessment as any;
     const analytics = {
       assessmentId,
-      title: assessment.title,
-      status: assessment.status,
+      title: typedAssessment.title,
+      status: typedAssessment.status,
       totalQuestions: questionCount || 0,
       totalAnswers: answerCount || 0,
       completionPercentage: questionCount ? Math.round((answerCount || 0) / questionCount * 100) : 0,
-      startDate: assessment.start_date,
-      endDate: assessment.end_date,
+      startDate: typedAssessment.start_date,
+      endDate: typedAssessment.end_date,
     };
 
     logger.info('Assessment analytics retrieved', { assessmentId });
@@ -216,7 +217,8 @@ export async function getAssessmentsTimeSeries(userId: string, weeks: number = 1
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 7);
 
-      const count = data.filter((item) => {
+      const typedData = data as any[];
+      const count = typedData.filter((item) => {
         const date = new Date(item.created_at);
         return date >= weekStart && date < weekEnd;
       }).length;
@@ -293,9 +295,10 @@ export async function getRecommendationEffectiveness(userId: string) {
       };
     }
 
-    const completed = recommendations.filter((r) => r.status === 'completed').length;
-    const inProgress = recommendations.filter((r) => r.status === 'in_progress').length;
-    const pending = recommendations.filter((r) => r.status === 'pending').length;
+    const typedRecommendations = recommendations as any[];
+    const completed = typedRecommendations.filter((r) => r.status === 'completed').length;
+    const inProgress = typedRecommendations.filter((r) => r.status === 'in_progress').length;
+    const pending = typedRecommendations.filter((r) => r.status === 'pending').length;
 
     const effectiveness = {
       total: recommendations.length,

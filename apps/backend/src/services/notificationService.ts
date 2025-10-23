@@ -132,7 +132,7 @@ export async function markAsRead(notificationId: string) {
     }
 
     logger.info('Notification marked as read', { notificationId });
-    return data as Notification;
+    return data as unknown as Notification;
   } catch (error) {
     logAndThrow('Failed to mark notification as read', error);
   }

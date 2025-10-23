@@ -95,7 +95,8 @@ router.post('/verify', async (req: Request, res: Response) => {
     }
 
     // Get user
-    const user = await getUserById(verificationTokenRecord.user_id);
+    const typedToken = verificationTokenRecord as any;
+    const user = await getUserById(typedToken.user_id);
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -115,7 +116,7 @@ router.post('/verify', async (req: Request, res: Response) => {
     await verifyUserEmail(user.id);
 
     // Mark token as used
-    await useEmailVerificationToken(verificationTokenRecord.id);
+    await useEmailVerificationToken(typedToken.id);
 
     // Send confirmation email
     await sendAccountConfirmationEmail(user.email, user.full_name);

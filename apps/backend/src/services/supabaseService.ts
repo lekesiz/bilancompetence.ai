@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types';
+import { isValidBilanStatus } from '../types/enums.js';
+import { ValidationError } from '../utils/errorHandler.js';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL || '';
@@ -511,9 +513,6 @@ export async function getAllBilans() {
   return data || [];
 }
 
-import { isValidBilanStatus } from '../types/enums.js';
-import { ValidationError } from '../utils/errorHandler.js';
-
 export async function countBilansByStatus(status: string) {
   // Validate enum
   if (!isValidBilanStatus(status)) {
@@ -554,7 +553,8 @@ export async function getOrganizationStats(organizationId: string) {
       .not('consultant_id', 'is', null);
 
     // Count unique consultants
-    const uniqueConsultants = new Set(bilanData?.map(b => b.consultant_id) || []);
+    const typedBilanData = (bilanData as unknown as BilanRow[]) || [];
+    const uniqueConsultants = new Set(typedBilanData.map(b => b.consultant_id) || []);
 
     // Get completed bilans
     const { count: completedBilans, error: completedError } = await supabase
@@ -570,8 +570,9 @@ export async function getOrganizationStats(organizationId: string) {
       .eq('organization_id', organizationId)
       .not('satisfaction_score', 'is', null);
 
-    const avgSatisfaction = satisfactionData && satisfactionData.length > 0
-      ? satisfactionData.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / satisfactionData.length
+    const typedSatisfactionData = (satisfactionData as unknown as BilanRow[]) || [];
+    const avgSatisfaction = typedSatisfactionData.length > 0
+      ? typedSatisfactionData.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / typedSatisfactionData.length
       : 0;
 
     return {
@@ -605,7 +606,8 @@ export async function getRecentActivityByOrganization(organizationId: string, li
     throw usersError;
   }
 
-  const userIds = users?.map(u => u.id) || [];
+  const typedUsers = (users as unknown as UserRow[]) || [];
+  const userIds = typedUsers.map(u => u.id) || [];
 
   // If no users, return empty array
   if (userIds.length === 0) {

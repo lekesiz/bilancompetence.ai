@@ -1,6 +1,7 @@
 import { supabase } from './supabaseService';
 import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
+import { isValidUserRole } from '../types/enums.js';
 
 /**
  * User Service - User profile management
@@ -46,7 +47,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
     }
 
     logger.info('User profile retrieved successfully', { userId });
-    return data;
+    return data as unknown as UserProfile;
   } catch (error) {
     logAndThrow('Failed to get user profile', error);
   }
@@ -87,7 +88,7 @@ export async function updateUserProfile(
     }
 
     logger.info('User profile updated successfully', { userId, fields: Object.keys(updates) });
-    return data as UserProfile;
+    return data as unknown as UserProfile;
   } catch (error) {
     logAndThrow('Failed to update user profile', error);
   }
@@ -103,6 +104,11 @@ export async function getUsersByRole(role: string, limit: number = 100) {
     const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'];
     if (!validRoles.includes(role)) {
       throw new ValidationError(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+    }
+
+    // Validate role enum
+    if (!isValidUserRole(role)) {
+      throw new ValidationError(`Invalid role: ${role}`);
     }
 
     const { data, error } = await supabase
@@ -172,7 +178,7 @@ export async function updateUserRole(
     }
 
     logger.info('User role updated successfully', { userId, newRole });
-    return data as UserProfile;
+    return data as unknown as UserProfile;
   } catch (error) {
     logAndThrow('Failed to update user role', error);
   }
@@ -297,37 +303,36 @@ export async function getUserStats(userId: string) {
     }
 
     // Get bilans count
-    const { data: bilans, error: bilansError } = await supabase
+    const { data: bilans, count: bilansCount, error: bilansError } = await supabase
       .from('bilans')
-      .select('id')
-      .or(`beneficiary_id.eq.${userId},consultant_id.eq.${userId}`)
-      .count('exact');
+      .select('id', { count: 'exact' })
+      .or(`beneficiary_id.eq.${userId},consultant_id.eq.${userId}`);
 
     if (bilansError) {
       throw new DatabaseError('Failed to fetch assessment count', bilansError);
     }
 
     // Get recommendations count
-    const { data: recommendations, error: recommendationsError } = await supabase
+    const { data: recommendations, count: recommendationsCount, error: recommendationsError } = await supabase
       .from('recommendations')
-      .select('id')
-      .eq('user_id', userId)
-      .count('exact');
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId);
 
     if (recommendationsError) {
       throw new DatabaseError('Failed to fetch recommendation count', recommendationsError);
     }
 
+    const typedUser = user as any; // Type assertion for database row
     const stats = {
-      userId: user.id,
-      email: user.email,
-      full_name: user.full_name,
-      role: user.role,
-      assessmentCount: bilans?.length || 0,
-      recommendationCount: recommendations?.length || 0,
-      lastLogin: user.last_login_at,
-      emailVerified: !!user.email_verified_at,
-      joinedDate: user.created_at,
+      userId: typedUser.id,
+      email: typedUser.email,
+      full_name: typedUser.full_name,
+      role: typedUser.role,
+      assessmentCount: bilansCount || 0,
+      recommendationCount: recommendationsCount || 0,
+      lastLogin: typedUser.last_login_at,
+      emailVerified: !!typedUser.email_verified_at,
+      joinedDate: typedUser.created_at,
     };
 
     logger.info('User statistics retrieved successfully', { userId });
