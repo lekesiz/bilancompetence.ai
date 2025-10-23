@@ -3,22 +3,27 @@
 
 set -e
 
-echo "Setting up monorepo for Vercel..."
-# Vercel expects to find the .next directory in the root (or where it builds from)
-# So we'll build the frontend normally and let Next.js output to apps/frontend/.next
-
 echo "Building frontend..."
-cd apps/frontend && npm run build && cd ../..
+npm run build
 
-echo "Linking Next.js build output..."
-# Create symlink or copy the .next directory to root for Vercel to find it
+echo "Preparing Next.js output for Vercel..."
+# The build output is in apps/frontend/.next
+# Vercel expects it in the current directory for standalone mode
+
+# Wait a moment for the build to fully complete
+sleep 2
+
+# Copy the .next directory to root if it doesn't exist
 if [ ! -d ".next" ]; then
-  ln -s apps/frontend/.next .next || cp -r apps/frontend/.next .next
+  echo "Copying .next directory from apps/frontend/ to root..."
+  cp -r apps/frontend/.next .next
+  echo "Successfully copied .next directory"
 fi
 
-# Copy public directory if it exists
+# Ensure public directory is accessible if it exists
 if [ ! -d "public" ] && [ -d "apps/frontend/public" ]; then
-  ln -s apps/frontend/public ./public || cp -r apps/frontend/public ./public
+  echo "Copying public directory..."
+  cp -r apps/frontend/public ./public
 fi
 
 echo "Build complete!"
