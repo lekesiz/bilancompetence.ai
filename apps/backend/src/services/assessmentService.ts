@@ -102,7 +102,7 @@ export async function createAssessment(
   consultantId?: string
 ) {
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .insert({
       beneficiary_id: beneficiaryId,
       consultant_id: consultantId,
@@ -126,7 +126,7 @@ export async function createAssessment(
  */
 export async function getAssessment(assessmentId: string): Promise<Assessment | null> {
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .select('*')
     .eq('id', assessmentId)
     .single();
@@ -166,7 +166,7 @@ export async function getUserAssessments(
 
     // Get total count
     const { count: total, error: countError } = await supabase
-      .from('bilans')
+      .from('assessments')
       .select('*', { count: 'exact', head: true })
       .eq(column, userId);
 
@@ -176,7 +176,7 @@ export async function getUserAssessments(
 
     // Get paginated data
     const { data, error } = await supabase
-      .from('bilans')
+      .from('assessments')
       .select('*')
       .eq(column, userId)
       .order(sortCol, { ascending: direction === 'asc' })
@@ -191,7 +191,7 @@ export async function getUserAssessments(
 
   // Fallback: return all assessments without pagination (legacy support)
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .select('*')
     .eq(column, userId)
     .order('created_at', { ascending: false });
@@ -208,7 +208,7 @@ export async function getUserAssessments(
  */
 export async function updateAssessment(assessmentId: string, updates: any) {
   const { data, error } = await supabase
-    .from('bilans')
+    .from('assessments')
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
@@ -391,7 +391,7 @@ export async function createRecommendation(
 export async function getUserRecommendations(userId: string) {
   // Get bilans for this user first, then get recommendations
   const { data: bilans, error: bilansError } = await supabase
-    .from('bilans')
+    .from('assessments')
     .select('id')
     .eq('beneficiary_id', userId);
 
