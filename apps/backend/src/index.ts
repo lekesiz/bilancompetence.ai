@@ -39,7 +39,11 @@ import documentsRoutes from './routes/documents.js';
 import paymentsRoutes from './routes/payments.js';
 import wedofRoutes from './routes/wedof.js';
 import pennylaneRoutes from './routes/pennylane.js';
+import twoFactorRoutes from './routes/twoFactor.js';
+import chatEnhancedRoutes from './routes/chatEnhanced.js';
+import sessionsRoutes from './routes/sessions.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
+import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
 import RealtimeService from './services/realtimeService.js';
@@ -82,6 +86,9 @@ app.use('/api/', etagMiddleware);
 
 // Query monitoring for performance tracking
 app.use('/api/', queryMonitoringMiddleware);
+
+// Input sanitization (protection XSS et SQL Injection)
+app.use('/api/', sanitizeInput());
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -139,6 +146,9 @@ app.use('/api/documents', documentsRoutes);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/wedof', wedofRoutes);
 app.use('/api/pennylane', pennylaneRoutes);
+app.use('/api/2fa', twoFactorRoutes);
+app.use('/api/chat-enhanced', chatEnhancedRoutes);
+app.use('/api/sessions', sessionsRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
