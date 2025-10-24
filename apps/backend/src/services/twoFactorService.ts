@@ -1,10 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import * as crypto from 'crypto';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_KEY || ''
-);
+// Make Supabase optional - only initialize if credentials are provided
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 /**
  * Service de gestion de l'authentification à deux facteurs (2FA)
@@ -26,12 +26,15 @@ interface TwoFactorVerification {
  * Génère un secret TOTP pour un utilisateur
  */
 export async function generateTwoFactorSecret(userId: string): Promise<TwoFactorSecret> {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.');
+  }
   try {
     // Générer un secret aléatoire (base32)
     const secret = generateBase32Secret();
     
     // Récupérer les informations utilisateur
-    const { data: user, error: userError } = await supabase
+    const { data: user, error: userError} = await supabase
       .from('users')
       .select('email, full_name')
       .eq('id', userId)
@@ -82,6 +85,9 @@ export async function generateTwoFactorSecret(userId: string): Promise<TwoFactor
  * Active le 2FA après vérification du premier code
  */
 export async function enableTwoFactor(userId: string, token: string): Promise<TwoFactorVerification> {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.');
+  }
   try {
     // Récupérer le secret
     const { data: twoFactorData, error: fetchError } = await supabase
@@ -129,6 +135,9 @@ export async function enableTwoFactor(userId: string, token: string): Promise<Tw
  * Vérifie un code 2FA lors de la connexion
  */
 export async function verifyTwoFactorToken(userId: string, token: string): Promise<TwoFactorVerification> {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.');
+  }
   try {
     // Récupérer le secret et les backup codes
     const { data: twoFactorData, error: fetchError } = await supabase
@@ -184,6 +193,9 @@ export async function verifyTwoFactorToken(userId: string, token: string): Promi
  * Désactive le 2FA pour un utilisateur
  */
 export async function disableTwoFactor(userId: string): Promise<void> {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.');
+  }
   try {
     const { error } = await supabase
       .from('user_two_factor')
@@ -203,6 +215,9 @@ export async function disableTwoFactor(userId: string): Promise<void> {
  * Vérifie si le 2FA est activé pour un utilisateur
  */
 export async function isTwoFactorEnabled(userId: string): Promise<boolean> {
+  if (!supabase) {
+    return false; // If Supabase is not configured, 2FA is not enabled
+  }
   try {
     const { data, error } = await supabase
       .from('user_two_factor')

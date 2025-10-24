@@ -3,15 +3,21 @@ import { Database } from '../types/database.types.js';
 import { isValidBilanStatus } from '../types/enums.js';
 import { ValidationError } from '../utils/errorHandler.js';
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+// Initialize Supabase client (optional - will be null if not configured)
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables');
+export const supabase = (supabaseUrl && supabaseKey) 
+  ? createClient<Database>(supabaseUrl, supabaseKey)
+  : null;
+
+// Helper function to ensure Supabase is configured
+export function ensureSupabaseConfigured() {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+  }
+  return supabase;
 }
-
-export const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 /**
  * User Service - Database operations
