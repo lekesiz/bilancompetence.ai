@@ -61,7 +61,7 @@ const questions: Question[] = [
   }
 ];
 
-export default function PhasePrelim inairePage() {
+export default function PhasePreliminairePage() {
   const router = useRouter();
   const [answers, setAnswers] = useState<{ [key: string]: any }>({});
   const [loading, setLoading] = useState(false);
