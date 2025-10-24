@@ -1,5 +1,5 @@
 import { Parser } from 'json2csv';
-import { supabase } from './supabaseService';
+import { supabase } from './supabaseService.js';
 import { logAndThrow, validateRequired, DatabaseError, NotFoundError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 

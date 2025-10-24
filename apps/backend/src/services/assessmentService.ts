@@ -1,8 +1,8 @@
-import { supabase } from './supabaseService';
+import { supabase } from './supabaseService.js';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { logger } from '../utils/logger';
-import { parsePaginationParams, createPaginatedResponse, parseSortParams, PaginationParams, PaginatedResponse } from '../utils/pagination';
+import { logger } from '../utils/logger.js';
+import { parsePaginationParams, createPaginatedResponse, parseSortParams, PaginationParams, PaginatedResponse } from '../utils/pagination.js';
 
 /**
  * Assessment Service - Bilan management with Wizard support

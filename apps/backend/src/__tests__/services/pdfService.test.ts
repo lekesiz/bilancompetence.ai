@@ -5,7 +5,7 @@ import {
   calculateScoreStatistics,
   getStatusColor,
   formatDate,
-} from '../../services/pdfService';
+} from '../../services/pdfService.js';
 
 // Mock Supabase client
 jest.mock('../../services/supabaseService', () => ({
@@ -36,7 +36,7 @@ jest.mock('../../utils/logger', () => ({
   },
 }));
 
-import { supabase } from '../../services/supabaseService';
+import { supabase } from '../../services/supabaseService.js';
 import { PDFDocument, rgb } from 'pdf-lib';
 
 describe('pdfService', () => {

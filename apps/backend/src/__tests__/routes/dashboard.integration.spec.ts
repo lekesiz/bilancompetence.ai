@@ -11,7 +11,7 @@
 
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
-import dashboardRoutes from '../../routes/dashboard';
+import dashboardRoutes from '../../routes/dashboard.js';
 
 // Mock middleware and services
 const mockAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {

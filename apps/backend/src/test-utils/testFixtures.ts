@@ -11,7 +11,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { createSupabaseMock, createFullSupabaseMock, mockDataBuilders } from './supabaseMockHelper';
+import { createSupabaseMock, createFullSupabaseMock, mockDataBuilders } from './supabaseMockHelper.js';
 
 /**
  * Test database configuration

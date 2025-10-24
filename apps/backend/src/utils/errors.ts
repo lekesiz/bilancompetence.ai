@@ -5,7 +5,7 @@
  * - User-friendly error messages
  */
 
-import { log } from './logger';
+import { log } from './logger.js';
 
 /**
  * Custom API Error class

@@ -15,8 +15,8 @@ import {
   updateUserProfile,
   getUserPreferences,
   updateUserPreferences,
-} from '../../services/userService';
-import { supabase } from '../../services/supabaseService';
+} from '../../services/userService.js';
+import { supabase } from '../../services/supabaseService.js';
 
 // Mock Supabase client
 jest.mock('../../services/supabaseService', () => ({

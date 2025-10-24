@@ -9,8 +9,8 @@
  * @version 1.0.0
  */
 
-import { logger } from '../utils/logger';
-import { supabase } from './supabaseService';
+import { logger } from '../utils/logger.js';
+import { supabase } from './supabaseService.js';
 
 // ============================================================================
 // TYPES & INTERFACES

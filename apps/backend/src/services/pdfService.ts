@@ -1,5 +1,5 @@
 import { PDFDocument, PDFPage, rgb, degrees } from 'pdf-lib';
-import { supabase } from './supabaseService';
+import { supabase } from './supabaseService.js';
 
 /**
  * PDF Service - Assessment Report Generation

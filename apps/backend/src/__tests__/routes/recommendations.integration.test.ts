@@ -1,8 +1,8 @@
 import request from 'supertest';
 import express, { Express } from 'express';
-import recommendationsRouter from '../../routes/recommendations';
-import { authMiddleware } from '../../middleware/auth';
-import * as authService from '../../services/authService';
+import recommendationsRouter from '../../routes/recommendations.js';
+import { authMiddleware } from '../../middleware/auth.js';
+import * as authService from '../../services/authService.js';
 
 /**
  * Integration Tests for Recommendations API Endpoints
@@ -14,7 +14,7 @@ jest.mock('../../services/franceTravailService');
 jest.mock('../../services/authService');
 jest.mock('../../utils/logger');
 
-import { FranceTravailService } from '../../services/franceTravailService';
+import { FranceTravailService } from '../../services/franceTravailService.js';
 
 const mockFranceTravailService = FranceTravailService as jest.MockedClass<
   typeof FranceTravailService

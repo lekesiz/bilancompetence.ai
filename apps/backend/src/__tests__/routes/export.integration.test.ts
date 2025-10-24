@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import exportRouter from '../../routes/export';
+import exportRouter from '../../routes/export.js';
 
 // Mock dependencies
 jest.mock('../../services/supabaseService', () => ({
@@ -54,11 +54,11 @@ jest.mock('../../utils/logger', () => ({
   },
 }));
 
-import { supabase } from '../../services/supabaseService';
+import { supabase } from '../../services/supabaseService.js';
 import {
   generateAssessmentPDF,
   generateUserAssessmentsSummary,
-} from '../../services/pdfService';
+} from '../../services/pdfService.js';
 
 describe('PDF Export Routes Integration Tests', () => {
   const mockAssessmentId = '550e8400-e29b-41d4-a716-446655440000';

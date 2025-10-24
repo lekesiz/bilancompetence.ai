@@ -1,6 +1,6 @@
 import request from 'supertest';
 import express from 'express';
-import authRoutes from '../../routes/auth';
+import authRoutes from '../../routes/auth.js';
 
 describe('Auth Routes Integration Tests', () => {
   let app: express.Application;

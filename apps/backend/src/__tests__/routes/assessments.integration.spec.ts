@@ -12,7 +12,7 @@
 
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
-import assessmentRoutes from '../../routes/assessments';
+import assessmentRoutes from '../../routes/assessments.js';
 
 // Mock middleware
 const mockAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {

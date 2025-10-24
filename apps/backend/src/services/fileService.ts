@@ -1,4 +1,4 @@
-import { supabase } from './supabaseService';
+import { supabase } from './supabaseService.js';
 import { v4 as uuidv4 } from 'uuid';
 import { logAndThrow, validateRequired, DatabaseError, NotFoundError } from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';

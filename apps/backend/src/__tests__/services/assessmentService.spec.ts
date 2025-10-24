@@ -24,8 +24,8 @@ import {
   skillsStepSchema,
   motivationsStepSchema,
   constraintsStepSchema,
-} from '../../services/assessmentService';
-import { supabase } from '../../services/supabaseService';
+} from '../../services/assessmentService.js';
+import { supabase } from '../../services/supabaseService.js';
 
 // Mock Supabase client
 jest.mock('../../services/supabaseService', () => ({

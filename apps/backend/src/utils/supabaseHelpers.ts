@@ -4,9 +4,9 @@
  * Prevents SelectQueryError type mismatches and improves DX
  */
 
-import { supabase } from '../services/supabaseService';
+import { supabase } from '../services/supabaseService.js';
 import { PostgrestError } from '@supabase/supabase-js';
-import { logger } from './logger';
+import { logger } from './logger.js';
 
 /**
  * Custom error classes for better error handling

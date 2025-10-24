@@ -10,7 +10,7 @@ import {
   validateRefreshRequest,
   RegisterRequest,
   LoginRequest,
-} from '../../validators/authValidator';
+} from '../../validators/authValidator.js';
 
 describe('Auth Validators', () => {
   describe('Register Schema', () => {

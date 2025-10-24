@@ -11,7 +11,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types';
+import { Database } from '../types/database.types.js';
 import crypto from 'crypto';
 
 interface ArchivedDocument {
