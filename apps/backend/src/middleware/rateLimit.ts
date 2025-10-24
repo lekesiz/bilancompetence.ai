@@ -10,7 +10,7 @@ export const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  trustProxy: true, // Trust proxy headers for Railway deployment
+  validate: { trustProxy: false }, // Disable trust proxy validation for Railway
   skip: (req) => {
     // Skip rate limiting for health check
     return req.path === '/health';
@@ -28,7 +28,7 @@ export const authLimiter = rateLimit({
   skipSuccessfulRequests: false, // Count failed AND successful requests
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers for Railway deployment
+  validate: { trustProxy: false }, // Disable trust proxy validation for Railway
   keyGenerator: (req) => {
     // Use email as key if available for more accurate limiting
     if (req.body?.email) {
@@ -49,7 +49,7 @@ export const loginLimiter = rateLimit({
   skipSuccessfulRequests: true, // Only count failed requests
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers for Railway deployment
+  validate: { trustProxy: false }, // Disable trust proxy validation for Railway
   keyGenerator: (req) => {
     return req.body?.email || req.ip || 'unknown';
   },
@@ -66,7 +66,7 @@ export const registrationLimiter = rateLimit({
   skipSuccessfulRequests: false,
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers for Railway deployment
+  validate: { trustProxy: false }, // Disable trust proxy validation for Railway
 });
 
 /**
@@ -80,7 +80,7 @@ export const passwordResetLimiter = rateLimit({
   skipSuccessfulRequests: false,
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers for Railway deployment
+  validate: { trustProxy: false }, // Disable trust proxy validation for Railway
   keyGenerator: (req) => {
     return req.body?.email || req.ip || 'unknown';
   },
@@ -97,7 +97,7 @@ export const emailVerificationLimiter = rateLimit({
   skipSuccessfulRequests: false,
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers for Railway deployment
+  validate: { trustProxy: false }, // Disable trust proxy validation for Railway
   keyGenerator: (req) => {
     return req.body?.email || req.ip || 'unknown';
   },
