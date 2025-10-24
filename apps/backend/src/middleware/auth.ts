@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../services/authService.js';
+import { validateJWTPayload, JWTPayload } from './jwtValidation.js';
 
 /**
  * Extend Express Request type to include user
@@ -7,18 +8,13 @@ import { verifyToken } from '../services/authService.js';
 declare global {
   namespace Express {
     interface Request {
-      user?: {
-        id: string;
-        email: string;
-        full_name: string;
-        role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
-      };
+      user?: JWTPayload;
     }
   }
 }
 
 /**
- * Authentication middleware - verify JWT token
+ * Authentication middleware - verify JWT token with Zod validation
  */
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
@@ -41,8 +37,18 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
       });
     }
 
-    req.user = decoded as any;
-    next();
+    // Validate JWT payload with Zod schema
+    try {
+      const validatedPayload = validateJWTPayload(decoded);
+      req.user = validatedPayload;
+      next();
+    } catch (error: any) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Invalid token payload',
+        details: error.errors || error.message,
+      });
+    }
   } catch (error) {
     res.status(401).json({
       status: 'error',
@@ -86,7 +92,12 @@ export function optionalAuthMiddleware(req: Request, res: Response, next: NextFu
       const decoded = verifyToken(token);
 
       if (decoded) {
-        req.user = decoded as any;
+        try {
+          const validatedPayload = validateJWTPayload(decoded);
+          req.user = validatedPayload;
+        } catch (error) {
+          // Invalid payload, continue without authentication
+        }
       }
     }
 
@@ -101,3 +112,4 @@ export function optionalAuthMiddleware(req: Request, res: Response, next: NextFu
 export const authenticateToken = authMiddleware;
 
 export default authMiddleware;
+

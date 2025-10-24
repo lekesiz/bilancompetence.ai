@@ -262,8 +262,8 @@ async function callGeminiAPI(prompt: string): Promise<any> {
       throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    const text = data.candidates[0]?.content?.parts[0]?.text;
+    const data = await response.json() as any;
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) {
       throw new Error('No response from Gemini API');
