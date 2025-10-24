@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const navLinks = [
   { href: '/', label: 'Accueil' },
@@ -23,9 +24,10 @@ export const Header = () => {
           <nav className="hidden md:flex space-x-6 items-center">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href} legacyBehavior>
-                <a className="text-textSecondary hover:text-primary transition-colors duration-300">{link.label}</a>
+                <a className="text-textSecondary hover:text-primary transition-colors duration-300 dark:text-gray-300">{link.label}</a>
               </Link>
             ))}
+            <ThemeToggle />
             <Link href="/login" legacyBehavior>
               <a className="bg-primary text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-opacity-90 transition-all duration-300 shadow-sm">Commencer mon bilan</a>
             </Link>
