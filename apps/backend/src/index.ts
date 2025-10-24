@@ -48,8 +48,13 @@ const realtime = new RealtimeService(server);
 
 // Middleware - Security & Logging
 app.use(helmet());
+// Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
+const corsOrigins = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : ['http://localhost:3000', 'http://localhost:3001'];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:3001'],
+  origin: corsOrigins,
   credentials: true,
 }));
 app.use(morgan('dev'));
