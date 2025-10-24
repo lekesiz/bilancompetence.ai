@@ -201,7 +201,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
           <Link
             href="/dashboard/admin/utilisateurs"
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
@@ -236,6 +236,24 @@ export default function AdminDashboard() {
             <div className="text-3xl mb-2">📈</div>
             <h3 className="text-lg font-semibold text-textPrimary">Statistiques</h3>
             <p className="text-sm text-textSecondary">Analytics détaillées</p>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/integrations/wedof"
+            className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow-md p-6 hover:shadow-lg transition-all text-center border-2 border-purple-200"
+          >
+            <div className="text-3xl mb-2">🎓</div>
+            <h3 className="text-lg font-semibold text-purple-800">Wedof</h3>
+            <p className="text-sm text-purple-600">Gestion formation</p>
+          </Link>
+
+          <Link
+            href="/dashboard/admin/integrations/pennylane"
+            className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-md p-6 hover:shadow-lg transition-all text-center border-2 border-blue-200"
+          >
+            <div className="text-3xl mb-2">💰</div>
+            <h3 className="text-lg font-semibold text-blue-800">Pennylane</h3>
+            <p className="text-sm text-blue-600">Facturation</p>
           </Link>
         </div>
 

@@ -37,6 +37,8 @@ import testsRoutes from './routes/tests.js';
 import aiRoutes from './routes/ai.js';
 import documentsRoutes from './routes/documents.js';
 import paymentsRoutes from './routes/payments.js';
+import wedofRoutes from './routes/wedof.js';
+import pennylaneRoutes from './routes/pennylane.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
@@ -135,6 +137,8 @@ app.use('/api/tests', testsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/payments', paymentsRoutes);
+app.use('/api/wedof', wedofRoutes);
+app.use('/api/pennylane', pennylaneRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
