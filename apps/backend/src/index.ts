@@ -52,7 +52,7 @@ import { logger } from './utils/logger.js';
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // Initialize Socket.io for real-time features
 const realtime = new RealtimeService(server);
