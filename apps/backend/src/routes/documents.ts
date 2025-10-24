@@ -2,8 +2,14 @@ import { Router, Request, Response } from 'express';
 import { createPDFGenerator } from '../services/pdfGenerator.js';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const router = Router();
+
+// ES Module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Ensure documents directory exists
 const DOCUMENTS_DIR = path.join(__dirname, '../../documents');
