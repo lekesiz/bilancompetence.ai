@@ -18,15 +18,15 @@ export default function MentionsLegalesPage() {
               <h2 className="text-2xl font-bold text-gray-800 mb-4">1. Éditeur du Site</h2>
               <div className="bg-blue-50 p-6 rounded-lg">
                 <p className="mb-2"><strong>Raison sociale :</strong> Netz Informatique</p>
-                <p className="mb-2"><strong>Forme juridique :</strong> SARL (Société à Responsabilité Limitée)</p>
-                <p className="mb-2"><strong>Capital social :</strong> 10 000 €</p>
-                <p className="mb-2"><strong>Siège social :</strong> [Adresse complète de Netz Informatique]</p>
-                <p className="mb-2"><strong>SIRET :</strong> [Numéro SIRET]</p>
-                <p className="mb-2"><strong>RCS :</strong> [Ville] [Numéro RCS]</p>
-                <p className="mb-2"><strong>TVA Intracommunautaire :</strong> [Numéro TVA]</p>
-                <p className="mb-2"><strong>Téléphone :</strong> [Numéro de téléphone]</p>
-                <p className="mb-2"><strong>Email :</strong> contact@netz-informatique.fr</p>
-                <p className="mb-2"><strong>Directeur de la publication :</strong> [Nom du directeur]</p>
+                <p className="mb-2"><strong>Forme juridique :</strong> SAS (Société par Actions Simplifiée)</p>
+                <p className="mb-2"><strong>Capital social :</strong> 100,00 € (fixe)</p>
+                <p className="mb-2"><strong>Siège social :</strong> 1 A Route de Schweighouse, 67500 Haguenau, France</p>
+                <p className="mb-2"><strong>SIRET :</strong> 818 347 346 00020</p>
+                <p className="mb-2"><strong>SIREN :</strong> 818 347 346</p>
+                <p className="mb-2"><strong>TVA Intracommunautaire :</strong> FR83 818 347 346</p>
+                <p className="mb-2"><strong>Téléphone :</strong> 03 67 31 02 01</p>
+                <p className="mb-2"><strong>Email :</strong> contact@netzinformatique.fr</p>
+                <p className="mb-2"><strong>Directeur de la publication :</strong> Représentant légal de Netz Informatique</p>
               </div>
             </section>
 
@@ -84,8 +84,8 @@ export default function MentionsLegalesPage() {
               </p>
               <div className="bg-blue-50 p-6 rounded-lg">
                 <p className="mb-2"><strong>Responsable du traitement :</strong> Netz Informatique</p>
-                <p className="mb-2"><strong>Délégué à la Protection des Données (DPO) :</strong> [Nom du DPO]</p>
-                <p className="mb-2"><strong>Contact DPO :</strong> dpo@netz-informatique.fr</p>
+                <p className="mb-2"><strong>Délégué à la Protection des Données (DPO) :</strong> Netz Informatique</p>
+                <p className="mb-2"><strong>Contact DPO :</strong> dpo@netzinformatique.fr</p>
               </div>
               <p className="text-gray-700 mt-4">
                 Pour plus d'informations sur le traitement de vos données personnelles, consultez notre{' '}

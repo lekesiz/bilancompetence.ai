@@ -19,11 +19,11 @@ export default function PolitiqueConfidentialitePage() {
               <h2 className="text-2xl font-bold text-gray-800 mb-4">1. Responsable du Traitement</h2>
               <div className="bg-purple-50 p-6 rounded-lg">
                 <p className="mb-2"><strong>Raison sociale :</strong> Netz Informatique</p>
-                <p className="mb-2"><strong>Adresse :</strong> [Adresse complète]</p>
-                <p className="mb-2"><strong>Email :</strong> contact@netz-informatique.fr</p>
-                <p className="mb-2"><strong>Téléphone :</strong> [Numéro de téléphone]</p>
-                <p className="mb-2"><strong>Délégué à la Protection des Données (DPO) :</strong> [Nom du DPO]</p>
-                <p className="mb-2"><strong>Contact DPO :</strong> dpo@netz-informatique.fr</p>
+                <p className="mb-2"><strong>Adresse :</strong> 1 A Route de Schweighouse, 67500 Haguenau, France</p>
+                <p className="mb-2"><strong>Email :</strong> contact@netzinformatique.fr</p>
+                <p className="mb-2"><strong>Téléphone :</strong> 03 67 31 02 01</p>
+                <p className="mb-2"><strong>Délégué à la Protection des Données (DPO) :</strong> Netz Informatique</p>
+                <p className="mb-2"><strong>Contact DPO :</strong> dpo@netzinformatique.fr</p>
               </div>
             </section>
 

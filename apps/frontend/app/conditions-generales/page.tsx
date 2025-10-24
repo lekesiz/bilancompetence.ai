@@ -360,9 +360,9 @@ export default function ConditionsGeneralesPage() {
                 </p>
                 <div className="space-y-2 text-gray-700">
                   <p><strong>Netz Informatique</strong></p>
-                  <p>Adresse : [Adresse complète]</p>
-                  <p>Email : contact@netz-informatique.fr</p>
-                  <p>Téléphone : [Numéro de téléphone]</p>
+                  <p>Adresse : 1 A Route de Schweighouse, 67500 Haguenau, France</p>
+                  <p>Email : contact@netzinformatique.fr</p>
+                  <p>Téléphone : 03 67 31 02 01</p>
                   <p>Formulaire de contact : <a href="/contact" className="text-blue-600 hover:underline">Page de contact</a></p>
                 </div>
               </div>
