@@ -161,16 +161,38 @@ app.use((req, res) => {
 // For serverless environments (Vercel), only start listening if not in a serverless function context
 const isVercel = !!process.env.VERCEL;
 const isNetlify = !!process.env.NETLIFY;
+const isRailway = !!process.env.RAILWAY_ENVIRONMENT;
 const isServerless = isVercel || isNetlify;
 
-if (!isServerless) {
-  // Traditional Node.js server for local development
-  server.listen(PORT, () => {
-    logger.info(`✅ Backend server running on http://localhost:${PORT}`);
-    logger.info(`📍 Health check: http://localhost:${PORT}/health`);
+// Railway and traditional servers should always start listening
+if (!isServerless || isRailway) {
+  // Start the HTTP server
+  server.listen(PORT, '0.0.0.0', () => {
+    logger.info(`✅ Backend server running on port ${PORT}`);
+    logger.info(`📍 Health check: /health`);
     logger.info(`🚀 Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.info(`🔌 WebSocket server initialized for real-time features`);
     logger.info(`📡 Online users: 0`);
+    if (isRailway) {
+      logger.info(`🚂 Running on Railway`);
+    }
+  });
+  
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    logger.info('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      logger.info('HTTP server closed');
+      process.exit(0);
+    });
+  });
+  
+  process.on('SIGINT', () => {
+    logger.info('SIGINT signal received: closing HTTP server');
+    server.close(() => {
+      logger.info('HTTP server closed');
+      process.exit(0);
+    });
   });
 } else {
   logger.info(`✅ Backend running in serverless mode (${isVercel ? 'Vercel' : 'Netlify'})`);
