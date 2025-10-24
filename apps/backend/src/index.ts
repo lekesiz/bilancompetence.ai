@@ -36,6 +36,7 @@ import parcoursRoutes from './routes/parcours.js';
 import testsRoutes from './routes/tests.js';
 import aiRoutes from './routes/ai.js';
 import documentsRoutes from './routes/documents.js';
+import paymentsRoutes from './routes/payments.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
@@ -133,6 +134,7 @@ app.use('/api/parcours', parcoursRoutes);
 app.use('/api/tests', testsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/payments', paymentsRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
