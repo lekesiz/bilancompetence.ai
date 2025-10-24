@@ -46,6 +46,9 @@ const PORT = process.env.PORT || 3001;
 // Initialize Socket.io for real-time features
 const realtime = new RealtimeService(server);
 
+// Trust proxy - Required for Railway deployment
+app.set('trust proxy', true);
+
 // Middleware - Security & Logging
 app.use(helmet());
 // Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
