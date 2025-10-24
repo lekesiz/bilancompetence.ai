@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createPDFGenerator } from '../services/pdfGenerator';
+import { createPDFGenerator } from '../services/pdfGenerator.js';
 import path from 'path';
 import fs from 'fs';
 

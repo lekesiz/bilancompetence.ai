@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import wedofService from '../services/wedofService';
+import wedofService from '../services/wedofService.js';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { stripeService } from '../services/stripeService';
+import { stripeService } from '../services/stripeService.js';
 
 const router = Router();
 

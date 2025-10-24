@@ -2,8 +2,16 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import StructuredData from '@/components/seo/StructuredData';
 
 export default function HomePage() {
+  // SEO Structured Data
+  const structuredDataRendered = (
+    <>
+      <StructuredData type="Organization" />
+      <StructuredData type="Service" />
+    </>
+  );
   const [stats, setStats] = useState({ users: 0, bilans: 0, satisfaction: 0 });
 
   // Animated counter effect

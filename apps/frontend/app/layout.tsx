@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { QueryProvider } from "@/contexts/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";
@@ -40,14 +41,16 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
       <body className="bg-background text-textPrimary font-sans dark:bg-gray-900 dark:text-gray-100 transition-colors">
-        <ThemeProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <Toaster position="top-right" richColors closeButton />
-          <Analytics />
-          <SpeedInsights />
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <Toaster position="top-right" richColors closeButton />
+            <Analytics />
+            <SpeedInsights />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

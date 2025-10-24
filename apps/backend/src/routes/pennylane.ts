@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import pennylaneService from '../services/pennylaneService';
+import pennylaneService from '../services/pennylaneService.js';
 
 const router = Router();
 
