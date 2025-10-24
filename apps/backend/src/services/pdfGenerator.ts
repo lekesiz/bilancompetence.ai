@@ -84,7 +84,7 @@ export class PDFGeneratorService {
     this.doc.moveDown(0.5);
 
     if (testResults.mbti) {
-      this.doc.fontSize(12).text('MBTI - Type de personnalité', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('MBTI - Type de personnalité').font('Helvetica');
       this.doc.fontSize(11)
         .text(`Type : ${testResults.mbti.type}`, { indent: 20 })
         .text(`Description : ${testResults.mbti.description}`, { indent: 20 });
@@ -92,7 +92,7 @@ export class PDFGeneratorService {
     }
 
     if (testResults.riasec) {
-      this.doc.fontSize(12).text('RIASEC - Intérêts professionnels', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('RIASEC - Intérêts professionnels').font('Helvetica');
       this.doc.fontSize(11)
         .text(`Codes dominants : ${testResults.riasec.codes.join(', ')}`, { indent: 20 })
         .text(`Centres d'intérêt : ${testResults.riasec.topInterests.join(', ')}`, { indent: 20 });
@@ -100,7 +100,7 @@ export class PDFGeneratorService {
     }
 
     if (testResults.competences && testResults.competences.length > 0) {
-      this.doc.fontSize(12).text('Compétences identifiées', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('Compétences identifiées').font('Helvetica');
       testResults.competences.forEach(comp => {
         this.doc.fontSize(11).text(`• ${comp}`, { indent: 20 });
       });
@@ -108,7 +108,7 @@ export class PDFGeneratorService {
     }
 
     if (testResults.valeurs && testResults.valeurs.length > 0) {
-      this.doc.fontSize(12).text('Valeurs professionnelles', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('Valeurs professionnelles').font('Helvetica');
       testResults.valeurs.forEach(val => {
         this.doc.fontSize(11).text(`• ${val}`, { indent: 20 });
       });
@@ -121,7 +121,7 @@ export class PDFGeneratorService {
     this.doc.moveDown(0.5);
 
     if (actionPlan.objectives && actionPlan.objectives.length > 0) {
-      this.doc.fontSize(12).text('Objectifs professionnels', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('Objectifs professionnels').font('Helvetica');
       actionPlan.objectives.forEach((obj, index) => {
         this.doc.fontSize(11).text(`${index + 1}. ${obj}`, { indent: 20 });
       });
@@ -129,12 +129,12 @@ export class PDFGeneratorService {
     }
 
     if (actionPlan.actions && actionPlan.actions.length > 0) {
-      this.doc.fontSize(12).text('Actions prioritaires', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('Actions prioritaires').font('Helvetica');
       this.doc.moveDown(0.5);
       actionPlan.actions.forEach((action, index) => {
         const priorityColor = action.priority === 'high' ? 'red' : action.priority === 'medium' ? 'orange' : 'green';
         this.doc.fontSize(11)
-          .text(`${index + 1}. ${action.title}`, { bold: true, indent: 20 })
+          .font('Helvetica-Bold').text(`${index + 1}. ${action.title}`, { indent: 20 }).font('Helvetica')
           .text(`   ${action.description}`, { indent: 20 })
           .text(`   Échéance : ${action.deadline} | Priorité : ${action.priority.toUpperCase()}`, { indent: 20 });
         this.doc.moveDown(0.5);
@@ -143,7 +143,7 @@ export class PDFGeneratorService {
 
     if (actionPlan.metiers && actionPlan.metiers.length > 0) {
       this.doc.moveDown();
-      this.doc.fontSize(12).text('Métiers recommandés', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('Métiers recommandés').font('Helvetica');
       actionPlan.metiers.forEach(metier => {
         this.doc.fontSize(11).text(`• ${metier}`, { indent: 20 });
       });
@@ -151,7 +151,7 @@ export class PDFGeneratorService {
 
     if (actionPlan.formations && actionPlan.formations.length > 0) {
       this.doc.moveDown();
-      this.doc.fontSize(12).text('Formations suggérées', { bold: true });
+      this.doc.fontSize(12).font('Helvetica-Bold').text('Formations suggérées').font('Helvetica');
       actionPlan.formations.forEach(formation => {
         this.doc.fontSize(11).text(`• ${formation}`, { indent: 20 });
       });
@@ -179,7 +179,7 @@ export class PDFGeneratorService {
     this.doc.pipe(fs.createWriteStream(filepath));
 
     // Header with logo placeholder
-    this.doc.fontSize(20).text('ATTESTATION DE RÉALISATION', { align: 'center', bold: true });
+    this.doc.fontSize(20).font('Helvetica-Bold').text('ATTESTATION DE RÉALISATION', { align: 'center' }).font('Helvetica');
     this.doc.moveDown();
     this.doc.fontSize(16).text('Bilan de Compétences', { align: 'center' });
     this.doc.moveDown(3);
@@ -194,7 +194,7 @@ export class PDFGeneratorService {
 
     this.doc.fontSize(14).text(
       `${user.firstName} ${user.lastName}`,
-      { align: 'center', bold: true }
+      { align: 'center' }
     );
 
     this.doc.moveDown();
@@ -233,7 +233,7 @@ export class PDFGeneratorService {
 
     this.doc.fontSize(11)
       .text('Le consultant', { align: 'left' })
-      .text(consultant.name, { align: 'left', bold: true });
+      .font('Helvetica-Bold').text(consultant.name, { align: 'left' }).font('Helvetica');
 
     // Footer
     this.addFooter();
@@ -286,11 +286,11 @@ export class PDFGeneratorService {
       const lowPriority = actionPlan.actions.filter(a => a.priority === 'low');
 
       if (highPriority.length > 0) {
-        this.doc.fontSize(12).text('Priorité HAUTE', { bold: true, color: 'red' });
+        this.doc.fontSize(12).fillColor('red').font('Helvetica-Bold').text('Priorité HAUTE').font('Helvetica').fillColor('black');
         highPriority.forEach((action, index) => {
           this.doc.fontSize(11)
             .fillColor('black')
-            .text(`${index + 1}. ${action.title}`, { bold: true, indent: 20 })
+            .font('Helvetica-Bold').text(`${index + 1}. ${action.title}`, { indent: 20 }).font('Helvetica')
             .text(`   ${action.description}`, { indent: 20 })
             .text(`   Échéance : ${action.deadline}`, { indent: 20 });
           this.doc.moveDown(0.5);
@@ -299,11 +299,11 @@ export class PDFGeneratorService {
       }
 
       if (mediumPriority.length > 0) {
-        this.doc.fontSize(12).fillColor('orange').text('Priorité MOYENNE', { bold: true });
+        this.doc.fontSize(12).fillColor('orange').font('Helvetica-Bold').text('Priorité MOYENNE').font('Helvetica');
         mediumPriority.forEach((action, index) => {
           this.doc.fontSize(11)
             .fillColor('black')
-            .text(`${index + 1}. ${action.title}`, { bold: true, indent: 20 })
+            .font('Helvetica-Bold').text(`${index + 1}. ${action.title}`, { indent: 20 }).font('Helvetica')
             .text(`   ${action.description}`, { indent: 20 })
             .text(`   Échéance : ${action.deadline}`, { indent: 20 });
           this.doc.moveDown(0.5);
@@ -312,11 +312,11 @@ export class PDFGeneratorService {
       }
 
       if (lowPriority.length > 0) {
-        this.doc.fontSize(12).fillColor('green').text('Priorité BASSE', { bold: true });
+        this.doc.fontSize(12).fillColor('green').font('Helvetica-Bold').text('Priorité BASSE').font('Helvetica');
         lowPriority.forEach((action, index) => {
           this.doc.fontSize(11)
             .fillColor('black')
-            .text(`${index + 1}. ${action.title}`, { bold: true, indent: 20 })
+            .font('Helvetica-Bold').text(`${index + 1}. ${action.title}`, { indent: 20 }).font('Helvetica')
             .text(`   ${action.description}`, { indent: 20 })
             .text(`   Échéance : ${action.deadline}`, { indent: 20 });
           this.doc.moveDown(0.5);
@@ -359,7 +359,7 @@ export class PDFGeneratorService {
     this.doc
       .fontSize(18)
       .fillColor('#3B82F6')
-      .text(title, { align: 'center', bold: true });
+      .font('Helvetica-Bold').text(title, { align: 'center' }).font('Helvetica');
     
     this.doc
       .moveTo(50, this.doc.y + 10)

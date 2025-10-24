@@ -97,4 +97,7 @@ export function optionalAuthMiddleware(req: Request, res: Response, next: NextFu
   }
 }
 
+// Backward compatibility alias
+export const authenticateToken = authMiddleware;
+
 export default authMiddleware;

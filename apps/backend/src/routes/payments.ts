@@ -154,8 +154,8 @@ router.get('/subscription/:subscriptionId', async (req: Request, res: Response) 
     res.json({
       subscriptionId: subscription.id,
       status: subscription.status,
-      currentPeriodEnd: subscription.current_period_end,
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      currentPeriodEnd: (subscription as any).current_period_end,
+      cancelAtPeriodEnd: (subscription as any).cancel_at_period_end,
       items: subscription.items.data,
     });
 
