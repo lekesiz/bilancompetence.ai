@@ -11,7 +11,7 @@ import { defineConfig, devices } from '@playwright/test';
  * - Groupe E: Sécurité (JWT, RLS, audit)
  */
 export default defineConfig({
-  testDir: '../../tests/e2e',
+  testDir: './tests/e2e',
   
   /* Run tests in files in parallel */
   fullyParallel: true,

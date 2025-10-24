@@ -1,0 +1,111 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "BilanCompetence.ai" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e7]:
+        - link "Accueil" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Qu'est-ce qu'un bilan ?" [ref=e9] [cursor=pointer]:
+          - /url: /quest-ce-quun-bilan
+        - link "Méthodologie" [ref=e10] [cursor=pointer]:
+          - /url: /methodologie
+        - link "Financement" [ref=e11] [cursor=pointer]:
+          - /url: /financement
+        - link "Bilan à distance" [ref=e12] [cursor=pointer]:
+          - /url: /bilan-a-distance
+        - link "FAQ" [ref=e13] [cursor=pointer]:
+          - /url: /faq
+        - link "Contact" [ref=e14] [cursor=pointer]:
+          - /url: /contact
+        - generic [ref=e15]:
+          - button "Clair" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+          - button "Sombre" [ref=e23] [cursor=pointer]:
+            - img [ref=e24]
+          - button "Système" [ref=e26] [cursor=pointer]:
+            - img [ref=e28]
+        - link "Commencer mon bilan" [ref=e30] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e31]:
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - heading "Welcome Back" [level=1] [ref=e35]
+        - paragraph [ref=e36]: Sign in to your BilanCompetence.AI account
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - generic [ref=e39]: Email Address
+          - textbox "you@example.com" [ref=e40]
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: Password
+            - link "Forgot password?" [ref=e44] [cursor=pointer]:
+              - /url: /forgot-password
+          - generic [ref=e45]:
+            - textbox "••••••••••••" [ref=e46]
+            - button "👁" [ref=e47] [cursor=pointer]
+        - generic [ref=e48]:
+          - checkbox "Remember me" [ref=e49]
+          - generic [ref=e50]: Remember me
+        - button "Sign In" [ref=e51] [cursor=pointer]
+      - paragraph [ref=e52]:
+        - text: Don't have an account?
+        - link "Create one here" [ref=e53] [cursor=pointer]:
+          - /url: /register
+      - generic [ref=e54]:
+        - paragraph [ref=e55]: "Demo Credentials:"
+        - paragraph [ref=e56]: "Email: demo@example.com"
+        - paragraph [ref=e57]: "Password: Demo@123456"
+  - contentinfo [ref=e58]:
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - heading "BilanCompetence.ai" [level=3] [ref=e62]
+          - paragraph [ref=e63]: Votre partenaire pour l'évolution professionnelle et le développement des compétences.
+        - generic [ref=e64]:
+          - heading "Liens rapides" [level=4] [ref=e65]
+          - list [ref=e66]:
+            - listitem [ref=e67]:
+              - link "Accueil" [ref=e68] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e69]:
+              - link "Qu'est-ce qu'un bilan ?" [ref=e70] [cursor=pointer]:
+                - /url: /quest-ce-quun-bilan
+            - listitem [ref=e71]:
+              - link "Méthodologie" [ref=e72] [cursor=pointer]:
+                - /url: /methodologie
+            - listitem [ref=e73]:
+              - link "Financement" [ref=e74] [cursor=pointer]:
+                - /url: /financement
+            - listitem [ref=e75]:
+              - link "Bilan à distance" [ref=e76] [cursor=pointer]:
+                - /url: /bilan-a-distance
+        - generic [ref=e77]:
+          - heading "Informations légales" [level=4] [ref=e78]
+          - list [ref=e79]:
+            - listitem [ref=e80]:
+              - link "Mentions légales" [ref=e81] [cursor=pointer]:
+                - /url: /mentions-legales
+            - listitem [ref=e82]:
+              - link "Politique de confidentialité" [ref=e83] [cursor=pointer]:
+                - /url: /politique-confidentialite
+            - listitem [ref=e84]:
+              - link "Conditions générales" [ref=e85] [cursor=pointer]:
+                - /url: /conditions-generales
+        - generic [ref=e86]:
+          - heading "Contact" [level=4] [ref=e87]
+          - generic [ref=e88]:
+            - paragraph [ref=e89]: 1a route de schweighouse, 67500 Haguenau
+            - paragraph [ref=e90]:
+              - link "03 67 31 02 01" [ref=e91] [cursor=pointer]:
+                - /url: tel:0367310201
+            - paragraph [ref=e92]:
+              - link "contact@netzinformatique.fr" [ref=e93] [cursor=pointer]:
+                - /url: mailto:contact@netzinformatique.fr
+      - paragraph [ref=e95]: © 2025 BilanCompetence.ai - Tous droits réservés. Site réalisé par Formation Haguenau.
+  - region "Notifications alt+T"
+  - alert [ref=e96]
+```

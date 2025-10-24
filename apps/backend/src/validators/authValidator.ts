@@ -16,14 +16,20 @@ export const registerSchema = z.object({
     .regex(/[a-z]/, 'Password must contain lowercase letter')
     .regex(/\d/, 'Password must contain digit')
     .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Password must contain special character'),
-  full_name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(255, 'Name too long'),
   role: z
     .enum(['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'])
     .default('BENEFICIARY'),
-});
+})
+.and(
+  z.union([
+    z.object({ full_name: z.string().min(2, 'Name must be at least 2 characters').max(255, 'Name too long') }),
+    z.object({ fullName: z.string().min(2, 'Name must be at least 2 characters').max(255, 'Name too long') }),
+  ])
+)
+.transform((data) => ({
+  ...data,
+  full_name: 'full_name' in data ? data.full_name : (data as any).fullName,
+}));
 
 export type RegisterRequest = z.infer<typeof registerSchema>;
 
