@@ -32,6 +32,9 @@ import chatRoutes from './routes/chat.js';
 import recommendationsRoutes from './routes/recommendations.js';
 import qualiopisRoutes from './routes/qualiopi.js';
 import schedulingRoutes from './routes/scheduling.js';
+import parcoursRoutes from './routes/parcours.js';
+import testsRoutes from './routes/tests.js';
+import aiRoutes from './routes/ai.js';
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
@@ -125,6 +128,9 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/admin/qualiopi', qualiopisRoutes);
 app.use('/api/scheduling', schedulingRoutes);
+app.use('/api/parcours', parcoursRoutes);
+app.use('/api/tests', testsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
