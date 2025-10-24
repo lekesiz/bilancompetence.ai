@@ -1,8 +1,10 @@
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+// Make Stripe optional - only initialize if API key is provided
+const stripeApiKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeApiKey ? new Stripe(stripeApiKey, {
   apiVersion: '2025-09-30.clover',
-});
+}) : null;
 
 export interface PaymentIntentData {
   amount: number;
@@ -18,12 +20,19 @@ export interface SubscriptionData {
 }
 
 export class StripeService {
+  private ensureStripeConfigured() {
+    if (!stripe) {
+      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.');
+    }
+  }
+
   /**
    * Create a payment intent
    */
   async createPaymentIntent(data: PaymentIntentData): Promise<Stripe.PaymentIntent> {
+    this.ensureStripeConfigured();
     try {
-      const paymentIntent = await stripe.paymentIntents.create({
+      const paymentIntent = await stripe!.paymentIntents.create({
         amount: data.amount,
         currency: data.currency,
         customer: data.customerId,
@@ -44,9 +53,10 @@ export class StripeService {
    * Create or retrieve a Stripe customer
    */
   async createOrGetCustomer(email: string, name: string, userId: string): Promise<Stripe.Customer> {
+    this.ensureStripeConfigured();
     try {
       // Check if customer already exists
-      const existingCustomers = await stripe.customers.list({
+      const existingCustomers = await stripe!.customers.list({
         email,
         limit: 1,
       });
@@ -56,7 +66,7 @@ export class StripeService {
       }
 
       // Create new customer
-      const customer = await stripe.customers.create({
+      const customer = await stripe!.customers.create({
         email,
         name,
         metadata: {
@@ -75,8 +85,9 @@ export class StripeService {
    * Create a subscription
    */
   async createSubscription(data: SubscriptionData): Promise<Stripe.Subscription> {
+    this.ensureStripeConfigured();
     try {
-      const subscription = await stripe.subscriptions.create({
+      const subscription = await stripe!.subscriptions.create({
         customer: data.customerId,
         items: [{ price: data.priceId }],
         metadata: data.metadata || {},
@@ -96,8 +107,9 @@ export class StripeService {
    * Cancel a subscription
    */
   async cancelSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+    this.ensureStripeConfigured();
     try {
-      const subscription = await stripe.subscriptions.cancel(subscriptionId);
+      const subscription = await stripe!.subscriptions.cancel(subscriptionId);
       return subscription;
     } catch (error: any) {
       console.error('Stripe cancel subscription error:', error);
@@ -109,8 +121,9 @@ export class StripeService {
    * Get subscription details
    */
   async getSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+    this.ensureStripeConfigured();
     try {
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const subscription = await stripe!.subscriptions.retrieve(subscriptionId);
       return subscription;
     } catch (error: any) {
       console.error('Stripe get subscription error:', error);
@@ -125,8 +138,9 @@ export class StripeService {
     subscriptionId: string,
     updates: Stripe.SubscriptionUpdateParams
   ): Promise<Stripe.Subscription> {
+    this.ensureStripeConfigured();
     try {
-      const subscription = await stripe.subscriptions.update(subscriptionId, updates);
+      const subscription = await stripe!.subscriptions.update(subscriptionId, updates);
       return subscription;
     } catch (error: any) {
       console.error('Stripe update subscription error:', error);
@@ -138,10 +152,11 @@ export class StripeService {
    * Construct webhook event
    */
   constructWebhookEvent(payload: string | Buffer, signature: string): Stripe.Event {
+    this.ensureStripeConfigured();
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 
     try {
-      const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      const event = stripe!.webhooks.constructEvent(payload, signature, webhookSecret);
       return event;
     } catch (error: any) {
       console.error('Stripe webhook error:', error);
@@ -153,8 +168,9 @@ export class StripeService {
    * Get customer portal session
    */
   async createCustomerPortalSession(customerId: string, returnUrl: string): Promise<Stripe.BillingPortal.Session> {
+    this.ensureStripeConfigured();
     try {
-      const session = await stripe.billingPortal.sessions.create({
+      const session = await stripe!.billingPortal.sessions.create({
         customer: customerId,
         return_url: returnUrl,
       });
@@ -176,8 +192,9 @@ export class StripeService {
     cancelUrl: string;
     metadata?: Record<string, string>;
   }): Promise<Stripe.Checkout.Session> {
+    this.ensureStripeConfigured();
     try {
-      const session = await stripe.checkout.sessions.create({
+      const session = await stripe!.checkout.sessions.create({
         customer: params.customerId,
         mode: 'subscription',
         payment_method_types: ['card'],
@@ -203,8 +220,9 @@ export class StripeService {
    * List all prices
    */
   async listPrices(): Promise<Stripe.Price[]> {
+    this.ensureStripeConfigured();
     try {
-      const prices = await stripe.prices.list({
+      const prices = await stripe!.prices.list({
         active: true,
         expand: ['data.product'],
       });
@@ -220,8 +238,9 @@ export class StripeService {
    * Get invoice
    */
   async getInvoice(invoiceId: string): Promise<Stripe.Invoice> {
+    this.ensureStripeConfigured();
     try {
-      const invoice = await stripe.invoices.retrieve(invoiceId);
+      const invoice = await stripe!.invoices.retrieve(invoiceId);
       return invoice;
     } catch (error: any) {
       console.error('Stripe get invoice error:', error);
@@ -233,8 +252,9 @@ export class StripeService {
    * List customer invoices
    */
   async listCustomerInvoices(customerId: string, limit: number = 10): Promise<Stripe.Invoice[]> {
+    this.ensureStripeConfigured();
     try {
-      const invoices = await stripe.invoices.list({
+      const invoices = await stripe!.invoices.list({
         customer: customerId,
         limit,
       });
@@ -244,6 +264,13 @@ export class StripeService {
       console.error('Stripe list invoices error:', error);
       throw new Error(`Failed to list invoices: ${error.message}`);
     }
+  }
+
+  /**
+   * Check if Stripe is configured
+   */
+  isConfigured(): boolean {
+    return stripe !== null;
   }
 }
 
