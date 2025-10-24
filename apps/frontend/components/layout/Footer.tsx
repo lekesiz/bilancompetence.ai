@@ -10,7 +10,7 @@ const quickLinks = [
 
 const legalLinks = [
   { href: '/mentions-legales', label: 'Mentions légales' },
-  { href: '/politique-de-confidentialite', label: 'Politique de confidentialité' },
+  { href: '/politique-confidentialite', label: 'Politique de confidentialité' },
   { href: '/conditions-generales', label: 'Conditions générales' },
 ];
 
