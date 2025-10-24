@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 // Reusable component for feature cards
-const FeatureCard = ({ icon, title, children }) => (
+const FeatureCard = ({ icon, title, children }: { icon: string; title: string; children: React.ReactNode }) => (
   <div className="bg-surface p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
     <div className="text-4xl text-primary mb-4">{icon}</div>
     <h3 className="text-xl font-bold font-heading mb-2">{title}</h3>
@@ -10,7 +10,7 @@ const FeatureCard = ({ icon, title, children }) => (
 );
 
 // Reusable component for testimonial cards
-const TestimonialCard = ({ quote, author, title }) => (
+const TestimonialCard = ({ quote, author, title }: { quote: string; author: string; title: string }) => (
   <div className="bg-gray-100 p-6 rounded-lg italic">
     <p className="text-textSecondary mb-4">"{quote}"</p>
     <p className="font-semibold text-textPrimary">{author}</p>
