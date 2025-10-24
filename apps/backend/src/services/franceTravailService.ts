@@ -273,7 +273,7 @@ class FranceTravailService {
         throw new Error(`France Travail authentication failed: ${response.statusText}`);
       }
 
-      const data: TokenResponse = await response.json();
+      const data = await response.json() as TokenResponse;
 
       // Cache the token
       this.accessToken = data.access_token;
