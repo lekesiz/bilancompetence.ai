@@ -41,7 +41,7 @@ import wedofRoutes from './routes/wedof.js';
 import pennylaneRoutes from './routes/pennylane.js';
 import twoFactorRoutes from './routes/twoFactor.js';
 // import chatEnhancedRoutes from './routes/chatEnhanced.js'; // Temporarily disabled until Supabase is configured
-import sessionsRoutes from './routes/sessions.js';
+// import sessionsRoutes from './routes/sessions.js'; // Temporarily disabled until Supabase is configured
 import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
 import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
@@ -148,7 +148,7 @@ app.use('/api/wedof', wedofRoutes);
 app.use('/api/pennylane', pennylaneRoutes);
 app.use('/api/2fa', twoFactorRoutes);
 // app.use('/api/chat-enhanced', chatEnhancedRoutes); // Temporarily disabled until Supabase is configured
-app.use('/api/sessions', sessionsRoutes);
+// app.use('/api/sessions', sessionsRoutes); // Temporarily disabled until Supabase is configured
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
