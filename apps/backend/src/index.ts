@@ -79,6 +79,8 @@ app.use(cors({
       /^https:\/\/.*\.vercel\.app$/,  // All Vercel deployments
       /^http:\/\/localhost:\d+$/,      // Local development
       /^https:\/\/bilancompetence\.ai$/,  // Production domain
+      /^https:\/\/app\.bilancompetence\.ai$/,  // Production app subdomain
+      /^https:\/\/.*\.bilancompetence\.ai$/,  // All subdomains
     ];
     
     const isAllowed = allowedPatterns.some(pattern => pattern.test(origin)) || 
