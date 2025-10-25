@@ -39,6 +39,18 @@ beforeEach(() => {
   });
 
   app.use('/api/recommendations', recommendationsRouter);
+
+  // Clear all mocks before each test
+  jest.clearAllMocks();
+
+  // Setup default mock implementations
+  mockFranceTravailService.mockImplementation(() => ({
+    getUserCompetencies: jest.fn(),
+    mapCompetenciesToRomeCodes: jest.fn(),
+    searchJobsByRomeCode: jest.fn(),
+    scoreJobMatches: jest.fn(),
+    saveJobToUserList: jest.fn(),
+  } as any));
 });
 
 // ============================================

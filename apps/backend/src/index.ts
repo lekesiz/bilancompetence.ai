@@ -65,7 +65,9 @@ app.use(helmet());
 // Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
 const corsOrigins = process.env.CORS_ORIGIN 
   ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-  : ['http://localhost:3000', 'http://localhost:3001'];
+  : process.env.NODE_ENV === 'production'
+    ? ['https://bilancompetence.vercel.app', 'https://bilancompetence-git-main-lekesizs-projects.vercel.app']
+    : ['http://localhost:3000', 'http://localhost:3001'];
 
 app.use(cors({
   origin: corsOrigins,

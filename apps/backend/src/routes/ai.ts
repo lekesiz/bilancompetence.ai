@@ -1,8 +1,31 @@
 import { Router, Request, Response } from 'express';
+import multer from 'multer';
+import pdfParse from 'pdf-parse';
+import mammoth from 'mammoth';
 import { authenticateToken } from '../middleware/auth.js';
 import { supabase } from '../config/supabase.js';
 
 const router = Router();
+
+// Configure multer for file uploads (in-memory storage)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max file size
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF and Word documents are allowed.'));
+    }
+  }
+});
 
 // Use Gemini API (from environment variables)
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -10,14 +33,36 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
 
 /**
  * POST /api/ai/analyze-cv
- * Analyze CV and extract competences
+ * Analyze CV and extract competences from uploaded file
  */
-router.post('/analyze-cv', authenticateToken, async (req: Request, res: Response) => {
+router.post('/analyze-cv', authenticateToken, upload.single('cv'), async (req: Request, res: Response) => {
   try {
-    const { cv_text, assessment_id } = req.body;
+    const file = req.file;
+    const { assessment_id } = req.body;
 
-    if (!cv_text) {
-      return res.status(400).json({ error: 'CV text is required' });
+    if (!file) {
+      return res.status(400).json({ error: 'CV file is required' });
+    }
+
+    // Extract text from uploaded file
+    let cv_text = '';
+    try {
+      if (file.mimetype === 'application/pdf') {
+        const pdfData = await pdfParse(file.buffer);
+        cv_text = pdfData.text;
+      } else if (file.mimetype.includes('word') || file.mimetype.includes('document')) {
+        const result = await mammoth.extractRawText({ buffer: file.buffer });
+        cv_text = result.value;
+      } else {
+        return res.status(400).json({ error: 'Unsupported file type' });
+      }
+    } catch (extractError) {
+      console.error('Error extracting text from file:', extractError);
+      return res.status(500).json({ error: 'Failed to extract text from CV file' });
+    }
+
+    if (!cv_text || cv_text.trim().length === 0) {
+      return res.status(400).json({ error: 'CV file appears to be empty or unreadable' });
     }
 
     // Call Gemini API for CV analysis

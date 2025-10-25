@@ -2,7 +2,7 @@
  * Scheduling Service Unit Tests
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from '@jest/globals';
 import SchedulingService from '../../services/schedulingService';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,34 +13,34 @@ const mockBeneficiaryId = uuidv4();
 const mockBilanId = uuidv4();
 
 // Mock Supabase service
-vi.mock('../../services/supabaseService.js', () => ({
+jest.mock('../../services/supabaseService.js', () => ({
   supabase: {
-    from: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnThis(),
-        is: vi.fn().mockReturnThis(),
-        order: vi.fn().mockReturnThis(),
-        gte: vi.fn().mockReturnThis(),
-        lte: vi.fn().mockReturnThis(),
-        neq: vi.fn().mockReturnThis(),
-        in: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnThis(),
+        is: jest.fn().mockReturnThis(),
+        order: jest.fn().mockReturnThis(),
+        gte: jest.fn().mockReturnThis(),
+        lte: jest.fn().mockReturnThis(),
+        neq: jest.fn().mockReturnThis(),
+        in: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
           data: { id: mockBilanId, status: 'ACTIVE', phase: 'INVESTIGATION' },
           error: null,
         }),
       }),
-      insert: vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({
+      insert: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
             data: { id: uuidv4() },
             error: null,
           }),
         }),
       }),
-      update: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnThis(),
-        select: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({
+      update: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
             data: { id: uuidv4(), status: 'CONFIRMED' },
             error: null,
           }),
