@@ -85,7 +85,7 @@ export function WorkHistoryStep({
           onChange={(e) => handleChange('recentJob', e.target.value)}
           placeholder="Job title, company, duration, main responsibilities..."
           rows={4}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-xs text-gray-500 mt-1">Minimum 10 characters required</p>
       </div>
@@ -100,7 +100,7 @@ export function WorkHistoryStep({
           onChange={(e) => handleChange('previousPositions', e.target.value)}
           placeholder="Format: Job Title | Company | Years&#10;e.g., Senior Developer | TechCorp | 2020-2023&#10;Developer | StartupX | 2018-2020"
           rows={5}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-xs text-gray-500 mt-1">Minimum 10 characters required</p>
       </div>
@@ -115,7 +115,7 @@ export function WorkHistoryStep({
           onChange={(e) => handleChange('importantAspects', e.target.value)}
           placeholder="e.g., challenging projects, team collaboration, continuous learning..."
           rows={3}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-xs text-gray-500 mt-1">Optional</p>
       </div>
@@ -127,7 +127,7 @@ export function WorkHistoryStep({
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
+            : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >
         {isSaving ? 'Saving Step...' : 'Save & Continue'}

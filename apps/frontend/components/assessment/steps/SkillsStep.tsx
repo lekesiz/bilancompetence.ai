@@ -167,7 +167,7 @@ export function SkillsStep({
                     }}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition border-2 ${
                       competencies.find(c => c.skillName === skill.name)
-                        ? 'bg-blue-600 text-white border-blue-600'
+                        ? 'bg-primary-600 text-white border-blue-600'
                         : 'bg-gray-100 text-gray-700 border-gray-200 hover:border-blue-400'
                     }`}
                   >
@@ -264,7 +264,7 @@ export function SkillsStep({
           }}
           placeholder="e.g., specific frameworks, tools, or skills..."
           rows={3}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-xs text-gray-500 mt-1">Optional</p>
       </div>
@@ -276,7 +276,7 @@ export function SkillsStep({
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
+            : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >
         {isSaving ? 'Saving Step...' : 'Save & Continue'}

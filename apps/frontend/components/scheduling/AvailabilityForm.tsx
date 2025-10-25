@@ -142,7 +142,7 @@ export default function AvailabilityForm({
 
       {/* Slot Type Selection */}
       <div className="grid grid-cols-2 gap-4">
-        <label className="flex items-center p-4 border-2 border-gray-200 rounded cursor-pointer hover:border-blue-500 transition">
+        <label className="flex items-center p-4 border-2 border-gray-200 rounded cursor-pointer hover:border-primary-500 transition">
           <input
             type="radio"
             value="ONE_TIME"
@@ -156,7 +156,7 @@ export default function AvailabilityForm({
           </span>
         </label>
 
-        <label className="flex items-center p-4 border-2 border-gray-200 rounded cursor-pointer hover:border-blue-500 transition">
+        <label className="flex items-center p-4 border-2 border-gray-200 rounded cursor-pointer hover:border-primary-500 transition">
           <input
             type="radio"
             value="RECURRING"
@@ -179,7 +179,7 @@ export default function AvailabilityForm({
             <input
               type="date"
               {...register('date_specific')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
             {errors.date_specific && (
               <p className="text-red-500 text-sm mt-1">{errors.date_specific.message}</p>
@@ -190,7 +190,7 @@ export default function AvailabilityForm({
             <label className="block text-sm font-medium text-gray-700 mb-2">Day of Week</label>
             <select
               {...register('day_of_week', { valueAsNumber: true })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="">Select a day</option>
               {DAYS_OF_WEEK.map((day) => (
@@ -211,7 +211,7 @@ export default function AvailabilityForm({
               <input
                 type="date"
                 {...register('recurring_until')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               <p className="text-gray-500 text-sm mt-1">
                 Leave empty for ongoing recurrence
@@ -228,7 +228,7 @@ export default function AvailabilityForm({
           <input
             type="time"
             {...register('start_time')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           {errors.start_time && (
             <p className="text-red-500 text-sm mt-1">{errors.start_time.message}</p>
@@ -240,7 +240,7 @@ export default function AvailabilityForm({
           <input
             type="time"
             {...register('end_time')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           {errors.end_time && (
             <p className="text-red-500 text-sm mt-1">{errors.end_time.message}</p>
@@ -262,7 +262,7 @@ export default function AvailabilityForm({
         <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
         <select
           {...register('timezone')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           {TIMEZONES.map((tz) => (
             <option key={tz} value={tz}>
@@ -282,7 +282,7 @@ export default function AvailabilityForm({
           min="1"
           max="5"
           {...register('max_concurrent_bookings', { valueAsNumber: true })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-gray-500 text-sm mt-1">
           How many sessions can be scheduled at the same time
@@ -313,7 +313,7 @@ export default function AvailabilityForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition"
+          className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:bg-gray-400 transition"
         >
           {isSubmitting ? 'Saving...' : initialSlot ? 'Update Slot' : 'Create Slot'}
         </button>

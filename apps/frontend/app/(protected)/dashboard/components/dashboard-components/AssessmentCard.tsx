@@ -32,7 +32,7 @@ const statusConfig = {
     label: 'Completed',
     color: 'bg-green-100 text-green-800 border-green-200',
     icon: <CheckCircle className="w-4 h-4" />,
-    progressColor: 'bg-green-500',
+    progressColor: 'bg-success-500',
   },
 };
 

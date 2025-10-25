@@ -32,19 +32,19 @@ export default function Tabs({ tabs, defaultTab, onChange, variant = 'default' }
     default: {
       container: 'border-b border-gray-200',
       tab: 'px-4 py-2 border-b-2 transition',
-      active: 'border-blue-600 text-blue-600',
+      active: 'border-blue-600 text-primary-600',
       inactive: 'border-transparent text-gray-600 hover:text-gray-900',
     },
     pills: {
       container: 'gap-2 mb-4',
       tab: 'px-4 py-2 rounded-lg transition',
-      active: 'bg-blue-600 text-white',
+      active: 'bg-primary-600 text-white',
       inactive: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
     },
     underline: {
       container: 'border-b border-gray-200 space-x-0',
       tab: 'px-4 py-3 border-b-2 text-sm font-medium transition',
-      active: 'border-blue-600 text-blue-600',
+      active: 'border-blue-600 text-primary-600',
       inactive: 'border-transparent text-gray-600 hover:text-gray-900',
     },
   };

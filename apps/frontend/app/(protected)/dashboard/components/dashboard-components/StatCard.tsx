@@ -27,9 +27,9 @@ const variantStyles = {
   success: {
     bg: 'bg-green-50',
     border: 'border-green-200',
-    icon: 'text-green-600',
+    icon: 'text-success-600',
     value: 'text-green-800',
-    title: 'text-green-600',
+    title: 'text-success-600',
   },
   warning: {
     bg: 'bg-yellow-50',
@@ -101,7 +101,7 @@ export function StatCard({
               {trend && (
                 <div
                   className={`flex items-center text-sm font-semibold ${
-                    trend.isPositive ? 'text-green-600' : 'text-red-600'
+                    trend.isPositive ? 'text-success-600' : 'text-red-600'
                   }`}
                 >
                   {trend.isPositive ? (

@@ -205,7 +205,7 @@ export default function AdminSettingsPage() {
                         {apiKey.status === 'active' && (
                           <button
                             onClick={() => handleTest(apiKey.name)}
-                            className="text-green-600 hover:text-green-700 text-sm font-medium"
+                            className="text-success-600 hover:text-green-700 text-sm font-medium"
                           >
                             Tester
                           </button>

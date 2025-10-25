@@ -47,7 +47,7 @@ export function ConsultantDashboard() {
       {/* Quick Stats */}
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <Target className="w-6 h-6 text-green-600" />
+          <Target className="w-6 h-6 text-success-600" />
           Overview
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -107,7 +107,7 @@ export function ConsultantDashboard() {
       <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <Users className="w-6 h-6 text-green-600" />
+            <Users className="w-6 h-6 text-success-600" />
             Your Clients
           </h2>
           <button className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">

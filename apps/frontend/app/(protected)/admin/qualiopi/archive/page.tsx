@@ -153,7 +153,7 @@ export default function ArchivePage() {
           </div>
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-2">Expiring Soon</h3>
-            <p className="text-3xl font-bold text-orange-600">{stats.documents_expiring_soon}</p>
+            <p className="text-3xl font-bold text-warning-600">{stats.documents_expiring_soon}</p>
           </div>
         </div>
       )}
@@ -245,7 +245,7 @@ export default function ArchivePage() {
                     href={doc.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-green-600 hover:text-green-900"
+                    className="text-success-600 hover:text-green-900"
                   >
                     Download
                   </a>

@@ -112,7 +112,7 @@ export default function SavedJobsPage() {
             <p className="text-purple-100 text-sm">Total Saved</p>
             <p className="text-3xl font-bold text-white">{stats.total}</p>
           </div>
-          <div className="bg-green-500 bg-opacity-50 rounded-lg p-4">
+          <div className="bg-success-500 bg-opacity-50 rounded-lg p-4">
             <p className="text-green-100 text-sm">Applied</p>
             <p className="text-3xl font-bold text-white">{stats.applied}</p>
           </div>

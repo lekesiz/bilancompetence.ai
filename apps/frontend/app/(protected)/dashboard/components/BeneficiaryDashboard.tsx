@@ -168,7 +168,7 @@ export function BeneficiaryDashboard() {
       {recommendations.length > 0 && (
         <div>
           <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-green-600" />
+            <TrendingUp className="w-6 h-6 text-success-600" />
             AI-Powered Recommendations
           </h2>
           <RecommendationsPanel

@@ -45,7 +45,7 @@ export function JobRecommendationCard({
   const getScoreColor = (score?: number) => {
     if (!score) return 'bg-gray-100 text-gray-700';
     if (score >= 90) return 'bg-green-100 text-green-700';
-    if (score >= 75) return 'bg-blue-100 text-blue-700';
+    if (score >= 75) return 'bg-blue-100 text-primary-700';
     if (score >= 60) return 'bg-yellow-100 text-yellow-700';
     return 'bg-orange-100 text-orange-700';
   };
@@ -53,7 +53,7 @@ export function JobRecommendationCard({
   const getScoreBorderColor = (score?: number) => {
     if (!score) return 'border-gray-300';
     if (score >= 90) return 'border-green-300 hover:border-green-500';
-    if (score >= 75) return 'border-blue-300 hover:border-blue-500';
+    if (score >= 75) return 'border-blue-300 hover:border-primary-500';
     if (score >= 60) return 'border-yellow-300 hover:border-yellow-500';
     return 'border-orange-300 hover:border-orange-500';
   };
@@ -95,7 +95,7 @@ export function JobRecommendationCard({
         <div className="flex flex-wrap gap-3">
           {job.location && (
             <div className="flex items-center gap-2">
-              <span className="text-blue-600">📍</span>
+              <span className="text-primary-600">📍</span>
               <span>{job.location}</span>
             </div>
           )}
@@ -164,7 +164,7 @@ export function JobRecommendationCard({
             ${
               isSaved
                 ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
             }
             disabled:opacity-50 disabled:cursor-not-allowed
           `}

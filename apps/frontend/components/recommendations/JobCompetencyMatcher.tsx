@@ -51,7 +51,7 @@ export function JobCompetencyMatcher({
       case 'Expert':
         return 'bg-green-100 text-green-700';
       case 'Advanced':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-blue-100 text-primary-700';
       case 'Intermediate':
         return 'bg-yellow-100 text-yellow-700';
       default:
@@ -84,12 +84,12 @@ export function JobCompetencyMatcher({
         {/* Overall Match */}
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
           <p className="text-sm text-gray-600 mb-2">Overall Match</p>
-          <div className="text-3xl font-bold text-blue-600">
+          <div className="text-3xl font-bold text-primary-600">
             {job.matchScore || matchPercentage}%
           </div>
           <div className="mt-2 bg-white rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full"
+              className="bg-primary-600 h-2 rounded-full"
               style={{ width: `${job.matchScore || matchPercentage}%` }}
             />
           </div>

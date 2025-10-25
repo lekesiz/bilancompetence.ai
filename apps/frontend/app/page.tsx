@@ -44,10 +44,10 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Gradient */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
+      <section className="relative bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 text-white overflow-hidden">
         {/* Animated Background Shapes */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
@@ -69,7 +69,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Link 
                 href="/register"
-                className="group relative px-8 py-4 bg-white text-blue-700 rounded-lg font-bold text-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-2"
+                className="group relative px-8 py-4 bg-white text-primary-700 rounded-lg font-bold text-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-2"
               >
                 Commencer mon bilan
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,16 +121,16 @@ export default function HomePage() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 transform hover:scale-105 transition-transform duration-300">
-              <div className="text-5xl font-extrabold text-blue-600 mb-2">{stats.users.toLocaleString()}+</div>
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 transform hover:scale-105 transition-transform duration-300">
+              <div className="text-5xl font-extrabold text-primary-600 mb-2">{stats.users.toLocaleString()}+</div>
               <div className="text-lg text-gray-700 font-medium">Bénéficiaires accompagnés</div>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 transform hover:scale-105 transition-transform duration-300">
-              <div className="text-5xl font-extrabold text-green-600 mb-2">{stats.bilans.toLocaleString()}+</div>
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-success-50 to-success-50 transform hover:scale-105 transition-transform duration-300">
+              <div className="text-5xl font-extrabold text-success-600 mb-2">{stats.bilans.toLocaleString()}+</div>
               <div className="text-lg text-gray-700 font-medium">Bilans complétés</div>
             </div>
-            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-yellow-50 to-orange-50 transform hover:scale-105 transition-transform duration-300">
-              <div className="text-5xl font-extrabold text-orange-600 mb-2">{stats.satisfaction}%</div>
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-warning-50 to-warning-50 transform hover:scale-105 transition-transform duration-300">
+              <div className="text-5xl font-extrabold text-warning-600 mb-2">{stats.satisfaction}%</div>
               <div className="text-lg text-gray-700 font-medium">Taux de satisfaction</div>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
             <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -477,7 +477,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/register"
-              className="px-10 py-5 bg-white text-blue-700 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl"
+              className="px-10 py-5 bg-white text-primary-700 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl"
             >
               Commencer gratuitement
             </Link>

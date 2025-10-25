@@ -168,7 +168,7 @@ export default function SessionCard({
                 href={session.meeting_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-blue-600 hover:underline"
+                className="text-xs text-primary-600 hover:underline"
               >
                 Join Link
               </a>
@@ -252,7 +252,7 @@ export default function SessionCard({
                 <button
                   onClick={() => handleComplete(true)}
                   disabled={isLoading}
-                  className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:bg-gray-400 transition"
+                  className="flex-1 px-3 py-2 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 disabled:bg-gray-400 transition"
                 >
                   Completed
                 </button>
@@ -318,7 +318,7 @@ export default function SessionCard({
             <button
               onClick={handleRate}
               disabled={isLoading || !rating}
-              className="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:bg-gray-400 transition"
+              className="w-full px-3 py-2 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 disabled:bg-gray-400 transition"
             >
               Submit Rating
             </button>
@@ -340,7 +340,7 @@ export default function SessionCard({
             {session.status === 'SCHEDULED' && consultantMode && (
               <button
                 onClick={() => setShowActions(true)}
-                className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition"
+                className="flex-1 px-3 py-2 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition"
               >
                 Action
               </button>
@@ -349,7 +349,7 @@ export default function SessionCard({
             {session.status === 'CONFIRMED' && consultantMode && (
               <button
                 onClick={() => setShowActions(true)}
-                className="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition"
+                className="flex-1 px-3 py-2 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition"
               >
                 Complete
               </button>

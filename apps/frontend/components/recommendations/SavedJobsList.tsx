@@ -42,7 +42,7 @@ export function SavedJobsList({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'interested':
-        return 'bg-blue-100 text-blue-700 border-blue-300';
+        return 'bg-blue-100 text-primary-700 border-blue-300';
       case 'applied':
         return 'bg-green-100 text-green-700 border-green-300';
       case 'saved':
@@ -88,11 +88,11 @@ export function SavedJobsList({
         <h3 className="text-lg font-semibold text-blue-900 mb-2">
           No Saved Jobs Yet
         </h3>
-        <p className="text-blue-700 text-sm mb-4">
+        <p className="text-primary-700 text-sm mb-4">
           Save jobs that interest you to keep track of opportunities and manage your application process.
         </p>
         <button
-          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all"
+          className="inline-block px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium transition-all"
           onClick={() => window.history.back()}
         >
           Browse Jobs
@@ -128,7 +128,7 @@ export function SavedJobsList({
                     px-4 py-2 rounded-full font-medium transition-all text-sm
                     ${
                       selectedStatus === status
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-primary-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }
                   `}
@@ -226,7 +226,7 @@ export function SavedJobsList({
                     onChange={(e) =>
                       handleStatusChange(job.id, e.target.value as 'interested' | 'applied' | 'saved')
                     }
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="saved">Mark as Saved</option>
                     <option value="interested">Mark as Interested</option>
@@ -236,7 +236,7 @@ export function SavedJobsList({
                   {/* Details Button */}
                   <button
                     onClick={() => onViewDetails?.(job)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all text-sm"
+                    className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium transition-all text-sm"
                   >
                     View Details
                   </button>
@@ -271,7 +271,7 @@ export function SavedJobsList({
           <h4 className="font-semibold text-blue-900 mb-4">📊 Application Statistics</h4>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-2xl font-bold text-primary-600">
                 {savedJobs.filter((j) => j.status === 'applied').length}
               </p>
               <p className="text-sm text-blue-800 mt-1">Applied</p>

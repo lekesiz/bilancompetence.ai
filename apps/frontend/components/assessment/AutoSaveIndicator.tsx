@@ -57,7 +57,7 @@ export function AutoSaveIndicator({
 
   if (isSaving) {
     return (
-      <div className="flex items-center gap-2 text-sm text-blue-600">
+      <div className="flex items-center gap-2 text-sm text-primary-600">
         <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
         <span className="font-medium">Saving...</span>
       </div>

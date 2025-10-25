@@ -100,7 +100,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
               type="text"
               value={formData.full_name}
               onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                 errors.full_name ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Enter your full name"
@@ -145,7 +145,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                 errors.phone ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Enter your phone number"
@@ -169,7 +169,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               rows={4}
-              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none ${
                 errors.bio ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Tell us about yourself..."
@@ -204,7 +204,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
         <button
           type="submit"
           disabled={!hasChanges() || isSubmitting || loading}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? (
             <div className="flex items-center">

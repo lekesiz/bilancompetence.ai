@@ -127,7 +127,7 @@ export default function BeneficiaryBookingForm({
           </label>
           <select
             {...register('session_type')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
             <option value="INITIAL_MEETING">Initial Meeting</option>
             <option value="FOLLOW_UP">Follow-up</option>
@@ -146,7 +146,7 @@ export default function BeneficiaryBookingForm({
           </label>
           <select
             {...register('meeting_format')}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
             <option value="VIDEO">Video Call</option>
             <option value="PHONE">Phone Call</option>
@@ -167,7 +167,7 @@ export default function BeneficiaryBookingForm({
               type="text"
               {...register('meeting_location')}
               placeholder="e.g., Office Building A, Room 301"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
             {errors.meeting_location && (
               <p className="text-red-600 text-sm mt-1">{errors.meeting_location.message}</p>
@@ -184,7 +184,7 @@ export default function BeneficiaryBookingForm({
               type="url"
               {...register('meeting_link')}
               placeholder="https://meet.google.com/..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
             {errors.meeting_link && (
               <p className="text-red-600 text-sm mt-1">{errors.meeting_link.message}</p>
@@ -201,7 +201,7 @@ export default function BeneficiaryBookingForm({
             {...register('beneficiary_notes')}
             placeholder="Share any topics you'd like to discuss or questions you have..."
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
           />
           {errors.beneficiary_notes && (
             <p className="text-red-600 text-sm mt-1">{errors.beneficiary_notes.message}</p>
@@ -217,7 +217,7 @@ export default function BeneficiaryBookingForm({
             {...register('preparation_materials')}
             placeholder="Any documents or materials you'd like to prepare or bring..."
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
           />
           {errors.preparation_materials && (
             <p className="text-red-600 text-sm mt-1">{errors.preparation_materials.message}</p>

@@ -139,19 +139,19 @@ export function JobDetailsModal({
               <div className="bg-gray-50 rounded-lg p-4">
                 <ul className="space-y-2 text-gray-700">
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">→</span>
+                    <span className="text-primary-600 mt-1">→</span>
                     <span>Relevant experience in {job.title.split(' ')[0].toLowerCase()}</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">→</span>
+                    <span className="text-primary-600 mt-1">→</span>
                     <span>Strong communication and problem-solving skills</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">→</span>
+                    <span className="text-primary-600 mt-1">→</span>
                     <span>Team collaboration and project management experience</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-600 mt-1">→</span>
+                    <span className="text-primary-600 mt-1">→</span>
                     <span>Willingness to continuously learn and adapt</span>
                   </li>
                 </ul>
@@ -221,7 +221,7 @@ export function JobDetailsModal({
                 ${
                   isSaved
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-primary-600 text-white hover:bg-primary-700'
                 }
                 disabled:opacity-50 disabled:cursor-not-allowed
               `}

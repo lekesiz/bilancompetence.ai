@@ -18,7 +18,7 @@ const typeConfig = {
     label: 'Training',
     color: 'bg-green-50 border-green-200 text-green-800',
     icon: <BookOpen className="w-5 h-5" />,
-    bgColor: 'bg-green-500',
+    bgColor: 'bg-success-500',
   },
   SKILL_IMPROVEMENT: {
     label: 'Skill Improvement',

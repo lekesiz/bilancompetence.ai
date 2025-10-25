@@ -68,7 +68,7 @@ export function StepNavigation({
             className={`px-8 py-2 rounded-lg font-medium transition ${
               isLastStep || disableNext || isLoading || isSaving
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
             }`}
           >
             {isSaving ? 'Saving...' : 'Next →'}

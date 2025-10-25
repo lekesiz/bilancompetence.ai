@@ -195,7 +195,7 @@ const FaqPage = () => {
               {openIndex === index && (
                 <div className="px-6 pb-5">
                   <div className="flex items-start border-t pt-4">
-                    <span className="text-green-600 font-bold text-xl mr-4">R</span>
+                    <span className="text-success-600 font-bold text-xl mr-4">R</span>
                     <p className="text-textSecondary leading-relaxed">
                       {item.answer}
                     </p>

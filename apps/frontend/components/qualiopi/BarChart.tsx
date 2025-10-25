@@ -42,7 +42,7 @@ export default function BarChart({
               <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                 <div
                   className={`h-full transition-all duration-500 ${
-                    item.color || 'bg-blue-600'
+                    item.color || 'bg-primary-600'
                   }`}
                   style={{ width: `${(item.value / maxValue) * 100}%` }}
                   role="progressbar"
@@ -76,7 +76,7 @@ export default function BarChart({
                 <div className="flex items-end h-64 w-full justify-center">
                   <div
                     className={`w-full max-w-16 transition-all duration-500 rounded-t ${
-                      item.color || 'bg-blue-600'
+                      item.color || 'bg-primary-600'
                     } hover:opacity-80 cursor-pointer`}
                     style={{ height: `${percentage}%` }}
                     role="progressbar"

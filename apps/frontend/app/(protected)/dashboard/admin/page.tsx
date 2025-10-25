@@ -186,11 +186,11 @@ export default function AdminDashboard() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-textSecondary">Indicateurs</span>
-                <span className="font-semibold text-green-600">32/32 ✓</span>
+                <span className="font-semibold text-success-600">32/32 ✓</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-textSecondary">Conformité</span>
-                <span className="font-semibold text-green-600">100%</span>
+                <span className="font-semibold text-success-600">100%</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-textSecondary">Dernier Audit</span>
@@ -321,7 +321,7 @@ function StatCard({
           {icon}
         </div>
         {trend && (
-          <span className="text-green-600 text-sm font-semibold">
+          <span className="text-success-600 text-sm font-semibold">
             {trend}
           </span>
         )}

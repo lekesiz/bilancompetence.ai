@@ -97,7 +97,7 @@ export default function SurveysPage() {
   }
 
   const getNPSCategory = (score: number) => {
-    if (score >= 50) return { label: '🟢 Mükemmel', color: 'text-green-600' };
+    if (score >= 50) return { label: '🟢 Mükemmel', color: 'text-success-600' };
     if (score >= 0) return { label: '🟡 İyi', color: 'text-yellow-600' };
     return { label: '🔴 İyileştirilmesi Gerekli', color: 'text-red-600' };
   };
@@ -157,7 +157,7 @@ export default function SurveysPage() {
               <div className="text-4xl font-bold text-green-900 mt-2">
                 {analytics.average_satisfaction}/10
               </div>
-              <div className="text-xs text-green-600 mt-2">
+              <div className="text-xs text-success-600 mt-2">
                 {Array(Math.round(analytics.average_satisfaction))
                   .fill('⭐')
                   .join('')}
@@ -170,7 +170,7 @@ export default function SurveysPage() {
               <div className="text-4xl font-bold text-orange-900 mt-2">
                 {analytics.total_sent}
               </div>
-              <div className="text-xs text-orange-600 mt-2">Anket</div>
+              <div className="text-xs text-warning-600 mt-2">Anket</div>
             </div>
 
             {/* Total Responded */}

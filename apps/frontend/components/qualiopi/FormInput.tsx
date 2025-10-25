@@ -34,10 +34,10 @@ export default function FormInput({
   const baseClasses = `w-full rounded-lg transition border focus:outline-none focus:ring-2`;
 
   const variantClasses = {
-    default: `border-gray-300 bg-white focus:border-blue-500 focus:ring-blue-500 ${
+    default: `border-gray-300 bg-white focus:border-primary-500 focus:ring-primary-500 ${
       error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
     }`,
-    filled: `border-0 bg-gray-100 focus:bg-white focus:border-blue-500 focus:ring-blue-500 ${
+    filled: `border-0 bg-gray-100 focus:bg-white focus:border-primary-500 focus:ring-primary-500 ${
       error ? 'bg-red-50 focus:ring-red-500' : ''
     }`,
   };

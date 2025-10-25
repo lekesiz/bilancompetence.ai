@@ -67,7 +67,7 @@ export function AdminDashboard() {
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Status</p>
-            <p className="text-lg font-semibold text-green-600">Active</p>
+            <p className="text-lg font-semibold text-success-600">Active</p>
           </div>
           <div>
             <p className="text-sm text-gray-600 mb-1">Storage Used</p>
@@ -210,13 +210,13 @@ export function AdminDashboard() {
           <h3 className="font-semibold text-gray-800 mb-4">QUALIOPI Certification</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-5 h-5 rounded-full bg-success-500 flex items-center justify-center text-white text-xs font-bold">
                 ✓
               </div>
               <span className="text-gray-800">Data Protection & Privacy</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-5 h-5 rounded-full bg-success-500 flex items-center justify-center text-white text-xs font-bold">
                 ✓
               </div>
               <span className="text-gray-800">Assessment Quality</span>

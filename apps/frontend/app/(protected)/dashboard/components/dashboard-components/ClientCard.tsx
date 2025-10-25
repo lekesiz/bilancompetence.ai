@@ -106,7 +106,7 @@ export function ClientCard({
         {onMessage && (
           <button
             onClick={onMessage}
-            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-green-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-success-600 hover:bg-green-50 rounded-lg font-medium transition-colors text-sm"
           >
             <MessageCircle className="w-4 h-4" />
             Message

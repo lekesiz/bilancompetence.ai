@@ -211,7 +211,7 @@ export default function ConsultantSchedulePage() {
             onClick={() => setActiveTab(id)}
             className={`px-4 py-3 font-medium flex items-center gap-2 border-b-2 transition ${
               activeTab === id
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-blue-600 text-primary-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -231,7 +231,7 @@ export default function ConsultantSchedulePage() {
                 setEditingSlot(null);
                 setShowAvailabilityForm(!showAvailabilityForm);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
             >
               <Plus className="w-5 h-5" />
               Create Slot
@@ -275,7 +275,7 @@ export default function ConsultantSchedulePage() {
           {scheduledBookings.length > 0 && (
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-primary-500 rounded-full"></div>
                 Pending Confirmation ({scheduledBookings.length})
               </h2>
               <SessionList

@@ -86,7 +86,7 @@ export function JobRecommendationsList({
         <h3 className="text-lg font-semibold text-blue-900 mb-2">
           No Job Recommendations Yet
         </h3>
-        <p className="text-blue-700 text-sm mb-4">
+        <p className="text-primary-700 text-sm mb-4">
           Complete your assessment to get personalized job recommendations based on your skills and preferences.
         </p>
       </div>
@@ -108,7 +108,7 @@ export function JobRecommendationsList({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'score' | 'salary' | 'date')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="score">Match Score (High to Low)</option>
               <option value="salary">Salary (High to Low)</option>
@@ -126,7 +126,7 @@ export function JobRecommendationsList({
               placeholder="Search location..."
               value={filters.location || ''}
               onChange={(e) => handleFilterChange({ location: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
@@ -142,7 +142,7 @@ export function JobRecommendationsList({
               onChange={(e) =>
                 handleFilterChange({ minSalary: e.target.value ? parseInt(e.target.value) : undefined })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
@@ -158,7 +158,7 @@ export function JobRecommendationsList({
               onChange={(e) =>
                 handleFilterChange({ maxSalary: e.target.value ? parseInt(e.target.value) : undefined })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
         </div>
@@ -170,7 +170,7 @@ export function JobRecommendationsList({
               setFilters({ minSalary: undefined, maxSalary: undefined, location: '' });
               onFiltersChange?.({ minSalary: undefined, maxSalary: undefined, location: '' });
             }}
-            className="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium underline"
+            className="mt-4 text-sm text-primary-600 hover:text-primary-700 font-medium underline"
           >
             Clear all filters
           </button>
@@ -217,7 +217,7 @@ export function JobRecommendationsList({
             disabled={loading}
             className={`
               px-6 py-3 rounded-lg font-medium transition-all
-              bg-blue-600 text-white hover:bg-blue-700
+              bg-primary-600 text-white hover:bg-primary-700
               disabled:opacity-50 disabled:cursor-not-allowed
             `}
           >

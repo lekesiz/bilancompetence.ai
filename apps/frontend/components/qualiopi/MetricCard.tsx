@@ -20,7 +20,7 @@ interface MetricCardProps {
 
 const variantConfig = {
   green: 'from-green-50 to-green-100 border-green-200 text-green-900 text-green-700',
-  blue: 'from-blue-50 to-blue-100 border-blue-200 text-blue-900 text-blue-700',
+  blue: 'from-blue-50 to-blue-100 border-blue-200 text-blue-900 text-primary-700',
   yellow: 'from-yellow-50 to-yellow-100 border-yellow-200 text-yellow-900 text-yellow-700',
   red: 'from-red-50 to-red-100 border-red-200 text-red-900 text-red-700',
   purple: 'from-purple-50 to-purple-100 border-purple-200 text-purple-900 text-purple-700',
@@ -30,7 +30,7 @@ const variantConfig = {
 
 const progressColorConfig = {
   green: 'bg-green-600',
-  blue: 'bg-blue-600',
+  blue: 'bg-primary-600',
   yellow: 'bg-yellow-600',
   red: 'bg-red-600',
   purple: 'bg-purple-600',

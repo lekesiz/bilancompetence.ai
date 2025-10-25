@@ -75,7 +75,7 @@ function Toast({
   const bgColor = {
     success: 'bg-green-500',
     error: 'bg-red-500',
-    info: 'bg-blue-500',
+    info: 'bg-primary-500',
     warning: 'bg-yellow-500',
   }[toastMsg.type];
 

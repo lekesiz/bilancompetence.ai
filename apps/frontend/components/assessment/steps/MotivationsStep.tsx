@@ -196,7 +196,7 @@ export function MotivationsStep({
           }}
           placeholder="e.g., I thrive in collaborative environments where I can contribute to innovative projects. I'm motivated by continuous learning opportunities and the ability to make a tangible impact..."
           rows={4}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-xs text-gray-500 mt-1">Minimum 20 characters required</p>
       </div>
@@ -208,7 +208,7 @@ export function MotivationsStep({
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
             ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
+            : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >
         {isSaving ? 'Saving Step...' : 'Save & Continue'}

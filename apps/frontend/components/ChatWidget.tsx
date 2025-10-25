@@ -185,7 +185,7 @@ export default function ChatWidget({
                   className={`rounded-lg px-3 py-2 max-w-xs break-words ${
                     message.senderId === recipientId
                       ? 'bg-gray-100 text-gray-900'
-                      : 'bg-blue-600 text-white ml-auto'
+                      : 'bg-primary-600 text-white ml-auto'
                   }`}
                 >
                   {message.content}
@@ -222,7 +222,7 @@ export default function ChatWidget({
             value={inputValue}
             onChange={handleTyping}
             placeholder="Type a message..."
-            className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             rows={2}
             disabled={!isConnected}
             onKeyDown={(e) => {
@@ -234,7 +234,7 @@ export default function ChatWidget({
           <button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || !isConnected}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-3 py-2 rounded transition-colors text-sm font-medium"
+            className="bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 text-white px-3 py-2 rounded transition-colors text-sm font-medium"
             aria-label="Send message"
           >
             Send

@@ -215,7 +215,7 @@ export default function ReportsPage() {
                 {report.audit_readiness ? '✅' : '⚠️'}
               </div>
               <div className={`text-xs mt-2 ${
-                report.audit_readiness ? 'text-green-600' : 'text-orange-600'
+                report.audit_readiness ? 'text-success-600' : 'text-warning-600'
               }`}>
                 {report.audit_readiness ? 'Hazır' : 'Hazır Değil'}
               </div>

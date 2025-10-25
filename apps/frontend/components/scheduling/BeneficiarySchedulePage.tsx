@@ -75,7 +75,7 @@ export default function BeneficiarySchedulePage({
                 }}
                 className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium whitespace-nowrap transition ${
                   activeTab === tab.id
-                    ? 'border-blue-600 text-blue-600'
+                    ? 'border-blue-600 text-primary-600'
                     : 'border-transparent text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -95,7 +95,7 @@ export default function BeneficiarySchedulePage({
                 <div>
                   <button
                     onClick={() => setSelectedSlot(null)}
-                    className="mb-6 text-blue-600 hover:text-blue-700 font-medium text-sm"
+                    className="mb-6 text-primary-600 hover:text-primary-700 font-medium text-sm"
                   >
                     ← Back to Browse
                   </button>

@@ -103,7 +103,7 @@ export default function Pagination({
                   onClick={() => onPageChange(page as number)}
                   className={`px-3 py-1.5 rounded-lg transition ${
                     page === currentPage
-                      ? 'bg-blue-600 text-white font-medium'
+                      ? 'bg-primary-600 text-white font-medium'
                       : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                   }`}
                   aria-label={`Go to page ${page}`}

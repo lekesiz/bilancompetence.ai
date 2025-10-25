@@ -24,7 +24,7 @@ export function ProgressBar({
                 step < currentStep
                   ? 'bg-green-500 text-white'
                   : step === currentStep
-                  ? 'bg-blue-600 text-white ring-2 ring-blue-300'
+                  ? 'bg-primary-600 text-white ring-2 ring-blue-300'
                   : 'bg-gray-300 text-gray-600'
               }`}
             >
@@ -40,7 +40,7 @@ export function ProgressBar({
       {/* Progress bar */}
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+          className="bg-primary-600 h-2 rounded-full transition-all duration-300"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>

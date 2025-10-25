@@ -282,7 +282,7 @@ export default function AvailabilityCalendar({
               <div className="flex gap-2 pt-3 border-t">
                 <button
                   onClick={() => onSlotEdit?.(selectedSlot)}
-                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition text-sm"
                 >
                   <Edit2 className="w-4 h-4" />
                   Edit

@@ -127,7 +127,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               type={showPasswords.current ? 'text' : 'password'}
               value={formData.currentPassword}
               onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                 errors.currentPassword ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Enter current password"
@@ -165,7 +165,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               type={showPasswords.new ? 'text' : 'password'}
               value={formData.newPassword}
               onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                 errors.newPassword ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Enter new password"
@@ -219,7 +219,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               type={showPasswords.confirm ? 'text' : 'password'}
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
                 errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
               }`}
               placeholder="Confirm new password"
@@ -248,7 +248,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
       {/* Password Requirements */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="text-sm font-medium text-blue-800 mb-2">Password Requirements:</h4>
-        <ul className="text-sm text-blue-700 space-y-1">
+        <ul className="text-sm text-primary-700 space-y-1">
           <li className="flex items-center">
             <CheckCircle className={`w-4 h-4 mr-2 ${formData.newPassword.length >= 8 ? 'text-green-500' : 'text-gray-400'}`} />
             At least 8 characters
@@ -273,7 +273,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
         <button
           type="submit"
           disabled={isSubmitting || loading}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? (
             <div className="flex items-center">

@@ -107,7 +107,7 @@ export default function BeneficiarySessionBrowser({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name or specialty..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function BeneficiarySessionBrowser({
               type="date"
               value={dateRange.from}
               onChange={(e) => handleDateRangeChange('from', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <div>
@@ -133,7 +133,7 @@ export default function BeneficiarySessionBrowser({
               type="date"
               value={dateRange.to}
               onChange={(e) => handleDateRangeChange('to', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function BeneficiarySessionBrowser({
             // In a real app, this would trigger a search
             toast.success('Searching for consultants...');
           }}
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+          className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition font-medium"
         >
           Search
         </button>

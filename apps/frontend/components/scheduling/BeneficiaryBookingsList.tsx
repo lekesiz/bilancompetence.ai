@@ -168,7 +168,7 @@ export default function BeneficiaryBookingsList({
                       href={booking.meeting_link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-blue-600 hover:underline"
+                      className="text-xs text-primary-600 hover:underline"
                     >
                       Join Link
                     </a>

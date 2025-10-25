@@ -149,19 +149,19 @@ export default function RegisterForm({
             {/* Password strength indicator */}
             {password && (
               <div className="mt-2 space-y-1 text-xs">
-                <div className={password.length >= 12 ? 'text-green-600' : 'text-gray-600'}>
+                <div className={password.length >= 12 ? 'text-success-600' : 'text-gray-600'}>
                   ✓ At least 12 characters
                 </div>
-                <div className={/[A-Z]/.test(password) ? 'text-green-600' : 'text-gray-600'}>
+                <div className={/[A-Z]/.test(password) ? 'text-success-600' : 'text-gray-600'}>
                   ✓ Uppercase letter
                 </div>
-                <div className={/[a-z]/.test(password) ? 'text-green-600' : 'text-gray-600'}>
+                <div className={/[a-z]/.test(password) ? 'text-success-600' : 'text-gray-600'}>
                   ✓ Lowercase letter
                 </div>
-                <div className={/\d/.test(password) ? 'text-green-600' : 'text-gray-600'}>
+                <div className={/\d/.test(password) ? 'text-success-600' : 'text-gray-600'}>
                   ✓ Number
                 </div>
-                <div className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) ? 'text-green-600' : 'text-gray-600'}>
+                <div className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) ? 'text-success-600' : 'text-gray-600'}>
                   ✓ Special character
                 </div>
               </div>

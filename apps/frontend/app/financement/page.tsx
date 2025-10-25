@@ -72,19 +72,19 @@ const FinancementPage = () => {
                 <h4 className="font-semibold text-textPrimary mb-3">Comment utiliser votre CPF ?</h4>
                 <ol className="space-y-2 text-textSecondary">
                   <li className="flex items-start">
-                    <span className="font-bold text-green-600 mr-2">1.</span>
+                    <span className="font-bold text-success-600 mr-2">1.</span>
                     <span>Créez votre compte sur <a href="https://www.moncompteformation.gouv.fr" target="_blank" rel="noopener noreferrer" className="text-primary underline">moncompteformation.gouv.fr</a></span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-green-600 mr-2">2.</span>
+                    <span className="font-bold text-success-600 mr-2">2.</span>
                     <span>Consultez le montant de vos droits disponibles</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-green-600 mr-2">3.</span>
+                    <span className="font-bold text-success-600 mr-2">3.</span>
                     <span>Recherchez "bilan de compétences" et sélectionnez notre organisme</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-green-600 mr-2">4.</span>
+                    <span className="font-bold text-success-600 mr-2">4.</span>
                     <span>Inscrivez-vous directement en ligne - aucune autorisation employeur nécessaire</span>
                   </li>
                 </ol>
@@ -226,25 +226,25 @@ const FinancementPage = () => {
                 <tr>
                   <td className="px-6 py-4 font-medium text-textPrimary">CPF</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">Tous actifs</td>
-                  <td className="px-6 py-4 text-sm text-green-600 font-medium">Non requise</td>
+                  <td className="px-6 py-4 text-sm text-success-600 font-medium">Non requise</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">Immédiat</td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 font-medium text-textPrimary">Plan de développement</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">Salariés</td>
-                  <td className="px-6 py-4 text-sm text-orange-600 font-medium">Requise</td>
+                  <td className="px-6 py-4 text-sm text-warning-600 font-medium">Requise</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">Variable</td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 font-medium text-textPrimary">Pôle Emploi</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">Demandeurs d'emploi</td>
-                  <td className="px-6 py-4 text-sm text-green-600 font-medium">Non applicable</td>
+                  <td className="px-6 py-4 text-sm text-success-600 font-medium">Non applicable</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">2-4 semaines</td>
                 </tr>
                 <tr>
                   <td className="px-6 py-4 font-medium text-textPrimary">Transition Pro</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">Salariés (reconversion)</td>
-                  <td className="px-6 py-4 text-sm text-orange-600 font-medium">Requise</td>
+                  <td className="px-6 py-4 text-sm text-warning-600 font-medium">Requise</td>
                   <td className="px-6 py-4 text-sm text-textSecondary">3-6 mois</td>
                 </tr>
               </tbody>

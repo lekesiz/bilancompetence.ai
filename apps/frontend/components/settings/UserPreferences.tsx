@@ -94,7 +94,7 @@ export default function UserPreferences() {
         className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
       >
         <div className="flex items-center gap-3 mb-6">
-          <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <Mail className="w-6 h-6 text-primary-600 dark:text-blue-400" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Notifications par email
           </h2>
@@ -125,7 +125,7 @@ export default function UserPreferences() {
                 onClick={() => toggleEmailPreference(pref.id)}
                 className={`
                   relative inline-flex h-6 w-11 items-center rounded-full transition-colors
-                  ${pref.enabled ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}
+                  ${pref.enabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}
                 `}
               >
                 <span

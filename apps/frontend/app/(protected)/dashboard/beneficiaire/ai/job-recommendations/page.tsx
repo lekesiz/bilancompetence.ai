@@ -253,7 +253,7 @@ const JobRecommendationsPage = () => {
                   </svg>
                   {job.averageSalary}
                 </div>
-                <div className="flex items-center text-green-600">
+                <div className="flex items-center text-success-600">
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
@@ -345,7 +345,7 @@ const JobRecommendationsPage = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">Croissance du secteur</h4>
-                  <p className="text-green-600 font-semibold">{selectedJob.growthRate}</p>
+                  <p className="text-success-600 font-semibold">{selectedJob.growthRate}</p>
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-2">Formation requise</h4>

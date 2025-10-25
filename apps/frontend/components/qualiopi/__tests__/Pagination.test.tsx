@@ -115,7 +115,7 @@ describe('Pagination Component', () => {
       />
     );
     const currentPageButton = screen.getByText('2').closest('button');
-    expect(currentPageButton).toHaveClass('bg-blue-600', 'text-white');
+    expect(currentPageButton).toHaveClass('bg-primary-600', 'text-white');
   });
 
   it('shows ellipsis for many pages', () => {

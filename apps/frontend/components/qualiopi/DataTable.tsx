@@ -120,7 +120,7 @@ export default function DataTable({
                   {col.sortable ? (
                     <button
                       onClick={() => handleSort(col.key)}
-                      className="flex items-center gap-2 hover:text-blue-600 transition"
+                      className="flex items-center gap-2 hover:text-primary-600 transition"
                     >
                       {col.label}
                       {sortBy === col.key && (
@@ -198,7 +198,7 @@ export default function DataTable({
                 onClick={() => setCurrentPage(page)}
                 className={`px-3 py-1 rounded ${
                   page === currentPage
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary-600 text-white'
                     : 'border border-gray-300 hover:bg-gray-50'
                 }`}
               >
