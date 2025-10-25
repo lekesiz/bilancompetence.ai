@@ -74,8 +74,9 @@ export class QualioptService {
             id,
             status,
             last_reviewed_at,
-            organization_qualiopi_status (
-              reviewed_by
+            reviewed_by,
+            users (
+              full_name
             )
           ),
           qualiopi_evidence (
@@ -101,7 +102,7 @@ export class QualioptService {
         status: indicator.organization_qualiopi_status[0]?.status || 'MISSING',
         evidence_count: indicator.qualiopi_evidence.length,
         last_reviewed_at: indicator.organization_qualiopi_status[0]?.last_reviewed_at,
-        reviewed_by_name: indicator.organization_qualiopi_status[0]?.reviewed_by,
+        reviewed_by_name: indicator.organization_qualiopi_status[0]?.users?.full_name || null,
       }));
     } catch (error) {
       console.error('Error in getIndicators:', error);
