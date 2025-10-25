@@ -256,7 +256,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         const recommendations = await getRecommendationsByBeneficiary(user.id);
         
         const completedBilans = bilans.filter((b: any) => b.status === BilanStatus.COMPLETED).length;
-        const pendingBilans = bilans.filter((b: any) => b.status === BilanStatus.IN_PROGRESS).length;
+        const pendingBilans = bilans.filter((b: any) => b.status === BilanStatus.INVESTIGATION).length;
         
         dashboardData = {
           role: 'BENEFICIARY',
@@ -282,7 +282,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         const bilans = await getBilansByConsultant(user.id);
         const clients = await getClientsByConsultant(user.id);
         
-        const activeBilans = bilans.filter((b: any) => b.status === BilanStatus.IN_PROGRESS).length;
+        const activeBilans = bilans.filter((b: any) => b.status === BilanStatus.INVESTIGATION).length;
         const completedBilans = bilans.filter((b: any) => b.status === BilanStatus.COMPLETED).length;
         
         dashboardData = {
@@ -305,8 +305,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         break;
       }
       
-      case 'ORG_ADMIN':
-      case 'ADMIN': {
+      case 'ORG_ADMIN': {
         const allBilans = await getAllBilans();
         const orgStats = user.organization_id 
           ? await getOrganizationStats(user.organization_id)
@@ -327,7 +326,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           bilans: allBilans || [],
           stats: orgStats || {
             totalBilans: allBilans?.length || 0,
-            activeBilans: allBilans?.filter((b: any) => b.status === BilanStatus.IN_PROGRESS).length || 0,
+            activeBilans: allBilans?.filter((b: any) => b.status === BilanStatus.INVESTIGATION).length || 0,
             completedBilans: allBilans?.filter((b: any) => b.status === BilanStatus.COMPLETED).length || 0,
           },
           recentActivity: recentActivity || [],
