@@ -1,10 +1,10 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/qualiopi';
 import { AvatarUpload, ProfileForm, PasswordForm } from '@/components/profile';
-import { User, Settings, Shield, Camera, Mail, Phone, FileText, Calendar, ShieldCheck } from 'lucide-react';
+import { User, Settings, Shield, Camera, Mail, Phone, FileText, Calendar, ShieldCheck, Upload, File, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
 interface UserProfile {
   id: string;
@@ -16,9 +16,11 @@ interface UserProfile {
   role?: string;
   created_at?: string;
   last_login_at?: string;
+  cv_url?: string;
+  cv_uploaded_at?: string;
 }
 
-type TabType = 'profile' | 'security';
+type TabType = 'profile' | 'security' | 'cv';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -26,10 +28,13 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [cvUploading, setCvUploading] = useState(false);
   const [notifications, setNotifications] = useState<{
     success?: string;
     error?: string;
   }>({});
+  const cvInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -55,6 +60,8 @@ export default function ProfilePage() {
             role: user?.role || 'BENEFICIARY',
             created_at: '2024-01-15T10:30:00Z',
             last_login_at: new Date().toISOString(),
+            cv_url: undefined,
+            cv_uploaded_at: undefined,
           });
         }
       } catch (error) {
@@ -70,6 +77,8 @@ export default function ProfilePage() {
           role: user?.role || 'BENEFICIARY',
           created_at: '2024-01-15T10:30:00Z',
           last_login_at: new Date().toISOString(),
+          cv_url: undefined,
+          cv_uploaded_at: undefined,
         });
       } finally {
         setLoading(false);
@@ -139,8 +148,92 @@ export default function ProfilePage() {
     setTimeout(() => setNotifications({}), 3000);
   };
 
+  const handleCvFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!validTypes.includes(file.type)) {
+        setNotifications({ error: 'Invalid file type. Please upload a PDF or DOCX file.' });
+        setTimeout(() => setNotifications({}), 5000);
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setNotifications({ error: 'File size exceeds 5MB. Please upload a smaller file.' });
+        setTimeout(() => setNotifications({}), 5000);
+        return;
+      }
+
+      setCvFile(file);
+    }
+  };
+
+  const handleCvUpload = async () => {
+    if (!cvFile) return;
+
+    setCvUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('cv', cvFile);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/upload-cv`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProfile((prev) => prev ? { ...prev, cv_url: data.cv_url, cv_uploaded_at: new Date().toISOString() } : null);
+        setNotifications({ success: 'CV uploaded successfully! AI analysis will begin shortly.' });
+        setCvFile(null);
+        if (cvInputRef.current) {
+          cvInputRef.current.value = '';
+        }
+        setTimeout(() => setNotifications({}), 5000);
+      } else {
+        throw new Error('Failed to upload CV');
+      }
+    } catch (error) {
+      console.error('Failed to upload CV:', error);
+      setNotifications({ error: 'Failed to upload CV. Please try again.' });
+      setTimeout(() => setNotifications({}), 5000);
+    } finally {
+      setCvUploading(false);
+    }
+  };
+
+  const handleCvDelete = async () => {
+    if (!confirm('Are you sure you want to delete your CV?')) return;
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/delete-cv`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+
+      if (response.ok) {
+        setProfile((prev) => prev ? { ...prev, cv_url: undefined, cv_uploaded_at: undefined } : null);
+        setNotifications({ success: 'CV deleted successfully!' });
+        setTimeout(() => setNotifications({}), 3000);
+      } else {
+        throw new Error('Failed to delete CV');
+      }
+    } catch (error) {
+      console.error('Failed to delete CV:', error);
+      setNotifications({ error: 'Failed to delete CV. Please try again.' });
+      setTimeout(() => setNotifications({}), 5000);
+    }
+  };
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -149,11 +242,18 @@ export default function ProfilePage() {
 
   const getRoleDisplayName = (role: string) => {
     const roleMap: Record<string, string> = {
-      BENEFICIARY: 'Career Seeker',
-      CONSULTANT: 'Career Consultant',
-      ORG_ADMIN: 'Organization Admin',
+      BENEFICIARY: 'Bénéficiaire',
+      CONSULTANT: 'Consultant',
+      ORG_ADMIN: 'Administrateur',
+      ADMIN: 'Administrateur',
     };
     return roleMap[role] || role;
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
   if (loading) {
@@ -161,7 +261,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300">Loading profile...</p>
+          <p className="text-gray-600 dark:text-gray-300">Chargement du profil...</p>
         </div>
       </div>
     );
@@ -170,12 +270,12 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-600 mb-4">Failed to load profile</div>
+        <div className="text-red-600 mb-4">Échec du chargement du profil</div>
         <button
           onClick={() => window.location.reload()}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          Retry
+          Réessayer
         </button>
       </div>
     );
@@ -186,31 +286,27 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your account settings and preferences</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Paramètres du Profil</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">Gérez vos informations personnelles et préférences</p>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
+        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
-          <span>Member since {formatDate(profile.created_at || '')}</span>
+          <span>Membre depuis {formatDate(profile.created_at || '')}</span>
         </div>
       </div>
 
       {/* Notifications */}
       {notifications.success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
-          <div className="w-5 h-5 bg-success-500 rounded-full flex items-center justify-center mr-3">
-            <div className="w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
-          </div>
-          <span className="text-green-800">{notifications.success}</span>
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center">
+          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mr-3" />
+          <span className="text-green-800 dark:text-green-200">{notifications.success}</span>
         </div>
       )}
 
       {notifications.error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
-          <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center mr-3">
-            <div className="w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
-          </div>
-          <span className="text-red-800">{notifications.error}</span>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-center">
+          <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-3" />
+          <span className="text-red-800 dark:text-red-200">{notifications.error}</span>
         </div>
       )}
 
@@ -238,7 +334,7 @@ export default function ProfilePage() {
                 )}
               </div>
               <div className="mt-3">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white dark:bg-gray-800 bg-opacity-20">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white bg-opacity-20">
                   <ShieldCheck className="w-4 h-4 mr-1" />
                   {getRoleDisplayName(profile.role || '')}
                 </span>
@@ -257,32 +353,45 @@ export default function ProfilePage() {
       </Card>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-gray-700">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('profile')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'profile'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300'
             }`}
           >
             <div className="flex items-center space-x-2">
               <User className="w-4 h-4" />
-              <span>Profile Information</span>
+              <span>Informations Personnelles</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('cv')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'cv'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4" />
+              <span>CV & Documents</span>
             </div>
           </button>
           <button
             onClick={() => setActiveTab('security')}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'security'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'
+                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300'
             }`}
           >
             <div className="flex items-center space-x-2">
               <Shield className="w-4 h-4" />
-              <span>Security & Privacy</span>
+              <span>Sécurité & Confidentialité</span>
             </div>
           </button>
         </nav>
@@ -293,7 +402,7 @@ export default function ProfilePage() {
         {/* Main Content */}
         <div className="lg:col-span-2">
           {activeTab === 'profile' && (
-            <Card title="Profile Information" subtitle="Update your personal information">
+            <Card title="Informations Personnelles" subtitle="Mettez à jour vos informations personnelles">
               <ProfileForm
                 initialData={{
                   full_name: profile.full_name,
@@ -307,8 +416,138 @@ export default function ProfilePage() {
             </Card>
           )}
 
+          {activeTab === 'cv' && (
+            <div className="space-y-6">
+              <Card title="Télécharger votre CV" subtitle="Uploadez votre CV pour une analyse IA personnalisée">
+                <div className="space-y-6">
+                  {/* Current CV Status */}
+                  {profile.cv_url ? (
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-green-100 dark:bg-green-800 rounded-lg">
+                            <File className="w-6 h-6 text-green-600 dark:text-green-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-green-900 dark:text-green-100">CV Téléchargé</h4>
+                            <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                              Téléchargé le {profile.cv_uploaded_at ? formatDate(profile.cv_uploaded_at) : 'Date inconnue'}
+                            </p>
+                            <div className="flex items-center space-x-4 mt-3">
+                              <a
+                                href={profile.cv_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                              >
+                                Voir le CV
+                              </a>
+                              <button
+                                onClick={handleCvDelete}
+                                className="text-sm text-red-600 dark:text-red-400 hover:underline"
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
+                          <Upload className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-blue-900 dark:text-blue-100">Aucun CV téléchargé</h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                            Téléchargez votre CV pour bénéficier d'une analyse IA et de recommandations personnalisées.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Upload Form */}
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8">
+                    <div className="text-center">
+                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                        {cvFile ? cvFile.name : 'Sélectionnez un fichier'}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        {cvFile 
+                          ? `Taille: ${formatFileSize(cvFile.size)} • Type: ${cvFile.type.includes('pdf') ? 'PDF' : 'DOCX'}`
+                          : 'PDF ou DOCX (max 5MB)'
+                        }
+                      </p>
+                      <div className="flex items-center justify-center space-x-4">
+                        <label className="cursor-pointer">
+                          <span className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <File className="w-4 h-4 mr-2" />
+                            Choisir un fichier
+                          </span>
+                          <input
+                            ref={cvInputRef}
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleCvFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                        {cvFile && (
+                          <button
+                            onClick={handleCvUpload}
+                            disabled={cvUploading}
+                            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {cvUploading ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Téléchargement...
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4 mr-2" />
+                                Télécharger
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">Pourquoi télécharger votre CV ?</h4>
+                    <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                <span>Analyse automatique de vos compétences et expériences</span>
+                      </li>
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>Recommandations de métiers personnalisées basées sur votre profil</span>
+                      </li>
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>Identification des lacunes de compétences et suggestions de formation</span>
+                      </li>
+                      <li className="flex items-start">
+                        <CheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>Génération automatique de votre bilan de compétences</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
+
           {activeTab === 'security' && (
-            <Card title="Change Password" subtitle="Update your password to keep your account secure">
+            <Card title="Changer le Mot de Passe" subtitle="Mettez à jour votre mot de passe pour sécuriser votre compte">
               <PasswordForm onSubmit={handlePasswordChange} loading={loading} />
             </Card>
           )}
@@ -317,48 +556,65 @@ export default function ProfilePage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Account Status */}
-          <Card title="Account Status" icon={<Settings className="w-5 h-5" />}>
+          <Card title="Statut du Compte" icon={<Settings className="w-5 h-5" />}>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-300">Email Verified</span>
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  ✓ Verified
+                <span className="text-sm text-gray-600 dark:text-gray-300">Email Vérifié</span>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                  ✓ Vérifié
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-300">Two-Factor Auth</span>
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:text-gray-100">
-                  Not Enabled
+                <span className="text-sm text-gray-600 dark:text-gray-300">Authentification 2FA</span>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                  Non activée
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-300">Last Login</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Dernière Connexion</span>
                 <span className="text-sm text-gray-900 dark:text-white">
-                  {profile.last_login_at ? formatDate(profile.last_login_at) : 'Never'}
+                  {profile.last_login_at ? formatDate(profile.last_login_at) : 'Jamais'}
                 </span>
               </div>
+              {profile.cv_url && (
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">CV Téléchargé</span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                    ✓ Oui
+                  </span>
+                </div>
+              )}
             </div>
           </Card>
 
           {/* Quick Actions */}
-          <Card title="Quick Actions">
+          <Card title="Actions Rapides">
             <div className="space-y-3">
-              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 rounded-lg transition-colors">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Camera className="w-4 h-4 text-gray-300" />
-                  <span>Update Profile Photo</span>
+                  <Camera className="w-4 h-4 text-gray-400" />
+                  <span>Modifier la Photo de Profil</span>
                 </div>
               </button>
-              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 rounded-lg transition-colors">
+              <button 
+                onClick={() => setActiveTab('cv')}
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
                 <div className="flex items-center space-x-3">
-                  <Shield className="w-4 h-4 text-gray-300" />
-                  <span>Enable 2FA</span>
+                  <Upload className="w-4 h-4 text-gray-400" />
+                  <span>Télécharger mon CV</span>
                 </div>
               </button>
-              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 rounded-lg transition-colors">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Settings className="w-4 h-4 text-gray-300" />
-                  <span>Privacy Settings</span>
+                  <Shield className="w-4 h-4 text-gray-400" />
+                  <span>Activer l'Authentification 2FA</span>
+                </div>
+              </button>
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <div className="flex items-center space-x-3">
+                  <Settings className="w-4 h-4 text-gray-400" />
+                  <span>Paramètres de Confidentialité</span>
                 </div>
               </button>
             </div>
@@ -368,3 +624,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+
