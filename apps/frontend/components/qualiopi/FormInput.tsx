@@ -34,20 +34,20 @@ export default function FormInput({
   const baseClasses = `w-full rounded-lg transition border focus:outline-none focus:ring-2`;
 
   const variantClasses = {
-    default: `border-gray-300 bg-white focus:border-primary-500 focus:ring-primary-500 ${
+    default: `border-gray-300 bg-white dark:bg-gray-800 focus:border-primary-500 focus:ring-primary-500 ${
       error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
     }`,
-    filled: `border-0 bg-gray-100 focus:bg-white focus:border-primary-500 focus:ring-primary-500 ${
+    filled: `border-0 bg-gray-100 focus:bg-white dark:bg-gray-800 focus:border-primary-500 focus:ring-primary-500 ${
       error ? 'bg-red-50 focus:ring-red-500' : ''
     }`,
   };
 
-  const disabledClasses = disabled ? 'bg-gray-100 text-gray-500 cursor-not-allowed' : '';
+  const disabledClasses = disabled ? 'bg-gray-100 text-gray-500 dark:text-gray-400 dark:text-gray-500 cursor-not-allowed' : '';
 
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -68,7 +68,7 @@ export default function FormInput({
       )}
 
       {helperText && !error && (
-        <p id={`${props.id}-helper`} className="text-gray-500 text-sm mt-1">
+        <p id={`${props.id}-helper`} className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm mt-1">
           {helperText}
         </p>
       )}

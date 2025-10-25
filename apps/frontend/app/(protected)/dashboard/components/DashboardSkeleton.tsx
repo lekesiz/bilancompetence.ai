@@ -14,7 +14,7 @@ export function DashboardSkeleton({ variant = 'beneficiary' }: DashboardSkeleton
       {/* Stats Grid Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+          <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-3">
               <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse"></div>
               <div className="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"></div>
@@ -28,7 +28,7 @@ export function DashboardSkeleton({ variant = 'beneficiary' }: DashboardSkeleton
       {/* Charts Skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+          <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="h-5 bg-gray-200 rounded w-1/2 animate-pulse"></div>
               <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>
@@ -39,7 +39,7 @@ export function DashboardSkeleton({ variant = 'beneficiary' }: DashboardSkeleton
       </div>
 
       {/* Content Section Skeleton */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse"></div>
           <div className="h-10 bg-gray-200 rounded-xl w-32 animate-pulse"></div>

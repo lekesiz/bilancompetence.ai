@@ -12,7 +12,7 @@ interface AssessmentCardProps {
 const statusConfig = {
   DRAFT: {
     label: 'Draft',
-    color: 'bg-gray-100 text-gray-800 border-gray-200',
+    color: 'bg-gray-100 text-gray-800 dark:text-gray-100 border-gray-200',
     icon: <FileText className="w-4 h-4" />,
     progressColor: 'bg-gray-400',
   },
@@ -55,13 +55,13 @@ export function AssessmentCard({
   const isCompact = variant === 'compact';
 
   return (
-    <div className={`bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 ${
+    <div className={`bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-300 ${
       isCompact ? 'p-4' : ''
     }`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0">
-          <h3 className={`font-semibold text-gray-800 mb-2 truncate ${
+          <h3 className={`font-semibold text-gray-800 dark:text-gray-100 mb-2 truncate ${
             isCompact ? 'text-base' : 'text-lg'
           }`}>
             {assessment.title}
@@ -73,7 +73,7 @@ export function AssessmentCard({
               {status.icon}
               {status.label}
             </span>
-            <span className="inline-flex items-center gap-1 text-sm text-gray-500">
+            <span className="inline-flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
               <Calendar className="w-4 h-4" />
               {formatDate(assessment.createdAt)}
             </span>
@@ -85,8 +85,8 @@ export function AssessmentCard({
       {(assessment.status === 'IN_PROGRESS' || assessment.status === 'DRAFT') && (
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className="text-sm font-semibold text-gray-800">{assessment.progress}%</span>
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Progress</span>
+            <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">{assessment.progress}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div

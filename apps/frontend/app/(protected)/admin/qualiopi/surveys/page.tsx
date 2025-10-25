@@ -109,10 +109,10 @@ export default function SurveysPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Memnuniyet Anketi Analytics
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             Katılımcı geri bildirimi ve memnuniyet metriklerini analiz edin
           </p>
         </div>
@@ -184,13 +184,13 @@ export default function SurveysPage() {
           </div>
 
           {/* Questions Analysis */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Soru Bazında Analiz</h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Soru Bazında Analiz</h2>
             <div className="space-y-4">
               {analytics.questions_data.slice(0, 5).map((question, idx) => (
                 <div key={idx} className="border border-gray-200 rounded p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-gray-900 dark:text-white">
                       Soru {question.question_number}
                     </span>
                     {question.average_score && (
@@ -207,7 +207,7 @@ export default function SurveysPage() {
                       ></div>
                     </div>
                   )}
-                  <div className="text-xs text-gray-500 mt-2">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-2">
                     {question.response_count} yanıt
                   </div>
                 </div>
@@ -217,16 +217,16 @@ export default function SurveysPage() {
 
           {/* Consultant Performance */}
           {analytics.consultant_performance.length > 0 && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Danışman Performansı</h2>
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Danışman Performansı</h2>
               <div className="space-y-3">
                 {analytics.consultant_performance.map((consultant, idx) => (
                   <div key={idx} className="flex items-center justify-between border border-gray-200 rounded p-4">
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-900 dark:text-white">
                         {consultant.consultant_name}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-gray-600 dark:text-gray-300">
                         {consultant.survey_count} anket
                       </div>
                     </div>
@@ -234,7 +234,7 @@ export default function SurveysPage() {
                       <div className="text-2xl font-bold text-blue-600">
                         {consultant.average_score}/10
                       </div>
-                      <div className="text-xs text-gray-500">Ort. Puan</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Ort. Puan</div>
                     </div>
                   </div>
                 ))}

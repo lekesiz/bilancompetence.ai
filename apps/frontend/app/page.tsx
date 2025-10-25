@@ -54,7 +54,7 @@ export default function HomePage() {
 
         <div className="relative container mx-auto px-4 py-24 md:py-32">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block mb-6 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium">
+            <div className="inline-block mb-6 px-4 py-2 bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-full text-sm font-medium">
               🎯 Certifié Qualiopi • 100% Finançable CPF
             </div>
             
@@ -69,7 +69,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Link 
                 href="/register"
-                className="group relative px-8 py-4 bg-white text-primary-700 rounded-lg font-bold text-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-2"
+                className="group relative px-8 py-4 bg-white dark:bg-gray-800 text-primary-700 rounded-lg font-bold text-lg hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-2"
               >
                 Commencer mon bilan
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +79,7 @@ export default function HomePage() {
               
               <Link 
                 href="/methodologie"
-                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-lg font-semibold text-lg hover:bg-white/20 transition-all duration-300 border-2 border-white/30"
+                className="px-8 py-4 bg-white dark:bg-gray-800/10 backdrop-blur-sm text-white rounded-lg font-semibold text-lg hover:bg-white dark:bg-gray-800/20 transition-all duration-300 border-2 border-white/30"
               >
                 Découvrir la méthodologie
               </Link>
@@ -118,86 +118,86 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 transform hover:scale-105 transition-transform duration-300">
               <div className="text-5xl font-extrabold text-primary-600 mb-2">{stats.users.toLocaleString()}+</div>
-              <div className="text-lg text-gray-700 font-medium">Bénéficiaires accompagnés</div>
+              <div className="text-lg text-gray-700 dark:text-gray-200 font-medium">Bénéficiaires accompagnés</div>
             </div>
             <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-success-50 to-success-50 transform hover:scale-105 transition-transform duration-300">
               <div className="text-5xl font-extrabold text-success-600 mb-2">{stats.bilans.toLocaleString()}+</div>
-              <div className="text-lg text-gray-700 font-medium">Bilans complétés</div>
+              <div className="text-lg text-gray-700 dark:text-gray-200 font-medium">Bilans complétés</div>
             </div>
             <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-warning-50 to-warning-50 transform hover:scale-105 transition-transform duration-300">
               <div className="text-5xl font-extrabold text-warning-600 mb-2">{stats.satisfaction}%</div>
-              <div className="text-lg text-gray-700 font-medium">Taux de satisfaction</div>
+              <div className="text-lg text-gray-700 dark:text-gray-200 font-medium">Taux de satisfaction</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section with Icons */}
-      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               Pourquoi choisir BilanCompetence.AI ?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Une approche innovante qui combine expertise humaine et intelligence artificielle
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Feature 1 */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+            <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Analyse IA Approfondie</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Analyse IA Approfondie</h3>
+              <p className="text-gray-600 dark:text-gray-300">
                 Identifiez vos compétences, aptitudes et motivations grâce à notre IA et une méthodologie éprouvée.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+            <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Projet Sur Mesure</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Projet Sur Mesure</h3>
+              <p className="text-gray-600 dark:text-gray-300">
                 Construisez un projet professionnel réaliste et motivant, parfaitement adapté à votre profil unique.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+            <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Accompagnement Expert</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Accompagnement Expert</h3>
+              <p className="text-gray-600 dark:text-gray-300">
                 Bénéficiez d'un suivi individuel avec un consultant certifié Qualiopi à chaque étape de votre parcours.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+            <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">100% Finançable</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">100% Finançable</h3>
+              <p className="text-gray-600 dark:text-gray-300">
                 Utilisez votre CPF ou d'autres dispositifs pour financer votre bilan sans impact sur votre budget.
               </p>
             </div>
@@ -206,13 +206,13 @@ export default function HomePage() {
       </section>
 
       {/* Methodology Timeline */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               Comment se déroule votre bilan ?
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 dark:text-gray-300">
               Un parcours structuré en 3 phases pour un accompagnement optimal
             </p>
           </div>
@@ -229,12 +229,12 @@ export default function HomePage() {
                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl shadow-lg">
                       <div className="flex items-center mb-4">
                         <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl mr-4">1</div>
-                        <h3 className="text-2xl font-bold text-gray-900">Phase Préliminaire</h3>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Phase Préliminaire</h3>
                       </div>
-                      <p className="text-gray-700 mb-4">
+                      <p className="text-gray-700 dark:text-gray-200 mb-4">
                         Analyse de votre demande, définition de vos objectifs et mise en place du cadre de travail.
                       </p>
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -243,25 +243,25 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="md:w-1/2 md:pl-12">
-                    <div className="bg-white p-6 rounded-xl border-2 border-blue-100">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-blue-100 dark:border-gray-700">
                       <ul className="space-y-3">
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Entretien de découverte</span>
+                          <span className="text-gray-700 dark:text-gray-200">Entretien de découverte</span>
                         </li>
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Définition des objectifs</span>
+                          <span className="text-gray-700 dark:text-gray-200">Définition des objectifs</span>
                         </li>
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Planification du parcours</span>
+                          <span className="text-gray-700 dark:text-gray-200">Planification du parcours</span>
                         </li>
                       </ul>
                     </div>
@@ -276,12 +276,12 @@ export default function HomePage() {
                     <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl shadow-lg">
                       <div className="flex items-center mb-4">
                         <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl mr-4">2</div>
-                        <h3 className="text-2xl font-bold text-gray-900">Phase d'Investigation</h3>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Phase d'Investigation</h3>
                       </div>
-                      <p className="text-gray-700 mb-4">
+                      <p className="text-gray-700 dark:text-gray-200 mb-4">
                         Exploration approfondie de vos compétences, motivations et pistes professionnelles.
                       </p>
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -290,25 +290,25 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="md:w-1/2 md:pr-12">
-                    <div className="bg-white p-6 rounded-xl border-2 border-green-100">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-green-100 dark:border-gray-700">
                       <ul className="space-y-3">
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Tests psychométriques (MBTI, RIASEC)</span>
+                          <span className="text-gray-700 dark:text-gray-200">Tests psychométriques (MBTI, RIASEC)</span>
                         </li>
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Analyse IA de votre CV</span>
+                          <span className="text-gray-700 dark:text-gray-200">Analyse IA de votre CV</span>
                         </li>
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Exploration des pistes métiers</span>
+                          <span className="text-gray-700 dark:text-gray-200">Exploration des pistes métiers</span>
                         </li>
                       </ul>
                     </div>
@@ -323,12 +323,12 @@ export default function HomePage() {
                     <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl shadow-lg">
                       <div className="flex items-center mb-4">
                         <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-xl mr-4">3</div>
-                        <h3 className="text-2xl font-bold text-gray-900">Phase de Conclusion</h3>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Phase de Conclusion</h3>
                       </div>
-                      <p className="text-gray-700 mb-4">
+                      <p className="text-gray-700 dark:text-gray-200 mb-4">
                         Synthèse de votre parcours, élaboration de votre plan d'action et remise des documents.
                       </p>
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -337,25 +337,25 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className="md:w-1/2 md:pl-12">
-                    <div className="bg-white p-6 rounded-xl border-2 border-purple-100">
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border-2 border-purple-100 dark:border-gray-700">
                       <ul className="space-y-3">
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Document de synthèse personnalisé</span>
+                          <span className="text-gray-700 dark:text-gray-200">Document de synthèse personnalisé</span>
                         </li>
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Plan d'action détaillé</span>
+                          <span className="text-gray-700 dark:text-gray-200">Plan d'action détaillé</span>
                         </li>
                         <li className="flex items-start">
                           <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                           </svg>
-                          <span className="text-gray-700">Attestation officielle</span>
+                          <span className="text-gray-700 dark:text-gray-200">Attestation officielle</span>
                         </li>
                       </ul>
                     </div>
@@ -383,17 +383,17 @@ export default function HomePage() {
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               Ils ont transformé leur carrière
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 dark:text-gray-300">
               Découvrez les témoignages de nos bénéficiaires
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Testimonial 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="flex items-center mb-4">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -401,7 +401,7 @@ export default function HomePage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-700 italic mb-6">
+              <p className="text-gray-700 dark:text-gray-200 italic mb-6">
                 "Le bilan a été un véritable tournant dans ma vie professionnelle. Grâce à l'accompagnement et aux outils IA, j'ai pu me reconvertir avec confiance dans un domaine qui me passionne vraiment."
               </p>
               <div className="flex items-center">
@@ -409,14 +409,14 @@ export default function HomePage() {
                   M
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900">Marie L.</div>
-                  <div className="text-sm text-gray-600">Devenue formatrice en communication</div>
+                  <div className="font-bold text-gray-900 dark:text-white">Marie L.</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Devenue formatrice en communication</div>
                 </div>
               </div>
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="flex items-center mb-4">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -424,7 +424,7 @@ export default function HomePage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-700 italic mb-6">
+              <p className="text-gray-700 dark:text-gray-200 italic mb-6">
                 "J'ai pu identifier mes compétences transférables que je ne soupçonnais même pas. Le consultant m'a aidé à construire un projet d'évolution cohérent au sein de mon entreprise."
               </p>
               <div className="flex items-center">
@@ -432,14 +432,14 @@ export default function HomePage() {
                   T
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900">Thomas D.</div>
-                  <div className="text-sm text-gray-600">Cadre dans l'industrie</div>
+                  <div className="font-bold text-gray-900 dark:text-white">Thomas D.</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Cadre dans l'industrie</div>
                 </div>
               </div>
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
               <div className="flex items-center mb-4">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -447,7 +447,7 @@ export default function HomePage() {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-700 italic mb-6">
+              <p className="text-gray-700 dark:text-gray-200 italic mb-6">
                 "En situation de burnout, le bilan a été une véritable bouffée d'oxygène. Je me suis reconvertie dans un métier qui a du sens pour moi et je suis enfin épanouie."
               </p>
               <div className="flex items-center">
@@ -455,8 +455,8 @@ export default function HomePage() {
                   S
                 </div>
                 <div>
-                  <div className="font-bold text-gray-900">Sophie M.</div>
-                  <div className="text-sm text-gray-600">Ancienne DRH, devenue coach</div>
+                  <div className="font-bold text-gray-900 dark:text-white">Sophie M.</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">Ancienne DRH, devenue coach</div>
                 </div>
               </div>
             </div>
@@ -477,13 +477,13 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/register"
-              className="px-10 py-5 bg-white text-primary-700 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl"
+              className="px-10 py-5 bg-white dark:bg-gray-800 text-primary-700 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl"
             >
               Commencer gratuitement
             </Link>
             <Link 
               href="/contact"
-              className="px-10 py-5 bg-transparent border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white/10 transition-all duration-300"
+              className="px-10 py-5 bg-transparent border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white dark:bg-gray-800/10 transition-all duration-300"
             >
               Contactez-nous
             </Link>

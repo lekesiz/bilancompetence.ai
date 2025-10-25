@@ -65,8 +65,8 @@ export function WorkHistoryStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Step 1: Work History</h2>
-        <p className="text-gray-600">Tell us about your professional background</p>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Step 1: Work History</h2>
+        <p className="text-gray-600 dark:text-gray-300">Tell us about your professional background</p>
       </div>
 
       <FormError
@@ -77,7 +77,7 @@ export function WorkHistoryStep({
 
       {/* Recent Job */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           Describe Your Most Recent Job Position *
         </label>
         <textarea
@@ -87,12 +87,12 @@ export function WorkHistoryStep({
           rows={4}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Minimum 10 characters required</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Minimum 10 characters required</p>
       </div>
 
       {/* Previous Positions */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           List All Previous Positions (Reverse Chronological) *
         </label>
         <textarea
@@ -102,12 +102,12 @@ export function WorkHistoryStep({
           rows={5}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Minimum 10 characters required</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Minimum 10 characters required</p>
       </div>
 
       {/* Important Aspects */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           What aspects of your work history are most important to you?
         </label>
         <textarea
@@ -117,7 +117,7 @@ export function WorkHistoryStep({
           rows={3}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Optional</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Optional</p>
       </div>
 
       {/* Save Button */}
@@ -126,7 +126,7 @@ export function WorkHistoryStep({
         disabled={isSaving}
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gray-300 text-gray-500 dark:text-gray-400 dark:text-gray-500 cursor-not-allowed'
             : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >

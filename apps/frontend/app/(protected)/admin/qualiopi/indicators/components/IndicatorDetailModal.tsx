@@ -121,7 +121,7 @@ export default function IndicatorDetailModal({
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 animate-pulse">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-2xl w-full mx-4 animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
@@ -137,7 +137,7 @@ export default function IndicatorDetailModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex items-center justify-between">
           <div>
@@ -157,17 +157,17 @@ export default function IndicatorDetailModal({
         <div className="p-6 space-y-6">
           {/* Indicator Description */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Açıklama</h3>
-            <p className="text-gray-700">{details.indicator.description}</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Açıklama</h3>
+            <p className="text-gray-700 dark:text-gray-200">{details.indicator.description}</p>
           </div>
 
           {/* Status Section */}
           <div className="border border-gray-200 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Durum Güncelle</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Durum Güncelle</h3>
 
             {/* Status Select */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Status
               </label>
               <select
@@ -183,7 +183,7 @@ export default function IndicatorDetailModal({
 
             {/* Notes */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Notlar
               </label>
               <textarea
@@ -208,7 +208,7 @@ export default function IndicatorDetailModal({
           {/* Evidence Section */}
           <div className="border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Kanıt Dosyaları ({details.evidence.length})
               </h3>
               <button
@@ -271,7 +271,7 @@ export default function IndicatorDetailModal({
                   <button
                     type="button"
                     onClick={() => setShowEvidenceForm(false)}
-                    className="flex-1 px-3 py-2 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400 transition"
+                    className="flex-1 px-3 py-2 bg-gray-300 text-gray-700 dark:text-gray-200 rounded text-sm hover:bg-gray-400 transition"
                   >
                     İptal
                   </button>
@@ -282,7 +282,7 @@ export default function IndicatorDetailModal({
             {/* Evidence List */}
             <div className="space-y-2">
               {details.evidence.length === 0 ? (
-                <p className="text-gray-500 text-sm">Henüz kanıt dosyası eklenmemiş</p>
+                <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm">Henüz kanıt dosyası eklenmemiş</p>
               ) : (
                 details.evidence.map((ev) => (
                   <div key={ev.id} className="bg-gray-50 p-3 rounded border border-gray-200">
@@ -297,9 +297,9 @@ export default function IndicatorDetailModal({
                           📄 {ev.file_name}
                         </a>
                         {ev.description && (
-                          <p className="text-xs text-gray-600 mt-1">{ev.description}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{ev.description}</p>
                         )}
-                        <div className="text-xs text-gray-500 mt-2">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-2">
                           {ev.uploaded_by_name} • {new Date(ev.created_at).toLocaleDateString('tr-TR')}
                         </div>
                       </div>

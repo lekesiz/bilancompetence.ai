@@ -41,7 +41,7 @@ describe('Badge Component', () => {
   it('applies gray variant', () => {
     const { container } = render(<Badge variant="gray">Gray</Badge>);
     const badge = container.firstChild;
-    expect(badge).toHaveClass('bg-gray-100', 'text-gray-800');
+    expect(badge).toHaveClass('bg-gray-100', 'text-gray-800 dark:text-gray-100');
   });
 
   it('applies size variants', () => {

@@ -162,7 +162,7 @@ export default function PhasePreliminairePage() {
         </div>
 
         {/* Progress Bar */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-textPrimary">
               Question {currentStep + 1} sur {questions.length}
@@ -180,7 +180,7 @@ export default function PhasePreliminairePage() {
         </div>
 
         {/* Question Card */}
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
           <h2 className="text-2xl font-semibold text-textPrimary mb-6">
             {currentQuestion.text}
           </h2>
@@ -250,7 +250,7 @@ export default function PhasePreliminairePage() {
           <button
             onClick={handlePrevious}
             disabled={currentStep === 0}
-            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-gray-200 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ← Précédent
           </button>

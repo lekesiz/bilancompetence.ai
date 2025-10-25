@@ -135,7 +135,7 @@ export default function AvailabilityForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6 bg-white rounded-lg shadow">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow">
       <h2 className="text-2xl font-bold mb-6">
         {initialSlot ? 'Edit Availability Slot' : 'Create Availability Slot'}
       </h2>
@@ -152,7 +152,7 @@ export default function AvailabilityForm({
           />
           <span className="ml-3">
             <strong>One-Time</strong>
-            <p className="text-sm text-gray-500">Single specific date</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Single specific date</p>
           </span>
         </label>
 
@@ -166,7 +166,7 @@ export default function AvailabilityForm({
           />
           <span className="ml-3">
             <strong>Recurring</strong>
-            <p className="text-sm text-gray-500">Weekly pattern</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Weekly pattern</p>
           </span>
         </label>
       </div>
@@ -175,7 +175,7 @@ export default function AvailabilityForm({
       <div className="space-y-3">
         {selectedSlotType === 'ONE_TIME' ? (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Date</label>
             <input
               type="date"
               {...register('date_specific')}
@@ -187,7 +187,7 @@ export default function AvailabilityForm({
           </div>
         ) : (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Day of Week</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Day of Week</label>
             <select
               {...register('day_of_week', { valueAsNumber: true })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -205,7 +205,7 @@ export default function AvailabilityForm({
 
             {/* Recurring until date */}
             <div className="mt-3">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Recurring Until (Optional)
               </label>
               <input
@@ -213,7 +213,7 @@ export default function AvailabilityForm({
                 {...register('recurring_until')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
-              <p className="text-gray-500 text-sm mt-1">
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm mt-1">
                 Leave empty for ongoing recurrence
               </p>
             </div>
@@ -224,7 +224,7 @@ export default function AvailabilityForm({
       {/* Time Selection */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Start Time</label>
           <input
             type="time"
             {...register('start_time')}
@@ -236,7 +236,7 @@ export default function AvailabilityForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">End Time</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">End Time</label>
           <input
             type="time"
             {...register('end_time')}
@@ -251,7 +251,7 @@ export default function AvailabilityForm({
       {/* Duration Display */}
       {watch('duration_minutes') && (
         <div className="p-3 bg-blue-50 rounded-md">
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 dark:text-gray-200">
             <strong>Duration:</strong> {watch('duration_minutes')} minutes
           </p>
         </div>
@@ -259,7 +259,7 @@ export default function AvailabilityForm({
 
       {/* Timezone Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Timezone</label>
         <select
           {...register('timezone')}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -274,7 +274,7 @@ export default function AvailabilityForm({
 
       {/* Max Concurrent Bookings */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
           Max Concurrent Bookings
         </label>
         <input
@@ -284,7 +284,7 @@ export default function AvailabilityForm({
           {...register('max_concurrent_bookings', { valueAsNumber: true })}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm mt-1">
           How many sessions can be scheduled at the same time
         </p>
         {errors.max_concurrent_bookings && (
@@ -305,7 +305,7 @@ export default function AvailabilityForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+            className="px-4 py-2 text-gray-700 dark:text-gray-200 border border-gray-300 rounded-md hover:bg-gray-50 transition"
           >
             Cancel
           </button>

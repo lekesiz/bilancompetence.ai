@@ -76,18 +76,18 @@ export default function AssessmentsPage() {
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      draft: 'bg-gray-200 text-gray-800',
+      draft: 'bg-gray-200 text-gray-800 dark:text-gray-100',
       in_progress: 'bg-blue-200 text-blue-800',
       completed: 'bg-green-200 text-green-800',
-      archived: 'bg-gray-400 text-gray-800',
+      archived: 'bg-gray-400 text-gray-800 dark:text-gray-100',
     };
-    return colors[status] || 'bg-gray-200 text-gray-800';
+    return colors[status] || 'bg-gray-200 text-gray-800 dark:text-gray-100';
   };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Assessments</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Assessments</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -97,11 +97,11 @@ export default function AssessmentsPage() {
       </div>
 
       {showCreate && (
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Create New Assessment</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Create New Assessment</h2>
           <form onSubmit={handleCreateAssessment} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Title</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Title</label>
               <input
                 type="text"
                 value={formData.title}
@@ -112,7 +112,7 @@ export default function AssessmentsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -122,7 +122,7 @@ export default function AssessmentsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Type</label>
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Type</label>
               <select
                 value={formData.assessment_type}
                 onChange={(e) => setFormData({ ...formData, assessment_type: e.target.value })}
@@ -150,23 +150,23 @@ export default function AssessmentsPage() {
         </div>
       ) : assessments.length === 0 ? (
         <div className="bg-gray-100 rounded-lg p-12 text-center">
-          <p className="text-gray-600 text-lg">No assessments yet. Create your first one!</p>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">No assessments yet. Create your first one!</p>
         </div>
       ) : (
         <div className="space-y-4">
           {assessments.map((assessment) => (
-            <div key={assessment.id} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+            <div key={assessment.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800">{assessment.title}</h3>
-                  <p className="text-gray-600 mt-2">{assessment.description}</p>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">{assessment.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mt-2">{assessment.description}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(assessment.status)}`}>
                   {assessment.status}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center text-sm text-gray-500">
+              <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                 <span>{assessment.assessment_type}</span>
                 <span>{new Date(assessment.created_at).toLocaleDateString()}</span>
               </div>

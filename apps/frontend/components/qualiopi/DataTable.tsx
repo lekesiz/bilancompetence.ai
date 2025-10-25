@@ -89,10 +89,10 @@ export default function DataTable({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg overflow-hidden">
       {title && (
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
         </div>
       )}
 
@@ -114,7 +114,7 @@ export default function DataTable({
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-6 py-3 text-left text-sm font-semibold text-gray-900 ${col.width || 'auto'}`}
+                  className={`px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white ${col.width || 'auto'}`}
                   style={{ width: col.width }}
                 >
                   {col.sortable ? (
@@ -139,7 +139,7 @@ export default function DataTable({
               <tr>
                 <td
                   colSpan={columns.length + (selectable ? 1 : 0)}
-                  className="px-6 py-8 text-center text-gray-500"
+                  className="px-6 py-8 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500"
                 >
                   {emptyMessage}
                 </td>
@@ -165,7 +165,7 @@ export default function DataTable({
                       </td>
                     )}
                     {columns.map((col) => (
-                      <td key={col.key} className="px-6 py-4 text-sm text-gray-900">
+                      <td key={col.key} className="px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {col.render ? col.render(row[col.key], row) : row[col.key]}
                       </td>
                     ))}
@@ -180,7 +180,7 @@ export default function DataTable({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-gray-300">
             {startIdx + 1}-{Math.min(startIdx + rowsPerPage, sortedData.length)} / {sortedData.length}
           </div>
           <div className="flex gap-2">

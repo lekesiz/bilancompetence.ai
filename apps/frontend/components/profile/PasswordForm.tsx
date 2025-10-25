@@ -116,7 +116,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
       <div className="space-y-4">
         {/* Current Password */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Current Password
           </label>
           <div className="relative">
@@ -138,9 +138,9 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPasswords.current ? (
-                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600" />
+                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600 dark:text-gray-300" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600" />
+                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600 dark:text-gray-300" />
               )}
             </button>
           </div>
@@ -154,7 +154,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
 
         {/* New Password */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             New Password
           </label>
           <div className="relative">
@@ -176,9 +176,9 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPasswords.new ? (
-                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600" />
+                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600 dark:text-gray-300" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600" />
+                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600 dark:text-gray-300" />
               )}
             </button>
           </div>
@@ -193,7 +193,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
                     style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
                   />
                 </div>
-                <span className="text-sm text-gray-600">{passwordStrength.label}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">{passwordStrength.label}</span>
               </div>
             </div>
           )}
@@ -208,7 +208,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
 
         {/* Confirm Password */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Confirm New Password
           </label>
           <div className="relative">
@@ -230,9 +230,9 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPasswords.confirm ? (
-                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600" />
+                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600 dark:text-gray-300" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600" />
+                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600 dark:text-gray-300" />
               )}
             </button>
           </div>

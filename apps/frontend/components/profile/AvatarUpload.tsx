@@ -132,7 +132,7 @@ export default function AvatarUpload({
 
       {!disabled && (
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Click to upload a new photo
           </p>
           <p className="text-xs text-gray-300 mt-1">

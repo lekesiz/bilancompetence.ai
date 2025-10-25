@@ -45,8 +45,8 @@ export function AdminDashboard() {
     <div className="space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-red-600 via-red-700 to-rose-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-gray-800 opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white dark:bg-gray-800 opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
         <div className="relative z-10">
           <h1 className="text-4xl font-bold mb-2">Organization Dashboard</h1>
           <p className="text-red-100 text-lg">Manage users, assessments, and organization metrics</p>
@@ -54,31 +54,31 @@ export function AdminDashboard() {
       </div>
 
       {/* Organization Overview */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Organization Info</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Organization Info</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm text-gray-600 mb-1">Organization Name</p>
-            <p className="text-lg font-semibold text-gray-800">{organization.name}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Organization Name</p>
+            <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{organization.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 mb-1">Plan</p>
-            <p className="text-lg font-semibold text-gray-800">{organization.plan}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Plan</p>
+            <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">{organization.plan}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 mb-1">Status</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Status</p>
             <p className="text-lg font-semibold text-success-600">Active</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600 mb-1">Storage Used</p>
-            <p className="text-lg font-semibold text-gray-800">--</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Storage Used</p>
+            <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">--</p>
           </div>
         </div>
       </div>
 
       {/* Key Metrics */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
           <Target className="w-6 h-6 text-red-600" />
           Key Metrics
         </h2>
@@ -138,7 +138,7 @@ export function AdminDashboard() {
 
       {/* Analytics Section */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
           <BarChart3 className="w-6 h-6 text-red-600" />
           Analytics
         </h2>
@@ -173,7 +173,7 @@ export function AdminDashboard() {
       {/* User Management */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <Users className="w-6 h-6 text-red-600" />
             User Management
           </h2>
@@ -202,34 +202,34 @@ export function AdminDashboard() {
 
       {/* Compliance & Reports */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
           <Shield className="w-6 h-6 text-red-600" />
           Compliance
         </h2>
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="font-semibold text-gray-800 mb-4">QUALIOPI Certification</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">QUALIOPI Certification</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full bg-success-500 flex items-center justify-center text-white text-xs font-bold">
                 ✓
               </div>
-              <span className="text-gray-800">Data Protection & Privacy</span>
+              <span className="text-gray-800 dark:text-gray-100">Data Protection & Privacy</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full bg-success-500 flex items-center justify-center text-white text-xs font-bold">
                 ✓
               </div>
-              <span className="text-gray-800">Assessment Quality</span>
+              <span className="text-gray-800 dark:text-gray-100">Assessment Quality</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs font-bold">
                 ⚠
               </div>
-              <span className="text-gray-800">User Feedback & Satisfaction</span>
+              <span className="text-gray-800 dark:text-gray-100">User Feedback & Satisfaction</span>
             </div>
           </div>
           <div className="mt-6 flex gap-3">
-            <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors">
+            <button className="px-4 py-2 bg-gray-100 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
               Export Report
             </button>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">

@@ -24,7 +24,7 @@ const STATUS_COLORS: Record<string, string> = {
   SCHEDULED: 'bg-blue-100 text-blue-900 border-blue-300',
   CONFIRMED: 'bg-green-100 text-green-900 border-green-300',
   IN_PROGRESS: 'bg-purple-100 text-purple-900 border-purple-300',
-  COMPLETED: 'bg-gray-100 text-gray-900 border-gray-300',
+  COMPLETED: 'bg-gray-100 text-gray-900 dark:text-white border-gray-300',
   CANCELLED: 'bg-red-100 text-red-900 border-red-300',
   NO_SHOW: 'bg-orange-100 text-orange-900 border-orange-300',
 };
@@ -122,14 +122,14 @@ export default function SessionCard({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow hover:shadow-md transition overflow-hidden">
       {/* Header with Status */}
       <div className={`p-4 border-b border-gray-200 flex justify-between items-start gap-2`}>
         <div>
-          <h3 className="font-semibold text-gray-900">
+          <h3 className="font-semibold text-gray-900 dark:text-white">
             {consultantMode ? session.beneficiary_id : session.consultant_id}
           </h3>
-          <p className="text-sm text-gray-600 mt-1">{session.session_type}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{session.session_type}</p>
         </div>
         <span
           className={`px-3 py-1 rounded-full text-xs font-medium border ${
@@ -143,25 +143,25 @@ export default function SessionCard({
       {/* Content */}
       <div className="p-4 space-y-3">
         {/* Date and Time */}
-        <div className="flex items-center gap-2 text-gray-700">
+        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
           <Clock className="w-4 h-4 text-gray-300" />
           <div>
             <p className="font-medium">
               {format(sessionDateTime, 'EEE, MMM d, yyyy')}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               {session.scheduled_start_time} - {session.scheduled_end_time} ({session.duration_minutes} min)
             </p>
           </div>
         </div>
 
         {/* Meeting Format */}
-        <div className="flex items-center gap-2 text-gray-700">
+        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
           {MEETING_FORMAT_ICONS[session.meeting_format]}
           <div>
             <p className="text-sm font-medium">{session.meeting_format}</p>
             {session.meeting_location && (
-              <p className="text-xs text-gray-600">{session.meeting_location}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300">{session.meeting_location}</p>
             )}
             {session.meeting_link && (
               <a
@@ -181,14 +181,14 @@ export default function SessionCard({
           <div className="p-3 bg-gray-50 rounded">
             {session.beneficiary_notes && (
               <div className="text-sm">
-                <p className="font-medium text-gray-700">Beneficiary Notes:</p>
-                <p className="text-gray-600 mt-1">{session.beneficiary_notes}</p>
+                <p className="font-medium text-gray-700 dark:text-gray-200">Beneficiary Notes:</p>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">{session.beneficiary_notes}</p>
               </div>
             )}
             {session.consultant_notes && (
               <div className="text-sm mt-2">
-                <p className="font-medium text-gray-700">Consultant Notes:</p>
-                <p className="text-gray-600 mt-1">{session.consultant_notes}</p>
+                <p className="font-medium text-gray-700 dark:text-gray-200">Consultant Notes:</p>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">{session.consultant_notes}</p>
               </div>
             )}
           </div>
@@ -207,13 +207,13 @@ export default function SessionCard({
                 }`}
               />
             ))}
-            <span className="text-sm text-gray-600 ml-2">({session.beneficiary_rating}/5)</span>
+            <span className="text-sm text-gray-600 dark:text-gray-300 ml-2">({session.beneficiary_rating}/5)</span>
           </div>
         )}
 
         {isCompleted && session.beneficiary_feedback && (
           <div className="p-3 bg-yellow-50 rounded border border-yellow-200">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 dark:text-gray-200">
               <strong>Feedback:</strong> {session.beneficiary_feedback}
             </p>
           </div>
@@ -222,7 +222,7 @@ export default function SessionCard({
         {/* Cancellation Reason */}
         {session.status === 'CANCELLED' && session.cancellation_reason && (
           <div className="p-3 bg-red-50 rounded border border-red-200">
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-700 dark:text-gray-200">
               <strong>Reason:</strong> {session.cancellation_reason}
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function SessionCard({
             <button
               onClick={() => setShowActions(false)}
               disabled={isLoading}
-              className="w-full px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition"
+              className="w-full px-3 py-2 bg-gray-200 text-gray-700 dark:text-gray-200 text-sm rounded hover:bg-gray-300 transition"
             >
               Close
             </button>
@@ -329,7 +329,7 @@ export default function SessionCard({
                 setRating(0);
                 setFeedback('');
               }}
-              className="w-full px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 transition"
+              className="w-full px-3 py-2 bg-gray-200 text-gray-700 dark:text-gray-200 text-sm rounded hover:bg-gray-300 transition"
             >
               Cancel
             </button>

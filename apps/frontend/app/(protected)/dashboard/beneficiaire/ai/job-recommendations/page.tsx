@@ -120,7 +120,7 @@ const JobRecommendationsPage = () => {
   const getMatchColor = (score: number) => {
     if (score >= 80) return 'bg-green-100 text-green-800 border-green-300';
     if (score >= 60) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-    return 'bg-gray-100 text-gray-800 border-gray-300';
+    return 'bg-gray-100 text-gray-800 dark:text-gray-100 border-gray-300';
   };
 
   const getMatchLabel = (score: number) => {
@@ -134,7 +134,7 @@ const JobRecommendationsPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-700 font-medium">Chargement des recommandations...</p>
+          <p className="text-gray-700 dark:text-gray-200 font-medium">Chargement des recommandations...</p>
         </div>
       </div>
     );
@@ -151,23 +151,23 @@ const JobRecommendationsPage = () => {
             </svg>
             Retour au dashboard
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Métiers recommandés</h1>
-          <p className="text-xl text-gray-600">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Métiers recommandés</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
             Basé sur votre profil, vos compétences et vos aspirations professionnelles
           </p>
         </div>
 
         {/* Filter */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Filtrer par compatibilité</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filtrer par compatibilité</h2>
             <div className="flex gap-3">
               <button
                 onClick={() => setFilter('all')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   filter === 'all'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 dark:text-gray-200 hover:bg-gray-200'
                 }`}
               >
                 Tous ({jobs.length})
@@ -177,7 +177,7 @@ const JobRecommendationsPage = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   filter === 'high'
                     ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 dark:text-gray-200 hover:bg-gray-200'
                 }`}
               >
                 Excellents ({jobs.filter(j => j.matchScore >= 80).length})
@@ -187,7 +187,7 @@ const JobRecommendationsPage = () => {
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   filter === 'medium'
                     ? 'bg-yellow-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 dark:text-gray-200 hover:bg-gray-200'
                 }`}
               >
                 Bons ({jobs.filter(j => j.matchScore >= 60 && j.matchScore < 80).length})
@@ -201,14 +201,14 @@ const JobRecommendationsPage = () => {
           {filteredJobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer"
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer"
               onClick={() => setSelectedJob(job)}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{job.title}</h3>
-                  <p className="text-sm text-gray-600">{job.sector}</p>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{job.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{job.sector}</p>
                 </div>
                 <div className={`px-3 py-1 rounded-full border ${getMatchColor(job.matchScore)}`}>
                   <span className="font-bold">{job.matchScore}%</span>
@@ -223,11 +223,11 @@ const JobRecommendationsPage = () => {
               </div>
 
               {/* Description */}
-              <p className="text-gray-700 mb-4 line-clamp-3">{job.description}</p>
+              <p className="text-gray-700 dark:text-gray-200 mb-4 line-clamp-3">{job.description}</p>
 
               {/* Skills */}
               <div className="mb-4">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Compétences requises:</p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Compétences requises:</p>
                 <div className="flex flex-wrap gap-2">
                   {job.requiredSkills.slice(0, 3).map((skill, index) => (
                     <span
@@ -238,7 +238,7 @@ const JobRecommendationsPage = () => {
                     </span>
                   ))}
                   {job.requiredSkills.length > 3 && (
-                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 dark:text-gray-300 rounded text-xs font-medium">
                       +{job.requiredSkills.length - 3}
                     </span>
                   )}
@@ -247,7 +247,7 @@ const JobRecommendationsPage = () => {
 
               {/* Salary & Growth */}
               <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-gray-600 dark:text-gray-300">
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -277,23 +277,23 @@ const JobRecommendationsPage = () => {
 
         {/* Empty State */}
         {filteredJobs.length === 0 && (
-          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-12 text-center">
             <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Aucun métier trouvé</h3>
-            <p className="text-gray-600">Essayez de changer les filtres</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Aucun métier trouvé</h3>
+            <p className="text-gray-600 dark:text-gray-300">Essayez de changer les filtres</p>
           </div>
         )}
 
         {/* Job Detail Modal */}
         {selectedJob && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedJob(null)}>
-            <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8" onClick={(e) => e.stopPropagation()}>
               {/* Close Button */}
               <button
                 onClick={() => setSelectedJob(null)}
-                className="float-right text-gray-300 hover:text-gray-600"
+                className="float-right text-gray-300 hover:text-gray-600 dark:text-gray-300"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -304,8 +304,8 @@ const JobRecommendationsPage = () => {
               <div className="mb-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">{selectedJob.title}</h2>
-                    <p className="text-lg text-gray-600">{selectedJob.sector}</p>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{selectedJob.title}</h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-300">{selectedJob.sector}</p>
                   </div>
                   <div className={`px-4 py-2 rounded-full border ${getMatchColor(selectedJob.matchScore)}`}>
                     <span className="font-bold text-lg">{selectedJob.matchScore}%</span>
@@ -318,13 +318,13 @@ const JobRecommendationsPage = () => {
 
               {/* Description */}
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Description du poste</h3>
-                <p className="text-gray-700 leading-relaxed">{selectedJob.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Description du poste</h3>
+                <p className="text-gray-700 dark:text-gray-200 leading-relaxed">{selectedJob.description}</p>
               </div>
 
               {/* Skills */}
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Compétences requises</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Compétences requises</h3>
                 <div className="flex flex-wrap gap-3">
                   {selectedJob.requiredSkills.map((skill, index) => (
                     <span
@@ -340,20 +340,20 @@ const JobRecommendationsPage = () => {
               {/* Details Grid */}
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Salaire moyen</h4>
-                  <p className="text-gray-700">{selectedJob.averageSalary}</p>
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-2">Salaire moyen</h4>
+                  <p className="text-gray-700 dark:text-gray-200">{selectedJob.averageSalary}</p>
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Croissance du secteur</h4>
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-2">Croissance du secteur</h4>
                   <p className="text-success-600 font-semibold">{selectedJob.growthRate}</p>
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Formation requise</h4>
-                  <p className="text-gray-700">{selectedJob.education}</p>
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-2">Formation requise</h4>
+                  <p className="text-gray-700 dark:text-gray-200">{selectedJob.education}</p>
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Environnement de travail</h4>
-                  <p className="text-gray-700">{selectedJob.workEnvironment}</p>
+                  <h4 className="font-bold text-gray-900 dark:text-white mb-2">Environnement de travail</h4>
+                  <p className="text-gray-700 dark:text-gray-200">{selectedJob.workEnvironment}</p>
                 </div>
               </div>
 

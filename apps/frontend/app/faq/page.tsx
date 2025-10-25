@@ -149,7 +149,7 @@ const FaqPage = () => {
                 className={`px-6 py-3 rounded-lg font-medium transition-all ${
                   selectedCategory === category
                     ? 'bg-primary text-white shadow-lg'
-                    : 'bg-white text-textPrimary hover:bg-gray-50 shadow-md'
+                    : 'bg-white dark:bg-gray-800 text-textPrimary hover:bg-gray-50 shadow-md'
                 }`}
               >
                 {category}
@@ -163,7 +163,7 @@ const FaqPage = () => {
           {filteredFAQ.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden transition-all hover:shadow-lg"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all hover:shadow-lg"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
@@ -214,7 +214,7 @@ const FaqPage = () => {
           </p>
           <Link 
             href="/contact"
-            className="inline-block bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white dark:bg-gray-800 text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Contactez-nous
           </Link>

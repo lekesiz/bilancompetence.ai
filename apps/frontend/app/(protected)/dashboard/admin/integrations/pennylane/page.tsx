@@ -230,7 +230,7 @@ export default function PennylaneIntegrationPage() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Intégration Pennylane
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
                 Gérez vos factures et clients via Pennylane
               </p>
             </div>
@@ -258,7 +258,7 @@ export default function PennylaneIntegrationPage() {
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
               activeTab === 'invoices'
                 ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
             }`}
           >
             📄 Factures
@@ -268,7 +268,7 @@ export default function PennylaneIntegrationPage() {
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
               activeTab === 'customers'
                 ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
             }`}
           >
             👥 Clients
@@ -277,9 +277,9 @@ export default function PennylaneIntegrationPage() {
 
         {/* Invoices Tab */}
         {activeTab === 'invoices' && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                 Factures ({invoices.length})
               </h2>
               <button
@@ -295,7 +295,7 @@ export default function PennylaneIntegrationPage() {
               <form onSubmit={handleCreateInvoice} className="mb-6 p-4 bg-blue-50 rounded-lg">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Client
                     </label>
                     <select
@@ -315,7 +315,7 @@ export default function PennylaneIntegrationPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Montant (€)
                     </label>
                     <input
@@ -330,7 +330,7 @@ export default function PennylaneIntegrationPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Description
                     </label>
                     <textarea
@@ -344,7 +344,7 @@ export default function PennylaneIntegrationPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Date d'échéance
                     </label>
                     <input
@@ -368,7 +368,7 @@ export default function PennylaneIntegrationPage() {
                     <button
                       type="button"
                       onClick={() => setShowCreateInvoice(false)}
-                      className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
+                      className="flex-1 bg-gray-200 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
                     >
                       Annuler
                     </button>
@@ -380,30 +380,30 @@ export default function PennylaneIntegrationPage() {
             {/* Invoices List */}
             <div className="space-y-3">
               {loading && invoices.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Chargement...</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Chargement...</div>
               ) : invoices.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Aucune facture trouvée</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Aucune facture trouvée</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                           N° Facture
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Client
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Montant
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Date
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Échéance
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Statut
                         </th>
                       </tr>
@@ -411,19 +411,19 @@ export default function PennylaneIntegrationPage() {
                     <tbody className="divide-y divide-gray-200">
                       {invoices.map((invoice) => (
                         <tr key={invoice.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                          <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
                             {invoice.invoice_number}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-700">
+                          <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
                             {invoice.customer_name}
                           </td>
-                          <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                          <td className="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">
                             {formatCurrency(invoice.amount)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                          <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                             {formatDate(invoice.date)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                          <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
                             {formatDate(invoice.due_date)}
                           </td>
                           <td className="px-4 py-3">
@@ -455,9 +455,9 @@ export default function PennylaneIntegrationPage() {
 
         {/* Customers Tab */}
         {activeTab === 'customers' && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                 Clients ({customers.length})
               </h2>
               <button
@@ -473,7 +473,7 @@ export default function PennylaneIntegrationPage() {
               <form onSubmit={handleCreateCustomer} className="mb-6 p-4 bg-purple-50 rounded-lg">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Nom du client
                     </label>
                     <input
@@ -488,7 +488,7 @@ export default function PennylaneIntegrationPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Email
                       </label>
                       <input
@@ -502,7 +502,7 @@ export default function PennylaneIntegrationPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Téléphone
                       </label>
                       <input
@@ -516,7 +516,7 @@ export default function PennylaneIntegrationPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Adresse
                     </label>
                     <input
@@ -530,7 +530,7 @@ export default function PennylaneIntegrationPage() {
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Ville
                       </label>
                       <input
@@ -543,7 +543,7 @@ export default function PennylaneIntegrationPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Code postal
                       </label>
                       <input
@@ -556,7 +556,7 @@ export default function PennylaneIntegrationPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Pays
                       </label>
                       <input
@@ -580,7 +580,7 @@ export default function PennylaneIntegrationPage() {
                     <button
                       type="button"
                       onClick={() => setShowCreateCustomer(false)}
-                      className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
+                      className="flex-1 bg-gray-200 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
                     >
                       Annuler
                     </button>
@@ -592,11 +592,11 @@ export default function PennylaneIntegrationPage() {
             {/* Customers List */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {loading && customers.length === 0 ? (
-                <div className="col-span-full text-center py-8 text-gray-500">
+                <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Chargement...
                 </div>
               ) : customers.length === 0 ? (
-                <div className="col-span-full text-center py-8 text-gray-500">
+                <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Aucun client trouvé
                 </div>
               ) : (
@@ -605,21 +605,21 @@ export default function PennylaneIntegrationPage() {
                     key={customer.id}
                     className="p-4 rounded-lg border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all"
                   >
-                    <h3 className="font-semibold text-gray-800 mb-2">{customer.name}</h3>
-                    <p className="text-sm text-gray-600 mb-1">{customer.email}</p>
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">{customer.name}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{customer.email}</p>
                     {customer.phone && (
-                      <p className="text-sm text-gray-500 mb-3">{customer.phone}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 mb-3">{customer.phone}</p>
                     )}
                     <div className="flex justify-between items-center pt-3 border-t border-gray-100">
                       <div>
-                        <p className="text-xs text-gray-500">Factures</p>
-                        <p className="font-semibold text-gray-800">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Factures</p>
+                        <p className="font-semibold text-gray-800 dark:text-gray-100">
                           {customer.total_invoices || 0}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Total</p>
-                        <p className="font-semibold text-gray-800">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Total</p>
+                        <p className="font-semibold text-gray-800 dark:text-gray-100">
                           {formatCurrency(customer.total_amount || 0)}
                         </p>
                       </div>

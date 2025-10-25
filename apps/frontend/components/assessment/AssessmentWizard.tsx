@@ -117,15 +117,15 @@ export function AssessmentWizard({
   if (!state.assessmentId && state.currentStep === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 flex items-center justify-center">
-        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Assessment Wizard</h1>
-          <p className="text-gray-600 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Assessment Wizard</h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
             Complete this 5-step assessment to get personalized career recommendations based on your skills, experience, and goals.
           </p>
 
           <div className="space-y-3 mb-8">
-            <h3 className="font-semibold text-gray-700">What's included:</h3>
-            <ul className="text-sm text-gray-600 space-y-2">
+            <h3 className="font-semibold text-gray-700 dark:text-gray-200">What's included:</h3>
+            <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
               <li>✓ Work history & experience</li>
               <li>✓ Education & certifications</li>
               <li>✓ Skills assessment</li>
@@ -151,7 +151,7 @@ export function AssessmentWizard({
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading assessment...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading assessment...</p>
         </div>
       </div>
     );
@@ -161,11 +161,11 @@ export function AssessmentWizard({
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Assessment Wizard</h1>
-              <p className="text-gray-600 mt-1">Step {state.currentStep} of 5</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Assessment Wizard</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Step {state.currentStep} of 5</p>
             </div>
             <AutoSaveIndicator
               lastSavedAt={state.lastSavedAt}
@@ -197,7 +197,7 @@ export function AssessmentWizard({
         )}
 
         {/* Step Content */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
           {state.currentStep === 1 && (
             <WorkHistoryStep
               data={state.draftData.step1}

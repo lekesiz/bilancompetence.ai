@@ -26,7 +26,7 @@ export default function Badge({
     warning: 'bg-yellow-100 text-yellow-800 border border-yellow-300',
     danger: 'bg-red-100 text-red-800 border border-red-300',
     info: 'bg-cyan-100 text-cyan-800 border border-cyan-300',
-    gray: 'bg-gray-100 text-gray-800 border border-gray-300',
+    gray: 'bg-gray-100 text-gray-800 dark:text-gray-100 border border-gray-300',
   };
 
   const sizeClasses = {

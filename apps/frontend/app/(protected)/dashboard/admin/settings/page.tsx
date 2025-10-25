@@ -109,8 +109,8 @@ export default function AdminSettingsPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Paramètres Système</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Paramètres Système</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
             Gérez les clés API et les paramètres de configuration du système
           </p>
         </div>
@@ -140,10 +140,10 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* API Keys Section */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Clés API</h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Clés API</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
               Configurez les clés API pour les services externes
             </p>
           </div>
@@ -154,18 +154,18 @@ export default function AdminSettingsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center">
-                      <h3 className="text-lg font-medium text-gray-900">{apiKey.name}</h3>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">{apiKey.name}</h3>
                       <span
                         className={`ml-3 px-2 py-1 text-xs font-medium rounded-full ${
                           apiKey.status === 'active'
                             ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
+                            : 'bg-gray-100 text-gray-800 dark:text-gray-100'
                         }`}
                       >
                         {apiKey.status === 'active' ? 'Active' : 'Non configurée'}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">{apiKey.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{apiKey.description}</p>
 
                     {editingKey === apiKey.name ? (
                       <div className="mt-3">
@@ -185,7 +185,7 @@ export default function AdminSettingsPage() {
                           </button>
                           <button
                             onClick={handleCancel}
-                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                            className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
                           >
                             Annuler
                           </button>
@@ -193,7 +193,7 @@ export default function AdminSettingsPage() {
                       </div>
                     ) : (
                       <div className="mt-2 flex items-center gap-4">
-                        <code className="text-sm bg-gray-100 px-3 py-1 rounded font-mono text-gray-700">
+                        <code className="text-sm bg-gray-100 px-3 py-1 rounded font-mono text-gray-700 dark:text-gray-200">
                           {apiKey.masked}
                         </code>
                         <button
@@ -220,26 +220,26 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* System Info */}
-        <div className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Informations Système</h2>
+        <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Informations Système</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="border border-gray-200 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Version</p>
-              <p className="text-lg font-semibold text-gray-900">1.0.0</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Version</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">1.0.0</p>
             </div>
             <div className="border border-gray-200 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Environnement</p>
-              <p className="text-lg font-semibold text-gray-900">Production</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Environnement</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">Production</p>
             </div>
             <div className="border border-gray-200 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Backend URL</p>
-              <p className="text-lg font-semibold text-gray-900 truncate">
+              <p className="text-sm text-gray-600 dark:text-gray-300">Backend URL</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                 {process.env.NEXT_PUBLIC_API_URL || 'https://web-production-60dbd.up.railway.app'}
               </p>
             </div>
             <div className="border border-gray-200 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Database</p>
-              <p className="text-lg font-semibold text-gray-900">Supabase PostgreSQL</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Database</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">Supabase PostgreSQL</p>
             </div>
           </div>
         </div>

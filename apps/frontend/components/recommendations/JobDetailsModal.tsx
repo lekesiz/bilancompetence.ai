@@ -58,7 +58,7 @@ export function JobDetailsModal({
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex justify-between items-start">
             <div>
@@ -79,27 +79,27 @@ export function JobDetailsModal({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {job.location && (
                 <div>
-                  <p className="text-xs text-gray-600 uppercase font-semibold mb-1">Location</p>
-                  <p className="text-gray-900 font-medium">📍 {job.location}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 uppercase font-semibold mb-1">Location</p>
+                  <p className="text-gray-900 dark:text-white font-medium">📍 {job.location}</p>
                 </div>
               )}
               {job.contractType && (
                 <div>
-                  <p className="text-xs text-gray-600 uppercase font-semibold mb-1">Type</p>
-                  <p className="text-gray-900 font-medium">💼 {job.contractType}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 uppercase font-semibold mb-1">Type</p>
+                  <p className="text-gray-900 dark:text-white font-medium">💼 {job.contractType}</p>
                 </div>
               )}
               {job.salaryMin && job.salaryMax && (
                 <div>
-                  <p className="text-xs text-gray-600 uppercase font-semibold mb-1">Salary</p>
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-xs text-gray-600 dark:text-gray-300 uppercase font-semibold mb-1">Salary</p>
+                  <p className="text-gray-900 dark:text-white font-medium">
                     💰 €{job.salaryMin.toLocaleString()}-€{job.salaryMax.toLocaleString()}
                   </p>
                 </div>
               )}
               {job.matchScore !== undefined && (
                 <div>
-                  <p className="text-xs text-gray-600 uppercase font-semibold mb-1">Match</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 uppercase font-semibold mb-1">Match</p>
                   <p className="text-green-600 font-bold text-lg">{Math.round(job.matchScore)}%</p>
                 </div>
               )}
@@ -111,8 +111,8 @@ export function JobDetailsModal({
             {/* Description */}
             {job.description && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">About This Role</h3>
-                <div className="prose prose-sm max-w-none text-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">About This Role</h3>
+                <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-200">
                   <p>{job.description}</p>
                 </div>
               </div>
@@ -121,12 +121,12 @@ export function JobDetailsModal({
             {/* Match Reasons */}
             {job.matchReasons && job.matchReasons.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Why This Role Matches Your Skills</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Why This Role Matches Your Skills</h3>
                 <div className="space-y-2">
                   {job.matchReasons.map((reason, idx) => (
                     <div key={idx} className="flex items-start gap-3">
                       <span className="text-green-600 font-bold text-lg mt-0.5">✓</span>
-                      <p className="text-gray-700">{reason}</p>
+                      <p className="text-gray-700 dark:text-gray-200">{reason}</p>
                     </div>
                   ))}
                 </div>
@@ -135,9 +135,9 @@ export function JobDetailsModal({
 
             {/* Key Requirements Section */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Requirements</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Key Requirements</h3>
               <div className="bg-gray-50 rounded-lg p-4">
-                <ul className="space-y-2 text-gray-700">
+                <ul className="space-y-2 text-gray-700 dark:text-gray-200">
                   <li className="flex items-start gap-2">
                     <span className="text-primary-600 mt-1">→</span>
                     <span>Relevant experience in {job.title.split(' ')[0].toLowerCase()}</span>
@@ -160,13 +160,13 @@ export function JobDetailsModal({
 
             {/* Company Info Section */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">About the Company</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">About the Company</h3>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-gray-700 mb-3">
+                <p className="text-gray-700 dark:text-gray-200 mb-3">
                   {job.company} is a leading organization offering competitive benefits and growth opportunities
                   for talented professionals.
                 </p>
-                <ul className="text-sm text-gray-700 space-y-1">
+                <ul className="text-sm text-gray-700 dark:text-gray-200 space-y-1">
                   <li className="flex items-center gap-2">
                     <span>✓</span> Competitive salary and benefits package
                   </li>
@@ -185,8 +185,8 @@ export function JobDetailsModal({
 
             {/* Next Steps */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Next Steps</h3>
-              <div className="space-y-2 text-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Next Steps</h3>
+              <div className="space-y-2 text-gray-700 dark:text-gray-200">
                 <p>
                   1. <strong>Review</strong> your skills match with this position
                 </p>
@@ -207,7 +207,7 @@ export function JobDetailsModal({
           <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-3 rounded-lg font-medium bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all"
+              className="flex-1 px-4 py-3 rounded-lg font-medium bg-gray-200 text-gray-800 dark:text-gray-100 hover:bg-gray-300 transition-all"
             >
               Close
             </button>

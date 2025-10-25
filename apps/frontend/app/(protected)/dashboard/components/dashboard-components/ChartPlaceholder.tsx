@@ -26,9 +26,9 @@ export function ChartPlaceholder({
 }: ChartPlaceholderProps) {
   if (loading) {
     return (
-      <div className={`bg-white rounded-xl border border-gray-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6 ${className}`}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
           <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>
         </div>
         <div className={`${height} bg-gray-100 rounded-lg animate-pulse flex items-center justify-center`}>
@@ -40,14 +40,14 @@ export function ChartPlaceholder({
 
   if (!data || data.length === 0) {
     return (
-      <div className={`bg-white rounded-xl border border-gray-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6 ${className}`}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
           <div className="text-gray-300">{chartIcons[chartType]}</div>
         </div>
         <div className={`${height} bg-gray-50 rounded-lg flex flex-col items-center justify-center`}>
           <div className="text-gray-300 mb-2">{chartIcons[chartType]}</div>
-          <p className="text-gray-500 text-sm">No data available</p>
+          <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-sm">No data available</p>
           <p className="text-gray-300 text-xs mt-1">Chart will appear when data is available</p>
         </div>
       </div>
@@ -55,9 +55,9 @@ export function ChartPlaceholder({
   }
 
   return (
-    <div className={`bg-white rounded-xl border border-gray-200 p-6 ${className}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl border border-gray-200 p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
         <div className="text-blue-600">{chartIcons[chartType]}</div>
       </div>
       <div className={`${height} bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg flex flex-col items-center justify-center border border-blue-100`}>

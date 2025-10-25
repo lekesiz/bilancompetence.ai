@@ -26,10 +26,10 @@ const FinancementPage = () => {
 
         {/* CPF Section */}
         <div className="mb-16">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             <div className="bg-gradient-to-r from-green-500 to-green-600 p-8 text-white">
               <div className="flex items-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-3xl mr-4">
+                <div className="w-16 h-16 rounded-full bg-white dark:bg-gray-800/20 flex items-center justify-center text-3xl mr-4">
                   💰
                 </div>
                 <div>
@@ -99,7 +99,7 @@ const FinancementPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Plan de développement des compétences */}
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-2xl mr-3">
                   🏢
@@ -126,7 +126,7 @@ const FinancementPage = () => {
             </div>
 
             {/* Pôle Emploi */}
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-2xl mr-3">
                   🎯
@@ -153,7 +153,7 @@ const FinancementPage = () => {
             </div>
 
             {/* Transition Pro */}
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center text-2xl mr-3">
                   🔄
@@ -180,7 +180,7 @@ const FinancementPage = () => {
             </div>
 
             {/* OPCO */}
-            <div className="bg-white rounded-lg shadow-md p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-lg bg-teal-100 flex items-center justify-center text-2xl mr-3">
                   🤝
@@ -212,7 +212,7 @@ const FinancementPage = () => {
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-textPrimary mb-8 text-center">Tableau Comparatif</h2>
           
-          <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
@@ -257,7 +257,7 @@ const FinancementPage = () => {
           <h2 className="text-3xl font-bold text-textPrimary mb-8 text-center">Questions Fréquentes</h2>
           
           <div className="space-y-4">
-            <details className="bg-white rounded-lg shadow-md p-6 cursor-pointer">
+            <details className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer">
               <summary className="font-semibold text-textPrimary text-lg">
                 Combien coûte un bilan de compétences ?
               </summary>
@@ -268,7 +268,7 @@ const FinancementPage = () => {
               </p>
             </details>
 
-            <details className="bg-white rounded-lg shadow-md p-6 cursor-pointer">
+            <details className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer">
               <summary className="font-semibold text-textPrimary text-lg">
                 Mon employeur sera-t-il informé si j'utilise mon CPF ?
               </summary>
@@ -278,7 +278,7 @@ const FinancementPage = () => {
               </p>
             </details>
 
-            <details className="bg-white rounded-lg shadow-md p-6 cursor-pointer">
+            <details className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer">
               <summary className="font-semibold text-textPrimary text-lg">
                 Puis-je cumuler plusieurs sources de financement ?
               </summary>
@@ -288,7 +288,7 @@ const FinancementPage = () => {
               </p>
             </details>
 
-            <details className="bg-white rounded-lg shadow-md p-6 cursor-pointer">
+            <details className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 cursor-pointer">
               <summary className="font-semibold text-textPrimary text-lg">
                 Combien de temps faut-il pour obtenir un financement ?
               </summary>
@@ -309,7 +309,7 @@ const FinancementPage = () => {
           </p>
           <Link 
             href="/contact"
-            className="inline-block bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white dark:bg-gray-800 text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Contactez-nous
           </Link>

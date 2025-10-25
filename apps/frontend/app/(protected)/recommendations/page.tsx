@@ -115,8 +115,8 @@ export default function RecommendationsPage() {
       {/* Get Fresh Recommendations Button */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Job Listings</h2>
-          <p className="text-gray-600 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Job Listings</h2>
+          <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
             Showing {recommendations.length} recommendations based on your skills
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function RecommendationsPage() {
             flex items-center gap-2
             ${
               loading
-                ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
+                ? 'bg-gray-300 text-gray-700 dark:text-gray-200 cursor-not-allowed'
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }
           `}

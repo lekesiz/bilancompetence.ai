@@ -130,8 +130,8 @@ export default function SavedJobsPage() {
       {/* Back to Recommendations Link */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Manage Your Applications</h2>
-          <p className="text-gray-600 text-sm mt-1">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Your Applications</h2>
+          <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
             Track and organize your job applications
           </p>
         </div>
@@ -211,12 +211,12 @@ export default function SavedJobsPage() {
       {/* Competency Matcher Modal */}
       {selectedJob && competencyMatcherOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg max-w-2xl w-full my-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full my-8">
             <div className="flex justify-between items-center p-6 border-b border-gray-200">
               <h2 className="text-2xl font-bold">Skill Match Analysis</h2>
               <button
                 onClick={() => setCompetencyMatcherOpen(false)}
-                className="text-gray-300 hover:text-gray-600 text-2xl"
+                className="text-gray-300 hover:text-gray-600 dark:text-gray-300 text-2xl"
               >
                 ✕
               </button>

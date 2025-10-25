@@ -105,7 +105,7 @@ export default function MetricCard({
       {action && (
         <button
           onClick={action.onClick}
-          className={`mt-4 w-full px-3 py-2 bg-opacity-20 bg-white text-inherit rounded font-medium hover:bg-opacity-40 transition`}
+          className={`mt-4 w-full px-3 py-2 bg-opacity-20 bg-white dark:bg-gray-800 text-inherit rounded font-medium hover:bg-opacity-40 transition`}
           aria-label={action.label}
         >
           {action.label}

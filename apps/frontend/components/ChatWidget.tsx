@@ -145,7 +145,7 @@ export default function ChatWidget({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 h-96 bg-white rounded-lg shadow-lg flex flex-col border border-gray-200 z-40">
+    <div className="fixed bottom-4 right-4 w-96 h-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex flex-col border border-gray-200 z-40">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-t-lg flex items-center justify-between">
         <div>
@@ -184,13 +184,13 @@ export default function ChatWidget({
                 <div
                   className={`rounded-lg px-3 py-2 max-w-xs break-words ${
                     message.senderId === recipientId
-                      ? 'bg-gray-100 text-gray-900'
+                      ? 'bg-gray-100 text-gray-900 dark:text-white'
                       : 'bg-primary-600 text-white ml-auto'
                   }`}
                 >
                   {message.content}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">
                   {new Date(message.timestamp).toLocaleTimeString()}
                 </p>
               </div>
@@ -208,7 +208,7 @@ export default function ChatWidget({
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
               </div>
             </div>
-            <p className="text-xs text-gray-500">{recipientName} is typing...</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{recipientName} is typing...</p>
           </div>
         )}
 

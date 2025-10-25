@@ -215,7 +215,7 @@ export default function WedofIntegrationPage() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 Intégration Wedof
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 dark:text-gray-300 mt-2">
                 Gérez vos dossiers de formation et stagiaires via Wedof
               </p>
             </div>
@@ -238,9 +238,9 @@ export default function WedofIntegrationPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Dossiers d'inscription */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Dossiers d'inscription</h2>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dossiers d'inscription</h2>
               <button
                 onClick={() => setShowCreateFolder(!showCreateFolder)}
                 className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all"
@@ -254,7 +254,7 @@ export default function WedofIntegrationPage() {
               <form onSubmit={handleCreateFolder} className="mb-6 p-4 bg-purple-50 rounded-lg">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Nom du dossier
                     </label>
                     <input
@@ -266,7 +266,7 @@ export default function WedofIntegrationPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                       Description
                     </label>
                     <textarea
@@ -278,7 +278,7 @@ export default function WedofIntegrationPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Date de début
                       </label>
                       <input
@@ -289,7 +289,7 @@ export default function WedofIntegrationPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         Date de fin
                       </label>
                       <input
@@ -311,7 +311,7 @@ export default function WedofIntegrationPage() {
                     <button
                       type="button"
                       onClick={() => setShowCreateFolder(false)}
-                      className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
+                      className="flex-1 bg-gray-200 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
                     >
                       Annuler
                     </button>
@@ -323,9 +323,9 @@ export default function WedofIntegrationPage() {
             {/* Folders List */}
             <div className="space-y-3">
               {loading && folders.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">Chargement...</div>
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Chargement...</div>
               ) : folders.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   Aucun dossier d'inscription trouvé
                 </div>
               ) : (
@@ -341,8 +341,8 @@ export default function WedofIntegrationPage() {
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-semibold text-gray-800">{folder.name}</h3>
-                        <p className="text-sm text-gray-500">
+                        <h3 className="font-semibold text-gray-800 dark:text-gray-100">{folder.name}</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                           {folder.attendees_count || 0} stagiaire(s)
                         </p>
                       </div>
@@ -350,7 +350,7 @@ export default function WedofIntegrationPage() {
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
                           folder.status === 'active'
                             ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-700'
+                            : 'bg-gray-100 text-gray-700 dark:text-gray-200'
                         }`}
                       >
                         {folder.status}
@@ -363,9 +363,9 @@ export default function WedofIntegrationPage() {
           </div>
 
           {/* Stagiaires */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                 Stagiaires
                 {selectedFolder && ` (${attendees.length})`}
               </h2>
@@ -380,7 +380,7 @@ export default function WedofIntegrationPage() {
             </div>
 
             {!selectedFolder ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                 Sélectionnez un dossier pour voir les stagiaires
               </div>
             ) : (
@@ -391,7 +391,7 @@ export default function WedofIntegrationPage() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                             Prénom
                           </label>
                           <input
@@ -405,7 +405,7 @@ export default function WedofIntegrationPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                             Nom
                           </label>
                           <input
@@ -420,7 +420,7 @@ export default function WedofIntegrationPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                           Email
                         </label>
                         <input
@@ -434,7 +434,7 @@ export default function WedofIntegrationPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                           Téléphone
                         </label>
                         <input
@@ -457,7 +457,7 @@ export default function WedofIntegrationPage() {
                         <button
                           type="button"
                           onClick={() => setShowCreateAttendee(false)}
-                          className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
+                          className="flex-1 bg-gray-200 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all"
                         >
                           Annuler
                         </button>
@@ -469,9 +469,9 @@ export default function WedofIntegrationPage() {
                 {/* Attendees List */}
                 <div className="space-y-3">
                   {loading && attendees.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">Chargement...</div>
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Chargement...</div>
                   ) : attendees.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                       Aucun stagiaire dans ce dossier
                     </div>
                   ) : (
@@ -482,19 +482,19 @@ export default function WedofIntegrationPage() {
                       >
                         <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="font-semibold text-gray-800">
+                            <h3 className="font-semibold text-gray-800 dark:text-gray-100">
                               {attendee.first_name} {attendee.last_name}
                             </h3>
-                            <p className="text-sm text-gray-600">{attendee.email}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">{attendee.email}</p>
                             {attendee.phone && (
-                              <p className="text-sm text-gray-500">{attendee.phone}</p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">{attendee.phone}</p>
                             )}
                           </div>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${
                               attendee.status === 'active'
                                 ? 'bg-green-100 text-green-700'
-                                : 'bg-gray-100 text-gray-700'
+                                : 'bg-gray-100 text-gray-700 dark:text-gray-200'
                             }`}
                           >
                             {attendee.status}

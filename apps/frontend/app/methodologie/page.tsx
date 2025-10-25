@@ -38,7 +38,7 @@ const MethodologiePage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-6">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Objectifs</h3>
             <ul className="space-y-3 text-textSecondary">
               <li className="flex items-start">
@@ -60,7 +60,7 @@ const MethodologiePage = () => {
             </ul>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Déroulement</h3>
             <div className="space-y-4 text-textSecondary">
               <p>
@@ -88,7 +88,7 @@ const MethodologiePage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-6">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Objectifs</h3>
             <ul className="space-y-3 text-textSecondary">
               <li className="flex items-start">
@@ -110,7 +110,7 @@ const MethodologiePage = () => {
             </ul>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-6">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Outils et Méthodes</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border-l-4 border-primary pl-4">
@@ -152,7 +152,7 @@ const MethodologiePage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Déroulement</h3>
             <div className="space-y-4 text-textSecondary">
               <p>
@@ -180,7 +180,7 @@ const MethodologiePage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-6">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Objectifs</h3>
             <ul className="space-y-3 text-textSecondary">
               <li className="flex items-start">
@@ -202,7 +202,7 @@ const MethodologiePage = () => {
             </ul>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
             <h3 className="text-2xl font-semibold text-textPrimary mb-4">Livrables</h3>
             <div className="space-y-4">
               <div className="flex items-start">
@@ -241,7 +241,7 @@ const MethodologiePage = () => {
           </p>
           <Link 
             href="/contact"
-            className="inline-block bg-white text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="inline-block bg-white dark:bg-gray-800 text-primary px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Contactez-nous
           </Link>

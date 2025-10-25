@@ -92,12 +92,12 @@ export default function BeneficiarySessionBrowser({
   return (
     <div className="space-y-6">
       {/* Search Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Find Available Sessions</h2>
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6 shadow">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Find Available Sessions</h2>
 
         {/* Search Input */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Search Consultant
           </label>
           <div className="relative">
@@ -115,7 +115,7 @@ export default function BeneficiarySessionBrowser({
         {/* Date Range Selection */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               From Date
             </label>
             <input
@@ -126,7 +126,7 @@ export default function BeneficiarySessionBrowser({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               To Date
             </label>
             <input
@@ -158,13 +158,13 @@ export default function BeneficiarySessionBrowser({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Consultants List */}
         <div className="lg:col-span-1">
-          <div className="bg-white border border-gray-200 rounded-lg shadow overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow overflow-hidden">
             <div className="p-4 bg-gray-50 border-b border-gray-200">
-              <h3 className="font-semibold text-gray-900">Available Consultants</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Available Consultants</h3>
             </div>
             <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto">
               {isLoading ? (
-                <div className="p-4 text-center text-gray-600">
+                <div className="p-4 text-center text-gray-600 dark:text-gray-300">
                   Loading consultants...
                 </div>
               ) : availableSlots && availableSlots.length > 0 ? (
@@ -180,10 +180,10 @@ export default function BeneficiarySessionBrowser({
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-gray-900 dark:text-white">
                           {consultant.consultant_name || `Consultant ${consultant.consultant_id.slice(0, 8)}`}
                         </p>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                           {consultant.slots?.length || 0} available slots
                         </p>
                       </div>
@@ -192,7 +192,7 @@ export default function BeneficiarySessionBrowser({
                   </button>
                 ))
               ) : (
-                <div className="p-4 text-center text-gray-600 text-sm">
+                <div className="p-4 text-center text-gray-600 dark:text-gray-300 text-sm">
                   No consultants found
                 </div>
               )}
@@ -202,9 +202,9 @@ export default function BeneficiarySessionBrowser({
 
         {/* Available Slots */}
         <div className="lg:col-span-2">
-          <div className="bg-white border border-gray-200 rounded-lg shadow overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow overflow-hidden">
             <div className="p-4 bg-gray-50 border-b border-gray-200">
-              <h3 className="font-semibold text-gray-900">
+              <h3 className="font-semibold text-gray-900 dark:text-white">
                 {selectedConsultantId ? 'Available Time Slots' : 'Select a consultant'}
               </h3>
             </div>
@@ -227,15 +227,15 @@ export default function BeneficiarySessionBrowser({
                         }`}
                       >
                         <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-gray-900 font-medium">
+                          <div className="flex items-center gap-2 text-gray-900 dark:text-white font-medium">
                             <Calendar className="w-4 h-4" />
                             {format(slotDateTime, 'EEE, MMM d, yyyy')}
                           </div>
-                          <div className="flex items-center gap-2 text-gray-600 text-sm">
+                          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
                             <Clock className="w-4 h-4" />
                             {slot.start_time} - {slot.end_time} ({slot.duration_minutes} min)
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                             {slot.max_concurrent_bookings > 1
                               ? `Up to ${slot.max_concurrent_bookings} concurrent bookings`
                               : 'Limited availability'}
@@ -245,17 +245,17 @@ export default function BeneficiarySessionBrowser({
                     );
                   })
                 ) : (
-                  <div className="p-4 text-center text-gray-600 text-sm">
+                  <div className="p-4 text-center text-gray-600 dark:text-gray-300 text-sm">
                     No available slots for selected date range
                   </div>
                 )}
               </div>
             ) : selectedConsultantId && isLoading ? (
-              <div className="p-8 text-center text-gray-600">
+              <div className="p-8 text-center text-gray-600 dark:text-gray-300">
                 Loading available slots...
               </div>
             ) : (
-              <div className="p-8 text-center text-gray-600">
+              <div className="p-8 text-center text-gray-600 dark:text-gray-300">
                 Select a consultant to view available slots
               </div>
             )}
@@ -272,8 +272,8 @@ export default function BeneficiarySessionBrowser({
       {/* Selected Slot Summary */}
       {selectedSlot && selectedConsultantId && (
         <div className="bg-green-50 border border-green-300 rounded-lg p-6">
-          <h3 className="font-semibold text-gray-900 mb-3">Selected Slot</h3>
-          <div className="space-y-2 text-sm text-gray-700 mb-4">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Selected Slot</h3>
+          <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200 mb-4">
             <p>
               <strong>Date:</strong> {format(new Date(`${selectedSlot.date}T${selectedSlot.start_time}`), 'EEEE, MMMM d, yyyy')}
             </p>

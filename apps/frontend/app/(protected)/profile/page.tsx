@@ -161,7 +161,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading profile...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading profile...</p>
         </div>
       </div>
     );
@@ -186,10 +186,10 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-          <p className="text-gray-600 mt-1">Manage your account settings and preferences</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your account settings and preferences</p>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-500">
+        <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
           <Calendar className="w-4 h-4" />
           <span>Member since {formatDate(profile.created_at || '')}</span>
         </div>
@@ -199,7 +199,7 @@ export default function ProfilePage() {
       {notifications.success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
           <div className="w-5 h-5 bg-success-500 rounded-full flex items-center justify-center mr-3">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
+            <div className="w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
           </div>
           <span className="text-green-800">{notifications.success}</span>
         </div>
@@ -208,7 +208,7 @@ export default function ProfilePage() {
       {notifications.error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
           <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center mr-3">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
+            <div className="w-2 h-2 bg-white dark:bg-gray-800 rounded-full"></div>
           </div>
           <span className="text-red-800">{notifications.error}</span>
         </div>
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                 )}
               </div>
               <div className="mt-3">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white bg-opacity-20">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white dark:bg-gray-800 bg-opacity-20">
                   <ShieldCheck className="w-4 h-4 mr-1" />
                   {getRoleDisplayName(profile.role || '')}
                 </span>
@@ -264,7 +264,7 @@ export default function ProfilePage() {
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'profile'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'
             }`}
           >
             <div className="flex items-center space-x-2">
@@ -277,7 +277,7 @@ export default function ProfilePage() {
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'security'
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:text-gray-200 hover:border-gray-300'
             }`}
           >
             <div className="flex items-center space-x-2">
@@ -320,20 +320,20 @@ export default function ProfilePage() {
           <Card title="Account Status" icon={<Settings className="w-5 h-5" />}>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Email Verified</span>
+                <span className="text-sm text-gray-600 dark:text-gray-300">Email Verified</span>
                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   ✓ Verified
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Two-Factor Auth</span>
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                <span className="text-sm text-gray-600 dark:text-gray-300">Two-Factor Auth</span>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:text-gray-100">
                   Not Enabled
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Last Login</span>
-                <span className="text-sm text-gray-900">
+                <span className="text-sm text-gray-600 dark:text-gray-300">Last Login</span>
+                <span className="text-sm text-gray-900 dark:text-white">
                   {profile.last_login_at ? formatDate(profile.last_login_at) : 'Never'}
                 </span>
               </div>
@@ -343,19 +343,19 @@ export default function ProfilePage() {
           {/* Quick Actions */}
           <Card title="Quick Actions">
             <div className="space-y-3">
-              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <Camera className="w-4 h-4 text-gray-300" />
                   <span>Update Profile Photo</span>
                 </div>
               </button>
-              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <Shield className="w-4 h-4 text-gray-300" />
                   <span>Enable 2FA</span>
                 </div>
               </button>
-              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+              <button className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <Settings className="w-4 h-4 text-gray-300" />
                   <span>Privacy Settings</span>

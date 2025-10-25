@@ -190,7 +190,7 @@ export default function RIASECTestPage() {
         </div>
 
         {/* Legend */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <h3 className="text-lg font-semibold text-textPrimary mb-4">Les 6 types d'intérêts professionnels</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {Object.entries(codeLabels).map(([code, label]) => (
@@ -205,7 +205,7 @@ export default function RIASECTestPage() {
         </div>
 
         {/* Progress */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-textPrimary">
               {Object.keys(answers).length} / {riasecQuestions.length} questions répondues
@@ -225,7 +225,7 @@ export default function RIASECTestPage() {
         {/* Questions */}
         <div className="space-y-4 mb-8">
           {riasecQuestions.map((question, index) => (
-            <div key={question.id} className="bg-white rounded-lg shadow-md p-4">
+            <div key={question.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center flex-1">
                   <span className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm mr-3">

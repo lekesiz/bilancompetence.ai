@@ -20,7 +20,7 @@ export default function IndicatorBoard({
       case 'MISSING':
         return 'bg-red-100 border-red-300 text-red-900';
       default:
-        return 'bg-gray-100 border-gray-300 text-gray-900';
+        return 'bg-gray-100 border-gray-300 text-gray-900 dark:text-white';
     }
   };
 
@@ -40,7 +40,7 @@ export default function IndicatorBoard({
   if (indicators.length === 0) {
     return (
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-        <p className="text-gray-600 text-lg mb-4">Gösterge bulunamadı</p>
+        <p className="text-gray-600 dark:text-gray-300 text-lg mb-4">Gösterge bulunamadı</p>
         <button
           onClick={onRefresh}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -90,7 +90,7 @@ export default function IndicatorBoard({
             )}
 
             {/* Click to see details */}
-            <button className="mt-4 w-full px-3 py-2 bg-opacity-20 bg-white text-inherit rounded font-medium hover:bg-opacity-40 transition">
+            <button className="mt-4 w-full px-3 py-2 bg-opacity-20 bg-white dark:bg-gray-800 text-inherit rounded font-medium hover:bg-opacity-40 transition">
               Detayları Gör
             </button>
           </div>

@@ -36,8 +36,8 @@ export function ConsultantDashboard() {
     <div className="space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-green-600 via-green-700 to-emerald-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-gray-800 opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white dark:bg-gray-800 opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
         <div className="relative z-10">
           <h1 className="text-4xl font-bold mb-2">Welcome, Consultant!</h1>
           <p className="text-green-100 text-lg">Manage your clients and their assessment progress</p>
@@ -46,7 +46,7 @@ export function ConsultantDashboard() {
 
       {/* Quick Stats */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
           <Target className="w-6 h-6 text-success-600" />
           Overview
         </h2>
@@ -106,7 +106,7 @@ export function ConsultantDashboard() {
       {/* Clients Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <Users className="w-6 h-6 text-success-600" />
             Your Clients
           </h2>
@@ -123,9 +123,9 @@ export function ConsultantDashboard() {
             ))}
           </div>
         ) : clients.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No clients yet</h3>
-            <p className="text-gray-600 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-12 text-center">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No clients yet</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Invite clients to start managing their assessments
             </p>
             <button className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
@@ -156,7 +156,7 @@ export function ConsultantDashboard() {
       {/* Assessments Needing Attention */}
       {assessments.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Assessments in Progress</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Assessments in Progress</h2>
           <div className="space-y-4">
             {assessments
               .filter((a) => a.status === 'IN_PROGRESS' || a.status === 'SUBMITTED')
@@ -172,8 +172,8 @@ export function ConsultantDashboard() {
               ))}
           </div>
           {assessments.filter((a) => a.status === 'IN_PROGRESS' || a.status === 'SUBMITTED').length === 0 && (
-            <div className="bg-white rounded-lg shadow p-6 text-center">
-              <p className="text-gray-600">No assessments requiring attention</p>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
+              <p className="text-gray-600 dark:text-gray-300">No assessments requiring attention</p>
             </div>
           )}
         </div>
@@ -182,7 +182,7 @@ export function ConsultantDashboard() {
       {/* Recommendations Provided */}
       {recommendations.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Recommendations</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">Your Recommendations</h2>
           <RecommendationsPanel
             recommendations={recommendations}
             userRole="CONSULTANT"

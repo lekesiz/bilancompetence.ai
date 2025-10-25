@@ -116,7 +116,7 @@ export default function TestsPage() {
         </div>
 
         {/* Progress Overview */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-textPrimary">Votre Progression</h2>
             <span className="text-3xl font-bold text-primary">
@@ -190,7 +190,7 @@ function TestCard({
   assessmentId: string;
 }) {
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 ${completed ? 'border-2 border-green-500' : 'hover:shadow-lg transition-shadow'}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 ${completed ? 'border-2 border-green-500' : 'hover:shadow-lg transition-shadow'}`}>
       <div className="flex items-start justify-between mb-4">
         <div className="text-5xl">{info.icon}</div>
         {completed && (
@@ -211,7 +211,7 @@ function TestCard({
       {completed ? (
         <Link
           href={`/dashboard/beneficiaire/tests/${assessmentId}/${type}/results`}
-          className="block w-full text-center bg-gray-100 text-gray-800 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+          className="block w-full text-center bg-gray-100 text-gray-800 dark:text-gray-100 py-3 rounded-lg hover:bg-gray-200 transition-colors"
         >
           Voir les résultats
         </Link>
@@ -233,7 +233,7 @@ function TestResultCard({ test }: { test: Test }) {
     'riasec': { icon: '🎯', color: 'bg-blue-100 text-blue-800' },
     'competences': { icon: '💼', color: 'bg-green-100 text-green-800' },
     'valeurs': { icon: '⭐', color: 'bg-yellow-100 text-yellow-800' }
-  }[test.test_type] || { icon: '📝', color: 'bg-gray-100 text-gray-800' };
+  }[test.test_type] || { icon: '📝', color: 'bg-gray-100 text-gray-800 dark:text-gray-100' };
 
   const getResultSummary = () => {
     if (test.test_type === 'mbti' && test.result_data?.type) {
@@ -252,7 +252,7 @@ function TestResultCard({ test }: { test: Test }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex items-center justify-between">
       <div className="flex items-center space-x-4">
         <div className={`w-16 h-16 rounded-full ${info.color} flex items-center justify-center text-3xl`}>
           {info.icon}

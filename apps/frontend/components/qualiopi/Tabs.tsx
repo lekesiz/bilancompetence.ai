@@ -33,19 +33,19 @@ export default function Tabs({ tabs, defaultTab, onChange, variant = 'default' }
       container: 'border-b border-gray-200',
       tab: 'px-4 py-2 border-b-2 transition',
       active: 'border-blue-600 text-primary-600',
-      inactive: 'border-transparent text-gray-600 hover:text-gray-900',
+      inactive: 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white',
     },
     pills: {
       container: 'gap-2 mb-4',
       tab: 'px-4 py-2 rounded-lg transition',
       active: 'bg-primary-600 text-white',
-      inactive: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+      inactive: 'bg-gray-100 text-gray-700 dark:text-gray-200 hover:bg-gray-200',
     },
     underline: {
       container: 'border-b border-gray-200 space-x-0',
       tab: 'px-4 py-3 border-b-2 text-sm font-medium transition',
       active: 'border-blue-600 text-primary-600',
-      inactive: 'border-transparent text-gray-600 hover:text-gray-900',
+      inactive: 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white',
     },
   };
 

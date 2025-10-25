@@ -33,7 +33,7 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -48,8 +48,8 @@ const ContactPage = () => {
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Envoyez-nous un message</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Envoyez-nous un message</h2>
             
             {status === 'success' && (
               <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -64,7 +64,7 @@ const ContactPage = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Nom complet *
                 </label>
                 <input
@@ -80,7 +80,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Email *
                 </label>
                 <input
@@ -96,7 +96,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Téléphone
                 </label>
                 <input
@@ -111,7 +111,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Sujet *
                 </label>
                 <select
@@ -131,7 +131,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Message *
                 </label>
                 <textarea
@@ -169,8 +169,8 @@ const ContactPage = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             {/* Contact Cards */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Nos coordonnées</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Nos coordonnées</h3>
               
               <div className="space-y-6">
                 {/* Email */}
@@ -181,7 +181,7 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-1">Email</h4>
+                    <h4 className="font-bold text-gray-900 dark:text-white mb-1">Email</h4>
                     <a href="mailto:contact@bilancompetence.ai" className="text-blue-600 hover:text-blue-700">
                       contact@bilancompetence.ai
                     </a>
@@ -196,11 +196,11 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-1">Téléphone</h4>
+                    <h4 className="font-bold text-gray-900 dark:text-white mb-1">Téléphone</h4>
                     <a href="tel:+33123456789" className="text-blue-600 hover:text-blue-700">
                       01 23 45 67 89
                     </a>
-                    <p className="text-sm text-gray-600 mt-1">Lun-Ven: 9h-18h</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">Lun-Ven: 9h-18h</p>
                   </div>
                 </div>
 
@@ -213,8 +213,8 @@ const ContactPage = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 mb-1">Adresse</h4>
-                    <p className="text-gray-700">
+                    <h4 className="font-bold text-gray-900 dark:text-white mb-1">Adresse</h4>
+                    <p className="text-gray-700 dark:text-gray-200">
                       123 Avenue des Compétences<br />
                       75001 Paris, France
                     </p>
@@ -225,8 +225,8 @@ const ContactPage = () => {
 
             {/* FAQ Quick Links */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Questions fréquentes</h3>
-              <p className="text-gray-700 mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Questions fréquentes</h3>
+              <p className="text-gray-700 dark:text-gray-200 mb-6">
                 Consultez notre FAQ pour trouver rapidement des réponses à vos questions.
               </p>
               <Link 
@@ -241,20 +241,20 @@ const ContactPage = () => {
             </div>
 
             {/* Business Hours */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Horaires d'ouverture</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Horaires d'ouverture</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="font-medium text-gray-700">Lundi - Vendredi</span>
-                  <span className="text-gray-900 font-semibold">9h00 - 18h00</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-200">Lundi - Vendredi</span>
+                  <span className="text-gray-900 dark:text-white font-semibold">9h00 - 18h00</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="font-medium text-gray-700">Samedi</span>
-                  <span className="text-gray-900 font-semibold">10h00 - 14h00</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-200">Samedi</span>
+                  <span className="text-gray-900 dark:text-white font-semibold">10h00 - 14h00</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="font-medium text-gray-700">Dimanche</span>
-                  <span className="text-gray-500">Fermé</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-200">Dimanche</span>
+                  <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Fermé</span>
                 </div>
               </div>
             </div>
@@ -269,7 +269,7 @@ const ContactPage = () => {
           </p>
           <Link 
             href="/register"
-            className="inline-block px-10 py-5 bg-white text-blue-700 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl"
+            className="inline-block px-10 py-5 bg-white dark:bg-gray-800 text-blue-700 rounded-lg font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-2xl"
           >
             Commencer gratuitement
           </Link>

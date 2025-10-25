@@ -40,7 +40,7 @@ const statusConfig = {
   },
   INACTIVE: {
     label: 'Inactive',
-    color: 'bg-gray-100 text-gray-800 border-gray-200',
+    color: 'bg-gray-100 text-gray-800 dark:text-gray-100 border-gray-200',
     icon: <UserX className="w-3 h-3" />,
   },
 };
@@ -83,7 +83,7 @@ export function UserManagementTable({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 shadow-sm">
       {/* Search */}
       <div className="p-6 border-b border-gray-100">
         <div className="relative">
@@ -106,11 +106,11 @@ export function UserManagementTable({
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">User</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Role</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Created</th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">User</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Role</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Status</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Created</th>
+              <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700 dark:text-gray-200">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -121,7 +121,7 @@ export function UserManagementTable({
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                       <Users className="w-6 h-6 text-gray-300" />
                     </div>
-                    <p className="text-gray-500 font-medium">No users found</p>
+                    <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 font-medium">No users found</p>
                     <p className="text-gray-300 text-sm">Try adjusting your search criteria</p>
                   </div>
                 </td>
@@ -139,8 +139,8 @@ export function UserManagementTable({
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-800 truncate">{user.name}</p>
-                          <p className="text-sm text-gray-500 truncate flex items-center gap-1">
+                          <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{user.name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 truncate flex items-center gap-1">
                             <Mail className="w-3 h-3" />
                             {user.email}
                           </p>
@@ -163,7 +163,7 @@ export function UserManagementTable({
                         {status.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 flex items-center gap-1">
+                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       {formatDate(user.createdAt)}
                     </td>
@@ -200,7 +200,7 @@ export function UserManagementTable({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center bg-gray-50 rounded-b-xl">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Showing {startIndex + 1} to {Math.min(startIndex + ITEMS_PER_PAGE, filteredUsers.length)} of{' '}
             {filteredUsers.length} users
           </p>
@@ -208,18 +208,18 @@ export function UserManagementTable({
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="flex items-center gap-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
+              className="flex items-center gap-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               Previous
             </button>
-            <span className="px-3 py-2 text-sm text-gray-700 bg-white rounded-lg border border-gray-200">
+            <span className="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 rounded-lg border border-gray-200">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
-              className="flex items-center gap-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
+              className="flex items-center gap-1 px-3 py-2 border border-gray-200 rounded-lg hover:bg-white dark:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-colors"
             >
               Next
               <ChevronRight className="w-4 h-4" />

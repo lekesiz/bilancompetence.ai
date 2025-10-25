@@ -117,8 +117,8 @@ export function MotivationsStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Step 4: Motivations & Values</h2>
-        <p className="text-gray-600">What drives your career decisions?</p>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Step 4: Motivations & Values</h2>
+        <p className="text-gray-600 dark:text-gray-300">What drives your career decisions?</p>
       </div>
 
       <FormError
@@ -129,7 +129,7 @@ export function MotivationsStep({
 
       {/* Career Values */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
           What are your top career values? (Select at least 1)
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -143,7 +143,7 @@ export function MotivationsStep({
               className={`px-4 py-2 rounded-lg text-sm font-medium transition border-2 text-center ${
                 topValues.includes(value)
                   ? 'bg-green-600 text-white border-green-600'
-                  : 'bg-gray-100 text-gray-700 border-gray-200 hover:border-green-400'
+                  : 'bg-gray-100 text-gray-700 dark:text-gray-200 border-gray-200 hover:border-green-400'
               }`}
             >
               {value}
@@ -151,13 +151,13 @@ export function MotivationsStep({
           ))}
         </div>
         {topValues.length > 0 && (
-          <p className="text-xs text-gray-600 mt-2">Selected: {topValues.length}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">Selected: {topValues.length}</p>
         )}
       </div>
 
       {/* Career Goals */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
           What are your top career goals? (Select at least 1)
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -171,7 +171,7 @@ export function MotivationsStep({
               className={`px-4 py-2 rounded-lg text-sm font-medium transition border-2 text-center ${
                 careerGoals.includes(goal)
                   ? 'bg-purple-600 text-white border-purple-600'
-                  : 'bg-gray-100 text-gray-700 border-gray-200 hover:border-purple-400'
+                  : 'bg-gray-100 text-gray-700 dark:text-gray-200 border-gray-200 hover:border-purple-400'
               }`}
             >
               {goal}
@@ -179,13 +179,13 @@ export function MotivationsStep({
           ))}
         </div>
         {careerGoals.length > 0 && (
-          <p className="text-xs text-gray-600 mt-2">Selected: {careerGoals.length}</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">Selected: {careerGoals.length}</p>
         )}
       </div>
 
       {/* Motivation Description */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           Describe your ideal work environment and what motivates you *
         </label>
         <textarea
@@ -198,7 +198,7 @@ export function MotivationsStep({
           rows={4}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Minimum 20 characters required</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Minimum 20 characters required</p>
       </div>
 
       {/* Save Button */}
@@ -207,7 +207,7 @@ export function MotivationsStep({
         disabled={isSaving}
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gray-300 text-gray-500 dark:text-gray-400 dark:text-gray-500 cursor-not-allowed'
             : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >

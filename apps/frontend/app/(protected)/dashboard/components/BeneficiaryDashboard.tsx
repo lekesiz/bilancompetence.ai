@@ -35,8 +35,8 @@ export function BeneficiaryDashboard() {
     <div className="space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-gray-800 opacity-10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white dark:bg-gray-800 opacity-10 rounded-full translate-y-12 -translate-x-12"></div>
         <div className="relative z-10">
           <h1 className="text-4xl font-bold mb-2">Welcome back!</h1>
           <p className="text-blue-100 text-lg">Here's your assessment progress and personalized recommendations</p>
@@ -45,7 +45,7 @@ export function BeneficiaryDashboard() {
 
       {/* Quick Stats */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
           <Target className="w-6 h-6 text-blue-600" />
           Your Progress Overview
         </h2>
@@ -105,7 +105,7 @@ export function BeneficiaryDashboard() {
       {/* Active Assessments Section */}
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <Award className="w-6 h-6 text-blue-600" />
             Your Assessments
           </h2>
@@ -127,12 +127,12 @@ export function BeneficiaryDashboard() {
             ))}
           </div>
         ) : assessments.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 p-12 text-center">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Award className="w-8 h-8 text-blue-600" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No assessments yet</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">No assessments yet</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
               Start your first assessment to get personalized recommendations and insights about your career development
             </p>
             <Link
@@ -167,7 +167,7 @@ export function BeneficiaryDashboard() {
       {/* Recommendations Section */}
       {recommendations.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-success-600" />
             AI-Powered Recommendations
           </h2>
@@ -193,8 +193,8 @@ export function BeneficiaryDashboard() {
 
       {/* Footer message */}
       <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-        <h3 className="text-gray-800 font-semibold mb-2">Need help?</h3>
-        <p className="text-gray-600 text-sm">
+        <h3 className="text-gray-800 dark:text-gray-100 font-semibold mb-2">Need help?</h3>
+        <p className="text-gray-600 dark:text-gray-300 text-sm">
           Visit our <Link href="/help" className="text-blue-600 hover:underline font-medium">help center</Link> or{' '}
           <Link href="/contact" className="text-blue-600 hover:underline font-medium">contact support</Link> for assistance with your assessments.
         </p>

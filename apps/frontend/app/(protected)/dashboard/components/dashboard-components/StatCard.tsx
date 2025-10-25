@@ -18,11 +18,11 @@ interface StatCardProps {
 
 const variantStyles = {
   default: {
-    bg: 'bg-white',
+    bg: 'bg-white dark:bg-gray-800',
     border: 'border-gray-200',
     icon: 'text-blue-600',
-    value: 'text-gray-800',
-    title: 'text-gray-500',
+    value: 'text-gray-800 dark:text-gray-100',
+    title: 'text-gray-500 dark:text-gray-400 dark:text-gray-500',
   },
   success: {
     bg: 'bg-green-50',
@@ -90,7 +90,7 @@ export function StatCard({
         <>
           <div className="flex items-center justify-between mb-3">
             <h3 className={`${styles.title} text-sm font-medium`}>{title}</h3>
-            <div className={`${styles.icon} p-2 rounded-lg bg-white shadow-sm`}>
+            <div className={`${styles.icon} p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm`}>
               {displayIcon}
             </div>
           </div>
@@ -115,7 +115,7 @@ export function StatCard({
             </div>
             
             {description && (
-              <p className="text-gray-500 text-xs">{description}</p>
+              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-xs">{description}</p>
             )}
           </div>
         </>

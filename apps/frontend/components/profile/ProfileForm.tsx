@@ -89,7 +89,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
       <div className="space-y-6">
         {/* Full Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Full Name *
           </label>
           <div className="relative">
@@ -113,7 +113,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
 
         {/* Email (Read-only) */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Email Address
           </label>
           <div className="relative">
@@ -124,17 +124,17 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
               type="email"
               value={initialData.email}
               disabled
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 dark:text-gray-400 dark:text-gray-500 cursor-not-allowed"
             />
           </div>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
             Email cannot be changed. Contact support if needed.
           </p>
         </div>
 
         {/* Phone */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Phone Number
           </label>
           <div className="relative">
@@ -158,7 +158,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
 
         {/* Bio */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Bio
           </label>
           <div className="relative">
@@ -179,7 +179,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
             {errors.bio ? (
               <p className="text-sm text-red-600">{errors.bio}</p>
             ) : (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                 Optional. Share a bit about yourself.
               </p>
             )}
@@ -196,7 +196,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
           type="button"
           onClick={handleReset}
           disabled={!hasChanges() || isSubmitting || loading}
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 border border-gray-300 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <X className="w-4 h-4 mr-2 inline" />
           Reset

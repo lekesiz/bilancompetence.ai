@@ -72,10 +72,10 @@ export default function Pagination({
   }
 
   return (
-    <div className="flex items-center justify-between py-4 px-6 bg-white border-t border-gray-200">
+    <div className="flex items-center justify-between py-4 px-6 bg-white dark:bg-gray-800 border-t border-gray-200">
       {/* Info */}
       {variant === 'detailed' && totalItems && (
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-300">
           {startItem}-{endItem} / {totalItems} kayıt
         </div>
       )}
@@ -97,14 +97,14 @@ export default function Pagination({
           {getPageNumbers().map((page, idx) => (
             <div key={idx}>
               {page === '...' ? (
-                <span className="px-2 text-gray-500">...</span>
+                <span className="px-2 text-gray-500 dark:text-gray-400 dark:text-gray-500">...</span>
               ) : (
                 <button
                   onClick={() => onPageChange(page as number)}
                   className={`px-3 py-1.5 rounded-lg transition ${
                     page === currentPage
                       ? 'bg-primary-600 text-white font-medium'
-                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      : 'border border-gray-300 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
                   }`}
                   aria-label={`Go to page ${page}`}
                   aria-current={page === currentPage ? 'page' : undefined}

@@ -71,8 +71,8 @@ export function EducationStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Step 2: Education</h2>
-        <p className="text-gray-600">Tell us about your educational background</p>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Step 2: Education</h2>
+        <p className="text-gray-600 dark:text-gray-300">Tell us about your educational background</p>
       </div>
 
       <FormError
@@ -83,7 +83,7 @@ export function EducationStep({
 
       {/* Highest Level */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           What is your highest level of education? *
         </label>
         <select
@@ -102,7 +102,7 @@ export function EducationStep({
 
       {/* Field of Study */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           What is your field of study?
         </label>
         <input
@@ -112,12 +112,12 @@ export function EducationStep({
           placeholder="e.g., Computer Science, Business Administration, Engineering..."
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Optional</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Optional</p>
       </div>
 
       {/* Certifications */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           Do you have any professional certifications or qualifications?
         </label>
         <textarea
@@ -127,12 +127,12 @@ export function EducationStep({
           rows={3}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Optional</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Optional</p>
       </div>
 
       {/* Current Education */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           Are you currently pursuing any education or training?
         </label>
         <input
@@ -142,7 +142,7 @@ export function EducationStep({
           placeholder="e.g., Online course, University degree, etc."
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Optional</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Optional</p>
       </div>
 
       {/* Save Button */}
@@ -151,7 +151,7 @@ export function EducationStep({
         disabled={isSaving}
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gray-300 text-gray-500 dark:text-gray-400 dark:text-gray-500 cursor-not-allowed'
             : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >

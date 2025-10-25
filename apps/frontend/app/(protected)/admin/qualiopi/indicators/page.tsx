@@ -130,10 +130,10 @@ export default function QualiopsIndicatorsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Qualiopi Uyumluluk Göstergeleri
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             32 göstergenin durumunu ve uyumluluk yüzdesini takip edin
           </p>
         </div>
@@ -196,7 +196,7 @@ export default function QualiopsIndicatorsPage() {
             className={`px-4 py-2 rounded-lg font-medium transition ${
               filterStatus === status
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-700 dark:text-gray-200 hover:bg-gray-200'
             }`}
           >
             {status === 'ALL' && 'Tümü'}

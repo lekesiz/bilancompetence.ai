@@ -126,7 +126,7 @@ export default function BeneficiaireDashboard() {
 
         {/* Overall Progress */}
         {parcours && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-textPrimary">
                 Progression Globale
@@ -228,8 +228,8 @@ function PhaseCard({
     switch (status) {
       case 'completed': return 'bg-green-100 text-green-800';
       case 'in_progress': return 'bg-blue-100 text-blue-800';
-      case 'locked': return 'bg-gray-100 text-gray-600';
-      default: return 'bg-gray-100 text-gray-600';
+      case 'locked': return 'bg-gray-100 text-gray-600 dark:text-gray-300';
+      default: return 'bg-gray-100 text-gray-600 dark:text-gray-300';
     }
   };
 
@@ -245,7 +245,7 @@ function PhaseCard({
   const isLocked = phase?.status === 'locked';
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 ${isLocked ? 'opacity-60' : 'hover:shadow-lg transition-shadow'}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 ${isLocked ? 'opacity-60' : 'hover:shadow-lg transition-shadow'}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
           {phaseNumber}
@@ -282,7 +282,7 @@ function PhaseCard({
       {isLocked && (
         <button 
           disabled
-          className="block w-full text-center bg-gray-300 text-gray-600 py-2 rounded-lg cursor-not-allowed"
+          className="block w-full text-center bg-gray-300 text-gray-600 dark:text-gray-300 py-2 rounded-lg cursor-not-allowed"
         >
           🔒 Verrouillée
         </button>
@@ -293,7 +293,7 @@ function PhaseCard({
 
 function ActionCard({ title, description, icon, link }: { title: string; description: string; icon: string; link: string }) {
   return (
-    <Link href={link} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <Link href={link} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
       <div className="text-4xl mb-3">{icon}</div>
       <h3 className="text-lg font-semibold text-textPrimary mb-2">{title}</h3>
       <p className="text-textSecondary text-sm">{description}</p>

@@ -25,12 +25,12 @@ export function ProgressBar({
                   ? 'bg-green-500 text-white'
                   : step === currentStep
                   ? 'bg-primary-600 text-white ring-2 ring-blue-300'
-                  : 'bg-gray-300 text-gray-600'
+                  : 'bg-gray-300 text-gray-600 dark:text-gray-300'
               }`}
             >
               {step < currentStep ? '✓' : step}
             </div>
-            <span className="text-xs mt-2 font-medium text-gray-600">
+            <span className="text-xs mt-2 font-medium text-gray-600 dark:text-gray-300">
               {['', 'Work', 'Edu', 'Skills', 'Values', 'Context'][step]}
             </span>
           </div>
@@ -48,7 +48,7 @@ export function ProgressBar({
       {/* Progress label */}
       {showLabel && (
         <div className="text-center mt-3">
-          <span className="text-sm font-medium text-gray-600">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
             Step {currentStep} of {totalSteps} ({progressPercentage}% complete)
           </span>
         </div>

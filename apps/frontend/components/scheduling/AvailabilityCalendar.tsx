@@ -68,11 +68,11 @@ function CalendarGrid({
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
       {/* Day labels */}
       <div className="grid grid-cols-7 gap-2 mb-2">
         {dayLabels.map((label) => (
-          <div key={label} className="text-center font-semibold text-gray-600 text-sm py-2">
+          <div key={label} className="text-center font-semibold text-gray-600 dark:text-gray-300 text-sm py-2">
             {label}
           </div>
         ))}
@@ -96,7 +96,7 @@ function CalendarGrid({
                 className={`w-full h-full p-1 rounded text-xs font-medium flex flex-col items-center justify-center transition ${
                   hasSlot(date)
                     ? 'bg-green-100 text-green-900 border-2 border-green-500 hover:bg-green-200'
-                    : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
+                    : 'bg-gray-50 text-gray-700 dark:text-gray-200 border border-gray-200 hover:bg-gray-100'
                 }`}
               >
                 <div>{date.getDate()}</div>
@@ -169,7 +169,7 @@ export default function AvailabilityCalendar({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Calendar */}
       <div className="lg:col-span-2">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
           {/* Month Navigation */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">{monthName}</h2>
@@ -191,7 +191,7 @@ export default function AvailabilityCalendar({
 
           {/* Loading State */}
           {isLoading ? (
-            <div className="p-8 text-center text-gray-500">Loading calendar...</div>
+            <div className="p-8 text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading calendar...</div>
           ) : (
             <CalendarGrid
               month={currentDate.getMonth()}
@@ -211,21 +211,21 @@ export default function AvailabilityCalendar({
       <div className="space-y-4">
         {/* Recurring Slots */}
         {recurringSlots.length > 0 && (
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="font-semibold text-gray-900 mb-3">Recurring Availability</h3>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Recurring Availability</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {recurringSlots.map((slot: AvailabilitySlot) => (
                 <div key={slot.id} className="p-3 bg-blue-50 rounded border border-blue-200">
                   <div className="flex justify-between items-start gap-2">
                     <div>
-                      <p className="font-medium text-sm text-gray-900">
+                      <p className="font-medium text-sm text-gray-900 dark:text-white">
                         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][slot.day_of_week || 0]}
                       </p>
-                      <p className="text-xs text-gray-600 mt-1">
+                      <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
                         {slot.start_time} - {slot.end_time}
                       </p>
                       {slot.recurring_until && (
-                        <p className="text-xs text-gray-500 mt-1">Until {slot.recurring_until}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Until {slot.recurring_until}</p>
                       )}
                     </div>
                     <button
@@ -244,11 +244,11 @@ export default function AvailabilityCalendar({
 
         {/* Selected Slot Details */}
         {selectedSlot && (
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="font-semibold text-gray-900 mb-3">Slot Details</h3>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Slot Details</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-600">Date</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Date</p>
                 <p className="font-medium">
                   {selectedSlot.date_specific
                     ? new Date(selectedSlot.date_specific).toLocaleDateString()
@@ -257,24 +257,24 @@ export default function AvailabilityCalendar({
               </div>
 
               <div>
-                <p className="text-sm text-gray-600">Time</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Time</p>
                 <p className="font-medium">
                   {selectedSlot.start_time} - {selectedSlot.end_time}
                 </p>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600">Duration</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Duration</p>
                 <p className="font-medium">{selectedSlot.duration_minutes} minutes</p>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600">Max Concurrent</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Max Concurrent</p>
                 <p className="font-medium">{selectedSlot.max_concurrent_bookings}</p>
               </div>
 
               <div>
-                <p className="text-sm text-gray-600">Timezone</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Timezone</p>
                 <p className="font-medium">{selectedSlot.timezone}</p>
               </div>
 

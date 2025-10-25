@@ -88,10 +88,10 @@ export default function RegisterForm({
       {/* Step 1: Email */}
       {currentStep === 1 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Step 1: Email</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Step 1: Email</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Email Address
             </label>
             <input
@@ -120,10 +120,10 @@ export default function RegisterForm({
       {/* Step 2: Password */}
       {currentStep === 2 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Step 2: Password</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Step 2: Password</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Password
             </label>
             <div className="relative">
@@ -137,7 +137,7 @@ export default function RegisterForm({
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-900"
+                className="absolute right-3 top-2.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white"
               >
                 {showPassword ? '🙈' : '👁'}
               </button>
@@ -149,19 +149,19 @@ export default function RegisterForm({
             {/* Password strength indicator */}
             {password && (
               <div className="mt-2 space-y-1 text-xs">
-                <div className={password.length >= 12 ? 'text-success-600' : 'text-gray-600'}>
+                <div className={password.length >= 12 ? 'text-success-600' : 'text-gray-600 dark:text-gray-300'}>
                   ✓ At least 12 characters
                 </div>
-                <div className={/[A-Z]/.test(password) ? 'text-success-600' : 'text-gray-600'}>
+                <div className={/[A-Z]/.test(password) ? 'text-success-600' : 'text-gray-600 dark:text-gray-300'}>
                   ✓ Uppercase letter
                 </div>
-                <div className={/[a-z]/.test(password) ? 'text-success-600' : 'text-gray-600'}>
+                <div className={/[a-z]/.test(password) ? 'text-success-600' : 'text-gray-600 dark:text-gray-300'}>
                   ✓ Lowercase letter
                 </div>
-                <div className={/\d/.test(password) ? 'text-success-600' : 'text-gray-600'}>
+                <div className={/\d/.test(password) ? 'text-success-600' : 'text-gray-600 dark:text-gray-300'}>
                   ✓ Number
                 </div>
-                <div className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) ? 'text-success-600' : 'text-gray-600'}>
+                <div className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) ? 'text-success-600' : 'text-gray-600 dark:text-gray-300'}>
                   ✓ Special character
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function RegisterForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Confirm Password
             </label>
             <div className="relative">
@@ -183,7 +183,7 @@ export default function RegisterForm({
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-900"
+                className="absolute right-3 top-2.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white"
               >
                 {showConfirmPassword ? '🙈' : '👁'}
               </button>
@@ -198,7 +198,7 @@ export default function RegisterForm({
               type="button"
               onClick={handleBack}
               disabled={isLoading}
-              className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 transition-colors"
+              className="flex-1 border border-gray-300 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 transition-colors"
             >
               Back
             </button>
@@ -222,10 +222,10 @@ export default function RegisterForm({
       {/* Step 3: Personal Info */}
       {currentStep === 3 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Step 3: Your Details</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Step 3: Your Details</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Full Name
             </label>
             <input
@@ -251,7 +251,7 @@ export default function RegisterForm({
               type="button"
               onClick={handleBack}
               disabled={isLoading}
-              className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 transition-colors"
+              className="flex-1 border border-gray-300 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 transition-colors"
             >
               Back
             </button>

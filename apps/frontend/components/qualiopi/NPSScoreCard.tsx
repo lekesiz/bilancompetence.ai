@@ -34,7 +34,7 @@ export default function NPSScoreCard({
   const detractorsPercent = total > 0 ? Math.round((detractors / total) * 100) : 0;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6 space-y-6">
       {/* Main NPS Display */}
       <div className={`border-2 rounded-lg p-6 ${category.color}`}>
         <div className="text-center">
@@ -51,8 +51,8 @@ export default function NPSScoreCard({
               className="w-full bg-red-600 rounded-t transition-all"
               style={{ height: `${Math.max(detractorsPercent * 2, 10)}px` }}
             ></div>
-            <p className="text-xs font-medium mt-2 text-gray-600">Düşmek</p>
-            <p className="text-sm font-bold text-gray-900">{detractorsPercent}%</p>
+            <p className="text-xs font-medium mt-2 text-gray-600 dark:text-gray-300">Düşmek</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-white">{detractorsPercent}%</p>
           </div>
 
           {/* Passives */}
@@ -61,8 +61,8 @@ export default function NPSScoreCard({
               className="w-full bg-yellow-600 rounded-t transition-all"
               style={{ height: `${Math.max(passivesPercent * 2, 10)}px` }}
             ></div>
-            <p className="text-xs font-medium mt-2 text-gray-600">Nötr</p>
-            <p className="text-sm font-bold text-gray-900">{passivesPercent}%</p>
+            <p className="text-xs font-medium mt-2 text-gray-600 dark:text-gray-300">Nötr</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-white">{passivesPercent}%</p>
           </div>
 
           {/* Promoters */}
@@ -71,8 +71,8 @@ export default function NPSScoreCard({
               className="w-full bg-green-600 rounded-t transition-all"
               style={{ height: `${Math.max(promotersPercent * 2, 10)}px` }}
             ></div>
-            <p className="text-xs font-medium mt-2 text-gray-600">Tavsiye</p>
-            <p className="text-sm font-bold text-gray-900">{promotersPercent}%</p>
+            <p className="text-xs font-medium mt-2 text-gray-600 dark:text-gray-300">Tavsiye</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-white">{promotersPercent}%</p>
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function NPSScoreCard({
       {/* Breakdown */}
       {showBreakdown && total > 0 && (
         <div className="space-y-3">
-          <h4 className="font-semibold text-gray-900 text-sm">Katılımcı Dağılımı</h4>
+          <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Katılımcı Dağılımı</h4>
 
           {/* Promoters */}
           <div className="flex items-center gap-3">
@@ -89,8 +89,8 @@ export default function NPSScoreCard({
             </div>
             <div className="flex-1">
               <div className="flex justify-between items-center mb-1">
-                <p className="text-sm font-medium text-gray-700">Tavsiye Edenler</p>
-                <span className="text-xs text-gray-500">{promotersPercent}%</span>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Tavsiye Edenler</p>
+                <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{promotersPercent}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
@@ -108,8 +108,8 @@ export default function NPSScoreCard({
             </div>
             <div className="flex-1">
               <div className="flex justify-between items-center mb-1">
-                <p className="text-sm font-medium text-gray-700">Nötrler</p>
-                <span className="text-xs text-gray-500">{passivesPercent}%</span>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Nötrler</p>
+                <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{passivesPercent}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
@@ -127,8 +127,8 @@ export default function NPSScoreCard({
             </div>
             <div className="flex-1">
               <div className="flex justify-between items-center mb-1">
-                <p className="text-sm font-medium text-gray-700">Düşen Katılımcılar</p>
-                <span className="text-xs text-gray-500">{detractorsPercent}%</span>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Düşen Katılımcılar</p>
+                <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">{detractorsPercent}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
@@ -139,7 +139,7 @@ export default function NPSScoreCard({
             </div>
           </div>
 
-          <p className="text-xs text-gray-500 mt-3">
+          <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-3">
             Toplam: {total} katılımcı
           </p>
         </div>

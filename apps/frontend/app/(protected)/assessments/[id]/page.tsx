@@ -66,13 +66,13 @@ export default function AssessmentPage() {
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
-      'DRAFT': 'bg-gray-200 text-gray-800',
+      'DRAFT': 'bg-gray-200 text-gray-800 dark:text-gray-100',
       'IN_PROGRESS': 'bg-blue-200 text-blue-800',
       'SUBMITTED': 'bg-yellow-200 text-yellow-800',
       'UNDER_REVIEW': 'bg-purple-200 text-purple-800',
       'COMPLETED': 'bg-green-200 text-green-800',
     };
-    return colors[status] || 'bg-gray-200 text-gray-800';
+    return colors[status] || 'bg-gray-200 text-gray-800 dark:text-gray-100';
   };
 
   /**
@@ -191,7 +191,7 @@ export default function AssessmentPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading assessment...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading assessment...</p>
         </div>
       </div>
     );
@@ -222,11 +222,11 @@ export default function AssessmentPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">{assessment.title}</h1>
-              <p className="text-gray-600 mt-2">{assessment.description}</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">{assessment.title}</h1>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">{assessment.description}</p>
             </div>
             <div className="flex items-center gap-3">
               {/* PDF Download Button */}
@@ -254,9 +254,9 @@ export default function AssessmentPage() {
 
                   {/* Report Type Dropdown */}
                   {showReportTypeSelector && !pdfDownloading && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-300 rounded-lg shadow-lg z-10">
                       <div className="p-3 border-b border-gray-300">
-                        <p className="text-sm font-semibold text-gray-700 mb-2">Select Report Type</p>
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Select Report Type</p>
                         {/* Preliminary Option */}
                         <label className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
                           <input
@@ -267,7 +267,7 @@ export default function AssessmentPage() {
                             onChange={(e) => setReportType(e.target.value as ReportType)}
                             className="w-4 h-4"
                           />
-                          <span className="text-sm text-gray-700">Preliminary Report</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-200">Preliminary Report</span>
                         </label>
 
                         {/* Investigation Option */}
@@ -281,7 +281,7 @@ export default function AssessmentPage() {
                             className="w-4 h-4"
                             disabled={assessment.status === 'PRELIMINARY'}
                           />
-                          <span className={`text-sm ${assessment.status === 'PRELIMINARY' ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <span className={`text-sm ${assessment.status === 'PRELIMINARY' ? 'text-gray-300' : 'text-gray-700 dark:text-gray-200'}`}>
                             Investigation Report
                           </span>
                         </label>
@@ -297,7 +297,7 @@ export default function AssessmentPage() {
                             className="w-4 h-4"
                             disabled={assessment.status !== 'COMPLETED'}
                           />
-                          <span className={`text-sm ${assessment.status !== 'COMPLETED' ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <span className={`text-sm ${assessment.status !== 'COMPLETED' ? 'text-gray-300' : 'text-gray-700 dark:text-gray-200'}`}>
                             Conclusion Report
                           </span>
                         </label>
@@ -313,7 +313,7 @@ export default function AssessmentPage() {
                         </button>
                         <button
                           onClick={() => setShowReportTypeSelector(false)}
-                          className="flex-1 bg-gray-300 text-gray-800 px-3 py-2 rounded font-semibold hover:bg-gray-400 transition text-sm"
+                          className="flex-1 bg-gray-300 text-gray-800 dark:text-gray-100 px-3 py-2 rounded font-semibold hover:bg-gray-400 transition text-sm"
                         >
                           Cancel
                         </button>
@@ -349,22 +349,22 @@ export default function AssessmentPage() {
           )}
 
           {/* Status Info */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 dark:text-gray-300">
             <div>
-              <p className="font-semibold text-gray-700">Type</p>
+              <p className="font-semibold text-gray-700 dark:text-gray-200">Type</p>
               <p className="mt-1">{assessment.assessment_type}</p>
             </div>
             <div>
-              <p className="font-semibold text-gray-700">Progress</p>
+              <p className="font-semibold text-gray-700 dark:text-gray-200">Progress</p>
               <p className="mt-1">{assessment.progress_percentage}%</p>
             </div>
             <div>
-              <p className="font-semibold text-gray-700">Created</p>
+              <p className="font-semibold text-gray-700 dark:text-gray-200">Created</p>
               <p className="mt-1">{new Date(assessment.created_at).toLocaleDateString()}</p>
             </div>
             {assessment.submitted_at && (
               <div>
-                <p className="font-semibold text-gray-700">Submitted</p>
+                <p className="font-semibold text-gray-700 dark:text-gray-200">Submitted</p>
                 <p className="mt-1">{new Date(assessment.submitted_at).toLocaleDateString()}</p>
               </div>
             )}
@@ -373,15 +373,15 @@ export default function AssessmentPage() {
 
         {/* Progress Bar */}
         {isDraft && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="font-semibold text-gray-800 mb-4">Progress</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+            <h2 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Progress</h2>
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div
                 className="bg-blue-600 h-3 rounded-full transition-all"
                 style={{ width: `${assessment.progress_percentage}%` }}
               />
             </div>
-            <p className="text-sm text-gray-600 mt-3">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
               Step {assessment.current_step} of 5 completed ({assessment.progress_percentage}%)
             </p>
           </div>
@@ -442,13 +442,13 @@ export default function AssessmentPage() {
 
         {/* Skills Summary */}
         {assessment.competencies && assessment.competencies.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="font-semibold text-gray-800 mb-4">Skills Assessed ({assessment.competencies.length})</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+            <h2 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Skills Assessed ({assessment.competencies.length})</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {assessment.competencies.slice(0, 12).map((comp) => (
                 <div key={comp.id} className="bg-gray-50 rounded-lg p-3">
-                  <p className="font-medium text-sm text-gray-800">{comp.skill_name}</p>
-                  <div className="mt-2 flex gap-2 text-xs text-gray-600">
+                  <p className="font-medium text-sm text-gray-800 dark:text-gray-100">{comp.skill_name}</p>
+                  <div className="mt-2 flex gap-2 text-xs text-gray-600 dark:text-gray-300">
                     <span>Level: {comp.self_assessment_level}/4</span>
                     <span>Interest: {comp.self_interest_level}/10</span>
                   </div>
@@ -456,7 +456,7 @@ export default function AssessmentPage() {
               ))}
             </div>
             {assessment.competencies.length > 12 && (
-              <p className="text-sm text-gray-600 mt-4">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-4">
                 +{assessment.competencies.length - 12} more skills
               </p>
             )}
@@ -467,7 +467,7 @@ export default function AssessmentPage() {
         <div className="flex gap-4">
           <button
             onClick={() => router.back()}
-            className="flex-1 bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
+            className="flex-1 bg-gray-300 text-gray-800 dark:text-gray-100 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400 transition"
           >
             ← Back
           </button>

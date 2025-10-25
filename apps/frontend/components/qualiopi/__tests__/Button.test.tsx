@@ -26,7 +26,7 @@ describe('Button Component', () => {
   it('applies secondary variant', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-gray-200', 'text-gray-900');
+    expect(button).toHaveClass('bg-gray-200', 'text-gray-900 dark:text-white');
   });
 
   it('applies danger variant', () => {

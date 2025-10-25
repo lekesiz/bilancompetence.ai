@@ -38,13 +38,13 @@ export function StepNavigation({
         className={`px-6 py-2 rounded-lg font-medium transition ${
           isFirstStep || disableBack || isLoading || isSaving
             ? 'bg-gray-200 text-gray-300 cursor-not-allowed'
-            : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+            : 'bg-gray-300 text-gray-800 dark:text-gray-100 hover:bg-gray-400'
         }`}
       >
         ← Back
       </button>
 
-      <div className="text-center text-sm text-gray-600">
+      <div className="text-center text-sm text-gray-600 dark:text-gray-300">
         Step {currentStep} of {totalSteps}
       </div>
 

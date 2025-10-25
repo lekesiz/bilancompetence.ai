@@ -54,7 +54,7 @@ export default function FilterBar({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-4 space-y-4">
       {/* Search Bar */}
       {onSearch && (
         <div>
@@ -74,7 +74,7 @@ export default function FilterBar({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {filters.map((filter) => (
             <div key={filter.key}>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 {filter.label}
               </label>
 
@@ -118,7 +118,7 @@ export default function FilterBar({
                         }}
                         className="w-4 h-4"
                       />
-                      <span className="text-sm text-gray-700">{opt.label}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-200">{opt.label}</span>
                     </label>
                   ))}
                 </div>
@@ -142,7 +142,7 @@ export default function FilterBar({
         <div className="flex justify-end">
           <button
             onClick={handleReset}
-            className="px-4 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+            className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
           >
             Filtreleri Temizle
           </button>

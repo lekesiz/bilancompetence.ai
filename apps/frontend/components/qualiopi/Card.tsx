@@ -27,8 +27,8 @@ export default function Card({
   className = '',
 }: CardProps) {
   const variantClasses = {
-    default: 'bg-white border border-gray-200',
-    elevated: 'bg-white shadow-lg',
+    default: 'bg-white dark:bg-gray-800 border border-gray-200',
+    elevated: 'bg-white dark:bg-gray-800 shadow-lg',
     outlined: 'bg-transparent border-2 border-gray-300',
   };
 
@@ -44,8 +44,8 @@ export default function Card({
         <div className="px-6 py-4 border-b border-gray-200 flex items-start gap-3">
           {icon && <div className="flex-shrink-0 text-2xl">{icon}</div>}
           <div className="flex-1">
-            {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
-            {subtitle && <p className="text-sm text-gray-600 mt-1">{subtitle}</p>}
+            {title && <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>}
+            {subtitle && <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{subtitle}</p>}
           </div>
         </div>
       )}

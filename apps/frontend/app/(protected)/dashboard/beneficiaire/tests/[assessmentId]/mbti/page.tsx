@@ -135,7 +135,7 @@ export default function MBTITestPage() {
         </div>
 
         {/* Progress */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-textPrimary">
               {Object.keys(answers).length} / {mbtiQuestions.length} questions répondues
@@ -155,7 +155,7 @@ export default function MBTITestPage() {
         {/* Questions */}
         <div className="space-y-6 mb-8">
           {mbtiQuestions.map((question, index) => (
-            <div key={question.id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={question.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div className="mb-4">
                 <span className="text-sm font-medium text-primary">Question {index + 1}</span>
                 <h3 className="text-lg font-semibold text-textPrimary mt-2">

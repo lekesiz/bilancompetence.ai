@@ -29,14 +29,14 @@ export default function BarChart({
   if (direction === 'horizontal') {
     return (
       <div role="region" aria-label={title || 'Bar chart'}>
-        {title && <h3 className="text-lg font-bold text-gray-900 mb-4">{title}</h3>}
+        {title && <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{title}</h3>}
         <div className="space-y-4">
           {data.map((item, idx) => (
             <div key={idx}>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-sm font-medium text-gray-700">{item.label}</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{item.label}</label>
                 {showValues && (
-                  <span className="text-sm font-bold text-gray-900">{item.value}</span>
+                  <span className="text-sm font-bold text-gray-900 dark:text-white">{item.value}</span>
                 )}
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -61,7 +61,7 @@ export default function BarChart({
   // Vertical bars
   return (
     <div role="region" aria-label={title || 'Bar chart'}>
-      {title && <h3 className="text-lg font-bold text-gray-900 mb-4">{title}</h3>}
+      {title && <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{title}</h3>}
       <div style={{ height }}>
         <div className="flex items-end justify-around h-full gap-3 pb-4">
           {data.map((item, idx) => {
@@ -88,9 +88,9 @@ export default function BarChart({
                 </div>
                 <div className="text-center">
                   {showValues && (
-                    <div className="text-sm font-bold text-gray-900">{item.value}</div>
+                    <div className="text-sm font-bold text-gray-900 dark:text-white">{item.value}</div>
                   )}
-                  <label className="text-xs text-gray-600 truncate w-full px-1">
+                  <label className="text-xs text-gray-600 dark:text-gray-300 truncate w-full px-1">
                     {item.label}
                   </label>
                 </div>

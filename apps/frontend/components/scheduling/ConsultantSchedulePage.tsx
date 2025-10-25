@@ -38,23 +38,23 @@ function AnalyticsSummary({ analytics }: { analytics: SessionAnalytics[] }) {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div className="bg-white p-4 rounded-lg shadow">
-        <p className="text-gray-600 text-sm">Sessions Completed</p>
-        <p className="text-2xl font-bold text-gray-900">{totalSessions}</p>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <p className="text-gray-600 dark:text-gray-300 text-sm">Sessions Completed</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalSessions}</p>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow">
-        <p className="text-gray-600 text-sm">Hours Completed</p>
-        <p className="text-2xl font-bold text-gray-900">{totalHours.toFixed(1)}</p>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <p className="text-gray-600 dark:text-gray-300 text-sm">Hours Completed</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalHours.toFixed(1)}</p>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow">
-        <p className="text-gray-600 text-sm">Avg Rating</p>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <p className="text-gray-600 dark:text-gray-300 text-sm">Avg Rating</p>
         <p className="text-2xl font-bold text-yellow-600">⭐ {avgRating}</p>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow">
-        <p className="text-gray-600 text-sm">No-Shows</p>
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+        <p className="text-gray-600 dark:text-gray-300 text-sm">No-Shows</p>
         <p className="text-2xl font-bold text-orange-600">{noShowCount}</p>
       </div>
     </div>
@@ -78,12 +78,12 @@ function SessionList({
   onCancel: (id: string, reason: string) => Promise<void>;
 }) {
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Loading sessions...</div>;
+    return <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading sessions...</div>;
   }
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">
         <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
         <p>No sessions scheduled</p>
       </div>
@@ -183,7 +183,7 @@ export default function ConsultantSchedulePage() {
 
   if (!consultantId) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">
         <p>Please log in to access your schedule</p>
       </div>
     );
@@ -194,8 +194,8 @@ export default function ConsultantSchedulePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Consultant Schedule</h1>
-          <p className="text-gray-600 mt-1">Manage your availability and sessions</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Consultant Schedule</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your availability and sessions</p>
         </div>
       </div>
 
@@ -212,7 +212,7 @@ export default function ConsultantSchedulePage() {
             className={`px-4 py-3 font-medium flex items-center gap-2 border-b-2 transition ${
               activeTab === id
                 ? 'border-blue-600 text-primary-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+                : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white'
             }`}
           >
             <Icon className="w-5 h-5" />
@@ -274,7 +274,7 @@ export default function ConsultantSchedulePage() {
           {/* Scheduled Sessions */}
           {scheduledBookings.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <div className="w-3 h-3 bg-primary-500 rounded-full"></div>
                 Pending Confirmation ({scheduledBookings.length})
               </h2>
@@ -291,7 +291,7 @@ export default function ConsultantSchedulePage() {
           {/* Confirmed Sessions */}
           {confirmedBookings.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 Confirmed ({confirmedBookings.length})
               </h2>
@@ -308,7 +308,7 @@ export default function ConsultantSchedulePage() {
           {/* Completed Sessions */}
           {completedBookings.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
                 Completed / Cancelled ({completedBookings.length})
               </h2>
@@ -323,7 +323,7 @@ export default function ConsultantSchedulePage() {
           )}
 
           {bookings.length === 0 && !bookingsLoading && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">
               <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No sessions scheduled</p>
             </div>
@@ -339,33 +339,33 @@ export default function ConsultantSchedulePage() {
 
           {/* Detailed Analytics */}
           {analyticsLoading ? (
-            <div className="text-center py-8 text-gray-500">Loading analytics...</div>
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">Loading analytics...</div>
           ) : analytics.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400 dark:text-gray-500">
               <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No analytics data available</p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Scheduled
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Completed
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       No-Show
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Avg Rating
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Hours
                     </th>
                   </tr>
@@ -373,22 +373,22 @@ export default function ConsultantSchedulePage() {
                 <tbody className="divide-y divide-gray-200">
                   {analytics.map((row: SessionAnalytics) => (
                     <tr key={row.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm text-gray-900 font-medium">
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
                         {new Date(row.session_date).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                         {row.total_sessions_scheduled}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                         {row.total_sessions_completed}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                         {row.total_sessions_no_show}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                         {row.average_rating ? `⭐ ${row.average_rating.toFixed(1)}` : 'N/A'}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
+                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                         {row.total_hours_completed?.toFixed(1) || 0}
                       </td>
                     </tr>

@@ -145,7 +145,7 @@ export default function AdminDashboard() {
 
         {/* Secondary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-textPrimary mb-4">Répartition Utilisateurs</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-textPrimary mb-4">Performance</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -181,7 +181,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h3 className="text-lg font-semibold text-textPrimary mb-4">Conformité Qualiopi</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
           <Link
             href="/dashboard/admin/utilisateurs"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">👥</div>
             <h3 className="text-lg font-semibold text-textPrimary">Utilisateurs</h3>
@@ -213,7 +213,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/dashboard/admin/bilans"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📊</div>
             <h3 className="text-lg font-semibold text-textPrimary">Tous les Bilans</h3>
@@ -222,7 +222,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/dashboard/admin/qualiopi"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📋</div>
             <h3 className="text-lg font-semibold text-textPrimary">Qualiopi</h3>
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/dashboard/admin/statistiques"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📈</div>
             <h3 className="text-lg font-semibold text-textPrimary">Statistiques</h3>
@@ -258,7 +258,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-2xl font-semibold text-textPrimary">Activité Récente</h2>
           </div>
@@ -315,7 +315,7 @@ function StatCard({
   trend?: string;
 }) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-4">
         <div className={`w-12 h-12 rounded-full ${color} flex items-center justify-center text-2xl`}>
           {icon}

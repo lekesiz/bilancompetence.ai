@@ -137,8 +137,8 @@ export function SkillsStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Step 3: Skills & Competencies</h2>
-        <p className="text-gray-600">Select and rate your professional skills</p>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Step 3: Skills & Competencies</h2>
+        <p className="text-gray-600 dark:text-gray-300">Select and rate your professional skills</p>
       </div>
 
       <FormError
@@ -149,14 +149,14 @@ export function SkillsStep({
 
       {/* Skills Selection */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
           Select your skills (minimum 5 required) - {competencies.length} selected
         </label>
 
         <div className="space-y-4">
           {['Technical', 'Soft Skills', 'Business', 'Languages'].map((category) => (
             <div key={category}>
-              <h4 className="font-semibold text-gray-700 text-sm mb-2">{category}</h4>
+              <h4 className="font-semibold text-gray-700 dark:text-gray-200 text-sm mb-2">{category}</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {PREDEFINED_SKILLS.filter(s => s.category === category).map((skill) => (
                   <button
@@ -168,7 +168,7 @@ export function SkillsStep({
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition border-2 ${
                       competencies.find(c => c.skillName === skill.name)
                         ? 'bg-primary-600 text-white border-blue-600'
-                        : 'bg-gray-100 text-gray-700 border-gray-200 hover:border-blue-400'
+                        : 'bg-gray-100 text-gray-700 dark:text-gray-200 border-gray-200 hover:border-blue-400'
                     }`}
                   >
                     {skill.name}
@@ -183,12 +183,12 @@ export function SkillsStep({
       {/* Selected Skills with Ratings */}
       {competencies.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Rate Your Skills</h3>
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Rate Your Skills</h3>
           <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
             {competencies.map((comp) => (
               <div key={comp.skillName} className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium text-gray-700">{comp.skillName}</span>
+                  <span className="font-medium text-gray-700 dark:text-gray-200">{comp.skillName}</span>
                   <button
                     onClick={() => {
                       setCompetencies(competencies.filter(c => c.skillName !== comp.skillName));
@@ -203,7 +203,7 @@ export function SkillsStep({
                 <div className="grid grid-cols-2 gap-4">
                   {/* Assessment Level */}
                   <div>
-                    <label className="text-xs text-gray-600">
+                    <label className="text-xs text-gray-600 dark:text-gray-300">
                       Self-Assessment: {comp.selfAssessmentLevel}/4
                     </label>
                     <input
@@ -217,7 +217,7 @@ export function SkillsStep({
                       }}
                       className="w-full"
                     />
-                    <div className="text-xs text-gray-500 flex justify-between mt-1">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 flex justify-between mt-1">
                       <span>Beginner</span>
                       <span>Expert</span>
                     </div>
@@ -225,7 +225,7 @@ export function SkillsStep({
 
                   {/* Interest Level */}
                   <div>
-                    <label className="text-xs text-gray-600">
+                    <label className="text-xs text-gray-600 dark:text-gray-300">
                       Interest Level: {comp.selfInterestLevel}/10
                     </label>
                     <input
@@ -239,7 +239,7 @@ export function SkillsStep({
                       }}
                       className="w-full"
                     />
-                    <div className="text-xs text-gray-500 flex justify-between mt-1">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 flex justify-between mt-1">
                       <span>Low</span>
                       <span>High</span>
                     </div>
@@ -253,7 +253,7 @@ export function SkillsStep({
 
       {/* Additional Skills */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
           List any additional skills not shown above
         </label>
         <textarea
@@ -266,7 +266,7 @@ export function SkillsStep({
           rows={3}
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <p className="text-xs text-gray-500 mt-1">Optional</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 mt-1">Optional</p>
       </div>
 
       {/* Save Button */}
@@ -275,7 +275,7 @@ export function SkillsStep({
         disabled={isSaving}
         className={`w-full py-3 rounded-lg font-semibold transition ${
           isSaving
-            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            ? 'bg-gray-300 text-gray-500 dark:text-gray-400 dark:text-gray-500 cursor-not-allowed'
             : 'bg-primary-600 text-white hover:bg-primary-700'
         }`}
       >

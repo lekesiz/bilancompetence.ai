@@ -40,10 +40,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Welcome Back
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Sign in to your BilanCompetence.AI account
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
           {/* Email Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               Email Address
             </label>
             <input
@@ -83,7 +83,7 @@ export default function LoginPage() {
           {/* Password Field */}
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                 Password
               </label>
               <a
@@ -104,7 +104,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-900"
+                className="absolute right-3 top-2.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white"
               >
                 {showPassword ? '🙈' : '👁'}
               </button>
@@ -121,7 +121,7 @@ export default function LoginPage() {
               id="remember"
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+            <label htmlFor="remember" className="ml-2 block text-sm text-gray-700 dark:text-gray-200">
               Remember me
             </label>
           </div>
@@ -144,7 +144,7 @@ export default function LoginPage() {
         </form>
 
         {/* Sign Up Link */}
-        <p className="text-center text-gray-600 text-sm mt-6">
+        <p className="text-center text-gray-600 dark:text-gray-300 text-sm mt-6">
           Don't have an account?{' '}
           <a
             href="/register"
@@ -156,11 +156,11 @@ export default function LoginPage() {
 
         {/* Demo Info */}
         <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-600 font-medium mb-2">Demo Credentials:</p>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-600 dark:text-gray-300 font-medium mb-2">Demo Credentials:</p>
+          <p className="text-xs text-gray-600 dark:text-gray-300">
             Email: <span className="font-mono">demo@example.com</span>
           </p>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-600 dark:text-gray-300">
             Password: <span className="font-mono">Demo@123456</span>
           </p>
         </div>

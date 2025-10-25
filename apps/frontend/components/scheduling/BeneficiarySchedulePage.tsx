@@ -37,7 +37,7 @@ export default function BeneficiarySchedulePage({
   if (!user?.id) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600 dark:text-gray-300">Loading...</p>
       </div>
     );
   }
@@ -52,11 +52,11 @@ export default function BeneficiarySchedulePage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Schedule Sessions</h1>
-            <p className="text-gray-600 mt-2">Book and manage your consultation sessions</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Schedule Sessions</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">Book and manage your consultation sessions</p>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function BeneficiarySchedulePage({
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tab Navigation */}
-        <div className="mb-8 border-b border-gray-200 bg-white rounded-t-lg shadow-sm overflow-x-auto">
+        <div className="mb-8 border-b border-gray-200 bg-white dark:bg-gray-800 rounded-t-lg shadow-sm overflow-x-auto">
           <div className="flex gap-0">
             {tabs.map((tab) => (
               <button
@@ -76,7 +76,7 @@ export default function BeneficiarySchedulePage({
                 className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium whitespace-nowrap transition ${
                   activeTab === tab.id
                     ? 'border-blue-600 text-primary-600'
-                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                    : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white'
                 }`}
               >
                 {tab.icon}
@@ -87,7 +87,7 @@ export default function BeneficiarySchedulePage({
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-b-lg shadow-sm p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-b-lg shadow-sm p-6">
           {/* Browse Sessions Tab */}
           {activeTab === 'browse' && (
             <div>
@@ -125,7 +125,7 @@ export default function BeneficiarySchedulePage({
           {/* All Bookings Tab */}
           {activeTab === 'my-bookings' && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">All Your Bookings</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">All Your Bookings</h2>
               <BeneficiaryBookingsList
                 beneficiaryId={user.id}
                 bilanId={bilanId}
@@ -136,7 +136,7 @@ export default function BeneficiarySchedulePage({
           {/* Upcoming/Pending Tab */}
           {activeTab === 'pending' && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Upcoming Sessions</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Upcoming Sessions</h2>
               <BeneficiaryBookingsList
                 beneficiaryId={user.id}
                 bilanId={bilanId}
@@ -148,7 +148,7 @@ export default function BeneficiarySchedulePage({
           {/* Completed Tab */}
           {activeTab === 'completed' && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Completed Sessions</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Completed Sessions</h2>
               <BeneficiaryBookingsList
                 beneficiaryId={user.id}
                 bilanId={bilanId}

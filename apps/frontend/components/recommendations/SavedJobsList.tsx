@@ -46,9 +46,9 @@ export function SavedJobsList({
       case 'applied':
         return 'bg-green-100 text-green-700 border-green-300';
       case 'saved':
-        return 'bg-gray-100 text-gray-700 border-gray-300';
+        return 'bg-gray-100 text-gray-700 dark:text-gray-200 border-gray-300';
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gray-100 text-gray-700 dark:text-gray-200';
     }
   };
 
@@ -104,11 +104,11 @@ export function SavedJobsList({
   return (
     <div className="space-y-6">
       {/* Stats and Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Your Saved Jobs</h3>
-            <p className="text-gray-600 text-sm mt-1">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Saved Jobs</h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
               {filteredJobs.length} of {totalCount || savedJobs.length} jobs
             </p>
           </div>
@@ -129,7 +129,7 @@ export function SavedJobsList({
                     ${
                       selectedStatus === status
                         ? 'bg-primary-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-100 text-gray-700 dark:text-gray-200 hover:bg-gray-200'
                     }
                   `}
                 >
@@ -156,13 +156,13 @@ export function SavedJobsList({
           {filteredJobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all"
+              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-6 hover:shadow-md transition-all"
             >
               <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                 {/* Job Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start gap-2 mb-2">
-                    <h3 className="text-lg font-bold text-gray-900">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                       {job.title}
                     </h3>
                     <span
@@ -175,12 +175,12 @@ export function SavedJobsList({
                     </span>
                   </div>
 
-                  <p className="text-gray-600 font-medium mb-3">
+                  <p className="text-gray-600 dark:text-gray-300 font-medium mb-3">
                     {job.company}
                   </p>
 
                   {/* Job Details */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300 mb-3">
                     {job.location && (
                       <div className="flex items-center gap-1">
                         <span>📍</span>
@@ -213,7 +213,7 @@ export function SavedJobsList({
                   )}
 
                   {/* Save Date */}
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
                     Saved on {new Date(job.savedAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -259,7 +259,7 @@ export function SavedJobsList({
 
       {/* Empty Filter State */}
       {!loading && filteredJobs.length === 0 && savedJobs.length > 0 && (
-        <div className="text-center py-8 text-gray-600 bg-gray-50 rounded-lg">
+        <div className="text-center py-8 text-gray-600 dark:text-gray-300 bg-gray-50 rounded-lg">
           <p className="text-lg">No jobs with status "{getStatusLabel(selectedStatus)}"</p>
           <p className="text-sm mt-2">Try selecting a different status filter</p>
         </div>
@@ -283,10 +283,10 @@ export function SavedJobsList({
               <p className="text-sm text-green-800 mt-1">Interested</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-600">
+              <p className="text-2xl font-bold text-gray-600 dark:text-gray-300">
                 {savedJobs.filter((j) => j.status === 'saved').length}
               </p>
-              <p className="text-sm text-gray-800 mt-1">Saved</p>
+              <p className="text-sm text-gray-800 dark:text-gray-100 mt-1">Saved</p>
             </div>
           </div>
         </div>

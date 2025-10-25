@@ -22,7 +22,7 @@ const STATUS_COLORS: Record<string, string> = {
   SCHEDULED: 'bg-blue-100 text-blue-900 border-blue-300',
   CONFIRMED: 'bg-green-100 text-green-900 border-green-300',
   IN_PROGRESS: 'bg-purple-100 text-purple-900 border-purple-300',
-  COMPLETED: 'bg-gray-100 text-gray-900 border-gray-300',
+  COMPLETED: 'bg-gray-100 text-gray-900 dark:text-white border-gray-300',
   CANCELLED: 'bg-red-100 text-red-900 border-red-300',
   NO_SHOW: 'bg-orange-100 text-orange-900 border-orange-300',
 };
@@ -84,7 +84,7 @@ export default function BeneficiaryBookingsList({
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3"></div>
-          <p className="text-gray-600">Loading your bookings...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading your bookings...</p>
         </div>
       </div>
     );
@@ -106,8 +106,8 @@ export default function BeneficiaryBookingsList({
     return (
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
         <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-        <h3 className="font-semibold text-gray-900 mb-1">No Bookings</h3>
-        <p className="text-gray-600">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-1">No Bookings</h3>
+        <p className="text-gray-600 dark:text-gray-300">
           {status ? `You have no ${status.toLowerCase()} bookings` : 'You have no bookings yet'}
         </p>
       </div>
@@ -125,13 +125,13 @@ export default function BeneficiaryBookingsList({
         return (
           <div
             key={booking.id}
-            className="bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition"
+            className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow hover:shadow-md transition"
           >
             {/* Header with Status */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-start gap-2">
               <div>
-                <h3 className="font-semibold text-gray-900">{booking.consultant_id}</h3>
-                <p className="text-sm text-gray-600 mt-1">{booking.session_type}</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{booking.consultant_id}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{booking.session_type}</p>
               </div>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-medium border ${
@@ -145,23 +145,23 @@ export default function BeneficiaryBookingsList({
             {/* Content */}
             <div className="p-4 space-y-3">
               {/* Date and Time */}
-              <div className="flex items-center gap-2 text-gray-700">
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
                 <Clock className="w-4 h-4 text-gray-300" />
                 <div>
                   <p className="font-medium">{format(sessionDateTime, 'EEE, MMM d, yyyy')}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {booking.scheduled_start_time} - {booking.scheduled_end_time} ({booking.duration_minutes} min)
                   </p>
                 </div>
               </div>
 
               {/* Meeting Format */}
-              <div className="flex items-center gap-2 text-gray-700">
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
                 {MEETING_FORMAT_ICONS[booking.meeting_format]}
                 <div>
                   <p className="text-sm font-medium">{booking.meeting_format}</p>
                   {booking.meeting_location && (
-                    <p className="text-xs text-gray-600">{booking.meeting_location}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-300">{booking.meeting_location}</p>
                   )}
                   {booking.meeting_link && (
                     <a
@@ -179,7 +179,7 @@ export default function BeneficiaryBookingsList({
               {/* Beneficiary Notes */}
               {booking.beneficiary_notes && (
                 <div className="p-3 bg-blue-50 rounded border border-blue-200">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-200">
                     <strong>Your Notes:</strong> {booking.beneficiary_notes}
                   </p>
                 </div>
@@ -200,14 +200,14 @@ export default function BeneficiaryBookingsList({
                       ★
                     </span>
                   ))}
-                  <span className="text-sm text-gray-600 ml-2">({booking.beneficiary_rating || 0}/5)</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300 ml-2">({booking.beneficiary_rating || 0}/5)</span>
                 </div>
               )}
 
               {/* Feedback */}
               {isCompleted && booking.beneficiary_feedback && (
                 <div className="p-3 bg-yellow-50 rounded border border-yellow-200">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-200">
                     <strong>Your Feedback:</strong> {booking.beneficiary_feedback}
                   </p>
                 </div>
@@ -216,7 +216,7 @@ export default function BeneficiaryBookingsList({
               {/* Cancellation Reason */}
               {booking.status === 'CANCELLED' && booking.cancellation_reason && (
                 <div className="p-3 bg-red-50 rounded border border-red-200">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-200">
                     <strong>Cancellation Reason:</strong> {booking.cancellation_reason}
                   </p>
                 </div>
@@ -228,7 +228,7 @@ export default function BeneficiaryBookingsList({
               {showCancelForm === booking.id ? (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       Cancellation Reason
                     </label>
                     <textarea
@@ -245,7 +245,7 @@ export default function BeneficiaryBookingsList({
                         setShowCancelForm(null);
                         setCancellationReason('');
                       }}
-                      className="flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 transition text-sm"
                     >
                       Keep Booking
                     </button>
@@ -266,7 +266,7 @@ export default function BeneficiaryBookingsList({
                   Cancel Booking
                 </button>
               ) : (
-                <p className="text-xs text-gray-500 italic">
+                <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500 italic">
                   {isCompleted ? 'Session completed' : 'Cannot cancel this booking'}
                 </p>
               )}

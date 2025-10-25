@@ -35,25 +35,25 @@ export class DashboardErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+          <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-8 h-8 text-red-600" />
             </div>
             
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
               Dashboard Error
             </h2>
             
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Something went wrong while loading your dashboard. Please try refreshing the page.
             </p>
             
             {this.state.error && (
               <details className="text-left mb-6 p-4 bg-gray-100 rounded-lg">
-                <summary className="cursor-pointer text-sm font-medium text-gray-700 mb-2">
+                <summary className="cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                   Error Details
                 </summary>
-                <pre className="text-xs text-gray-600 whitespace-pre-wrap">
+                <pre className="text-xs text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
                   {this.state.error.message}
                 </pre>
               </details>

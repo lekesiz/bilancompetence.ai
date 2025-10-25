@@ -96,13 +96,13 @@ export function JobRecommendationsList({
   return (
     <div className="space-y-6">
       {/* Filters Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters & Sorting</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filters & Sorting</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Sort Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Sort By
             </label>
             <select
@@ -118,7 +118,7 @@ export function JobRecommendationsList({
 
           {/* Location Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Location
             </label>
             <input
@@ -132,7 +132,7 @@ export function JobRecommendationsList({
 
           {/* Min Salary Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Min Salary (€)
             </label>
             <input
@@ -148,7 +148,7 @@ export function JobRecommendationsList({
 
           {/* Max Salary Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Max Salary (€)
             </label>
             <input
@@ -179,7 +179,7 @@ export function JobRecommendationsList({
 
       {/* Results Info */}
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-300">
           Showing {sortedJobs.length} of {totalCount || sortedJobs.length} recommendations
         </p>
       </div>
@@ -228,7 +228,7 @@ export function JobRecommendationsList({
 
       {/* Empty Results Message */}
       {!loading && sortedJobs.length === 0 && jobs.length > 0 && (
-        <div className="text-center py-8 text-gray-600">
+        <div className="text-center py-8 text-gray-600 dark:text-gray-300">
           <p>No jobs match your current filters. Try adjusting them.</p>
         </div>
       )}

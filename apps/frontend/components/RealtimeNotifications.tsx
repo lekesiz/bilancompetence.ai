@@ -60,7 +60,7 @@ export default function RealtimeNotifications() {
       case 'message':
         return 'bg-purple-50 border-purple-200 text-purple-800';
       case 'system':
-        return 'bg-gray-50 border-gray-200 text-gray-800';
+        return 'bg-gray-50 border-gray-200 text-gray-800 dark:text-gray-100';
       default:
         return 'bg-blue-50 border-blue-200 text-blue-800';
     }

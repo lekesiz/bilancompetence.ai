@@ -109,12 +109,12 @@ export default function BeneficiaryBookingForm({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Booking</h2>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Complete Your Booking</h2>
 
       {/* Booking Summary */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-gray-700 dark:text-gray-200">
           <strong>Date & Time:</strong> {selectedDate} from {selectedStartTime} to {selectedEndTime} ({durationMinutes} minutes)
         </p>
       </div>
@@ -122,7 +122,7 @@ export default function BeneficiaryBookingForm({
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Session Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Session Type *
           </label>
           <select
@@ -141,7 +141,7 @@ export default function BeneficiaryBookingForm({
 
         {/* Meeting Format */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Meeting Format *
           </label>
           <select
@@ -160,7 +160,7 @@ export default function BeneficiaryBookingForm({
         {/* Meeting Location/Link (conditional) */}
         {meetingFormat === 'IN_PERSON' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Meeting Location
             </label>
             <input
@@ -177,7 +177,7 @@ export default function BeneficiaryBookingForm({
 
         {meetingFormat === 'VIDEO' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Meeting Link (Optional)
             </label>
             <input
@@ -194,7 +194,7 @@ export default function BeneficiaryBookingForm({
 
         {/* Beneficiary Notes */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Notes or Topics to Discuss (Optional)
           </label>
           <textarea
@@ -210,7 +210,7 @@ export default function BeneficiaryBookingForm({
 
         {/* Preparation Materials */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Preparation Materials (Optional)
           </label>
           <textarea
@@ -230,7 +230,7 @@ export default function BeneficiaryBookingForm({
             type="button"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 transition font-medium disabled:bg-gray-100 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

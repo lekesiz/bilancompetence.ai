@@ -117,7 +117,7 @@ export default function ConsultantDashboard() {
             title="En Attente"
             value={stats.pending}
             icon="⏳"
-            color="bg-gray-100 text-gray-800"
+            color="bg-gray-100 text-gray-800 dark:text-gray-100"
           />
         </div>
 
@@ -134,7 +134,7 @@ export default function ConsultantDashboard() {
           
           <Link 
             href="/dashboard/consultant/rendez-vous"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📅</div>
             <h3 className="text-lg font-semibold text-textPrimary">Mes Rendez-vous</h3>
@@ -143,7 +143,7 @@ export default function ConsultantDashboard() {
           
           <Link 
             href="/dashboard/consultant/messagerie"
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">💬</div>
             <h3 className="text-lg font-semibold text-textPrimary">Messagerie</h3>
@@ -152,7 +152,7 @@ export default function ConsultantDashboard() {
         </div>
 
         {/* Bilans List */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-2xl font-semibold text-textPrimary">Mes Bilans</h2>
           </div>
@@ -178,27 +178,27 @@ export default function ConsultantDashboard() {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                       Bénéficiaire
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                       Titre
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                       Statut
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                       Progression
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                       Dernière MAJ
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                   {bilans.map((bilan) => (
                     <tr key={bilan.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -239,7 +239,7 @@ export default function ConsultantDashboard() {
                         </Link>
                         <Link
                           href={`/dashboard/consultant/bilans/${bilan.id}/edit`}
-                          className="text-gray-600 hover:text-gray-900"
+                          className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:text-white"
                         >
                           Modifier
                         </Link>
@@ -258,7 +258,7 @@ export default function ConsultantDashboard() {
 
 function StatCard({ title, value, icon, color }: { title: string; value: number; icon: string; color: string }) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-textSecondary text-sm mb-1">{title}</p>
@@ -282,7 +282,7 @@ function StatusBadge({ status }: { status: string }) {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:text-gray-100';
     }
   };
 

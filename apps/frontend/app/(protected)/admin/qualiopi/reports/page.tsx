@@ -129,16 +129,16 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Uyumluluk Raporu
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-gray-600 dark:text-gray-300 mt-1">
           Qualiopi uyumluluk raporunu oluştur ve indir
         </p>
       </div>
 
       {/* Generation Options */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6 space-y-4">
         <div>
           <label className="flex items-center gap-3">
             <input
@@ -147,7 +147,7 @@ export default function ReportsPage() {
               onChange={(e) => setIncludeEvidence(e.target.checked)}
               className="w-4 h-4"
             />
-            <span className="text-gray-700 font-medium">
+            <span className="text-gray-700 dark:text-gray-200 font-medium">
               Kanıt dosyalarını raporda dahil et
             </span>
           </label>
@@ -223,8 +223,8 @@ export default function ReportsPage() {
           </div>
 
           {/* Export Options */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-            <h2 className="text-lg font-bold text-gray-900">Raporu İndir</h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6 space-y-4">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Raporu İndir</h2>
 
             <div className="flex gap-2">
               <select
@@ -244,23 +244,23 @@ export default function ReportsPage() {
               </button>
             </div>
 
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Rapor, göstergelerin durumunu, memnuniyet metriklerini ve tavsiye edilen adımları içerir.
             </p>
           </div>
 
           {/* Audit Schedule */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Audit Takvimi</h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Audit Takvimi</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border border-gray-200 rounded p-4">
-                <div className="font-medium text-gray-900">Kendi Değerlendirmesi</div>
+                <div className="font-medium text-gray-900 dark:text-white">Kendi Değerlendirmesi</div>
                 <div className="text-2xl font-bold text-blue-600 mt-2">
                   {new Date(report.audit_schedule.self_assessment_deadline).toLocaleDateString('tr-TR')}
                 </div>
               </div>
               <div className="border border-gray-200 rounded p-4">
-                <div className="font-medium text-gray-900">Harici Audit</div>
+                <div className="font-medium text-gray-900 dark:text-white">Harici Audit</div>
                 <div className="text-2xl font-bold text-purple-600 mt-2">
                   {report.audit_schedule.external_audit_period}
                 </div>
@@ -269,22 +269,22 @@ export default function ReportsPage() {
           </div>
 
           {/* Next Steps */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Sonraki Adımlar</h2>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 rounded-lg p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Sonraki Adımlar</h2>
             <div className="space-y-3">
               {report.next_steps.map((step, idx) => (
                 <div key={idx} className="flex gap-3 items-start">
                   <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                     {idx + 1}
                   </div>
-                  <p className="text-gray-700 pt-0.5">{step}</p>
+                  <p className="text-gray-700 dark:text-gray-200 pt-0.5">{step}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Report Info */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-sm text-gray-600">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-sm text-gray-600 dark:text-gray-300">
             <div className="flex justify-between items-center">
               <span>Rapor ID: <span className="font-mono font-medium">{report.report_id}</span></span>
               <span>Oluşturma Tarihi: {new Date(report.generated_at).toLocaleDateString('tr-TR')}</span>

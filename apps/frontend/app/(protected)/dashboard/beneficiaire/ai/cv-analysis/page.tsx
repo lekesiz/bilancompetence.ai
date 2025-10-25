@@ -113,15 +113,15 @@ const CVAnalysisPage = () => {
             </svg>
             Retour au dashboard
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Analyse de CV par IA</h1>
-          <p className="text-xl text-gray-600">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Analyse de CV par IA</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
             Uploadez votre CV et obtenez une analyse détaillée de vos compétences et recommandations personnalisées
           </p>
         </div>
 
         {/* Upload Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Uploader votre CV</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Uploader votre CV</h2>
 
           <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition-colors">
             <input
@@ -137,10 +137,10 @@ const CVAnalysisPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
-              <p className="text-lg font-semibold text-gray-700 mb-2">
+              <p className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">
                 {file ? file.name : 'Cliquez pour sélectionner un fichier'}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">
                 Formats acceptés: PDF, DOC, DOCX (max 5MB)
               </p>
             </label>
@@ -164,8 +164,8 @@ const CVAnalysisPage = () => {
           {analyzing && (
             <div className="mt-6 text-center">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-              <p className="text-gray-700 font-medium">Analyse en cours...</p>
-              <p className="text-sm text-gray-500">Notre IA analyse votre CV, veuillez patienter</p>
+              <p className="text-gray-700 dark:text-gray-200 font-medium">Analyse en cours...</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 dark:text-gray-400 dark:text-gray-500">Notre IA analyse votre CV, veuillez patienter</p>
             </div>
           )}
         </div>
@@ -174,25 +174,25 @@ const CVAnalysisPage = () => {
         {result && (
           <div className="space-y-6">
             {/* Summary */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                 <svg className="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Résumé de votre profil
               </h2>
-              <p className="text-gray-700 leading-relaxed">{result.summary}</p>
+              <p className="text-gray-700 dark:text-gray-200 leading-relaxed">{result.summary}</p>
             </div>
 
             {/* Experience */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                 <svg className="w-8 h-8 text-success-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Expérience professionnelle
               </h2>
-              <p className="text-lg text-gray-700 mb-4">
+              <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">
                 <strong>{result.experience.years} ans</strong> d'expérience
               </p>
               <div className="space-y-2">
@@ -201,15 +201,15 @@ const CVAnalysisPage = () => {
                     <svg className="w-5 h-5 text-success-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-gray-700">{role}</span>
+                    <span className="text-gray-700 dark:text-gray-200">{role}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Skills */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                 <svg className="w-8 h-8 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
@@ -228,8 +228,8 @@ const CVAnalysisPage = () => {
             </div>
 
             {/* Strengths */}
-            <div className="bg-white rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                 <svg className="w-8 h-8 text-warning-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
@@ -241,7 +241,7 @@ const CVAnalysisPage = () => {
                     <svg className="w-6 h-6 text-warning-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-gray-700">{strength}</span>
+                    <span className="text-gray-700 dark:text-gray-200">{strength}</span>
                   </div>
                 ))}
               </div>
@@ -249,7 +249,7 @@ const CVAnalysisPage = () => {
 
             {/* Recommendations */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
                 <svg className="w-8 h-8 text-indigo-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                 </svg>
@@ -257,11 +257,11 @@ const CVAnalysisPage = () => {
               </h2>
               <div className="space-y-4">
                 {result.recommendations.map((rec, index) => (
-                  <div key={index} className="flex items-start bg-white rounded-lg p-4">
+                  <div key={index} className="flex items-start bg-white dark:bg-gray-800 rounded-lg p-4">
                     <span className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold mr-3">
                       {index + 1}
                     </span>
-                    <span className="text-gray-700 pt-1">{rec}</span>
+                    <span className="text-gray-700 dark:text-gray-200 pt-1">{rec}</span>
                   </div>
                 ))}
               </div>
@@ -280,7 +280,7 @@ const CVAnalysisPage = () => {
                   setFile(null);
                   setResult(null);
                 }}
-                className="flex-1 bg-gray-200 text-gray-700 px-8 py-4 rounded-lg font-bold hover:bg-gray-300 transition-colors"
+                className="flex-1 bg-gray-200 text-gray-700 dark:text-gray-200 px-8 py-4 rounded-lg font-bold hover:bg-gray-300 transition-colors"
               >
                 Analyser un autre CV
               </button>

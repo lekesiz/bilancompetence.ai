@@ -87,7 +87,7 @@ export default function ProgressRing({
         </text>
       </svg>
 
-      {label && <p className="text-sm font-medium text-gray-700 mt-3">{label}</p>}
+      {label && <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mt-3">{label}</p>}
     </div>
   );
 }

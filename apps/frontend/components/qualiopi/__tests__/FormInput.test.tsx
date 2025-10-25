@@ -47,7 +47,7 @@ describe('FormInput Component', () => {
   it('applies default variant', () => {
     render(<FormInput variant="default" />);
     const input = screen.getByRole('textbox');
-    expect(input).toHaveClass('border-gray-300', 'bg-white');
+    expect(input).toHaveClass('border-gray-300', 'bg-white dark:bg-gray-800');
   });
 
   it('applies filled variant', () => {
