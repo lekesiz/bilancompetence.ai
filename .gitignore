@@ -106,3 +106,4 @@ DEPLOYMENT_*.md
 # Disabled configs
 *.disabled
 
+_local_temp/

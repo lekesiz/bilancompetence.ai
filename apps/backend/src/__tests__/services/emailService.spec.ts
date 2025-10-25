@@ -14,7 +14,7 @@ import {
   sendPasswordResetEmail,
   sendVerificationEmail,
   sendConfirmationEmail,
-} from '../../services/emailService.js';
+} from '../../services/emailService';
 import nodemailer from 'nodemailer';
 
 // Mock nodemailer

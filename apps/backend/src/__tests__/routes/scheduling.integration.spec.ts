@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
 import express, { Express } from 'express';
-import schedulingRoutes from '../../routes/scheduling.js';
+import schedulingRoutes from '../../routes/scheduling';
 import { v4 as uuidv4 } from 'uuid';
 
 // Create a test Express app

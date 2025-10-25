@@ -13,8 +13,8 @@ import {
   getUserNotifications,
   markNotificationAsRead,
   deleteNotification,
-} from '../../services/notificationService.js';
-import { supabase } from '../../services/supabaseService.js';
+} from '../../services/notificationService';
+import { supabase } from '../../services/supabaseService';
 
 jest.mock('../../services/supabaseService', () => ({
   supabase: {

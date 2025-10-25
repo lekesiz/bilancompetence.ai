@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
-import SchedulingService from '../../services/schedulingService.js';
+import SchedulingService from '../../services/schedulingService';
 import { v4 as uuidv4 } from 'uuid';
 
 // Mock data

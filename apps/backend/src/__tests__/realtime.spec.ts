@@ -1,7 +1,7 @@
 import http from 'http';
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, xit } from '@jest/globals';
 import io, { Socket as ClientSocket } from 'socket.io-client';
-import RealtimeService from '../services/realtimeService.js';
+import RealtimeService from '../services/realtimeService';
 
 describe('Real-time Service - WebSocket Communication', () => {
   let server: http.Server;

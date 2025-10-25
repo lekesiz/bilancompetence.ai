@@ -11,7 +11,7 @@ import {
   generateUserId,
   createUserRecord,
   UserPayload,
-} from '../../services/authService.js';
+} from '../../services/authService';
 
 describe('AuthService', () => {
   const testUser: UserPayload = {
