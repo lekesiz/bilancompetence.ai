@@ -26,7 +26,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: 'ADMIN' | 'CONSULTANT' | 'BENEFICIARY' | 'ORGANIZATION_ADMIN';
+    role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
     organization_id?: string;
   };
 }
@@ -49,10 +49,8 @@ export const authorizeResource = (resourceType: ResourceType) => {
         return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
       }
 
-      // Les admins ont accès à tout
-      if (userRole === 'ADMIN') {
-        return next();
-      }
+  // Les ORG_ADMIN ont accès à tout dans leur organisation
+  // Note: Il n'y a pas de rôle ADMIN global dans ce système
 
       // Récupérer l'ID de la ressource depuis les paramètres
       const resourceId = 
@@ -169,7 +167,7 @@ async function checkBilanAuthorization(
   }
 
   // Organization Admin peut accéder aux bilans de son organisation
-  if (userRole === 'ORGANIZATION_ADMIN' && bilan.organization_id === userOrgId) {
+  if (userRole === 'ORG_ADMIN' && bilan.organization_id === userOrgId) {
     return true;
   }
 
