@@ -9,8 +9,8 @@ import {
   ChartPlaceholder,
 } from './dashboard-components';
 import { Plus, TrendingUp, Target, Award, Sparkles } from 'lucide-react';
-import { Button } from '@/components/qualiopi/Button';
-import { Card } from '@/components/qualiopi/Card';
+import Button from '@/components/qualiopi/Button';
+import Card from '@/components/qualiopi/Card';
 
 export function BeneficiaryDashboard() {
   const { data, loading, error } = useBeneficiaryDashboardData();
