@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
+// Temporarily disabled due to Node.js 18 compatibility issues
+// import { createRequire } from 'module';
+// const require = createRequire(import.meta.url);
+// const pdfParse = require('pdf-parse');
 import mammoth from 'mammoth';
 import { authenticateToken } from '../middleware/auth.js';
 import { supabase } from '../config/supabase.js';
@@ -50,8 +51,10 @@ router.post('/analyze-cv', authenticateToken, upload.single('cv'), async (req: R
     let cv_text = '';
     try {
       if (file.mimetype === 'application/pdf') {
-        const pdfData = await pdfParse(file.buffer);
-        cv_text = pdfData.text;
+        // Temporarily disabled due to pdf-parse compatibility issues with Node.js 18
+        return res.status(501).json({ 
+          error: 'PDF analysis temporarily unavailable. Please upgrade to Node.js 20+ or use Word documents.' 
+        });
       } else if (file.mimetype.includes('word') || file.mimetype.includes('document')) {
         const result = await mammoth.extractRawText({ buffer: file.buffer });
         cv_text = result.value;
