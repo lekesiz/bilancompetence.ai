@@ -78,13 +78,13 @@ export function ClientCard({
       {/* Client info */}
       <div className="space-y-3 mb-4 pb-4 border-b border-gray-100">
         <div className="flex items-center gap-2 text-sm">
-          <Mail className="w-4 h-4 text-gray-400" />
+          <Mail className="w-4 h-4 text-gray-300" />
           <span className="text-gray-600">Contact:</span>
           <span className="text-gray-800 font-medium">{client.contact}</span>
         </div>
         {client.lastAssessmentDate && (
           <div className="flex items-center gap-2 text-sm">
-            <Calendar className="w-4 h-4 text-gray-400" />
+            <Calendar className="w-4 h-4 text-gray-300" />
             <span className="text-gray-600">Last Assessment:</span>
             <span className="text-gray-800 font-medium">{formatDate(client.lastAssessmentDate)}</span>
           </div>

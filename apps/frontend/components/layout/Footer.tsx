@@ -18,7 +18,7 @@ const legalLinks = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-300 border-t border-gray-800">
+    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-200 border-t border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section */}
@@ -26,7 +26,7 @@ export const Footer = () => {
             <h3 className="text-xl font-bold font-heading text-white mb-4">
               BilanCompetence.ai
             </h3>
-            <p className="text-gray-400 text-sm leading-relaxed mb-4">
+            <p className="text-gray-300 text-sm leading-relaxed mb-4">
               Votre partenaire pour l'évolution professionnelle et le développement des compétences.
             </p>
             <div className="flex space-x-4">
@@ -42,7 +42,7 @@ export const Footer = () => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 hover:text-primary-400 transition-colors duration-200"
+                    className="text-sm text-gray-300 hover:text-primary-400 transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -59,7 +59,7 @@ export const Footer = () => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-400 hover:text-primary-400 transition-colors duration-200"
+                    className="text-sm text-gray-300 hover:text-primary-400 transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -71,7 +71,7 @@ export const Footer = () => {
           {/* Contact Section */}
           <div>
             <h4 className="text-white font-semibold mb-4">Contact</h4>
-            <address className="not-italic text-sm text-gray-400 space-y-3">
+            <address className="not-italic text-sm text-gray-300 space-y-3">
               <div className="flex items-start space-x-2">
                 <svg 
                   className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0" 

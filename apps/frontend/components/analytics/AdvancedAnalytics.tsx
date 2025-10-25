@@ -50,7 +50,7 @@ export default function AdvancedAnalytics() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                   {stat.label}
                 </p>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -78,7 +78,7 @@ export default function AdvancedAnalytics() {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Statistiques détaillées
         </h3>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600 dark:text-gray-300">
           Les graphiques avancés seront disponibles prochainement.
         </p>
       </motion.div>

@@ -281,7 +281,7 @@ export default function AssessmentPage() {
                             className="w-4 h-4"
                             disabled={assessment.status === 'PRELIMINARY'}
                           />
-                          <span className={`text-sm ${assessment.status === 'PRELIMINARY' ? 'text-gray-400' : 'text-gray-700'}`}>
+                          <span className={`text-sm ${assessment.status === 'PRELIMINARY' ? 'text-gray-300' : 'text-gray-700'}`}>
                             Investigation Report
                           </span>
                         </label>
@@ -297,7 +297,7 @@ export default function AssessmentPage() {
                             className="w-4 h-4"
                             disabled={assessment.status !== 'COMPLETED'}
                           />
-                          <span className={`text-sm ${assessment.status !== 'COMPLETED' ? 'text-gray-400' : 'text-gray-700'}`}>
+                          <span className={`text-sm ${assessment.status !== 'COMPLETED' ? 'text-gray-300' : 'text-gray-700'}`}>
                             Conclusion Report
                           </span>
                         </label>

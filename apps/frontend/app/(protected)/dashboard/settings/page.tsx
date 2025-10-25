@@ -19,7 +19,7 @@ export default function SettingsPage() {
             Paramètres
           </h1>
         </div>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600 dark:text-gray-300">
           Gérez vos préférences et paramètres de compte
         </p>
       </motion.div>
@@ -38,15 +38,15 @@ export default function SettingsPage() {
                 <Bell className="w-5 h-5" />
                 Notifications
               </button>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors">
                 <User className="w-5 h-5" />
                 Profil
               </button>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors">
                 <Shield className="w-5 h-5" />
                 Sécurité
               </button>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors">
                 <Palette className="w-5 h-5" />
                 Apparence
               </button>
@@ -54,7 +54,7 @@ export default function SettingsPage() {
 
             {/* Theme Toggle in Sidebar */}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                 Thème
               </p>
               <ThemeToggle />

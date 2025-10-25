@@ -40,11 +40,11 @@ export function RecommendationsPanel({ recommendations, userRole }: Recommendati
         </h3>
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <TrendingUp className="w-8 h-8 text-gray-400" />
+            <TrendingUp className="w-8 h-8 text-gray-300" />
           </div>
           <p className="text-gray-500 font-medium">No recommendations available yet</p>
           {userRole === 'BENEFICIARY' && (
-            <p className="text-sm text-gray-400 mt-2">Complete an assessment to get personalized recommendations</p>
+            <p className="text-sm text-gray-300 mt-2">Complete an assessment to get personalized recommendations</p>
           )}
         </div>
       </div>
@@ -91,7 +91,7 @@ export function RecommendationsPanel({ recommendations, userRole }: Recommendati
                   </div>
                 </div>
                 <button
-                  className="text-gray-400 hover:text-gray-600 ml-2 p-1 rounded-lg hover:bg-white hover:bg-opacity-50 transition-colors"
+                  className="text-gray-300 hover:text-gray-600 ml-2 p-1 rounded-lg hover:bg-white hover:bg-opacity-50 transition-colors"
                   onClick={(e) => {
                     e.stopPropagation();
                   }}

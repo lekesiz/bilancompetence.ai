@@ -110,12 +110,12 @@ export default function UserPreferences() {
               className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <div className="flex items-center gap-4">
-                <pref.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <pref.icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">
                     {pref.label}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {pref.description}
                   </p>
                 </div>
@@ -164,12 +164,12 @@ export default function UserPreferences() {
               className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <div className="flex items-center gap-4">
-                <pref.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <pref.icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white">
                     {pref.label}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {pref.description}
                   </p>
                 </div>

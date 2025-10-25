@@ -87,7 +87,7 @@ export function UserManagementTable({
       {/* Search */}
       <div className="p-6 border-b border-gray-100">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-5 h-5" />
           <input
             type="text"
             placeholder="Search by name or email..."
@@ -119,10 +119,10 @@ export function UserManagementTable({
                 <td colSpan={5} className="px-6 py-12 text-center">
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                      <Users className="w-6 h-6 text-gray-400" />
+                      <Users className="w-6 h-6 text-gray-300" />
                     </div>
                     <p className="text-gray-500 font-medium">No users found</p>
-                    <p className="text-gray-400 text-sm">Try adjusting your search criteria</p>
+                    <p className="text-gray-300 text-sm">Try adjusting your search criteria</p>
                   </div>
                 </td>
               </tr>

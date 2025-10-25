@@ -37,7 +37,7 @@ export function StepNavigation({
         disabled={isFirstStep || disableBack || isLoading || isSaving}
         className={`px-6 py-2 rounded-lg font-medium transition ${
           isFirstStep || disableBack || isLoading || isSaving
-            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            ? 'bg-gray-200 text-gray-300 cursor-not-allowed'
             : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
         }`}
       >
@@ -55,7 +55,7 @@ export function StepNavigation({
             disabled={isLoading || isSaving}
             className={`px-8 py-2 rounded-lg font-medium transition ${
               isLoading || isSaving
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-gray-200 text-gray-300 cursor-not-allowed'
                 : 'bg-green-600 text-white hover:bg-green-700'
             }`}
           >
@@ -67,7 +67,7 @@ export function StepNavigation({
             disabled={isLastStep || disableNext || isLoading || isSaving}
             className={`px-8 py-2 rounded-lg font-medium transition ${
               isLastStep || disableNext || isLoading || isSaving
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-gray-200 text-gray-300 cursor-not-allowed'
                 : 'bg-primary-600 text-white hover:bg-primary-700'
             }`}
           >

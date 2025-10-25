@@ -101,7 +101,7 @@ export default function BeneficiarySessionBrowser({
             Search Consultant
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-3 w-4 h-4 text-gray-300" />
             <input
               type="text"
               value={searchTerm}
@@ -187,7 +187,7 @@ export default function BeneficiarySessionBrowser({
                           {consultant.slots?.length || 0} available slots
                         </p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400 mt-1" />
+                      <ChevronRight className="w-4 h-4 text-gray-300 mt-1" />
                     </div>
                   </button>
                 ))

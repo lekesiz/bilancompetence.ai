@@ -121,7 +121,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-gray-400" />
+              <Lock className="h-5 w-5 text-gray-300" />
             </div>
             <input
               type={showPasswords.current ? 'text' : 'password'}
@@ -138,9 +138,9 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPasswords.current ? (
-                <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600" />
               )}
             </button>
           </div>
@@ -159,7 +159,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-gray-400" />
+              <Lock className="h-5 w-5 text-gray-300" />
             </div>
             <input
               type={showPasswords.new ? 'text' : 'password'}
@@ -176,9 +176,9 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPasswords.new ? (
-                <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600" />
               )}
             </button>
           </div>
@@ -213,7 +213,7 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-gray-400" />
+              <Lock className="h-5 w-5 text-gray-300" />
             </div>
             <input
               type={showPasswords.confirm ? 'text' : 'password'}
@@ -230,9 +230,9 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPasswords.confirm ? (
-                <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <EyeOff className="h-5 w-5 text-gray-300 hover:text-gray-600" />
               ) : (
-                <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                <Eye className="h-5 w-5 text-gray-300 hover:text-gray-600" />
               )}
             </button>
           </div>
@@ -250,19 +250,19 @@ export default function PasswordForm({ onSubmit, loading = false }: PasswordForm
         <h4 className="text-sm font-medium text-blue-800 mb-2">Password Requirements:</h4>
         <ul className="text-sm text-primary-700 space-y-1">
           <li className="flex items-center">
-            <CheckCircle className={`w-4 h-4 mr-2 ${formData.newPassword.length >= 8 ? 'text-green-500' : 'text-gray-400'}`} />
+            <CheckCircle className={`w-4 h-4 mr-2 ${formData.newPassword.length >= 8 ? 'text-green-500' : 'text-gray-300'}`} />
             At least 8 characters
           </li>
           <li className="flex items-center">
-            <CheckCircle className={`w-4 h-4 mr-2 ${/[a-z]/.test(formData.newPassword) ? 'text-green-500' : 'text-gray-400'}`} />
+            <CheckCircle className={`w-4 h-4 mr-2 ${/[a-z]/.test(formData.newPassword) ? 'text-green-500' : 'text-gray-300'}`} />
             One lowercase letter
           </li>
           <li className="flex items-center">
-            <CheckCircle className={`w-4 h-4 mr-2 ${/[A-Z]/.test(formData.newPassword) ? 'text-green-500' : 'text-gray-400'}`} />
+            <CheckCircle className={`w-4 h-4 mr-2 ${/[A-Z]/.test(formData.newPassword) ? 'text-green-500' : 'text-gray-300'}`} />
             One uppercase letter
           </li>
           <li className="flex items-center">
-            <CheckCircle className={`w-4 h-4 mr-2 ${/\d/.test(formData.newPassword) ? 'text-green-500' : 'text-gray-400'}`} />
+            <CheckCircle className={`w-4 h-4 mr-2 ${/\d/.test(formData.newPassword) ? 'text-green-500' : 'text-gray-300'}`} />
             One number
           </li>
         </ul>

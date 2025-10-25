@@ -96,11 +96,11 @@
     --surface: #1F2937;
     --surface-hover: #374151;
 
-    /* Text Colors - Dark Mode */
-    --text-primary: #F9FAFB;
-    --text-secondary: #D1D5DB;
-    --text-tertiary: #9CA3AF;
-    --text-disabled: #6B7280;
+    /* Text Colors - Dark Mode (WCAG AA Compliant) */
+    --text-primary: #FFFFFF;
+    --text-secondary: #E5E7EB;
+    --text-tertiary: #D1D5DB;
+    --text-disabled: #9CA3AF;
     --text-inverse: #111827;
 
     /* Shadows - Dark Mode */

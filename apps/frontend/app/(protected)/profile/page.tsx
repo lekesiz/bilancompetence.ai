@@ -345,19 +345,19 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Camera className="w-4 h-4 text-gray-400" />
+                  <Camera className="w-4 h-4 text-gray-300" />
                   <span>Update Profile Photo</span>
                 </div>
               </button>
               <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Shield className="w-4 h-4 text-gray-400" />
+                  <Shield className="w-4 h-4 text-gray-300" />
                   <span>Enable 2FA</span>
                 </div>
               </button>
               <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
-                  <Settings className="w-4 h-4 text-gray-400" />
+                  <Settings className="w-4 h-4 text-gray-300" />
                   <span>Privacy Settings</span>
                 </div>
               </button>

@@ -144,7 +144,7 @@ export default function SessionCard({
       <div className="p-4 space-y-3">
         {/* Date and Time */}
         <div className="flex items-center gap-2 text-gray-700">
-          <Clock className="w-4 h-4 text-gray-400" />
+          <Clock className="w-4 h-4 text-gray-300" />
           <div>
             <p className="font-medium">
               {format(sessionDateTime, 'EEE, MMM d, yyyy')}
@@ -203,7 +203,7 @@ export default function SessionCard({
                 className={`w-4 h-4 ${
                   i < (session.beneficiary_rating || 0)
                     ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-300'
+                    : 'text-gray-200'
                 }`}
               />
             ))}
@@ -300,7 +300,7 @@ export default function SessionCard({
                     className={`w-6 h-6 ${
                       i < rating
                         ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300 hover:text-yellow-300'
+                        : 'text-gray-200 hover:text-yellow-300'
                     }`}
                   />
                 </button>

@@ -105,7 +105,7 @@ export default function BeneficiaryBookingsList({
   if (bookings.length === 0) {
     return (
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+        <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
         <h3 className="font-semibold text-gray-900 mb-1">No Bookings</h3>
         <p className="text-gray-600">
           {status ? `You have no ${status.toLowerCase()} bookings` : 'You have no bookings yet'}
@@ -146,7 +146,7 @@ export default function BeneficiaryBookingsList({
             <div className="p-4 space-y-3">
               {/* Date and Time */}
               <div className="flex items-center gap-2 text-gray-700">
-                <Clock className="w-4 h-4 text-gray-400" />
+                <Clock className="w-4 h-4 text-gray-300" />
                 <div>
                   <p className="font-medium">{format(sessionDateTime, 'EEE, MMM d, yyyy')}</p>
                   <p className="text-sm text-gray-600">
@@ -194,7 +194,7 @@ export default function BeneficiaryBookingsList({
                       className={`w-4 h-4 ${
                         i < (booking.beneficiary_rating || 0)
                           ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-gray-300'
+                          : 'text-gray-200'
                       }`}
                     >
                       ★

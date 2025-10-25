@@ -94,7 +94,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User className="h-5 w-5 text-gray-400" />
+              <User className="h-5 w-5 text-gray-300" />
             </div>
             <input
               type="text"
@@ -118,7 +118,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Mail className="h-5 w-5 text-gray-400" />
+              <Mail className="h-5 w-5 text-gray-300" />
             </div>
             <input
               type="email"
@@ -139,7 +139,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Phone className="h-5 w-5 text-gray-400" />
+              <Phone className="h-5 w-5 text-gray-300" />
             </div>
             <input
               type="tel"
@@ -163,7 +163,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
           </label>
           <div className="relative">
             <div className="absolute top-3 left-3 flex items-start pointer-events-none">
-              <FileText className="h-5 w-5 text-gray-400" />
+              <FileText className="h-5 w-5 text-gray-300" />
             </div>
             <textarea
               value={formData.bio}
@@ -183,7 +183,7 @@ export default function ProfileForm({ initialData, onSubmit, loading = false }: 
                 Optional. Share a bit about yourself.
               </p>
             )}
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-gray-300">
               {formData.bio.length}/500
             </span>
           </div>

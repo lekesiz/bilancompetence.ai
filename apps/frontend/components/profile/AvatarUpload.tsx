@@ -135,7 +135,7 @@ export default function AvatarUpload({
           <p className="text-sm text-gray-600">
             Click to upload a new photo
           </p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-300 mt-1">
             JPG, PNG or GIF (max 5MB)
           </p>
         </div>

@@ -216,7 +216,7 @@ export default function SavedJobsPage() {
               <h2 className="text-2xl font-bold">Skill Match Analysis</h2>
               <button
                 onClick={() => setCompetencyMatcherOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
+                className="text-gray-300 hover:text-gray-600 text-2xl"
               >
                 ✕
               </button>
