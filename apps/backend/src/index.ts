@@ -70,7 +70,27 @@ const corsOrigins = process.env.CORS_ORIGIN
     : ['http://localhost:3000', 'http://localhost:3001'];
 
 app.use(cors({
-  origin: corsOrigins,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin matches allowed patterns
+    const allowedPatterns = [
+      /^https:\/\/.*\.vercel\.app$/,  // All Vercel deployments
+      /^http:\/\/localhost:\d+$/,      // Local development
+      /^https:\/\/bilancompetence\.ai$/,  // Production domain
+    ];
+    
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin)) || 
+                      corsOrigins.includes(origin);
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      logger.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(morgan('dev'));
