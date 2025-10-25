@@ -5,6 +5,52 @@ import { supabase } from '../config/supabase.js';
 const router = Router();
 
 /**
+ * GET /api/tests/mbti/questions
+ * Get all MBTI questions
+ */
+router.get('/mbti/questions', async (req: Request, res: Response) => {
+  try {
+    const { data: questions, error } = await supabase
+      .from('mbti_questions')
+      .select('*')
+      .order('question_order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching MBTI questions:', error);
+      return res.status(500).json({ error: 'Failed to fetch MBTI questions' });
+    }
+
+    res.json(questions || []);
+  } catch (error) {
+    console.error('Error fetching MBTI questions:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * GET /api/tests/riasec/questions
+ * Get all RIASEC questions
+ */
+router.get('/riasec/questions', async (req: Request, res: Response) => {
+  try {
+    const { data: questions, error } = await supabase
+      .from('riasec_questions')
+      .select('*')
+      .order('question_order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching RIASEC questions:', error);
+      return res.status(500).json({ error: 'Failed to fetch RIASEC questions' });
+    }
+
+    res.json(questions || []);
+  } catch (error) {
+    console.error('Error fetching RIASEC questions:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
  * GET /api/tests/:assessmentId
  * Get all tests for an assessment
  */
