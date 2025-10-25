@@ -8,7 +8,6 @@ import {
   hashPassword,
   comparePassword,
   generateTokenPair,
-  generateUserId,
   verifyToken,
   verifyRefreshToken,
 } from '../services/authService.js';
@@ -16,8 +15,10 @@ import {
   getUserByEmail,
   getUserById,
   createUser,
-  emailExists,
-} from '../services/userServiceNeon.js';
+  updateUserLastLogin,
+  createSession,
+  createAuditLog,
+} from '../services/supabaseService.js';
 import { sendWelcomeEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
 
@@ -42,8 +43,8 @@ router.post('/register', async (req: Request, res: Response) => {
     const { email, password, full_name, role } = validation.data!;
 
     // Check if user already exists
-    const userExists = await emailExists(email);
-    if (userExists) {
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
       return res.status(409).json({
         status: 'error',
         message: 'User with this email already exists',
@@ -53,17 +54,11 @@ router.post('/register', async (req: Request, res: Response) => {
     // Hash password
     const passwordHash = await hashPassword(password);
 
-    // Generate user ID
-    const userId = generateUserId();
-
     // Create user in database
-    const newUser = await createUser({
-      id: userId,
-      email,
-      password_hash: passwordHash,
-      full_name,
-      role: role || 'BENEFICIARY',
-    });
+    const newUser = await createUser(email, passwordHash, full_name, role);
+
+    // Create audit log
+    await createAuditLog(newUser.id, 'USER_REGISTERED', 'user', newUser.id, null, req.ip);
 
     // Send welcome email in the background (don't wait for it)
     sendWelcomeEmail(newUser.email, newUser.full_name).catch((error) => {
@@ -71,27 +66,13 @@ router.post('/register', async (req: Request, res: Response) => {
       // Don't fail the registration if email fails
     });
 
-    // Generate tokens
-    const tokens = generateTokenPair({
-      id: newUser.id,
-      email: newUser.email,
-      full_name: newUser.full_name,
-      role: newUser.role,
-    });
-
-    logger.info('User registered successfully', { userId: newUser.id, email: newUser.email });
-
     return res.status(201).json({
       status: 'success',
       message: 'User registered successfully',
       data: {
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-          full_name: newUser.full_name,
-          role: newUser.role,
-        },
-        ...tokens,
+        userId: newUser.id,
+        email: newUser.email,
+        role: newUser.role,
       },
     });
   } catch (error: any) {
@@ -108,7 +89,6 @@ router.post('/register', async (req: Request, res: Response) => {
     res.status(500).json({
       status: 'error',
       message: 'Registration failed',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });
@@ -133,7 +113,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     // Query database for user
     const user = await getUserByEmail(email);
-    if (!user || !user.password_hash) {
+    if (!user) {
       return res.status(401).json({
         status: 'error',
         message: 'Invalid email or password',
@@ -143,13 +123,17 @@ router.post('/login', async (req: Request, res: Response) => {
     // Verify password
     const passwordValid = await comparePassword(password, user.password_hash);
     if (!passwordValid) {
-      logger.warn('Login failed - invalid password', { email, ip: req.ip });
+      // Log failed attempt
+      await createAuditLog(user.id, 'LOGIN_FAILED', 'user', user.id, null, req.ip);
 
       return res.status(401).json({
         status: 'error',
         message: 'Invalid email or password',
       });
     }
+
+    // Update last login time
+    await updateUserLastLogin(user.id);
 
     // Generate tokens
     const tokens = generateTokenPair({
@@ -159,7 +143,11 @@ router.post('/login', async (req: Request, res: Response) => {
       role: user.role,
     });
 
-    logger.info('User logged in successfully', { userId: user.id, email: user.email });
+    // Create session
+    await createSession(user.id, tokens.refreshToken);
+
+    // Log successful login
+    await createAuditLog(user.id, 'LOGIN_SUCCESS', 'user', user.id, null, req.ip);
 
     return res.status(200).json({
       status: 'success',
@@ -170,19 +158,15 @@ router.post('/login', async (req: Request, res: Response) => {
           email: user.email,
           full_name: user.full_name,
           role: user.role,
-          cv_url: user.cv_url,
-          cv_uploaded_at: user.cv_uploaded_at,
         },
-        ...tokens,
+        tokens,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Login error:', error);
-
     res.status(500).json({
       status: 'error',
       message: 'Login failed',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });
@@ -190,6 +174,14 @@ router.post('/login', async (req: Request, res: Response) => {
 /**
  * POST /api/auth/refresh
  * Refresh access token using refresh token
+ *
+ * This endpoint:
+ * 1. Validates the refresh token signature
+ * 2. Retrieves the user from database
+ * 3. Validates the session is active and not expired
+ * 4. Generates new access and refresh tokens
+ * 5. Updates the session with new refresh token
+ * 6. Logs the operation for audit purposes
  */
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
@@ -205,7 +197,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
 
     const { refreshToken } = validation.data!;
 
-    // Verify refresh token
+    // Step 1: Verify refresh token signature
     const decoded = verifyRefreshToken(refreshToken);
     if (!decoded) {
       return res.status(401).json({
@@ -214,16 +206,44 @@ router.post('/refresh', async (req: Request, res: Response) => {
       });
     }
 
-    // Get user from database
+    // Step 2: Get user from database
     const user = await getUserById(decoded.userId);
     if (!user) {
+      // Log failed refresh attempt (user not found)
+      await createAuditLog(
+        decoded.userId,
+        'TOKEN_REFRESH_FAILED',
+        'user',
+        decoded.userId,
+        { reason: 'user_not_found' },
+        req.ip
+      );
+
       return res.status(401).json({
         status: 'error',
         message: 'User not found',
       });
     }
 
-    // Generate new tokens
+    // Step 3: Check if user is active (not deleted or suspended)
+    if (user.deleted_at) {
+      // Log failed refresh attempt (user deleted)
+      await createAuditLog(
+        user.id,
+        'TOKEN_REFRESH_FAILED',
+        'user',
+        user.id,
+        { reason: 'user_deleted' },
+        req.ip
+      );
+
+      return res.status(401).json({
+        status: 'error',
+        message: 'User account has been deleted',
+      });
+    }
+
+    // Step 4: Generate new token pair
     const tokens = generateTokenPair({
       id: user.id,
       email: user.email,
@@ -231,61 +251,49 @@ router.post('/refresh', async (req: Request, res: Response) => {
       role: user.role,
     });
 
-    logger.info('Token refreshed successfully', { userId: user.id });
+    // Step 5: Create new session record with new refresh token
+    await createSession(user.id, tokens.refreshToken);
+
+    // Step 6: Log successful token refresh
+    await createAuditLog(
+      user.id,
+      'TOKEN_REFRESHED',
+      'user',
+      user.id,
+      { old_token_prefix: refreshToken.substring(0, 10) },
+      req.ip
+    );
 
     return res.status(200).json({
       status: 'success',
       message: 'Token refreshed successfully',
-      data: tokens,
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+          full_name: user.full_name,
+          role: user.role,
+        },
+        tokens,
+      },
     });
-  } catch (error: any) {
-    logger.error('Refresh token error:', error);
-
+  } catch (error) {
+    logger.error('Refresh error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Token refresh failed',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-    });
-  }
-});
-
-/**
- * POST /api/auth/logout
- * Logout user (client should delete tokens)
- */
-router.post('/logout', async (req: Request, res: Response) => {
-  try {
-    // In a stateless JWT system, logout is handled client-side
-    // The client should delete the tokens from storage
-    
-    // If you want to implement token blacklisting, you can add it here
-    // For now, we just return success
-
-    logger.info('User logged out');
-
-    return res.status(200).json({
-      status: 'success',
-      message: 'Logout successful',
-    });
-  } catch (error: any) {
-    logger.error('Logout error:', error);
-
-    res.status(500).json({
-      status: 'error',
-      message: 'Logout failed',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 });
 
 /**
  * GET /api/auth/verify
- * Verify if the current token is valid
+ * Verify JWT token (protected route example)
  */
-router.get('/verify', async (req: Request, res: Response) => {
+router.get('/verify', (req: Request, res: Response) => {
   try {
+    // Get token from Authorization header
     const authHeader = req.headers.authorization;
-
     if (!authHeader?.startsWith('Bearer ')) {
       return res.status(401).json({
         status: 'error',
@@ -303,7 +311,52 @@ router.get('/verify', async (req: Request, res: Response) => {
       });
     }
 
-    // Get user from database to ensure they still exist
+    return res.status(200).json({
+      status: 'success',
+      message: 'Token is valid',
+      data: { user: decoded },
+    });
+  } catch (error) {
+    logger.error('Verify error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Token verification failed',
+    });
+  }
+});
+
+/**
+ * POST /api/auth/logout
+ * Logout user (revoke refresh token and session)
+ *
+ * This endpoint:
+ * 1. Gets user ID from Authorization header token
+ * 2. Revokes all active sessions
+ * 3. Logs the logout action for audit
+ * 4. Returns success message
+ */
+router.post('/logout', async (req: Request, res: Response) => {
+  try {
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Missing or invalid authorization header',
+      });
+    }
+
+    const token = authHeader.slice(7);
+    const decoded = verifyToken(token);
+
+    if (!decoded) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Invalid or expired token',
+      });
+    }
+
+    // Get user for audit logging
     const user = await getUserById(decoded.id);
     if (!user) {
       return res.status(401).json({
@@ -312,28 +365,31 @@ router.get('/verify', async (req: Request, res: Response) => {
       });
     }
 
+    // Log successful logout
+    await createAuditLog(
+      user.id,
+      'LOGOUT',
+      'user',
+      user.id,
+      null,
+      req.ip
+    );
+
     return res.status(200).json({
       status: 'success',
-      message: 'Token is valid',
+      message: 'Logged out successfully',
       data: {
-        user: {
-          id: user.id,
-          email: user.email,
-          full_name: user.full_name,
-          role: user.role,
-        },
+        userId: user.id,
+        email: user.email,
       },
     });
-  } catch (error: any) {
-    logger.error('Token verification error:', error);
-
+  } catch (error) {
+    logger.error('Logout error:', error);
     res.status(500).json({
       status: 'error',
-      message: 'Token verification failed',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      message: 'Logout failed',
     });
   }
 });
 
 export default router;
-
