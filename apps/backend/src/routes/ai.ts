@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import multer from 'multer';
-const pdfParse = require("pdf-parse");
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const pdfParse = require('pdf-parse');
 import mammoth from 'mammoth';
 import { authenticateToken } from '../middleware/auth.js';
 import { supabase } from '../config/supabase.js';
