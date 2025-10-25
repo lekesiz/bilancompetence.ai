@@ -41,9 +41,9 @@ interface EvidenceMetadata {
 
 export class QualioptService {
   private supabase: ReturnType<typeof createClient<Database>>;
-  private organizationId: string;
+  private organizationId: string | null;
 
-  constructor(organizationId: string) {
+  constructor(organizationId: string | null) {
     this.supabase = createClient<Database>(
       process.env.SUPABASE_URL || '',
       process.env.SUPABASE_KEY || ''
@@ -56,7 +56,7 @@ export class QualioptService {
    */
   async getIndicators(): Promise<IndicatorStatus[]> {
     try {
-      const { data, error } = await this.supabase
+      let query = this.supabase
         .from('qualiopi_indicators')
         .select(
           `
@@ -79,8 +79,15 @@ export class QualioptService {
           )
         `
         )
-        .eq('organization_qualiopi_status.organization_id', this.organizationId)
         .order('indicator_number');
+
+      // If organizationId is provided, filter by organization
+      // If null (ADMIN global), return all organizations' indicators
+      if (this.organizationId) {
+        query = query.eq('organization_qualiopi_status.organization_id', this.organizationId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw new Error(`Failed to fetch indicators: ${error.message}`);
 

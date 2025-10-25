@@ -94,12 +94,23 @@ const requireAdminRole = requireRole('ADMIN', 'ORG_ADMIN');
 /**
  * Get organization ID from authenticated user
  */
-const getOrgId = (req: Request): string => {
+const getOrgId = (req: Request): string | null => {
   const userId = (req as any).user?.id;
+  const userRole = (req as any).user?.role;
   const orgId = (req as any).user?.organization_id;
 
-  if (!userId || !orgId) {
-    throw new Error('User not authenticated or organization not found');
+  if (!userId) {
+    throw new Error('User not authenticated');
+  }
+
+  // ADMIN global can access all organizations (orgId = null)
+  if (userRole === 'ADMIN') {
+    return orgId || null;
+  }
+
+  // ORG_ADMIN must have an organization
+  if (!orgId) {
+    throw new Error('Organization not found for user');
   }
 
   return orgId;
