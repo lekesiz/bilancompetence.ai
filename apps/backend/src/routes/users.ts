@@ -11,6 +11,7 @@ import {
   getAllUsers,
   getUsersByOrganization,
 } from '../services/userServiceNeon.js';
+import { uploadCV, deleteCV } from '../services/cvServiceNeon.js';
 import { logger } from '../utils/logger.js';
 
 const router = Router();
@@ -196,20 +197,9 @@ router.post('/upload-cv', authMiddleware, upload.single('cv'), async (req: Reque
 
     const userId = req.user.id;
 
-    // TODO: Upload file to storage (S3, Supabase Storage, etc.)
-    // For now, we'll create a placeholder URL
-    // In production, you should implement actual file storage
-    
-    // Example with Supabase Storage:
-    // const cvUrl = await uploadCVToStorage(userId, req.file);
-    
-    // Placeholder implementation:
-    const timestamp = Date.now();
-    const fileName = `cv_${userId}_${timestamp}.pdf`;
-    const cvUrl = `https://storage.example.com/cvs/${fileName}`;
-
-    // Update database with RLS
-    const updatedUser = await updateUserCV(userId, cvUrl);
+    // Upload CV to Supabase Storage and update Neon database
+    const result = await uploadCV(userId, req.file);
+    const updatedUser = await getUserById(userId);
 
     if (!updatedUser) {
       return res.status(500).json({
@@ -261,11 +251,9 @@ router.delete('/delete-cv', authMiddleware, async (req: Request, res: Response) 
       });
     }
 
-    // TODO: Delete file from storage
-    // Example: await deleteCVFromStorage(user.cv_url);
-
-    // Update database with RLS
-    const updatedUser = await deleteUserCV(userId);
+    // Delete CV from Supabase Storage and update Neon database
+    await deleteCV(userId);
+    const updatedUser = await getUserById(userId);
 
     if (!updatedUser) {
       return res.status(500).json({
