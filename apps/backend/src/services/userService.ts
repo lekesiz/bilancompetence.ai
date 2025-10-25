@@ -409,7 +409,7 @@ export async function exportUserData(userId: string) {
 
     // Get user sessions
     const { data: sessions, error: sessionsError } = await supabase
-      .from('sessions')
+      .from('auth_sessions')
       .select('*')
       .eq('user_id', userId);
 

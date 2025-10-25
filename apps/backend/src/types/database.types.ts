@@ -168,7 +168,7 @@ export type Database = {
           [key: string]: any;
         };
       };
-      sessions: {
+      auth_sessions: {
         Row: {
           id: string;
           user_id: string;

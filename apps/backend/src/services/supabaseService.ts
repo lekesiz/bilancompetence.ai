@@ -26,7 +26,7 @@ export function ensureSupabaseConfigured() {
 type UserRow = Database['public']['Tables']['users']['Row'];
 type BilanRow = Database['public']['Tables']['bilans']['Row'];
 type RecommendationRow = Database['public']['Tables']['recommendations']['Row'];
-type SessionRow = Database['public']['Tables']['sessions']['Row'];
+type SessionRow = Database['public']['Tables']['auth_sessions']['Row'];
 type AuditLogRow = Database['public']['Tables']['audit_logs']['Row'];
 type OrganizationRow = Database['public']['Tables']['organizations']['Row'];
 
@@ -298,7 +298,7 @@ export async function createSession(userId: string, refreshToken: string) {
   expiresAt.setDate(expiresAt.getDate() + 30); // 30 days
 
   const { data, error } = await supabase
-    .from('sessions')
+    .from('auth_sessions')
     .insert({
       user_id: userId,
       refresh_token: refreshToken,
@@ -316,7 +316,7 @@ export async function createSession(userId: string, refreshToken: string) {
 
 export async function getSession(sessionId: string) {
   const { data, error } = await supabase
-    .from('sessions')
+    .from('auth_sessions')
     .select('*')
     .eq('id', sessionId)
     .eq('is_active', true)
@@ -332,7 +332,7 @@ export async function getSession(sessionId: string) {
 
 export async function revokeSession(sessionId: string) {
   const { data, error } = await supabase
-    .from('sessions')
+    .from('auth_sessions')
     .update({ is_active: false })
     .eq('id', sessionId)
     .select()
