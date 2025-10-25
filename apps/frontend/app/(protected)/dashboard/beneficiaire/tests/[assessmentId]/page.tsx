@@ -27,7 +27,7 @@ export default function TestsPage() {
 
   const loadTests = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         router.push('/login');
         return;

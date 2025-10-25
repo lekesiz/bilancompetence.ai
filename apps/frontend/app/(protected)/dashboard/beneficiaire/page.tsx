@@ -33,7 +33,7 @@ export default function BeneficiaireDashboard() {
 
   const loadParcours = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         router.push('/login');
         return;

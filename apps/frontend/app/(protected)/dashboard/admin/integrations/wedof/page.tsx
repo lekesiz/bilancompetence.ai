@@ -65,7 +65,7 @@ export default function WedofIntegrationPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wedof/folders`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
 
@@ -88,7 +88,7 @@ export default function WedofIntegrationPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wedof/folders/${folderId}/attendees`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
 
@@ -115,7 +115,7 @@ export default function WedofIntegrationPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify(folderForm),
       });
@@ -146,7 +146,7 @@ export default function WedofIntegrationPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify(attendeeForm),
       });
@@ -182,7 +182,7 @@ export default function WedofIntegrationPage() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wedof/sync`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
 

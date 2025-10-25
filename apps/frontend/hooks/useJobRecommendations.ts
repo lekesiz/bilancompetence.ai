@@ -121,7 +121,7 @@ export function useJobRecommendations() {
     }
 
     // Get token from localStorage or auth context
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       throw new Error('No authentication token found');
     }

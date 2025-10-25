@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { apiClient } from '@/lib/apiClient';
 
 interface Job {
   id: string;
@@ -28,17 +29,7 @@ const JobRecommendationsPage = () => {
 
   const fetchRecommendations = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ai/job-recommendations`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch');
-      }
-
-      const data = await response.json();
+      const data = await apiClient.get('/api/ai/job-recommendations');
       setJobs(data.recommendations);
 
     } catch (error) {

@@ -39,7 +39,7 @@ class ApiClient {
    */
   private getAuthToken(): string | null {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('auth_token') || null;
+    return localStorage.getItem('accessToken') || null;
   }
 
   /**
@@ -130,7 +130,8 @@ class ApiClient {
           if (response.status === 401) {
             // Clear auth token on 401
             if (typeof window !== 'undefined') {
-              localStorage.removeItem('auth_token');
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
               window.location.href = '/login';
             }
           }

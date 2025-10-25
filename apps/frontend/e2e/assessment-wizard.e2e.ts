@@ -182,7 +182,7 @@ test.describe('Assessment Wizard E2E Testing', () => {
     const storage = await page.evaluate(() => {
       return {
         keys: Object.keys(localStorage),
-        hasAuth: !!localStorage.getItem('auth') || !!localStorage.getItem('token'),
+        hasAuth: !!localStorage.getItem('auth') || !!localStorage.getItem('accessToken'),
         hasDraft: Object.keys(localStorage).some(k => k.includes('assessment') || k.includes('draft')),
       };
     });

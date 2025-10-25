@@ -35,7 +35,7 @@ export default function ConsultantDashboard() {
 
   const loadBilans = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         router.push('/login');
         return;

@@ -129,7 +129,7 @@ export default function RIASECTestPage() {
     
     try {
       const result = calculateRIASEC();
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tests/${assessmentId}/riasec`, {
         method: 'POST',

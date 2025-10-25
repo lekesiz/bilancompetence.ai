@@ -51,7 +51,7 @@ describe('useJobRecommendations Hook', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
-    localStorage.setItem('auth_token', 'test-token-123');
+    localStorage.setItem('accessToken', 'test-token-123');
     (global.fetch as jest.Mock).mockClear();
   });
 
@@ -571,7 +571,7 @@ describe('useJobRecommendations Hook', () => {
 
   describe('Authentication', () => {
     it('should require authentication token', async () => {
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem('accessToken');
 
       const { result } = renderHook(() => useJobRecommendations());
 

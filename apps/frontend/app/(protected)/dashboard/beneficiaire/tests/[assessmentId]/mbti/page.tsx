@@ -83,7 +83,7 @@ export default function MBTITestPage() {
     
     try {
       const result = calculateMBTI();
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tests/${assessmentId}/mbti`, {
         method: 'POST',

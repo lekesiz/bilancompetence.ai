@@ -65,7 +65,7 @@ export default function PennylaneIntegrationPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/invoices`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
 
@@ -88,7 +88,7 @@ export default function PennylaneIntegrationPage() {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/customers`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
 
@@ -115,7 +115,7 @@ export default function PennylaneIntegrationPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify({
           ...invoiceForm,
@@ -147,7 +147,7 @@ export default function PennylaneIntegrationPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify(customerForm),
       });
@@ -182,7 +182,7 @@ export default function PennylaneIntegrationPage() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/sync`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       });
 

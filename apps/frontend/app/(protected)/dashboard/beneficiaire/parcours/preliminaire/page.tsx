@@ -110,7 +110,7 @@ export default function PhasePreliminairePage() {
     setLoading(true);
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('accessToken');
       
       // Save answers to backend
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/parcours/preliminaire/answers`, {
