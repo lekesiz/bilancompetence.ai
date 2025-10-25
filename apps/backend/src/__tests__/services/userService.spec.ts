@@ -206,22 +206,8 @@ describe('UserService', () => {
     it('should handle update with no changes', async () => {
       const updates = {};
 
-      const mockUpdate = jest.fn().mockReturnValue({
-        eq: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
-              data: mockUserProfile,
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
-
-      const result = await updateUserProfile(testUserId, updates);
-
-      expect(result).toEqual(mockUserProfile);
+      // updateUserProfile rejects empty updates with ValidationError
+      await expect(updateUserProfile(testUserId, updates)).rejects.toThrow();
     });
 
     it('should update timestamp on profile change', async () => {
@@ -319,16 +305,27 @@ describe('UserService', () => {
   describe('updateUserPreferences', () => {
     const mockPreferences = {
       user_id: testUserId,
-      notifications_enabled: true,
-      email_notifications: true,
+      notifications_email: true,
+      notifications_sms: false,
       language: 'en',
+      theme: 'light',
     };
 
     it('should update user preferences successfully', async () => {
       const updates = {
-        notifications_enabled: false,
         language: 'fr',
+        theme: 'dark' as 'light' | 'dark',
       };
+
+      // Mock both select (to check existing) and update
+      const mockSelect = jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: mockPreferences,
+            error: null,
+          }),
+        }),
+      });
 
       const mockUpdate = jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
@@ -341,19 +338,28 @@ describe('UserService', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
+      (supabase.from as jest.Mock).mockReturnValueOnce({ select: mockSelect }).mockReturnValueOnce({ update: mockUpdate });
 
       const result = await updateUserPreferences(testUserId, updates);
 
-      expect(result.notifications_enabled).toBe(false);
       expect(result.language).toBe('fr');
+      expect(result.theme).toBe('dark');
     });
 
     it('should update notification settings', async () => {
       const updates = {
-        email_notifications: false,
-        sms_notifications: true,
+        notifications_email: false,
+        notifications_sms: true,
       };
+
+      const mockSelect = jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: mockPreferences,
+            error: null,
+          }),
+        }),
+      });
 
       const mockUpdate = jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
@@ -366,16 +372,25 @@ describe('UserService', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
+      (supabase.from as jest.Mock).mockReturnValueOnce({ select: mockSelect }).mockReturnValueOnce({ update: mockUpdate });
 
       const result = await updateUserPreferences(testUserId, updates);
 
-      expect(result.email_notifications).toBe(false);
-      expect(result.sms_notifications).toBe(true);
+      expect(result.notifications_email).toBe(false);
+      expect(result.notifications_sms).toBe(true);
     });
 
     it('should handle invalid preference values gracefully', async () => {
       const updates = { language: 'invalid-lang' };
+
+      const mockSelect = jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: mockPreferences,
+            error: null,
+          }),
+        }),
+      });
 
       const mockUpdate = jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
@@ -388,7 +403,7 @@ describe('UserService', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
+      (supabase.from as jest.Mock).mockReturnValueOnce({ select: mockSelect }).mockReturnValueOnce({ update: mockUpdate });
 
       const result = await updateUserPreferences(testUserId, updates);
 
