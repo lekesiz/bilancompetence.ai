@@ -10,7 +10,7 @@ export type Database = {
           email: string;
           full_name: string;
           password_hash: string;
-          role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
+          role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
           organization_id: string | null;
           email_verified_at: string | null;
           last_login_at: string | null;
@@ -24,7 +24,7 @@ export type Database = {
           email: string;
           full_name: string;
           password_hash: string;
-          role?: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
+          role?: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
           organization_id?: string | null;
           email_verified_at?: string | null;
           last_login_at?: string | null;
@@ -38,7 +38,7 @@ export type Database = {
           email?: string;
           full_name?: string;
           password_hash?: string;
-          role?: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
+          role?: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
           organization_id?: string | null;
           email_verified_at?: string | null;
           last_login_at?: string | null;

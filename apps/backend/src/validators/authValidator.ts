@@ -17,7 +17,7 @@ export const registerSchema = z.object({
     .regex(/\d/, 'Password must contain digit')
     .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Password must contain special character'),
   role: z
-    .enum(['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'])
+    .enum(['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ADMIN'])
     .default('BENEFICIARY'),
 })
 .and(

@@ -71,7 +71,7 @@ export async function createUser(
   email: string,
   passwordHash: string,
   fullName: string,
-  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' = 'BENEFICIARY'
+  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN' = 'BENEFICIARY'
 ): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')

@@ -158,7 +158,7 @@ export function createUserRecord(
   email: string,
   password_hash: string,
   full_name: string,
-  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN'
+  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN'
 ) {
   return {
     id: generateUserId(),
