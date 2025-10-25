@@ -11,32 +11,71 @@
 
 import request from 'supertest';
 import express, { Request, Response, NextFunction } from 'express';
-import dashboardRoutes from '../../routes/dashboard.js';
 
-// Mock middleware and services
-const mockAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // Mock authenticated user
-  (req as any).user = {
-    id: 'test-user-123',
-    email: 'test@example.com',
-    full_name: 'Test User',
-    role: 'BENEFICIARY',
-  };
-  next();
-};
-
-const mockRoleMiddleware = (allowedRoles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+// Mock auth middleware FIRST
+jest.mock('../../middleware/auth', () => ({
+  authMiddleware: (req: Request, res: Response, next: NextFunction) => {
+    Object.assign(req, {
+      user: {
+        id: 'test-user-123',
+        email: 'test@example.com',
+        full_name: 'Test User',
+        role: 'BENEFICIARY',
+      },
+    });
+    next();
+  },
+  requireRole: (roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
     const userRole = (req as any).user?.role;
-    if (!allowedRoles.includes(userRole)) {
-      return res.status(403).json({
-        status: 'error',
-        message: 'Forbidden',
-      });
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({ status: 'error', message: 'Forbidden' });
     }
     next();
-  };
-};
+  },
+}));
+
+// Mock supabaseService functions
+jest.mock('../../services/supabaseService', () => ({
+  getUserById: jest.fn().mockImplementation((id: string) => {
+    return Promise.resolve({
+      id,
+      email: 'test@example.com',
+      full_name: 'Test User',
+      role: 'BENEFICIARY',
+      email_verified_at: new Date().toISOString(),
+      last_login_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+    });
+  }),
+  getBilansByBeneficiary: jest.fn().mockResolvedValue([
+    { id: 'bilan-1', title: 'Assessment 1', status: 'IN_PROGRESS' },
+    { id: 'bilan-2', title: 'Assessment 2', status: 'COMPLETED' },
+  ]),
+  getRecommendationsByBeneficiary: jest.fn().mockResolvedValue([
+    { id: 'rec-1', title: 'Recommendation 1' },
+  ]),
+  getBilansByConsultant: jest.fn().mockResolvedValue([
+    { id: 'bilan-3', title: 'Client Assessment 1' },
+  ]),
+  getClientsByConsultant: jest.fn().mockResolvedValue([
+    { id: 'client-1', full_name: 'Client 1' },
+  ]),
+  getAllBilans: jest.fn().mockResolvedValue([
+    { id: 'bilan-1', title: 'All Assessments' },
+  ]),
+  getOrganizationStats: jest.fn().mockResolvedValue({
+    totalBeneficiaries: 100,
+    totalConsultants: 10,
+    totalBilans: 50,
+    activeBilans: 20,
+  }),
+  getRecentActivityByOrganization: jest.fn().mockResolvedValue([
+    { id: 'activity-1', action: 'LOGIN', timestamp: new Date().toISOString() },
+  ]),
+}));
+
+// Import routes AFTER mocks
+import dashboardRoutes from '../../routes/dashboard';
 
 describe('Dashboard Routes Integration Tests', () => {
   let app: express.Application;
@@ -44,14 +83,11 @@ describe('Dashboard Routes Integration Tests', () => {
   beforeAll(() => {
     app = express();
     app.use(express.json());
-
-    // Mock the middleware
-    app.use((req: Request, res: Response, next: NextFunction) => {
-      // Apply auth middleware to /api/dashboard routes
-      mockAuthMiddleware(req, res, next);
-    });
-
     app.use('/api/dashboard', dashboardRoutes);
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
   describe('GET /api/dashboard/me - User Profile', () => {
