@@ -101,7 +101,7 @@ export async function getUsersByRole(role: string, limit: number = 100) {
   try {
     validateRequired({ role }, ['role']);
 
-    const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'];
+    const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ADMIN'];
     if (!validRoles.includes(role)) {
       throw new ValidationError(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
     }
@@ -156,12 +156,12 @@ export async function getOrganizationUsers(organizationId: string) {
  */
 export async function updateUserRole(
   userId: string,
-  newRole: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN'
+  newRole: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN'
 ) {
   try {
     validateRequired({ userId, newRole }, ['userId', 'newRole']);
 
-    const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN'];
+    const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ADMIN'];
     if (!validRoles.includes(newRole)) {
       throw new ValidationError(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
     }
