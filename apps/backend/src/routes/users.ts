@@ -1,5 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs/promises';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   getUserProfile,
@@ -14,6 +17,27 @@ import {
 import { createAuditLog } from '../services/supabaseService.js';
 
 const router = Router();
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF and DOCX files are allowed.'));
+    }
+  },
+});
 
 // Validation schemas
 const updateProfileSchema = z.object({
@@ -290,5 +314,84 @@ router.get(
     }
   }
 );
+
+/**
+ * POST /api/users/upload-cv
+ * Upload user CV
+ */
+router.post('/upload-cv', authMiddleware, upload.single('cv'), async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'No file uploaded',
+      });
+    }
+
+    const { uploadCv } = await import('../services/cvService.js');
+    const result = await uploadCv(req.user.id, req.file);
+
+    // Log the upload
+    await createAuditLog(
+      req.user.id,
+      'CV_UPLOADED',
+      'user',
+      req.user.id,
+      { filename: req.file.originalname, size: req.file.size },
+      req.ip
+    );
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'CV uploaded successfully',
+      data: result,
+    });
+  } catch (error: any) {
+    console.error('Upload CV error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: error.message || 'Failed to upload CV',
+    });
+  }
+});
+
+/**
+ * DELETE /api/users/delete-cv
+ * Delete user CV
+ */
+router.delete('/delete-cv', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    const { deleteCv } = await import('../services/cvService.js');
+    await deleteCv(req.user.id);
+
+    // Log the deletion
+    await createAuditLog(req.user.id, 'CV_DELETED', 'user', req.user.id, null, req.ip);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'CV deleted successfully',
+    });
+  } catch (error: any) {
+    console.error('Delete CV error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: error.message || 'Failed to delete CV',
+    });
+  }
+});
 
 export default router;
