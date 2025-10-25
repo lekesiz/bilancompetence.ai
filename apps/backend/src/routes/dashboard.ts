@@ -224,6 +224,137 @@ router.get('/admin', authMiddleware, requireRole('ORG_ADMIN'), async (req: Reque
  * - lastActive: User's last login
  * - email: User's email address
  */
+/**
+ * GET /api/dashboard
+ * Get dashboard data based on user role
+ * Automatically redirects to the appropriate role-specific dashboard
+ */
+router.get('/', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    // Get user from database to check role
+    const user = await getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'User not found',
+      });
+    }
+
+    // Redirect to role-specific dashboard data
+    let dashboardData;
+    
+    switch (user.role) {
+      case 'BENEFICIARY': {
+        const bilans = await getBilansByBeneficiary(user.id);
+        const recommendations = await getRecommendationsByBeneficiary(user.id);
+        
+        const completedBilans = bilans.filter((b: any) => b.status === BilanStatus.COMPLETED).length;
+        const pendingBilans = bilans.filter((b: any) => b.status === BilanStatus.IN_PROGRESS).length;
+        
+        dashboardData = {
+          role: 'BENEFICIARY',
+          user: {
+            id: user.id,
+            email: user.email,
+            full_name: user.full_name,
+            email_verified: !!user.email_verified_at,
+            last_login: user.last_login_at,
+          },
+          bilans: bilans || [],
+          recommendations: recommendations || [],
+          stats: {
+            completedBilans,
+            pendingBilans,
+            totalRecommendations: recommendations?.length || 0,
+          },
+        };
+        break;
+      }
+      
+      case 'CONSULTANT': {
+        const bilans = await getBilansByConsultant(user.id);
+        const clients = await getClientsByConsultant(user.id);
+        
+        const activeBilans = bilans.filter((b: any) => b.status === BilanStatus.IN_PROGRESS).length;
+        const completedBilans = bilans.filter((b: any) => b.status === BilanStatus.COMPLETED).length;
+        
+        dashboardData = {
+          role: 'CONSULTANT',
+          user: {
+            id: user.id,
+            email: user.email,
+            full_name: user.full_name,
+            email_verified: !!user.email_verified_at,
+            last_login: user.last_login_at,
+          },
+          bilans: bilans || [],
+          clients: clients || [],
+          stats: {
+            activeBilans,
+            completedBilans,
+            totalClients: clients?.length || 0,
+          },
+        };
+        break;
+      }
+      
+      case 'ORG_ADMIN':
+      case 'ADMIN': {
+        const allBilans = await getAllBilans();
+        const orgStats = user.organization_id 
+          ? await getOrganizationStats(user.organization_id)
+          : null;
+        const recentActivity = user.organization_id
+          ? await getRecentActivityByOrganization(user.organization_id)
+          : [];
+        
+        dashboardData = {
+          role: user.role,
+          user: {
+            id: user.id,
+            email: user.email,
+            full_name: user.full_name,
+            email_verified: !!user.email_verified_at,
+            last_login: user.last_login_at,
+          },
+          bilans: allBilans || [],
+          stats: orgStats || {
+            totalBilans: allBilans?.length || 0,
+            activeBilans: allBilans?.filter((b: any) => b.status === BilanStatus.IN_PROGRESS).length || 0,
+            completedBilans: allBilans?.filter((b: any) => b.status === BilanStatus.COMPLETED).length || 0,
+          },
+          recentActivity: recentActivity || [],
+        };
+        break;
+      }
+      
+      default:
+        return res.status(403).json({
+          status: 'error',
+          message: 'Invalid user role',
+        });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      data: dashboardData,
+    });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to fetch dashboard data',
+    });
+  }
+});
+
 router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
   try {
     if (!req.user) {
