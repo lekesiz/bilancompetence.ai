@@ -26,7 +26,7 @@ interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
+    role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
     organization_id?: string;
   };
 }
@@ -50,7 +50,7 @@ export const authorizeResource = (resourceType: ResourceType) => {
       }
 
   // Les ORG_ADMIN ont accès à tout dans leur organisation
-  // Note: Il n'y a pas de rôle ADMIN global dans ce système
+  // Les ADMIN ont accès à tout dans le système (super admin)
 
       // Récupérer l'ID de la ressource depuis les paramètres
       const resourceId = 

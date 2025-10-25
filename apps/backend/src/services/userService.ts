@@ -12,7 +12,7 @@ export interface UserProfile {
   id: string;
   email: string;
   full_name: string;
-  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN';
+  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
   phone?: string;
   avatar_url?: string;
   bio?: string;

@@ -36,6 +36,8 @@ export const UserRole = {
   CONSULTANT: 'CONSULTANT',
   /** Organization administrator */
   ORG_ADMIN: 'ORG_ADMIN',
+  /** System administrator (super admin) */
+  ADMIN: 'ADMIN',
 } as const;
 
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
