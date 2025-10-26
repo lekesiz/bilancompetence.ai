@@ -117,7 +117,7 @@ class BilanAPI {
     password: string,
     fullName: string,
     role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' = 'BENEFICIARY'
-  ): Promise<ApiResponse<{ userId: string; email: string; role: string }>> {
+  ): Promise<ApiResponse<{ user: User; accessToken: string; refreshToken: string; expiresIn: string }>> {
     try {
       const response = await this.api.post('/api/auth/register', {
         email,
@@ -125,6 +125,15 @@ class BilanAPI {
         full_name: fullName,
         role,
       });
+
+      // Save tokens if registration successful
+      if (response.data.status === 'success' && response.data.data?.accessToken) {
+        this.setTokens(
+          response.data.data.accessToken,
+          response.data.data.refreshToken
+        );
+      }
+
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -147,10 +156,10 @@ class BilanAPI {
         password,
       });
 
-      if (response.data.status === 'success' && response.data.data?.tokens) {
+      if (response.data.status === 'success' && response.data.data?.accessToken) {
         this.setTokens(
-          response.data.data.tokens.accessToken,
-          response.data.data.tokens.refreshToken
+          response.data.data.accessToken,
+          response.data.data.refreshToken
         );
       }
 

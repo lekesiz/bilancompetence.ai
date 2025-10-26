@@ -51,19 +51,14 @@ export function useAuth(): UseAuthReturn {
       try {
         const response = await api.register(email, password, fullName, 'BENEFICIARY');
 
-        if (response.status === 'success') {
-          // Auto-login after registration
-          const loginResponse = await api.login(email, password);
-          if (loginResponse.status === 'success' && loginResponse.data?.user) {
-            setUser(loginResponse.data.user);
-            setIsAuthenticated(true);
-            return true;
-          }
+        if (response.status === 'success' && response.data?.user) {
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+          return true;
         } else {
           setError(response.message || 'Registration failed');
+          return false;
         }
-
-        return false;
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'An error occurred';
         setError(errorMessage);
