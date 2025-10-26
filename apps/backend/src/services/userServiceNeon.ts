@@ -10,6 +10,7 @@ export interface User {
   organization_id?: string;
   cv_url?: string;
   cv_uploaded_at?: Date;
+  email_verified_at?: Date;
   created_at: Date;
   updated_at: Date;
 }
