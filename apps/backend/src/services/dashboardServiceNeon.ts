@@ -40,11 +40,15 @@ export async function getBilansByBeneficiary(beneficiaryId: string): Promise<Bil
 
 /**
  * Get all recommendations for a beneficiary
+ * Recommendations are linked to bilans, so we need to join through bilans table
  */
 export async function getRecommendationsByBeneficiary(beneficiaryId: string): Promise<Recommendation[]> {
   return query<Recommendation>(
     beneficiaryId,
-    'SELECT * FROM recommendations WHERE beneficiary_id = $1 ORDER BY created_at DESC',
+    `SELECT r.* FROM recommendations r
+     INNER JOIN bilans b ON b.id = r.bilan_id
+     WHERE b.beneficiary_id = $1
+     ORDER BY r.created_at DESC`,
     [beneficiaryId]
   );
 }
