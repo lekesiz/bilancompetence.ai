@@ -335,5 +335,129 @@ router.get('/verify', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * POST /api/auth/resend-verification
+ * Resend email verification link
+ */
+router.post('/resend-verification', async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email is required',
+      });
+    }
+
+    // Get user by email
+    const user = await getUserByEmail(email);
+    if (!user) {
+      // Don't reveal if user exists or not (security)
+      return res.status(200).json({
+        status: 'success',
+        message: 'If the email exists, a verification link has been sent',
+      });
+    }
+
+    // Check if already verified
+    if (user.email_verified) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Email is already verified',
+      });
+    }
+
+    // Generate verification token
+    const { generateToken } = await import('../services/emailService.js');
+    const verificationToken = generateToken(32);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Update user with verification token
+    const { query } = await import('../config/neon.js');
+    await query(
+      'UPDATE users SET verification_token = $1, verification_token_expires = $2 WHERE id = $3',
+      [verificationToken, expiresAt, user.id]
+    );
+
+    // Send verification email
+    const { sendEmailVerificationEmail } = await import('../services/emailService.js');
+    await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
+
+    logger.info('Verification email resent', { email: user.email });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Verification email sent successfully',
+    });
+  } catch (error: any) {
+    logger.error('Resend verification error:', error);
+
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to send verification email',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
+/**
+ * GET /api/auth/verify-email/:token
+ * Verify email address with token
+ */
+router.get('/verify-email/:token', async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+
+    if (!token) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Verification token is required',
+      });
+    }
+
+    // Find user by verification token
+    const { query } = await import('../config/neon.js');
+    const result = await query(
+      'SELECT * FROM users WHERE verification_token = $1 AND verification_token_expires > NOW()',
+      [token]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid or expired verification token',
+      });
+    }
+
+    const user = result.rows[0];
+
+    // Update user as verified
+    await query(
+      'UPDATE users SET email_verified = true, email_verified_at = NOW(), verification_token = NULL, verification_token_expires = NULL WHERE id = $1',
+      [user.id]
+    );
+
+    logger.info('Email verified successfully', { email: user.email });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Email verified successfully',
+      data: {
+        email: user.email,
+        verified: true,
+      },
+    });
+  } catch (error: any) {
+    logger.error('Email verification error:', error);
+
+    res.status(500).json({
+      status: 'error',
+      message: 'Email verification failed',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+});
+
 export default router;
 
