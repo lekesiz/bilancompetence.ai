@@ -321,7 +321,7 @@ Pricing: ~$30-100/month (scalable)
 
 ---
 
-## III. DATABASE SCHEMA (Supabase PostgreSQL)
+## III. DATABASE SCHEMA (Neon PostgreSQL)
 
 ### Core Tables
 

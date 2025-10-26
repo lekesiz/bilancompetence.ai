@@ -197,7 +197,7 @@ By end of week of Oct 27, we should have:
 
 ✅ **Technical**:
 - [ ] Next.js project running locally
-- [ ] Supabase database schema migrated
+- [ ] Neon PostgreSQL Database schema migrated
 - [ ] Auth API endpoints working (register, login, logout)
 - [ ] CI/CD pipeline green (no failures)
 - [ ] Zero critical bugs reported

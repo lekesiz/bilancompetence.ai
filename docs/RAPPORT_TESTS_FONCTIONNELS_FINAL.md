@@ -2,7 +2,7 @@
 
 **Date :** 25 octobre 2025  
 **Environnement :** Production (app.bilancompetence.ai)  
-**Base de données :** Supabase PostgreSQL  
+**Base de données :** Neon PostgreSQL  
 **Status :** ✅ **SUCCÈS GLOBAL**
 
 ---
@@ -164,7 +164,7 @@ La plateforme BilanCompetence.AI a été testée avec succès après l'annulatio
 | **Tests échoués** | 0/3 | 0% d'échec (1 page manquante) |
 | **Erreurs critiques résolues** | 3/3 | API Auth, Assessment Save, Logout 404 |
 | **Design System v3** | ✅ | 100% déployé et fonctionnel |
-| **Base de données** | ✅ Supabase | Stable et opérationnelle |
+| **Base de données: Neon PostgreSQL | Stable et opérationnelle |
 
 ---
 
@@ -213,11 +213,11 @@ La plateforme BilanCompetence.AI a été testée avec succès après l'annulatio
 
 **Backend (Railway) :**
 - Framework : Express.js + TypeScript
-- Base de données : Supabase PostgreSQL
+- Base de données : Neon PostgreSQL
 - ORM : Supabase SDK (@supabase/supabase-js)
 - Status : ✅ Déployé et fonctionnel
 
-**Base de données (Supabase) :**
+**Base de données: Neon PostgreSQL) :**
 - Type : PostgreSQL 15
 - Schéma : 28 tables créées
 - Authentification : Supabase Auth

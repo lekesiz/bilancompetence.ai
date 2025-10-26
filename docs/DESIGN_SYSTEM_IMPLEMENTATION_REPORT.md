@@ -220,7 +220,7 @@ xl:  0 20px 25px rgba(0,0,0,0.1)
 | **Production Site** | https://app.bilancompetence.ai | ✅ Live |
 | **Preview Deployment** | https://bilancompetence-iex5gd7i5-lekesizs-projects.vercel.app | ✅ Live |
 | **Backend API** | https://web-production-5a97.up.railway.app | ✅ Active |
-| **Database** | Supabase (njeqztsjijoarouqyuzb) | ✅ Active |
+| **database: Neon PostgreSQL (njeqztsjijoarouqyuzb) | ✅ Active |
 
 ### Deployment Timeline
 

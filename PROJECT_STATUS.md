@@ -14,7 +14,7 @@
 |:------|:------|:-----------|:-------|
 | **Backend API** | ✅ Tamamlandı | 100% | 109 endpoint, testler çalışıyor |
 | **Frontend** | ✅ Build Başarılı | 95% | TypeScript hataları düzeltildi |
-| **Database** | ✅ Tamamlandı | 100% | Supabase entegrasyonu |
+| **database: Neon PostgreSQL entegrasyonu |
 | **Authentication** | ✅ Tamamlandı | 100% | JWT + Refresh Token |
 | **Deployment** | ❌ Hatalı | 50% | Vercel schema hatası düzeltildi |
 | **Tests** | ✅ Çalışıyor | 81% | 104/128 test passing |
@@ -60,7 +60,7 @@ bilancompetence.ai/
 
 ### Backend
 - **Framework:** Node.js 20.x + Express
-- **Database:** Supabase (PostgreSQL)
+- **Database:** Neon PostgreSQL
 - **Auth:** JWT + Refresh Token
 - **API Endpoints:** 109 (tam liste: `docs/API_DOCUMENTATION.md`)
 - **Tests:** 128 test (104 passing, 24 failing - WebSocket tests)
@@ -112,7 +112,7 @@ bilancompetence.ai/
 
 ### Backend Deployment
 - **Platform:** TBD (Railway/Render önerilir)
-- **Database:** Supabase (zaten cloud'da)
+- **database: Neon PostgreSQL (zaten cloud'da)
 - **Environment Variables:** `.env.example` dosyasına bakın
 
 ---
@@ -144,6 +144,7 @@ bilancompetence.ai/
 ### Frontend (.env.local)
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:3001
+# Supabase Storage (sadece dosya erişimi için)
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ```
@@ -151,11 +152,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ### Backend (.env)
 ```bash
 PORT=3001
-DATABASE_URL=your_supabase_connection_string
+# Neon PostgreSQL (ana veritabanı)
+DATABASE_URL=your_neon_connection_string
 JWT_SECRET=your_jwt_secret
 JWT_REFRESH_SECRET=your_refresh_secret
+# Supabase Storage (sadece dosya depolama)
 SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_KEY=your_service_key
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_key
 ```
 
 **Detaylı liste:** `.env.example` dosyasına bakın

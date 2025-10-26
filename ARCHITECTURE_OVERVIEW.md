@@ -23,7 +23,7 @@
 │  /api/export/assessment/:assessmentId/pdf                          │
 │  ├─ authMiddleware (Verify JWT)                                    │
 │  ├─ Validate report type                                           │
-│  ├─ Fetch assessment from Supabase                                 │
+│  ├─ Fetch assessment from Neon PostgreSQL                                 │
 │  ├─ Access control check (owner/consultant/admin)                  │
 │  └─ Call pdfService.generateAssessmentPDF()                        │
 │                                                                     │
@@ -65,13 +65,13 @@
 └──────────────────────────────────────────────────────────────────┘
                                     │
                                     │
-                         Supabase Queries
+                         Neon PostgreSQL Queries
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                      DATABASE LAYER                                 │
 ├─────────────────────────────────────────────────────────────────────┤
-│  Supabase (PostgreSQL)                                              │
+│  Neon PostgreSQL                                              │
 │                                                                     │
 │  ├─ bilans (assessments)                                           │
 │  ├─ users (beneficiary, consultant)                                │
@@ -109,7 +109,7 @@ Express Router receives request
                         │
                         ▼
             ┌─────────────────────────────────────────┐
-            │ Fetch assessment from Supabase          │
+            │ Fetch assessment from Neon PostgreSQL          │
             ├─────────────────────────────────────────┤
             │ SELECT * FROM bilans                    │
             │ WHERE id = '550e8400...'                │
@@ -134,7 +134,7 @@ Express Router receives request
             ┌──────────────────────────────────────────────┐
             │ pdfService.generateAssessmentPDF()           │
             ├──────────────────────────────────────────────┤
-            │ 1. Fetch all related data from Supabase      │
+            │ 1. Fetch all related data from Neon PostgreSQL      │
             │    ├─ Competencies                           │
             │    ├─ Recommendations                        │
             │    ├─ Action plan items                      │
@@ -369,7 +369,7 @@ Frontend Layer
 │ │ Returns: Buffer (PDF bytes)                      │
 │ └──────────────────────────────────────────────────┘
 │
-└─────────────────────► Supabase Database
+└─────────────────────► Neon PostgreSQL Database
 ```
 
 ---
@@ -455,14 +455,14 @@ authentication?
         ├─ CSV Service
         ├─ Auth Service
         ├─ User Service
-        └─ Supabase Client
+        └─ PostgreSQL Client (Neon)
                 │
                 ▼
         ┌──────────────────────────────┐
-        │  SUPABASE (PostgreSQL)       │
+        │  Neon PostgreSQL       │
         ├──────────────────────────────┤
         │ Database: PostgreSQL         │
-        │ Hosting: Supabase Cloud      │
+        │ Hosting: Neon Cloud      │
         │                              │
         │ Tables:                      │
         │ ├─ users                     │

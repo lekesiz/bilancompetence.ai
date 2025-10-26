@@ -585,7 +585,7 @@ poweredByHeader: false  // X-Powered-By header'ı gizle
 #### ✅ Encryption at Rest
 
 **Database Encryption:**
-- ✅ Supabase PostgreSQL: AES-256 encryption at rest
+- ✅ Neon PostgreSQL: AES-256 encryption at rest
 - ✅ Password hashing: Bcrypt (10 rounds)
 - ✅ Sensitive data: Encrypted in database
 - ✅ Backup encryption: Automatic

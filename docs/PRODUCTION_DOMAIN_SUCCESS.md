@@ -111,7 +111,7 @@ const allowedOrigins = [
 | **Environment Variables** | ✅ Configured |
 | **Framework** | Express.js |
 
-### Database (Supabase)
+### database: Neon PostgreSQL)
 
 | Property | Value |
 |----------|-------|
@@ -213,7 +213,7 @@ The BilanCompetence.AI platform is now **fully operational** on the production d
 
 - **Production:** https://app.bilancompetence.ai
 - **Backend API:** https://web-production-5a97.up.railway.app
-- **Database:** Supabase Dashboard
+- **database: Neon PostgreSQL Dashboard
 - **Vercel Dashboard:** https://vercel.com/lekesizs-projects/bilancompetence
 - **Railway Dashboard:** https://railway.app
 

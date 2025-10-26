@@ -79,13 +79,13 @@ BREAK-EVEN:     Q4 2026 (projected)
 |-------|-----------|-------|
 | Frontend | Next.js 14 + TypeScript | React-based, SSR |
 | Backend | Node.js + Express | Microservices via Lambda |
-| Database | Supabase (PostgreSQL) | RLS, Auth built-in |
+| Database | Neon PostgreSQL | RLS, Auth built-in |
 | AI | Gemini 2.0 Flash | Multimodal, ~€10/mo cost |
 | APIs | France Travail + SendGrid | Job matching + Email |
 | Storage | AWS S3 | Document storage |
 | Cache | Upstash Redis | Session + rate limiting |
 | Search | Algolia | Full-text (optional) |
-| Hosting | Vercel + Supabase Cloud | Serverless, auto-scaling |
+| Hosting | Vercel + Neon Cloud | Serverless, auto-scaling |
 | CDN | CloudFlare | DDoS + performance |
 
 **Monthly Infrastructure Cost**: ~€150/month

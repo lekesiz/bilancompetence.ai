@@ -3,7 +3,7 @@
 **Date:** 25 Octobre 2025  
 **Status:** ✅ **RESOLVED - No Changes Required**  
 **Backend URL:** https://web-production-5a97.up.railway.app  
-**Database:** Supabase (bilancompetence-ai)
+**database: Neon PostgreSQL (bilancompetence-ai)
 
 ---
 
@@ -175,7 +175,7 @@ sequenceDiagram
 - **Commit:** `fix(qualiopi): Fix recursive relationship in getIndicators query`
 - **Health Endpoint:** `/health` - 200 OK
 
-### Database (Supabase)
+### database: Neon PostgreSQL)
 - **Project:** bilancompetence-ai
 - **Plan:** X-LARGE
 - **Tables:** 33
@@ -264,7 +264,7 @@ WITH records AS (SELECT c.oid::int8 AS id, CASE c...
 
 ## 📝 Conclusion
 
-Le système d'authentification de BilanCompetence.AI est **fonctionnel et correctement implémenté**. Le code backend utilise déjà le champ `full_name` conformément au schéma de base de données Supabase.
+Le système d'authentification de BilanCompetence.AI est **fonctionnel et correctement implémenté**. Le code backend utilise déjà le champ `full_name` conformément au schéma de Base de données: Neon PostgreSQL.
 
 Les tests de bout en bout confirment que:
 - ✅ L'inscription d'utilisateurs fonctionne (201 Created)

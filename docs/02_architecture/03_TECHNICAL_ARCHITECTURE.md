@@ -38,7 +38,7 @@
     ┌────▼─────────────────────────────────▼───┐
     │        DATA LAYER                         │
     ├────────────────────────────────────────┤
-    │  Supabase (PostgreSQL)                 │
+    │  Neon PostgreSQL                 │
     │  - Users, Bilans, Competencies         │
     │  - Documents, Communications           │
     │  - Audit Logs & Compliance             │
@@ -52,7 +52,7 @@
     │  INFRASTRUCTURE (Cloud Native)   │
     ├─────────────────────────────────┤
     │  Vercel (Frontend Hosting)       │
-    │  Supabase Cloud (Database)       │
+    │  Neon Cloud (Database)       │
     │  AWS Lambda (Microservices)      │
     │  CloudFlare (CDN + Security)     │
     └─────────────────────────────────┘
@@ -144,7 +144,7 @@
 - ✅ AI processing
 - ✅ Scheduled tasks
 
-#### Database: **Supabase (PostgreSQL + Auth)**
+#### database: Neon PostgreSQL (PostgreSQL + Auth)**
 
 **Neden PostgreSQL?**
 - ✅ ACID transactions
@@ -321,7 +321,7 @@ Pricing: ~$30-100/month (scalable)
 
 ---
 
-## III. DATABASE SCHEMA (Supabase PostgreSQL)
+## III. DATABASE SCHEMA (Neon PostgreSQL)
 
 ### Core Tables
 
@@ -645,7 +645,7 @@ Transit:
 - Certificate pinning (optional)
 
 At Rest:
-- Database: Encrypted at Supabase level
+- database: Neon PostgreSQL level
 - Documents (S3): AES-256 encryption
 - Sensitive fields: Application-level encryption
 ```
@@ -689,7 +689,7 @@ At Rest:
     └────────┬────────┘     └─────────────────┘
              │
     ┌────────▼──────────────────┐
-    │  Supabase (PostgreSQL)    │
+    │  Neon PostgreSQL    │
     │  - Primary: EU-Frankfurt  │
     │  - Backup: EU-Dublin      │
     │  - Read Replicas: 2       │
@@ -732,7 +732,7 @@ GitHub Actions
 ```
 - Application: Sentry (error tracking)
 - Performance: Vercel Analytics
-- Database: Supabase Dashboards
+- database: Neon PostgreSQL Dashboards
 - API: Datadog (optional, cost: $200/mo)
 - Uptime: StatusPage.io
 - Logs: ELK Stack (optional) or Supabase logs
@@ -746,7 +746,7 @@ GitHub Actions
 |--------|-----------|---------|--------|
 | **Frontend** | Next.js 14, Tailwind, Shadcn | Free | OSS |
 | **Backend** | Node.js, Express, TypeScript | Free | OSS |
-| **Database** | Supabase (PostgreSQL) | 25€/ay | Generous free tier |
+| **Database** | Neon PostgreSQL | 25€/ay | Generous free tier |
 | **Hosting** | Vercel | 20€/ay | Edge functions included |
 | **AI** | Gemini API | ~10€/ay | 10K bilans capacity |
 | **APIs** | France Travail, SendGrid | ~15€/ay | Free for most |

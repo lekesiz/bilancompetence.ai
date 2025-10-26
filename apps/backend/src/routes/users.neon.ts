@@ -208,7 +208,7 @@ router.post('/upload-cv', authMiddleware, upload.single('cv'), async (req: Reque
       });
     }
 
-    logger.info('CV uploaded successfully', { userId, cvUrl });
+    logger.info('CV uploaded successfully', { userId, cvUrl: result.cv_url });
 
     return res.status(200).json({
       status: 'success',

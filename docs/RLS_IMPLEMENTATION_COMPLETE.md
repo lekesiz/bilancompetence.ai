@@ -8,7 +8,7 @@
 
 ## 🎯 Executive Summary
 
-Row Level Security (RLS) policies have been successfully implemented and deployed to the production Supabase database. All critical tables are now protected with role-based access control policies.
+Row Level Security (RLS) policies have been successfully implemented and deployed to the production Neon PostgreSQL Database. All critical tables are now protected with role-based access control policies.
 
 ### Key Achievements
 

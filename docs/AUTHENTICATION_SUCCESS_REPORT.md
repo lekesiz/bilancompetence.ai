@@ -26,7 +26,7 @@ Authentication system is **fully operational** and production-ready. All critica
 
 ### 2. **Database Schema** ✅
 - **Status:** Fully compliant
-- **Database:** Supabase PostgreSQL
+- **Database:** Neon PostgreSQL
 - **Schema:**
   - ✅ `users` table with `full_name` column
   - ✅ All 33 tables with proper structure
@@ -94,7 +94,7 @@ Authentication system is **fully operational** and production-ready. All critica
          │ PostgreSQL + RLS
          ▼
 ┌─────────────────┐
-│   Database      │  Supabase
+│   database: Neon PostgreSQL
 │   (PostgreSQL)  │  njeqztsjijoarouqyuzb.supabase.co
 └─────────────────┘
 ```
@@ -186,7 +186,7 @@ Authentication system is **fully operational** and production-ready. All critica
 - **Environment Variables:** ✅ Configured
 - **Auto-deploy:** ✅ Enabled (GitHub main branch)
 
-### Database (Supabase)
+### database: Neon PostgreSQL)
 - **Project:** bilancompetence-ai
 - **Status:** ✅ **ACTIVE**
 - **Tables:** 33

@@ -2,7 +2,7 @@
 
 **Date:** 25 Octobre 2025  
 **Project:** BilanCompetence.AI  
-**Database:** Supabase PostgreSQL
+**Database:** Neon PostgreSQL
 
 ---
 

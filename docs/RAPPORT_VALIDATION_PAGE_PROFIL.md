@@ -169,7 +169,7 @@ La page Profil de BilanCompetence.AI a été créée avec succès et déployée 
 
 ### Environnement
 - **Frontend** : Vercel (https://app.bilancompetence.ai)
-- **Backend** : Railway (Supabase PostgreSQL)
+- **Backend** : Railway (Neon PostgreSQL)
 - **Branche** : `main`
 
 ### Commit

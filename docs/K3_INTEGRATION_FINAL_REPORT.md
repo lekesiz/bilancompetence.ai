@@ -252,7 +252,7 @@ The error is a minor validation issue - the endpoint expects `assessment_type` i
 ### Backend Services
 
 **assessmentService.ts:**
-- Now uses `assessments` table via Supabase client
+- Now uses `assessments` table via PostgreSQL Client (Neon)
 - Supports pagination, filtering, sorting
 - Implements draft management
 - Handles wizard step progression

@@ -105,10 +105,10 @@ export async function query<T = any>(
  */
 export async function queryOne<T = any>(
   userId: string | null,
-  query: string,
+  queryText: string,
   params?: any[]
 ): Promise<T | null> {
-  const rows = await query<T>(userId, query, params);
+  const rows = await query<T>(userId, queryText, params);
   return rows.length > 0 ? rows[0] : null;
 }
 

@@ -226,7 +226,7 @@ Bu faz, 120.000€ yatırım yapmadan önce pazar ve ürün-pazar uyumunun valid
 ### C. Database & Infrastructure
 
 **Seçimler**:
-- Database: Supabase (PostgreSQL + Auth)
+- database: Neon PostgreSQL (PostgreSQL + Auth)
 - Hosting: Vercel (frontend + edge functions)
 - Storage: AWS S3 (documents)
 - Email: SendGrid (SMTP)

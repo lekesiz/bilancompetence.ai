@@ -1,183 +1,254 @@
-# Supabase CLI
+# BilanCompetence.AI
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
-](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
+> **Plateforme de Bilan de Compétences Intelligente**
+> 
+> Une solution moderne et complète pour accompagner les professionnels dans leur évolution de carrière.
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue.svg)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.0-black.svg)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
+[![Neon](https://img.shields.io/badge/Neon-PostgreSQL-blue.svg)](https://neon.tech/)
 
-This repository contains all the functionality for Supabase CLI.
+---
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
+## 📋 Table des Matières
 
-## Getting started
+- [À Propos](#-à-propos)
+- [Architecture](#-architecture)
+- [Technologies](#-technologies)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Développement](#-développement)
+- [Déploiement](#-déploiement)
+- [Documentation](#-documentation)
+- [Licence](#-licence)
 
-### Install the CLI
+---
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
+## 🎯 À Propos
+
+**BilanCompetence.AI** est une plateforme web moderne qui digitalise et optimise le processus de bilan de compétences. Elle offre :
+
+- 🎓 **Évaluation des compétences** : Questionnaires interactifs et analyses approfondies
+- 🤖 **Recommandations IA** : Suggestions de carrière personnalisées basées sur les compétences
+- 📊 **Tableaux de bord** : Visualisation en temps réel de la progression
+- 👥 **Gestion multi-rôles** : Bénéficiaires, consultants et administrateurs
+- 📄 **Génération de rapports** : Exports PDF professionnels
+- 💬 **Messagerie intégrée** : Communication en temps réel entre bénéficiaires et consultants
+- 📅 **Planification** : Système de réservation de sessions
+
+---
+
+## 🏗️ Architecture
+
+Le projet utilise une architecture **monorepo** avec trois composantes principales :
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Frontend (Next.js 14)                    │
+│                    Vercel Deployment                        │
+└────────────────────────┬────────────────────────────────────┘
+                         │ REST API (HTTPS)
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Backend (Express.js + TypeScript)           │
+│                    Vercel/Railway Deployment                │
+└────────────┬───────────────────────────┬────────────────────┘
+             │                           │
+             ▼                           ▼
+┌────────────────────────┐    ┌────────────────────────┐
+│  Neon PostgreSQL       │    │  Supabase Storage      │
+│  (Serverless Database) │    │  (File Storage)        │
+└────────────────────────┘    └────────────────────────┘
+```
+
+### Architecture Hybride
+
+Le projet utilise une approche hybride innovante :
+
+- **Neon PostgreSQL** : Base de données serverless pour les données structurées (utilisateurs, évaluations, etc.)
+- **Supabase Storage** : Stockage de fichiers pour les CV et documents
+
+Cette architecture combine les avantages de Neon (performance, branching, auto-scaling) avec les capacités de stockage de Supabase.
+
+---
+
+## 🛠️ Technologies
+
+### Frontend
+- **Next.js 14** : Framework React avec App Router
+- **TypeScript** : Typage statique
+- **Tailwind CSS** : Framework CSS utility-first
+- **React Query** : Gestion d'état serveur
+- **Zustand** : Gestion d'état client
+- **React Hook Form + Zod** : Gestion et validation de formulaires
+
+### Backend
+- **Node.js 20.x** : Runtime JavaScript
+- **Express.js** : Framework web
+- **TypeScript** : Typage statique
+- **pg (node-postgres)** : Driver PostgreSQL natif
+- **JWT** : Authentification stateless
+
+### Base de Données
+- **Neon PostgreSQL** : Base de données serverless
+- **Row-Level Security (RLS)** : Sécurité au niveau des lignes
+- **Supabase Storage** : Stockage de fichiers
+
+### DevOps
+- **Vercel** : Déploiement frontend et backend
+- **GitHub Actions** : CI/CD
+- **Jest** : Tests unitaires et d'intégration
+- **Playwright** : Tests E2E
+
+---
+
+## 📦 Installation
+
+### Prérequis
+
+- Node.js 20.x ou supérieur
+- npm 9.x ou supérieur
+- Git
+- Compte Neon PostgreSQL
+- Compte Supabase (pour Storage uniquement)
+
+### Étapes
+
+1. **Cloner le repository**
+   ```bash
+   git clone https://github.com/lekesiz/bilancompetence.ai.git
+   cd bilancompetence.ai
+   ```
+
+2. **Installer les dépendances**
+   ```bash
+   npm install
+   ```
+
+3. **Configurer les variables d'environnement**
+   ```bash
+   cp .env.example .env
+   # Éditer .env avec vos clés API
+   ```
+
+---
+
+## ⚙️ Configuration
+
+### Variables d'Environnement Essentielles
 
 ```bash
-npm i supabase --save-dev
+# Neon PostgreSQL
+DATABASE_URL=postgresql://user:password@ep-xxx.region.aws.neon.tech/dbname?sslmode=require
+
+# Supabase Storage (pour les fichiers uniquement)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+JWT_REFRESH_SECRET=your_refresh_secret_key
+
+# Services externes
+STRIPE_SECRET_KEY=sk_test_xxx
+RESEND_API_KEY=re_xxx
+FRANCE_TRAVAIL_API_KEY=your_api_key
 ```
 
-To install the beta release channel:
+Voir `.env.example` pour la liste complète des variables.
+
+---
+
+## 🚀 Développement
+
+### Démarrer le Frontend
 
 ```bash
-npm i supabase@beta --save-dev
+npm run dev --workspace=apps/frontend
 ```
 
-When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+Le frontend sera accessible sur `http://localhost:3000`
 
-```
-NODE_OPTIONS=--no-experimental-fetch yarn add supabase
-```
-
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
-
-<details>
-  <summary><b>macOS</b></summary>
-
-  Available via [Homebrew](https://brew.sh). To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Windows</b></summary>
-
-  Available via [Scoop](https://scoop.sh). To install:
-
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
-
-  To upgrade:
-
-  ```powershell
-  scoop update supabase
-  ```
-</details>
-
-<details>
-  <summary><b>Linux</b></summary>
-
-  Available via [Homebrew](https://brew.sh) and Linux packages.
-
-  #### via Homebrew
-
-  To install:
-
-  ```sh
-  brew install supabase/tap/supabase
-  ```
-
-  To upgrade:
-
-  ```sh
-  brew upgrade supabase
-  ```
-
-  #### via Linux packages
-
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
-
-  ```sh
-  sudo apk add --allow-untrusted <...>.apk
-  ```
-
-  ```sh
-  sudo dpkg -i <...>.deb
-  ```
-
-  ```sh
-  sudo rpm -i <...>.rpm
-  ```
-
-  ```sh
-  sudo pacman -U <...>.pkg.tar.zst
-  ```
-</details>
-
-<details>
-  <summary><b>Other Platforms</b></summary>
-
-  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
-
-  ```sh
-  go install github.com/supabase/cli@latest
-  ```
-
-  Add a symlink to the binary in `$PATH` for easier access:
-
-  ```sh
-  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
-  ```
-
-  This works on other non-standard Linux distros.
-</details>
-
-<details>
-  <summary><b>Community Maintained Packages</b></summary>
-
-  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
-  To install in your working directory:
-
-  ```bash
-  pkgx install supabase
-  ```
-
-  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
-</details>
-
-### Run the CLI
+### Démarrer le Backend
 
 ```bash
-supabase bootstrap
+npm run dev --workspace=apps/backend
 ```
 
-Or using npx:
+Le backend sera accessible sur `http://localhost:3001`
+
+### Lancer les Tests
 
 ```bash
-npx supabase bootstrap
+# Tests backend
+npm test --workspace=apps/backend
+
+# Tests frontend
+npm test --workspace=apps/frontend
+
+# Tests E2E
+npm run test:e2e --workspace=apps/frontend
 ```
 
-The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+---
 
-## Docs
+## 🌐 Déploiement
 
-Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+### Frontend (Vercel)
 
-## Breaking changes
+Le frontend est automatiquement déployé sur Vercel à chaque push sur `main`.
 
-We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+**URL de production** : `https://app.bilancompetence.ai`
 
-However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+### Backend (Vercel/Railway)
 
-## Developing
+Le backend peut être déployé sur Vercel (serverless) ou Railway (container).
 
-To run from source:
+**Configuration Vercel** : Voir `apps/backend/vercel.json`
 
-```sh
-# Go >= 1.22
-go run . help
-```
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|:---------|:------------|
+| [TEKNIK_DEVIR_DOKUMANI.md](./TEKNIK_DEVIR_DOKUMANI.md) | 🔥 **Document de transfert technique complet** |
+| [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) | Documentation complète de l'API |
+| [ARCHITECTURE_OVERVIEW.md](./ARCHITECTURE_OVERVIEW.md) | Vue d'ensemble de l'architecture |
+| [RAPPORT_FINAL_MIGRATION_NEON.md](./docs/RAPPORT_FINAL_MIGRATION_NEON.md) | Rapport de migration vers Neon |
+
+---
+
+## 🔐 Sécurité
+
+- **RLS (Row-Level Security)** : Sécurité au niveau des lignes dans Neon PostgreSQL
+- **JWT** : Authentification stateless avec tokens d'accès et de rafraîchissement
+- **Helmet** : En-têtes de sécurité HTTP
+- **Rate Limiting** : Protection contre les abus
+- **CORS** : Contrôle d'origine croisée
+- **Input Sanitization** : Protection XSS et injection SQL
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Veuillez consulter [CONTRIBUTING.md](./CONTRIBUTING.md) pour plus de détails.
+
+---
+
+## 📄 Licence
+
+Ce projet est sous licence propriétaire. Tous droits réservés.
+
+---
+
+## 📞 Contact
+
+Pour toute question ou support, veuillez ouvrir une issue sur GitHub.
+
+---
+
+**Développé avec ❤️ par l'équipe BilanCompetence.AI**
+

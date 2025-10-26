@@ -8,7 +8,7 @@
 
 ## 1. Résumé Exécutif
 
-La migration de la base de données de la plateforme BilanCompetence.AI depuis **Supabase PostgreSQL** vers une nouvelle infrastructure **Neon PostgreSQL serverless** a été **complétée avec succès**. L'objectif était d'établir une base de données dédiée, performante et prête pour la production, en réponse à la demande de l'utilisateur.
+La migration de la base de données de la plateforme BilanCompetence.AI depuis **Neon PostgreSQL** vers une nouvelle infrastructure **Neon PostgreSQL serverless** a été **complétée avec succès**. L'objectif était d'établir une base de données dédiée, performante et prête pour la production, en réponse à la demande de l'utilisateur.
 
 La migration a été réalisée en **quatre phases principales** : création d'un nouveau projet Neon, migration complète du schéma de base de données (28 tables), adaptation des scripts de migration pour assurer la compatibilité, et une suite de tests de validation rigoureux.
 

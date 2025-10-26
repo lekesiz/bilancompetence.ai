@@ -56,7 +56,7 @@ US-001: Initialize Next.js project
 - Estimate: 4 hours
 - Developer: Manus AI
 
-US-002: Setup Supabase database
+US-002: Setup Neon PostgreSQL Database
 - Acceptance: ✅ Database schema migrated, RLS active
 - Tasks:
   1. Create Supabase project
