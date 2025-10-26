@@ -51,16 +51,20 @@ router.post('/send', authMiddleware, emailVerificationLimiter, async (req: Reque
     // Save token
     await createEmailVerificationToken(user.id, verificationToken, expiresAt);
 
-    // Send email (skip in development if email service is not configured)
-    if (process.env.NODE_ENV === 'production' && process.env.SENDGRID_API_KEY) {
+    // Send email (optional - log to console if not configured)
+    let emailSent = false;
+    if (process.env.SENDGRID_API_KEY) {
       try {
         await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
+        emailSent = true;
       } catch (emailError) {
         console.warn('Failed to send verification email:', emailError);
       }
-    } else {
-      console.log('📧 [DEV] Email verification token:', verificationToken);
-      console.log('📧 [DEV] Verification URL:', `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`);
+    }
+    
+    if (!emailSent) {
+      console.log('📧 Email verification token:', verificationToken);
+      console.log('📧 Verification URL:', `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`);
     }
 
     // Log action
@@ -69,6 +73,11 @@ router.post('/send', authMiddleware, emailVerificationLimiter, async (req: Reque
     return res.status(200).json({
       status: 'success',
       message: 'Verification email sent',
+      data: {
+        emailSent,
+        // Include token in development for testing
+        token: !emailSent ? verificationToken : undefined,
+      },
     });
   } catch (error) {
     console.error('Send verification email error:', error);

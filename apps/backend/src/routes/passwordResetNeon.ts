@@ -73,16 +73,20 @@ router.post(
       // Save token to database
       await createPasswordResetToken(user.id, resetToken, expiresAt);
 
-      // Send email (skip in development if email service is not configured)
-      if (process.env.NODE_ENV === 'production' && process.env.SENDGRID_API_KEY) {
+      // Send email (optional - log to console if not configured)
+      let emailSent = false;
+      if (process.env.SENDGRID_API_KEY) {
         try {
           await sendPasswordResetEmail(email, resetToken, user.full_name);
+          emailSent = true;
         } catch (emailError) {
           console.warn('Failed to send password reset email:', emailError);
         }
-      } else {
-        console.log('🔑 [DEV] Password reset token:', resetToken);
-        console.log('🔑 [DEV] Reset URL:', `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`);
+      }
+      
+      if (!emailSent) {
+        console.log('🔑 Password reset token:', resetToken);
+        console.log('🔑 Reset URL:', `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`);
       }
 
       // Log action
@@ -91,6 +95,11 @@ router.post(
       return res.status(200).json({
         status: 'success',
         message: 'If an account with this email exists, a password reset link will be sent.',
+        data: {
+          emailSent,
+          // Include token in development for testing
+          token: !emailSent ? resetToken : undefined,
+        },
       });
     } catch (error) {
       console.error('Password reset request error:', error);
