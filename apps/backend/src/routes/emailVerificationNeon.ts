@@ -51,8 +51,12 @@ router.post('/send', authMiddleware, emailVerificationLimiter, async (req: Reque
     // Save token
     await createEmailVerificationToken(user.id, verificationToken, expiresAt);
 
-    // Send email
-    await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
+    // Send email (don't fail if email service is not configured)
+    try {
+      await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
+    } catch (emailError) {
+      console.warn('Email service not configured, verification token created but email not sent:', emailError);
+    }
 
     // Log action
     await createAuditLog(user.id, 'EMAIL_VERIFICATION_SENT', 'user', user.id, null, req.ip);

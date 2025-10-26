@@ -73,8 +73,12 @@ router.post(
       // Save token to database
       await createPasswordResetToken(user.id, resetToken, expiresAt);
 
-      // Send email
-      await sendPasswordResetEmail(email, resetToken, user.full_name);
+      // Send email (don't fail if email service is not configured)
+      try {
+        await sendPasswordResetEmail(email, resetToken, user.full_name);
+      } catch (emailError) {
+        console.warn('Email service not configured, reset token created but email not sent:', emailError);
+      }
 
       // Log action
       await createAuditLog(user.id, 'PASSWORD_RESET_REQUESTED', 'user', user.id, null, req.ip);
