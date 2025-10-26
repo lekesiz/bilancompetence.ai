@@ -19,7 +19,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import http from 'http';
 import authRoutes from './routes/auth.js';
-import dashboardRoutes from './routes/dashboard.js';
+import dashboardRoutes from './routes/dashboardNeon.js';
 import passwordResetRoutes from './routes/passwordReset.js';
 import emailVerificationRoutes from './routes/emailVerification.js';
 import usersRoutes from './routes/users.js';
