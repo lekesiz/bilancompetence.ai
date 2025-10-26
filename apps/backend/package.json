@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "migrate": "tsx scripts/run-migrations.ts"
+    "migrate": "tsx src/scripts/run-migrations.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.76.1",

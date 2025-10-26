@@ -23,7 +23,7 @@ const pool = new Pool({
 async function runMigrations() {
   console.log('🚀 Starting database migrations...\n');
 
-  const migrationsDir = path.join(__dirname, '../migrations');
+  const migrationsDir = path.join(__dirname, '../../migrations');
   const migrationFiles = fs.readdirSync(migrationsDir)
     .filter(file => file.endsWith('.sql'))
     .sort(); // Run in alphabetical order (001, 002, 003...)
