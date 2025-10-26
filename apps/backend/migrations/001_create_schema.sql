@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
   organization_id UUID,
   avatar_url TEXT,
   cv_url TEXT,
+  cv_uploaded_at TIMESTAMP,
   bio TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   email_verified BOOLEAN DEFAULT FALSE,
