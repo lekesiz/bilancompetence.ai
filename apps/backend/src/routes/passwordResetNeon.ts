@@ -73,11 +73,16 @@ router.post(
       // Save token to database
       await createPasswordResetToken(user.id, resetToken, expiresAt);
 
-      // Send email (don't fail if email service is not configured)
-      try {
-        await sendPasswordResetEmail(email, resetToken, user.full_name);
-      } catch (emailError) {
-        console.warn('Email service not configured, reset token created but email not sent:', emailError);
+      // Send email (skip in development if email service is not configured)
+      if (process.env.NODE_ENV === 'production' && process.env.SENDGRID_API_KEY) {
+        try {
+          await sendPasswordResetEmail(email, resetToken, user.full_name);
+        } catch (emailError) {
+          console.warn('Failed to send password reset email:', emailError);
+        }
+      } else {
+        console.log('🔑 [DEV] Password reset token:', resetToken);
+        console.log('🔑 [DEV] Reset URL:', `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`);
       }
 
       // Log action
