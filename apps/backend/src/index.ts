@@ -200,6 +200,19 @@ const isServerless = isVercel || isNetlify;
 
 // Railway and traditional servers should always start listening
 if (!isServerless || isRailway) {
+  // Run migrations before starting server
+  if (process.env.NODE_ENV === 'production' && isRailway) {
+    logger.info('🔄 Running database migrations...');
+    try {
+      const { execSync } = await import('child_process');
+      execSync('npm run migrate', { stdio: 'inherit' });
+      logger.info('✅ Migrations completed successfully');
+    } catch (error) {
+      logger.error('❌ Migration failed:', error);
+      // Continue anyway - migrations might have already run
+    }
+  }
+  
   // Start the HTTP server
   server.listen(PORT, '0.0.0.0', () => {
     logger.info(`✅ Backend server running on port ${PORT}`);
