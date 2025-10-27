@@ -15,7 +15,7 @@ import {
   generateAssessmentPDF,
   generateUserAssessmentsSummary,
   generateConsultantClientReport,
-} from '../services/pdfService.js';
+} from '../services/pdfServiceNeon.js';
 
 const router = Router();
 
