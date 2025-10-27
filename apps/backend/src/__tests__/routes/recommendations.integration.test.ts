@@ -22,6 +22,7 @@ const mockFranceTravailService = FranceTravailService as jest.MockedClass<
 
 // Setup test app
 let app: Express;
+let mockInstance: any;
 
 beforeEach(() => {
   app = express();
@@ -44,13 +45,15 @@ beforeEach(() => {
   jest.clearAllMocks();
 
   // Setup default mock implementations
-  mockFranceTravailService.mockImplementation(() => ({
+  mockInstance = {
     getUserCompetencies: jest.fn(),
     mapCompetenciesToRomeCodes: jest.fn(),
     searchJobsByRomeCode: jest.fn(),
     scoreJobMatches: jest.fn(),
     saveJobToUserList: jest.fn(),
-  } as any));
+  };
+  
+  mockFranceTravailService.mockImplementation(() => mockInstance as any);
 });
 
 // ============================================
@@ -76,7 +79,7 @@ describe('POST /api/recommendations/jobs', () => {
       },
     ];
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce([
       'Java',
       'Python',
@@ -106,7 +109,7 @@ describe('POST /api/recommendations/jobs', () => {
   });
 
   it('should handle missing competencies gracefully', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce([]);
 
     const response = await request(app)
@@ -132,7 +135,7 @@ describe('POST /api/recommendations/jobs', () => {
   });
 
   it('should filter jobs by salary range', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce([
       'Java',
     ]);
@@ -164,7 +167,7 @@ describe('POST /api/recommendations/jobs', () => {
   });
 
   it('should handle API errors gracefully', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserCompetencies as jest.Mock).mockRejectedValueOnce(
       new Error('Database connection failed')
     );
@@ -193,7 +196,7 @@ describe('POST /api/recommendations/:jobId/save', () => {
       createdAt: new Date().toISOString(),
     };
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.saveJobToUserList as jest.Mock).mockResolvedValueOnce(
       mockSavedJob
     );
@@ -233,7 +236,7 @@ describe('POST /api/recommendations/:jobId/save', () => {
   });
 
   it('should handle database errors when saving', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.saveJobToUserList as jest.Mock).mockRejectedValueOnce(
       new Error('Database error')
     );
@@ -255,7 +258,7 @@ describe('POST /api/recommendations/:jobId/save', () => {
       notes: null,
     };
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.saveJobToUserList as jest.Mock).mockResolvedValueOnce(
       mockSavedJob
     );
@@ -292,7 +295,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
       },
     ];
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce(
       mockSavedJobs
     );
@@ -314,7 +317,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
       },
     ];
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce(
       mockSavedJobs
     );
@@ -334,7 +337,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
   });
 
   it('should enforce limit constraints (max 100)', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce([]);
 
     await request(app)
@@ -394,7 +397,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
 
     consultantApp.use('/api/recommendations', recommendationsRouter);
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce([]);
 
     const response = await request(consultantApp)
@@ -405,7 +408,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
   });
 
   it('should return empty list when user has no saved jobs', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce([]);
 
     const response = await request(app)
@@ -432,7 +435,7 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
       salaryRange: { min: 35000, max: 65000 },
     };
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(
       mockRomeDetails
     );
@@ -456,7 +459,7 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
   });
 
   it('should return 404 for non-existent ROME codes', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(null);
 
     const response = await request(app)
@@ -468,7 +471,7 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
   });
 
   it('should handle API errors', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getRomeCodeDetails as jest.Mock).mockRejectedValueOnce(
       new Error('API failed')
     );
@@ -486,7 +489,7 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
       label: 'Sales Representative',
     };
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(
       mockRomeDetails
     );
@@ -511,7 +514,7 @@ describe('GET /api/recommendations/rome-codes/search', () => {
       { code: 'E1103', label: 'Data Engineer' },
     ];
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce(
       mockResults
     );
@@ -542,7 +545,7 @@ describe('GET /api/recommendations/rome-codes/search', () => {
       label: `Role ${i}`,
     }));
 
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce(
       mockResults
     );
@@ -568,7 +571,7 @@ describe('GET /api/recommendations/rome-codes/search', () => {
   });
 
   it('should handle no results gracefully', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce([]);
 
     const response = await request(app)
@@ -581,7 +584,7 @@ describe('GET /api/recommendations/rome-codes/search', () => {
   });
 
   it('should handle API errors', async () => {
-    const mockInstance = mockFranceTravailService.mock.instances[0];
+    
     (mockInstance.searchRomeCodes as jest.Mock).mockRejectedValueOnce(
       new Error('Search failed')
     );

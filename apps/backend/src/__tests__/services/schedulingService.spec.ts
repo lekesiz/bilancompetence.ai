@@ -25,14 +25,14 @@ jest.mock('../../services/supabaseService.js', () => ({
         neq: jest.fn().mockReturnThis(),
         in: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
-          data: { id: mockBilanId, status: 'ACTIVE', phase: 'INVESTIGATION' },
+          data: { id: 'test-bilan-id', status: 'ACTIVE', phase: 'INVESTIGATION' },
           error: null,
         }),
       }),
       insert: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
-            data: { id: uuidv4() },
+            data: { id: 'test-insert-id' },
             error: null,
           }),
         }),
@@ -41,7 +41,7 @@ jest.mock('../../services/supabaseService.js', () => ({
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
-            data: { id: uuidv4(), status: 'CONFIRMED' },
+            data: { id: 'test-update-id', status: 'CONFIRMED' },
             error: null,
           }),
         }),
