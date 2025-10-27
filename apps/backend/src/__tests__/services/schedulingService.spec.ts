@@ -15,7 +15,7 @@ const mockBilanId = uuidv4();
 // Mock Supabase service
 jest.mock('../../services/supabaseService.js', () => ({
   supabase: {
-    from: jest.fn().mockReturnValue({
+    from: jest.fn().mockImplementation((table) => ({
       select: jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnThis(),
         is: jest.fn().mockReturnThis(),
@@ -25,28 +25,30 @@ jest.mock('../../services/supabaseService.js', () => ({
         neq: jest.fn().mockReturnThis(),
         in: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
-          data: { id: 'test-bilan-id', status: 'ACTIVE', phase: 'INVESTIGATION' },
+          data: table === 'bilans' 
+            ? { id: 'test-bilan-id', status: 'ACTIVE', phase: 'INVESTIGATION' }
+            : { id: uuidv4(), status: 'SCHEDULED' },
           error: null,
         }),
       }),
-      insert: jest.fn().mockReturnValue({
+      insert: jest.fn().mockImplementation((data) => ({
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
-            data: { id: 'test-insert-id' },
+            data: Array.isArray(data) ? { ...data[0], id: uuidv4() } : { ...data, id: uuidv4() },
             error: null,
           }),
         }),
-      }),
-      update: jest.fn().mockReturnValue({
+      })),
+      update: jest.fn().mockImplementation((data) => ({
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
-            data: { id: 'test-update-id', status: 'CONFIRMED' },
+            data: { id: uuidv4(), ...data },
             error: null,
           }),
         }),
-      }),
-    }),
+      })),
+    })),
   },
 }));
 
