@@ -30,7 +30,32 @@ import { supabase } from '../../services/supabaseService';
 // Mock Supabase client
 jest.mock('../../services/supabaseService', () => ({
   supabase: {
-    from: jest.fn(),
+    from: jest.fn().mockImplementation((table) => ({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnThis(),
+        single: jest.fn().mockResolvedValue({
+          data: null,
+          error: null,
+        }),
+      }),
+      insert: jest.fn().mockImplementation((data) => ({
+        select: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: Array.isArray(data) ? { ...data[0], id: 'test-id' } : { ...data, id: 'test-id' },
+            error: null,
+          }),
+        }),
+      })),
+      update: jest.fn().mockImplementation((data) => ({
+        eq: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: { id: 'test-id', ...data },
+            error: null,
+          }),
+        }),
+      })),
+    })),
   },
 }));
 
