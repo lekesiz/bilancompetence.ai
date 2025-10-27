@@ -247,3 +247,13 @@ if (!isServerless || isRailway) {
 
 export default app;
 export { server };
+
+// Test endpoint to verify deployment
+app.get('/api/test/deployment-version', (req, res) => {
+  res.json({
+    version: 'v2.0-phase3-complete',
+    timestamp: new Date().toISOString(),
+    commit: 'c2382ac',
+    features: ['email-verification', 'password-reset', 'optional-email-service']
+  });
+});
