@@ -1,7 +1,7 @@
 # BilanCompetence.AI - Complete API Documentation
 
 **Version**: 1.0.0
-**Base URL**: `https://api.bilancompetence.ai/api`
+**Base URL**: `https://web-production-60dbd.up.railway.app/api`
 **Authentication**: JWT Bearer Token
 **Content-Type**: `application/json`
 
@@ -676,3 +676,6 @@ npm install @bilancompetence/mobile-sdk
 **Last Updated**: October 27, 2025
 **API Version**: 1.0.0
 **Status**: Production Ready ✅
+**Database**: Neon PostgreSQL
+**Backend**: Railway
+**Frontend**: Vercel (https://app.bilancompetence.ai)
