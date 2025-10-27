@@ -37,24 +37,10 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_t
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_expires_at ON password_reset_tokens(expires_at);
 
 -- ============================================================================
--- AUDIT LOGS TABLE (if not exists)
+-- AUDIT LOGS TABLE (using existing table from migration 001)
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS audit_logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-  action VARCHAR(100) NOT NULL,
-  resource_type VARCHAR(50) NOT NULL,
-  resource_id VARCHAR(255) NOT NULL,
-  metadata JSONB,
-  ip_address VARCHAR(45),
-  created_at TIMESTAMP DEFAULT NOW()
-);
-
--- Index for faster audit log queries
-CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_resource ON audit_logs(resource_type, resource_id);
+-- Note: audit_logs table already exists from migration 001 with different schema
+-- We'll use the existing table instead of creating a new one
 
 -- ============================================================================
 -- CLEANUP OLD TOKENS (Optional - can be run periodically)
@@ -70,5 +56,4 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_resource ON audit_logs(resource_type, 
 -- ============================================================================
 COMMENT ON TABLE email_verification_tokens IS 'Stores email verification tokens for user email confirmation';
 COMMENT ON TABLE password_reset_tokens IS 'Stores password reset tokens for secure password recovery';
-COMMENT ON TABLE audit_logs IS 'Stores audit trail of important user actions';
 

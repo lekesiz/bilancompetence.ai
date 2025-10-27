@@ -159,7 +159,7 @@ export async function usePasswordResetToken(tokenId: string): Promise<void> {
 // ============================================================================
 
 /**
- * Create audit log entry
+ * Create audit log entry (using existing audit_logs schema from migration 001)
  */
 export async function createAuditLog(
   userId: string,
@@ -171,7 +171,7 @@ export async function createAuditLog(
 ): Promise<AuditLog> {
   const result = await query<AuditLog>(
     null,
-    `INSERT INTO audit_logs (user_id, action, resource_type, resource_id, metadata, ip_address, created_at)
+    `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, new_values, ip_address, created_at)
      VALUES ($1, $2, $3, $4, $5, $6, NOW())
      RETURNING *`,
     [userId, action, resourceType, resourceId, metadata ? JSON.stringify(metadata) : null, ipAddress || null]
