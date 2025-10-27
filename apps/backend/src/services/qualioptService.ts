@@ -113,7 +113,7 @@ export class QualioptService {
   /**
    * Get a single indicator with full details
    */
-  async getIndicatorDetails(indicatorId: number) {
+  async getIndicatorDetails(indicatorId: number): Promise<any> {
     try {
       const { data: indicator, error: indicatorError } = await this.supabase
         .from('qualiopi_indicators')
@@ -173,7 +173,7 @@ export class QualioptService {
     status: 'COMPLIANT' | 'MISSING' | 'UNDER_REVIEW',
     notes: string,
     reviewedByUserId: string
-  ) {
+  ): Promise<any> {
     try {
       // Upsert organization_qualiopi_status
       const { data, error } = await this.supabase
@@ -220,7 +220,7 @@ export class QualioptService {
     fileType: string,
     description: string,
     uploadedByUserId: string
-  ) {
+  ): Promise<any> {
     try {
       const { data, error } = await this.supabase
         .from('qualiopi_evidence')
@@ -383,7 +383,7 @@ export class QualioptService {
   /**
    * Get audit log for organization
    */
-  async getAuditLog(limit = 50) {
+  async getAuditLog(limit = 50): Promise<any> {
     try {
       const { data, error } = await this.supabase
         .from('qualiopi_audit_log')

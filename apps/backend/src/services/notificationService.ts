@@ -64,7 +64,7 @@ export async function createNotification(
 /**
  * Get user notifications
  */
-export async function getUserNotifications(userId: string, limit: number = 50) {
+export async function getUserNotifications(userId: string, limit: number = 50): Promise<any> {
   try {
     validateRequired({ userId }, ['userId']);
 

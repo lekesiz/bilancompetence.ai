@@ -266,7 +266,7 @@ export async function createAssessmentQuestion(
   category?: string,
   stepNumber: number = 1,
   section: string = 'general'
-) {
+): Promise<any> {
   const { data, error } = await supabase
     .from('assessment_questions')
     .insert({
@@ -292,7 +292,7 @@ export async function createAssessmentQuestion(
 /**
  * Get assessment questions
  */
-export async function getAssessmentQuestions(assessmentId: string) {
+export async function getAssessmentQuestions(assessmentId: string): Promise<any> {
   const { data, error } = await supabase
     .from('assessment_questions')
     .select('*')
@@ -316,7 +316,7 @@ export async function submitAnswer(
   answer: any,
   stepNumber: number = 1,
   section: string = 'general'
-) {
+): Promise<any> {
   const { data, error } = await supabase
     .from('assessment_answers')
     .insert({
@@ -341,7 +341,7 @@ export async function submitAnswer(
 /**
  * Get assessment answers
  */
-export async function getAssessmentAnswers(assessmentId: string) {
+export async function getAssessmentAnswers(assessmentId: string): Promise<any> {
   const { data, error } = await supabase
     .from('assessment_answers')
     .select('*')
@@ -365,7 +365,7 @@ export async function createRecommendation(
   action_items: string[],
   type: string = 'CAREER_PATH',
   priority: number = 1
-) {
+): Promise<any> {
   const { data, error } = await supabase
     .from('recommendations')
     .insert({
@@ -389,7 +389,7 @@ export async function createRecommendation(
 /**
  * Get user recommendations
  */
-export async function getUserRecommendations(userId: string) {
+export async function getUserRecommendations(userId: string): Promise<any> {
   // Get bilans for this user first, then get recommendations
   const { data: bilans, error: bilansError } = await supabase
     .from('assessments')
@@ -426,7 +426,7 @@ export async function getUserRecommendations(userId: string) {
 export async function updateRecommendationStatus(
   recommendationId: string,
   status: 'pending' | 'in_progress' | 'completed'
-) {
+): Promise<any> {
   const { data, error } = await supabase
     .from('recommendations')
     .update({

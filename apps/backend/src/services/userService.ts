@@ -97,7 +97,7 @@ export async function updateUserProfile(
 /**
  * Get user by role
  */
-export async function getUsersByRole(role: string, limit: number = 100) {
+export async function getUsersByRole(role: string, limit: number = 100): Promise<any> {
   try {
     validateRequired({ role }, ['role']);
 
@@ -131,7 +131,7 @@ export async function getUsersByRole(role: string, limit: number = 100) {
 /**
  * Get organization users
  */
-export async function getOrganizationUsers(organizationId: string) {
+export async function getOrganizationUsers(organizationId: string): Promise<any> {
   try {
     validateRequired({ organizationId }, ['organizationId']);
 
@@ -187,7 +187,7 @@ export async function updateUserRole(
 /**
  * Get user preferences
  */
-export async function getUserPreferences(userId: string) {
+export async function getUserPreferences(userId: string): Promise<any> {
   try {
     validateRequired({ userId }, ['userId']);
 
@@ -225,7 +225,7 @@ export async function updateUserPreferences(
     language?: string;
     [key: string]: any;
   }
-) {
+): Promise<any> {
   try {
     validateRequired({ userId, preferences }, ['userId', 'preferences']);
 
@@ -345,7 +345,7 @@ export async function getUserStats(userId: string) {
 /**
  * Delete user account (with audit trail)
  */
-export async function deleteUserAccount(userId: string, reason?: string) {
+export async function deleteUserAccount(userId: string, reason?: string): Promise<any> {
   try {
     validateRequired({ userId }, ['userId']);
 
@@ -388,7 +388,7 @@ export async function deleteUserAccount(userId: string, reason?: string) {
 /**
  * Export user data (GDPR)
  */
-export async function exportUserData(userId: string) {
+export async function exportUserData(userId: string): Promise<any> {
   try {
     validateRequired({ userId }, ['userId']);
 

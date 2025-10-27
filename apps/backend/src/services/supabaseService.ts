@@ -151,7 +151,7 @@ export async function updateUserLastLogin(userId: string): Promise<UserRow> {
   return data as unknown as UserRow;
 }
 
-export async function createPasswordResetToken(userId: string, token: string, expiresAt: Date) {
+export async function createPasswordResetToken(userId: string, token: string, expiresAt: Date): Promise<any> {
   const { data, error } = await supabase
     .from('password_reset_tokens')
     .insert({
@@ -169,7 +169,7 @@ export async function createPasswordResetToken(userId: string, token: string, ex
   return data;
 }
 
-export async function getPasswordResetToken(token: string) {
+export async function getPasswordResetToken(token: string): Promise<any> {
   const { data, error } = await supabase
     .from('password_reset_tokens')
     .select('*')
@@ -185,7 +185,7 @@ export async function getPasswordResetToken(token: string) {
   return data || null;
 }
 
-export async function usePasswordResetToken(tokenId: string) {
+export async function usePasswordResetToken(tokenId: string): Promise<any> {
   const { data, error } = await supabase
     .from('password_reset_tokens')
     .update({ used: true, used_at: new Date().toISOString() })
@@ -200,7 +200,7 @@ export async function usePasswordResetToken(tokenId: string) {
   return data;
 }
 
-export async function createEmailVerificationToken(userId: string, token: string, expiresAt: Date) {
+export async function createEmailVerificationToken(userId: string, token: string, expiresAt: Date): Promise<any> {
   const { data, error } = await supabase
     .from('email_verification_tokens')
     .insert({
@@ -218,7 +218,7 @@ export async function createEmailVerificationToken(userId: string, token: string
   return data;
 }
 
-export async function getEmailVerificationToken(token: string) {
+export async function getEmailVerificationToken(token: string): Promise<any> {
   const { data, error } = await supabase
     .from('email_verification_tokens')
     .select('*')
@@ -234,7 +234,7 @@ export async function getEmailVerificationToken(token: string) {
   return data || null;
 }
 
-export async function useEmailVerificationToken(tokenId: string) {
+export async function useEmailVerificationToken(tokenId: string): Promise<any> {
   const { data, error } = await supabase
     .from('email_verification_tokens')
     .update({ used: true, used_at: new Date().toISOString() })
@@ -257,7 +257,7 @@ export async function createOrganization(
   name: string,
   adminUserId: string,
   description?: string
-) {
+): Promise<any> {
   const { data, error } = await supabase
     .from('organizations')
     .insert({
@@ -275,7 +275,7 @@ export async function createOrganization(
   return data;
 }
 
-export async function getOrganization(id: string) {
+export async function getOrganization(id: string): Promise<any> {
   const { data, error } = await supabase
     .from('organizations')
     .select('*')
@@ -293,7 +293,7 @@ export async function getOrganization(id: string) {
  * Session Service
  */
 
-export async function createSession(userId: string, refreshToken: string) {
+export async function createSession(userId: string, refreshToken: string): Promise<any> {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 30); // 30 days
 
@@ -314,7 +314,7 @@ export async function createSession(userId: string, refreshToken: string) {
   return data;
 }
 
-export async function getSession(sessionId: string) {
+export async function getSession(sessionId: string): Promise<any> {
   const { data, error } = await supabase
     .from('auth_sessions')
     .select('*')
@@ -330,7 +330,7 @@ export async function getSession(sessionId: string) {
   return data || null;
 }
 
-export async function revokeSession(sessionId: string) {
+export async function revokeSession(sessionId: string): Promise<any> {
   const { data, error } = await supabase
     .from('auth_sessions')
     .update({ is_active: false })
@@ -356,7 +356,7 @@ export async function createAuditLog(
   entityId: string,
   changes?: any,
   ipAddress?: string
-) {
+): Promise<any> {
   const { data, error } = await supabase
     .from('audit_logs')
     .insert({
@@ -453,7 +453,7 @@ export async function getClientsByConsultant(consultantId: string) {
   return Array.from(uniqueMap.values());
 }
 
-export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
+export async function getRecommendationsByBeneficiary(beneficiaryId: string): Promise<any> {
   // First, get all bilans for the beneficiary
   const { data: bilans, error: bilansError } = await supabase
     .from('bilans')
@@ -497,7 +497,7 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string) {
   return data || [];
 }
 
-export async function getAllBilans() {
+export async function getAllBilans(): Promise<any> {
   const { data, error } = await supabase
     .from('bilans')
     .select(`
@@ -601,7 +601,7 @@ export async function getOrganizationStats(organizationId: string) {
  * Recent Activity Service
  */
 
-export async function getRecentActivityByOrganization(organizationId: string, limit: number = 20) {
+export async function getRecentActivityByOrganization(organizationId: string, limit: number = 20): Promise<any> {
   // First, get all user IDs in the organization
   const { data: users, error: usersError } = await supabase
     .from('users')

@@ -127,7 +127,7 @@ export async function uploadAvatar(
 /**
  * Get user files
  */
-export async function getUserFiles(userId: string, limit: number = 100) {
+export async function getUserFiles(userId: string, limit: number = 100): Promise<any> {
   try {
     validateRequired({ userId }, ['userId']);
 
@@ -226,7 +226,7 @@ export async function uploadAssessmentDocument(
   file: Buffer,
   fileName: string,
   fileType: string
-) {
+): Promise<any> {
   try {
     validateRequired(
       { userId, assessmentId, file, fileName, fileType },
@@ -278,7 +278,7 @@ export async function uploadAssessmentDocument(
 /**
  * Get assessment documents
  */
-export async function getAssessmentDocuments(assessmentId: string) {
+export async function getAssessmentDocuments(assessmentId: string): Promise<any> {
   try {
     validateRequired({ assessmentId }, ['assessmentId']);
 
