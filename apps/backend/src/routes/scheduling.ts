@@ -6,7 +6,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
-import SchedulingService from '../services/schedulingService.js';
+import SchedulingService from '../services/schedulingServiceNeon.js';
 import { logger } from '../utils/logger.js';
 
 const router = Router();
@@ -532,10 +532,12 @@ router.put('/bookings/:bookingId/complete', authMiddleware, async (req: Request,
       return res.status(400).json({ error: 'Invalid request body', details: validation.error });
     }
 
-    const booking = await SchedulingService.completeSession(bookingId, validation.data.attended, {
-      beneficiary_rating: validation.data.beneficiary_rating,
-      beneficiary_feedback: validation.data.beneficiary_feedback,
-    });
+    const booking = await SchedulingService.completeSession(
+      bookingId,
+      validation.data.attended,
+      validation.data.beneficiary_rating,
+      validation.data.beneficiary_feedback
+    );
 
     res.json({
       success: true,

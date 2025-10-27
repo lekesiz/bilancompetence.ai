@@ -8,7 +8,7 @@ import {
   uploadAssessmentDocument,
   getAssessmentDocuments,
   getDownloadUrl,
-} from '../services/fileService.js';
+} from '../services/fileServiceNeon.js';
 
 const router = Router();
 
