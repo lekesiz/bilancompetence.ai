@@ -29,8 +29,8 @@ import {
   skillsStepSchema,
   motivationsStepSchema,
   constraintsStepSchema,
-} from '../services/assessmentService.js';
-import { createAuditLog } from '../services/supabaseService.js';
+} from '../services/assessmentServiceNeon.js';
+import { createAuditLog } from '../services/authFlowServiceNeon.js';
 import { logger } from '../utils/logger.js';
 
 const router = Router();
@@ -159,7 +159,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
     const sort = (req.query.sort as string) || undefined;
 
-    const assessments = await getUserAssessments(req.user.id, role as any, page, limit, sort);
+    const assessments = await getUserAssessments(req.user.id, role as any, page, limit);
 
     return res.status(200).json({
       status: 'success',
@@ -652,7 +652,7 @@ router.post('/:id/submit', authMiddleware, async (req: Request, res: Response) =
       });
     }
 
-    const result = await submitAssessment(id, req.user.id);
+    const result = await submitAssessment(id);
 
     await createAuditLog(
       req.user.id,
