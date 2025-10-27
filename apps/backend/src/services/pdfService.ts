@@ -1170,7 +1170,7 @@ async function formatAssessmentData(assessment: any): Promise<FormattedAssessmen
 /**
  * Calculate score statistics from competencies
  */
-function calculateScoreStatistics(competencies: AssessmentCompetency[]): ScoreStats {
+export function calculateScoreStatistics(competencies: AssessmentCompetency[]): ScoreStats {
   if (competencies.length === 0) {
     return {
       averageScore: 0,
@@ -1217,7 +1217,7 @@ function calculateScoreStatistics(competencies: AssessmentCompetency[]): ScoreSt
 /**
  * Get status color based on assessment level
  */
-function getStatusColor(level: number): any {
+export function getStatusColor(level: number): any {
   if (level >= 3.2) {
     return rgb(40, 167, 69); // Green - Proficient
   } else if (level >= 2) {

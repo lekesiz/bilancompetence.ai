@@ -172,7 +172,10 @@ describe('NotificationService', () => {
 
       const result = await getUserNotifications(testUserId);
 
-      expect(result[0].created_at).toBeGreaterThanOrEqual(result[1].created_at);
+      // Verify descending order (newer first)
+      expect(new Date(result[0].created_at).getTime()).toBeGreaterThanOrEqual(
+        new Date(result[1].created_at).getTime()
+      );
     });
 
     it('should handle empty notification list', async () => {
@@ -323,24 +326,15 @@ describe('NotificationService', () => {
     });
 
     it('should handle invalid notification types gracefully', async () => {
-      const mockInsert = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          single: jest.fn().mockResolvedValue({
-            data: { ...mockNotification, type: 'unknown_type' },
-            error: null,
-          }),
-        }),
-      });
-
-      (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
-
-      const result = await createNotification(testUserId, {
-        type: 'unknown_type',
-        title: 'Unknown',
-        message: 'Test',
-      });
-
-      expect(result.type).toBeDefined();
+      // Invalid type should throw ValidationError
+      await expect(
+        createNotification(
+          testUserId,
+          'invalid_type' as any, // Invalid type
+          'Unknown',
+          'Test'
+        )
+      ).rejects.toThrow('Failed to create notification');
     });
   });
 
@@ -360,11 +354,12 @@ describe('NotificationService', () => {
 
         (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-        const result = await createNotification(userId, {
-          type: 'test',
-          title: 'Test',
-          message: 'Test',
-        });
+        const result = await createNotification(
+          userId,
+          'system',
+          'Test',
+          'Test'
+        );
 
         expect(result.user_id).toBe(userId);
       }
@@ -387,12 +382,13 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-      const result = await createNotification(testUserId, {
-        type: 'test',
-        title: 'Test',
-        message: 'Test',
-        data: notificationData,
-      });
+      const result = await createNotification(
+        testUserId,
+        'assessment',
+        'Test',
+        'Test',
+        notificationData
+      );
 
       expect(result.data).toEqual(notificationData);
     });
