@@ -11,6 +11,7 @@ export interface User {
   cv_url?: string;
   cv_uploaded_at?: Date;
   email_verified_at?: Date;
+  last_login_at?: Date;
   created_at: Date;
   updated_at: Date;
 }
@@ -208,5 +209,230 @@ export async function emailExists(email: string): Promise<boolean> {
   );
 
   return result.length > 0 && parseInt(result[0].count) > 0;
+}
+
+
+/**
+ * Get users by role
+ */
+export async function getUsersByRole(
+  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN',
+  limit: number = 100
+): Promise<User[]> {
+  const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ADMIN'];
+  if (!validRoles.includes(role)) {
+    throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+  }
+
+  return query<User>(
+    null, // Admin context
+    'SELECT id, email, full_name, role, organization_id, cv_url, cv_uploaded_at, created_at, updated_at FROM users WHERE role = $1 LIMIT $2',
+    [role, limit]
+  );
+}
+
+/**
+ * Update user role (admin only)
+ */
+export async function updateUserRole(
+  adminUserId: string,
+  userId: string,
+  newRole: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN'
+): Promise<User | null> {
+  const validRoles = ['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ADMIN'];
+  if (!validRoles.includes(newRole)) {
+    throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+  }
+
+  return queryOne<User>(
+    adminUserId, // Admin context for RLS
+    'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING id, email, full_name, role, organization_id, cv_url, cv_uploaded_at, created_at, updated_at',
+    [newRole, userId]
+  );
+}
+
+/**
+ * Get user preferences
+ */
+export async function getUserPreferences(userId: string): Promise<any | null> {
+  return queryOne<any>(
+    userId,
+    'SELECT * FROM user_preferences WHERE user_id = $1',
+    [userId]
+  );
+}
+
+/**
+ * Update user preferences (upsert)
+ */
+export async function updateUserPreferences(
+  userId: string,
+  preferences: {
+    notifications_email?: boolean;
+    notifications_sms?: boolean;
+    theme?: 'light' | 'dark';
+    language?: string;
+    [key: string]: any;
+  }
+): Promise<any> {
+  // Check if preferences exist
+  const existing = await getUserPreferences(userId);
+
+  if (existing) {
+    // Update existing preferences
+    const fields: string[] = [];
+    const values: any[] = [];
+    let paramIndex = 1;
+
+    Object.entries(preferences).forEach(([key, value]) => {
+      if (value !== undefined) {
+        fields.push(`${key} = $${paramIndex}`);
+        values.push(value);
+        paramIndex++;
+      }
+    });
+
+    if (fields.length === 0) {
+      return existing;
+    }
+
+    fields.push(`updated_at = NOW()`);
+    values.push(userId);
+
+    const result = await query<any>(
+      userId,
+      `UPDATE user_preferences SET ${fields.join(', ')} WHERE user_id = $${paramIndex} RETURNING *`,
+      values
+    );
+
+    return result[0];
+  } else {
+    // Insert new preferences
+    const result = await query<any>(
+      userId,
+      `INSERT INTO user_preferences (user_id, notifications_email, notifications_sms, theme, language, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+       RETURNING *`,
+      [
+        userId,
+        preferences.notifications_email ?? true,
+        preferences.notifications_sms ?? false,
+        preferences.theme ?? 'light',
+        preferences.language ?? 'fr'
+      ]
+    );
+
+    return result[0];
+  }
+}
+
+/**
+ * Get user statistics (assessments, recommendations, etc.)
+ */
+export async function getUserStats(userId: string): Promise<{
+  userId: string;
+  email: string;
+  full_name: string;
+  role: string;
+  assessmentCount: number;
+  recommendationCount: number;
+  lastLogin: Date | null;
+  emailVerified: boolean;
+  joinedDate: Date;
+}> {
+  // Get user
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  // Get bilans count
+  const bilansResult = await query<{ count: string }>(
+    userId,
+    'SELECT COUNT(*) as count FROM bilans WHERE beneficiary_id = $1 OR consultant_id = $1',
+    [userId]
+  );
+
+  // Get recommendations count
+  const recommendationsResult = await query<{ count: string }>(
+    userId,
+    'SELECT COUNT(*) as count FROM recommendations WHERE user_id = $1',
+    [userId]
+  );
+
+  return {
+    userId: user.id,
+    email: user.email,
+    full_name: user.full_name,
+    role: user.role,
+    assessmentCount: parseInt(bilansResult[0]?.count || '0'),
+    recommendationCount: parseInt(recommendationsResult[0]?.count || '0'),
+    lastLogin: null, // TODO: Add last_login_at to users table
+    emailVerified: !!user.email_verified_at,
+    joinedDate: user.created_at,
+  };
+}
+
+/**
+ * Delete user account (soft delete with audit trail)
+ */
+export async function deleteUserAccount(
+  adminUserId: string,
+  userId: string,
+  reason?: string
+): Promise<User | null> {
+  // Create audit log before deletion
+  await query(
+    adminUserId,
+    `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, changes, created_at)
+     VALUES ($1, 'ACCOUNT_DELETED', 'user', $2, $3, NOW())`,
+    [userId, userId, JSON.stringify({ reason })]
+  );
+
+  // Soft delete - mark as deleted instead of hard delete
+  return queryOne<User>(
+    adminUserId,
+    `UPDATE users 
+     SET deleted_at = NOW(), 
+         email = $1, 
+         updated_at = NOW() 
+     WHERE id = $2 
+     RETURNING id, email, full_name, role, organization_id, cv_url, cv_uploaded_at, created_at, updated_at`,
+    [`deleted_${userId}@deleted.local`, userId]
+  );
+}
+
+/**
+ * Export user data (GDPR compliance)
+ */
+export async function exportUserData(userId: string): Promise<{
+  user: User | null;
+  sessions: any[];
+  auditLogs: any[];
+  exportedAt: string;
+}> {
+  // Get user profile
+  const user = await getUserById(userId);
+
+  // Get user sessions
+  const sessions = await query<any>(
+    userId,
+    'SELECT * FROM auth_sessions WHERE user_id = $1',
+    [userId]
+  );
+
+  // Get user audit logs
+  const auditLogs = await query<any>(
+    userId,
+    'SELECT * FROM audit_logs WHERE user_id = $1',
+    [userId]
+  );
+
+  return {
+    user,
+    sessions,
+    auditLogs,
+    exportedAt: new Date().toISOString(),
+  };
 }
 

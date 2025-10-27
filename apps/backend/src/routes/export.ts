@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
-import { supabase } from '../services/supabaseService.js';
+import { getAssessment } from '../services/assessmentServiceNeon.js';
 import {
   exportAssessmentsToCSV,
   exportRecommendationsToCSV,
@@ -217,13 +217,9 @@ router.post('/assessment/:assessmentId/pdf', authMiddleware, async (req: Request
     }
 
     // Fetch assessment to verify access control
-    const { data: assessment, error: assessmentError } = await supabase
-      .from('bilans')
-      .select('*')
-      .eq('id', assessmentId)
-      .single();
+    const assessment = await getAssessment(assessmentId);
 
-    if (assessmentError || !assessment) {
+    if (!assessment) {
       return res.status(404).json({
         status: 'error',
         message: 'Assessment not found',

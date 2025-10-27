@@ -1,13 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
+import { getUserById } from '../services/userServiceNeon.js';
 import {
-  getUserById,
   verifyUserEmail,
   createEmailVerificationToken,
   getEmailVerificationToken,
   useEmailVerificationToken,
   createAuditLog,
-} from '../services/supabaseService.js';
+} from '../services/authFlowServiceNeon.js';
 import { generateToken, sendEmailVerificationEmail, sendAccountConfirmationEmail } from '../services/emailService.js';
 import { emailVerificationLimiter } from '../middleware/rateLimit.js';
 

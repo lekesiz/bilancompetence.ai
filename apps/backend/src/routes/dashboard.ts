@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
+import { getUserById } from '../services/userServiceNeon.js';
 import {
-  getUserById,
   getBilansByBeneficiary,
   getRecommendationsByBeneficiary,
   getBilansByConsultant,
@@ -9,7 +9,7 @@ import {
   getAllBilans,
   getOrganizationStats,
   getRecentActivityByOrganization,
-} from '../services/supabaseService.js';
+} from '../services/dashboardServiceNeon.js';
 import { BilanStatus } from '../types/enums.js';
 
 const router = Router();

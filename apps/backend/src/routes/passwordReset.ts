@@ -4,15 +4,14 @@ import {
   hashPassword,
   comparePassword,
 } from '../services/authService.js';
+import { getUserByEmail, getUserById } from '../services/userServiceNeon.js';
 import {
-  getUserByEmail,
-  getUserById,
   updateUserPassword,
   createPasswordResetToken,
   getPasswordResetToken,
   usePasswordResetToken,
   createAuditLog,
-} from '../services/supabaseService.js';
+} from '../services/authFlowServiceNeon.js';
 import { generateToken, sendPasswordResetEmail } from '../services/emailService.js';
 import { passwordResetLimiter } from '../middleware/rateLimit.js';
 
