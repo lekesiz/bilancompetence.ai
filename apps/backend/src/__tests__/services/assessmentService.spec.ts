@@ -321,6 +321,17 @@ describe('AssessmentService - Wizard Functions', () => {
     });
 
     it('should save competencies for skills step', async () => {
+      const mockUpdate = jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: { id: testAssessmentId, progress_percentage: 60, current_step: 3 },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
       const mockUpsert = jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnValue({
@@ -332,7 +343,12 @@ describe('AssessmentService - Wizard Functions', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValue({ upsert: mockUpsert });
+      (supabase.from as jest.Mock).mockImplementation((table: string) => {
+        if (table === 'assessments') {
+          return { update: mockUpdate };
+        }
+        return { upsert: mockUpsert };
+      });
 
       const competencies = [
         { skillName: 'React', selfAssessmentLevel: 4, selfInterestLevel: 9 },
@@ -342,7 +358,10 @@ describe('AssessmentService - Wizard Functions', () => {
         { skillName: 'SQL', selfAssessmentLevel: 3, selfInterestLevel: 6 },
       ];
 
-      const answers = { competencies_count: 5 };
+      const answers = {
+        competencies: competencies,
+        additionalSkills: 'Additional skills description',
+      };
 
       await saveDraftStep(testAssessmentId, 3, 'skills', answers, competencies);
 
@@ -352,18 +371,35 @@ describe('AssessmentService - Wizard Functions', () => {
 
   describe('autoSaveDraft', () => {
     it('should auto-save partial data without validation', async () => {
-      const mockUpdate = jest.fn().mockReturnValue({
-        eq: jest.fn().mockResolvedValue({ error: null }),
+      const mockSelect = jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: null,
+            error: null,
+          }),
+        }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
+      const mockInsert = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          single: jest.fn().mockResolvedValue({
+            data: { id: 'draft-id', draft_data: {} },
+            error: null,
+          }),
+        }),
+      });
+
+      (supabase.from as jest.Mock).mockReturnValue({
+        select: mockSelect,
+        insert: mockInsert,
+      });
 
       const partialData = { recentJob: 'Partial entry...' };
 
       const result = await autoSaveDraft(testAssessmentId, 1, partialData);
 
       expect(result.savedAt).toBeDefined();
-      expect(mockUpdate).toHaveBeenCalled();
+      expect(mockInsert).toHaveBeenCalled();
     });
 
     it('should update existing draft with merged data', async () => {
@@ -472,13 +508,28 @@ describe('AssessmentService - Wizard Functions', () => {
           return {
             select: jest.fn().mockReturnValue({
               eq: jest.fn().mockReturnValue({
-                limit: jest.fn().mockResolvedValue({ data: [{ id: 'answer-1' }] }),
+                eq: jest.fn().mockReturnValue({
+                  limit: jest.fn().mockResolvedValue({
+                    data: [{ id: 'answer-1' }],
+                    error: null,
+                  }),
+                }),
               }),
             }),
           };
         }
         if (table === 'assessments') {
           return { select: mockGetSelect, update: mockUpdateSelect };
+        }
+        if (table === 'assessment_drafts') {
+          return {
+            delete: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: null,
+                error: null,
+              }),
+            }),
+          };
         }
         return { select: mockGetSelect };
       });

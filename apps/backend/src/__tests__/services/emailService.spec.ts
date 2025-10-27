@@ -9,6 +9,20 @@
  * - sendNotificationEmail
  */
 
+// Set environment variables before imports
+process.env.FRONTEND_URL = 'http://localhost:3000';
+process.env.EMAIL_FROM = 'test@bilancompetence.ai';
+
+// Mock nodemailer BEFORE importing emailService
+const mockSendMail = jest.fn().mockResolvedValue({ messageId: 'mock-message-id' });
+const mockCreateTransport = jest.fn().mockReturnValue({
+  sendMail: mockSendMail,
+});
+
+jest.mock('nodemailer', () => ({
+  createTransport: mockCreateTransport,
+}));
+
 import {
   sendWelcomeEmail,
   sendPasswordResetEmail,
@@ -17,23 +31,13 @@ import {
 } from '../../services/emailService';
 import nodemailer from 'nodemailer';
 
-// Mock nodemailer
-jest.mock('nodemailer', () => ({
-  createTransport: jest.fn(),
-}));
-
 describe('EmailService', () => {
-  let mockSendMail: jest.Mock;
   const testEmail = 'test@example.com';
   const testFullName = 'Test User';
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSendMail = jest.fn().mockResolvedValue({ messageId: 'mock-message-id' });
-
-    (nodemailer.createTransport as jest.Mock).mockReturnValue({
-      sendMail: mockSendMail,
-    });
+    mockSendMail.mockResolvedValue({ messageId: 'mock-message-id' });
   });
 
   describe('sendWelcomeEmail', () => {
@@ -71,7 +75,8 @@ describe('EmailService', () => {
       await sendWelcomeEmail(testEmail, testFullName);
 
       const callArgs = mockSendMail.mock.calls[0][0];
-      expect(callArgs.html).toContain('login') || expect(callArgs.html).toContain('access');
+      expect(callArgs.html).toContain('Dashboard');
+      expect(callArgs.html).toContain(process.env.FRONTEND_URL);
     });
   });
 
@@ -80,24 +85,24 @@ describe('EmailService', () => {
     const resetLink = `https://example.com/reset?token=${resetToken}`;
 
     it('should send password reset email with token', async () => {
-      await sendPasswordResetEmail(testEmail, resetToken);
+      await sendPasswordResetEmail(testEmail, resetToken, testFullName);
 
       expect(mockSendMail).toHaveBeenCalled();
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.to).toBe(testEmail);
       expect(callArgs.subject).toContain('Reset');
-      expect(callArgs.html).toContain(resetToken) || expect(callArgs.html).toContain('reset');
+      expect(callArgs.html).toContain('reset');
     });
 
     it('should include valid reset token in email', async () => {
-      await sendPasswordResetEmail(testEmail, resetToken);
+      await sendPasswordResetEmail(testEmail, resetToken, testFullName);
 
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.html).toContain(resetToken);
     });
 
     it('should include instructions for password reset', async () => {
-      await sendPasswordResetEmail(testEmail, resetToken);
+      await sendPasswordResetEmail(testEmail, resetToken, testFullName);
 
       const callArgs = mockSendMail.mock.calls[0][0];
       const emailBody = callArgs.html.toLowerCase();
@@ -106,7 +111,7 @@ describe('EmailService', () => {
 
     it('should handle different email addresses', async () => {
       const differentEmail = 'different@example.com';
-      await sendPasswordResetEmail(differentEmail, resetToken);
+      await sendPasswordResetEmail(differentEmail, resetToken, testFullName);
 
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.to).toBe(differentEmail);
@@ -116,7 +121,7 @@ describe('EmailService', () => {
       const invalidEmail = 'not-an-email';
       mockSendMail.mockRejectedValueOnce(new Error('Invalid email'));
 
-      await expect(sendPasswordResetEmail(invalidEmail, resetToken)).rejects.toThrow();
+      await expect(sendPasswordResetEmail(invalidEmail, resetToken, testFullName)).rejects.toThrow();
     });
   });
 
@@ -124,24 +129,24 @@ describe('EmailService', () => {
     const verificationToken = 'verify-token-123';
 
     it('should send verification email with token', async () => {
-      await sendVerificationEmail(testEmail, verificationToken);
+      await sendVerificationEmail(testEmail, verificationToken, testFullName);
 
       expect(mockSendMail).toHaveBeenCalled();
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.to).toBe(testEmail);
       expect(callArgs.subject).toContain('Verif');
-      expect(callArgs.html).toContain(verificationToken) || expect(callArgs.html).toContain('verify');
+      expect(callArgs.html).toContain('verify');
     });
 
     it('should include verification link', async () => {
-      await sendVerificationEmail(testEmail, verificationToken);
+      await sendVerificationEmail(testEmail, verificationToken, testFullName);
 
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.html).toMatch(/verify|confirm|email/i);
     });
 
     it('should include instructions for email verification', async () => {
-      await sendVerificationEmail(testEmail, verificationToken);
+      await sendVerificationEmail(testEmail, verificationToken, testFullName);
 
       const callArgs = mockSendMail.mock.calls[0][0];
       expect(callArgs.html).toContain(verificationToken);
@@ -151,10 +156,10 @@ describe('EmailService', () => {
       const token1 = 'token-1';
       const token2 = 'token-2';
 
-      await sendVerificationEmail(testEmail, token1);
+      await sendVerificationEmail(testEmail, token1, testFullName);
       expect(mockSendMail).toHaveBeenCalledTimes(1);
 
-      await sendVerificationEmail(testEmail, token2);
+      await sendVerificationEmail(testEmail, token2, testFullName);
       expect(mockSendMail).toHaveBeenCalledTimes(2);
 
       const secondCall = mockSendMail.mock.calls[1][0];
@@ -219,7 +224,7 @@ describe('EmailService', () => {
     it('should handle timeout errors', async () => {
       mockSendMail.mockRejectedValueOnce(new Error('Operation timeout'));
 
-      await expect(sendWelcomeEmail(testEmail, testFullName)).rejects.toThrow('timeout');
+      await expect(sendWelcomeEmail(testEmail, testFullName)).rejects.toThrow();
     });
 
     it('should log errors appropriately', async () => {

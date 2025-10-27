@@ -95,6 +95,9 @@ export async function sendEmailVerificationEmail(
   }
 }
 
+// Alias for backward compatibility
+export const sendVerificationEmail = sendEmailVerificationEmail;
+
 /**
  * Send password reset link
  */
@@ -141,7 +144,7 @@ export async function sendPasswordResetEmail(
 /**
  * Send welcome email after successful registration
  */
-export async function sendWelcomeEmail(email: string, fullName: string): Promise<void> {
+export async function sendWelcomeEmail(email: string, fullName: string): Promise<{ messageId: string }> {
   try {
     validateRequired({ email, fullName }, ['email', 'fullName']);
 
@@ -180,6 +183,7 @@ export async function sendWelcomeEmail(email: string, fullName: string): Promise
     }
 
     logger.info('Welcome email sent successfully', { email, messageId: result.messageId || 'unknown' });
+    return { messageId: result.messageId || 'unknown' };
   } catch (error) {
     logAndThrow('Failed to send welcome email', error);
   }
@@ -223,10 +227,47 @@ export async function sendAccountConfirmationEmail(email: string, fullName: stri
   }
 }
 
+/**
+ * Send generic confirmation email with custom subject and message
+ */
+export async function sendConfirmationEmail(
+  email: string,
+  subject: string,
+  message: string
+): Promise<void> {
+  try {
+    validateRequired({ email, subject, message }, ['email', 'subject', 'message']);
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || 'noreply@bilancompetence.ai',
+      to: email,
+      subject: subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2>${subject}</h2>
+          <p>${message}</p>
+          <hr>
+          <p><small>This is an automated message from BilanCompetence.ai</small></p>
+        </div>
+      `,
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    if (!result) {
+      throw new Error('Email send operation returned empty result');
+    }
+
+    logger.info('Confirmation email sent successfully', { email, messageId: result.messageId || 'unknown' });
+  } catch (error) {
+    logAndThrow('Failed to send confirmation email', error);
+  }
+}
+
 export default {
   generateToken,
   sendEmailVerificationEmail,
   sendPasswordResetEmail,
   sendWelcomeEmail,
   sendAccountConfirmationEmail,
+  sendConfirmationEmail,
 };
