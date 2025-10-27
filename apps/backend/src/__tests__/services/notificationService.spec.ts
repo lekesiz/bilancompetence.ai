@@ -2,16 +2,16 @@
  * Notification Service Unit Tests
  *
  * Tests for notification management functionality:
- * - sendNotification
+ * - createNotification
  * - getUserNotifications
- * - markNotificationAsRead
+ * - markAsRead
  * - deleteNotification
  */
 
 import {
-  sendNotification,
+  createNotification,
   getUserNotifications,
-  markNotificationAsRead,
+  markAsRead,
   deleteNotification,
 } from '../../services/notificationService';
 import { supabase } from '../../services/supabaseService';
@@ -42,7 +42,7 @@ describe('NotificationService', () => {
     jest.clearAllMocks();
   });
 
-  describe('sendNotification', () => {
+  describe('createNotification', () => {
     it('should send notification successfully', async () => {
       const mockInsert = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
@@ -55,11 +55,12 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-      const result = await sendNotification(testUserId, {
-        type: 'assessment_submitted',
-        title: 'Assessment Submitted',
-        message: 'Your assessment has been submitted successfully',
-      });
+      const result = await createNotification(
+        testUserId,
+        'assessment',
+        'Assessment Submitted',
+        'Your assessment has been submitted successfully'
+      );
 
       expect(result.id).toBe(testNotificationId);
       expect(result.type).toBe('assessment_submitted');
@@ -67,10 +68,15 @@ describe('NotificationService', () => {
     });
 
     it('should include notification metadata', async () => {
+      const mockWithData = {
+        ...mockNotification,
+        data: { booking_id: 'book-123' },
+      };
+
       const mockInsert = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
-            data: mockNotification,
+            data: mockWithData,
             error: null,
           }),
         }),
@@ -78,23 +84,24 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-      const result = await sendNotification(testUserId, {
-        type: 'booking_confirmed',
-        title: 'Booking Confirmed',
-        message: 'Your booking has been confirmed',
-        data: { booking_id: 'book-123' },
-      });
+      const result = await createNotification(
+        testUserId,
+        'message',
+        'Booking Confirmed',
+        'Your booking has been confirmed',
+        { booking_id: 'book-123' }
+      );
 
       expect(result.user_id).toBe(testUserId);
       expect(result.data).toEqual({ booking_id: 'book-123' });
     });
 
     it('should handle different notification types', async () => {
-      const types = [
-        'assessment_submitted',
-        'recommendation_created',
-        'booking_confirmed',
-        'schedule_reminder',
+      const types: Array<'assessment' | 'recommendation' | 'message' | 'system'> = [
+        'assessment',
+        'recommendation',
+        'message',
+        'system',
       ];
 
       for (const type of types) {
@@ -109,11 +116,12 @@ describe('NotificationService', () => {
 
         (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-        const result = await sendNotification(testUserId, {
+        const result = await createNotification(
+          testUserId,
           type,
-          title: 'Test',
-          message: 'Test message',
-        });
+          'Test',
+          'Test message'
+        );
 
         expect(result.type).toBe(type);
       }
@@ -188,7 +196,7 @@ describe('NotificationService', () => {
     });
   });
 
-  describe('markNotificationAsRead', () => {
+  describe('markAsRead', () => {
     it('should mark notification as read', async () => {
       const mockUpdate = jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
@@ -203,7 +211,7 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
 
-      const result = await markNotificationAsRead(testNotificationId);
+      const result = await markAsRead(testNotificationId);
 
       expect(result.is_read).toBe(true);
     });
@@ -222,7 +230,7 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
 
-      const result = await markNotificationAsRead(testNotificationId);
+      const result = await markAsRead(testNotificationId);
 
       expect(result.is_read).toBe(true);
     });
@@ -243,7 +251,7 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ update: mockUpdate });
 
-      const result = await markNotificationAsRead(testNotificationId);
+      const result = await markAsRead(testNotificationId);
 
       expect(result.is_read).toBe(true);
     });
@@ -306,7 +314,7 @@ describe('NotificationService', () => {
       (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
       await expect(
-        sendNotification(testUserId, {
+        createNotification(testUserId, {
           type: 'test',
           title: 'Test',
           message: 'Test',
@@ -326,7 +334,7 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-      const result = await sendNotification(testUserId, {
+      const result = await createNotification(testUserId, {
         type: 'unknown_type',
         title: 'Unknown',
         message: 'Test',
@@ -352,7 +360,7 @@ describe('NotificationService', () => {
 
         (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-        const result = await sendNotification(userId, {
+        const result = await createNotification(userId, {
           type: 'test',
           title: 'Test',
           message: 'Test',
@@ -379,7 +387,7 @@ describe('NotificationService', () => {
 
       (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-      const result = await sendNotification(testUserId, {
+      const result = await createNotification(testUserId, {
         type: 'test',
         title: 'Test',
         message: 'Test',
