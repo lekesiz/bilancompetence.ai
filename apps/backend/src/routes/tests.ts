@@ -1,6 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import { supabase } from '../config/supabase.js';
+import {
+  getMBTIQuestions,
+  getRIASECQuestions,
+  getTestResults,
+  saveTestResult,
+} from '../services/psychometricServiceNeon.js';
 
 const router = Router();
 
@@ -10,16 +15,7 @@ const router = Router();
  */
 router.get('/mbti/questions', async (req: Request, res: Response) => {
   try {
-    const { data: questions, error } = await supabase
-      .from('mbti_questions')
-      .select('*')
-      .order('question_order', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching MBTI questions:', error);
-      return res.status(500).json({ error: 'Failed to fetch MBTI questions' });
-    }
-
+    const questions = await getMBTIQuestions();
     res.json(questions || []);
   } catch (error) {
     console.error('Error fetching MBTI questions:', error);
@@ -33,16 +29,7 @@ router.get('/mbti/questions', async (req: Request, res: Response) => {
  */
 router.get('/riasec/questions', async (req: Request, res: Response) => {
   try {
-    const { data: questions, error } = await supabase
-      .from('riasec_questions')
-      .select('*')
-      .order('question_order', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching RIASEC questions:', error);
-      return res.status(500).json({ error: 'Failed to fetch RIASEC questions' });
-    }
-
+    const questions = await getRIASECQuestions();
     res.json(questions || []);
   } catch (error) {
     console.error('Error fetching RIASEC questions:', error);
@@ -59,30 +46,10 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
     const { assessmentId } = req.params;
     const userId = (req as any).user.userId;
 
-    // Verify assessment belongs to user
-    const { data: assessment } = await supabase
-      .from('assessments')
-      .select('id')
-      .eq('id', assessmentId)
-      .eq('user_id', userId)
-      .single();
-
-    if (!assessment) {
-      return res.status(404).json({ error: 'Assessment not found' });
-    }
-
     // Get test results
-    const { data: tests, error } = await supabase
-      .from('test_results')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('created_at', { ascending: false });
+    const tests = await getTestResults(assessmentId, userId);
 
-    if (error) {
-      return res.status(500).json({ error: 'Failed to fetch tests' });
-    }
-
-    res.json({ tests: tests || [] });
+    res.json({ tests });
 
   } catch (error) {
     console.error('Error fetching tests:', error);
@@ -109,28 +76,19 @@ router.post('/:assessmentId/mbti', authenticateToken, async (req: Request, res: 
     const description = getMBTIDescription(mbtiType);
 
     // Save test result
-    const { data, error } = await supabase
-      .from('test_results')
-      .insert({
-        assessment_id: assessmentId,
-        test_type: 'mbti',
-        result_data: {
-          type: mbtiType,
-          description,
-          answers
-        },
-        score: null,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
-
-    if (error) {
-      return res.status(500).json({ error: 'Failed to save test result' });
-    }
+    const test = await saveTestResult(
+      assessmentId,
+      'mbti',
+      {
+        type: mbtiType,
+        description,
+        answers
+      },
+      userId
+    );
 
     res.json({ 
-      test: data,
+      test,
       mbti_type: mbtiType,
       description
     });
@@ -160,28 +118,19 @@ router.post('/:assessmentId/riasec', authenticateToken, async (req: Request, res
     const topThree = getTopThreeRIASEC(scores);
 
     // Save test result
-    const { data, error } = await supabase
-      .from('test_results')
-      .insert({
-        assessment_id: assessmentId,
-        test_type: 'riasec',
-        result_data: {
-          scores,
-          top_three: topThree,
-          answers
-        },
-        score: null,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
-
-    if (error) {
-      return res.status(500).json({ error: 'Failed to save test result' });
-    }
+    const test = await saveTestResult(
+      assessmentId,
+      'riasec',
+      {
+        scores,
+        top_three: topThree,
+        answers
+      },
+      userId
+    );
 
     res.json({ 
-      test: data,
+      test,
       scores,
       top_three: topThree
     });
@@ -207,26 +156,17 @@ router.post('/:assessmentId/competences', authenticateToken, async (req: Request
     }
 
     // Save test result
-    const { data, error } = await supabase
-      .from('test_results')
-      .insert({
-        assessment_id: assessmentId,
-        test_type: 'competences',
-        result_data: {
-          competences,
-          top_competences: competences.filter((c: any) => c.level >= 4)
-        },
-        score: null,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+    const test = await saveTestResult(
+      assessmentId,
+      'competences',
+      {
+        competences,
+        top_competences: competences.filter((c: any) => c.level >= 4)
+      },
+      userId
+    );
 
-    if (error) {
-      return res.status(500).json({ error: 'Failed to save test result' });
-    }
-
-    res.json({ test: data });
+    res.json({ test });
 
   } catch (error) {
     console.error('Error saving competences test:', error);
@@ -249,26 +189,17 @@ router.post('/:assessmentId/valeurs', authenticateToken, async (req: Request, re
     }
 
     // Save test result
-    const { data, error } = await supabase
-      .from('test_results')
-      .insert({
-        assessment_id: assessmentId,
-        test_type: 'valeurs',
-        result_data: {
-          valeurs,
-          top_valeurs: valeurs.slice(0, 5) // Top 5 values
-        },
-        score: null,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+    const test = await saveTestResult(
+      assessmentId,
+      'valeurs',
+      {
+        valeurs,
+        top_valeurs: valeurs.slice(0, 5) // Top 5 values
+      },
+      userId
+    );
 
-    if (error) {
-      return res.status(500).json({ error: 'Failed to save test result' });
-    }
-
-    res.json({ test: data });
+    res.json({ test });
 
   } catch (error) {
     console.error('Error saving valeurs test:', error);

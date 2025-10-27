@@ -1,4 +1,4 @@
-import { query } from '../config/neon.js';
+import { query, queryOne } from '../config/neon.js';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../utils/logger.js';
 
@@ -832,4 +832,161 @@ export const constraintsStepSchema = {
   constraints: 'object',
   required: ['constraints']
 };
+
+
+// ============================================================================
+// PARCOURS (ASSESSMENT PHASES) FUNCTIONS
+// ============================================================================
+
+/**
+ * Get assessment with parcours data (phases and answers)
+ */
+export async function getAssessmentWithParcours(
+  assessmentId: string,
+  userId: string
+): Promise<{
+  assessment: Assessment | null;
+  answers: AssessmentAnswer[];
+  phases: {
+    preliminaire: { status: string; completed_at?: Date; progress: number };
+    investigation: { status: string; completed_at?: Date; progress: number };
+    conclusion: { status: string; completed_at?: Date; progress: number };
+  };
+}> {
+  // Get assessment
+  const assessment = await getAssessment(assessmentId);
+
+  if (!assessment) {
+    return {
+      assessment: null,
+      answers: [],
+      phases: {
+        preliminaire: { status: 'locked', progress: 0 },
+        investigation: { status: 'locked', progress: 0 },
+        conclusion: { status: 'locked', progress: 0 },
+      },
+    };
+  }
+
+  // Get answers
+  const answers = await getAssessmentAnswers(assessmentId);
+
+  // Calculate phase statuses
+  const phases = {
+    preliminaire: {
+      status: (assessment as any).phase_preliminaire_completed ? 'completed' : 'in_progress',
+      completed_at: (assessment as any).phase_preliminaire_completed_at,
+      progress: calculatePhaseProgress(answers, 1),
+    },
+    investigation: {
+      status: (assessment as any).phase_investigation_completed
+        ? 'completed'
+        : (assessment as any).phase_preliminaire_completed
+        ? 'in_progress'
+        : 'locked',
+      completed_at: (assessment as any).phase_investigation_completed_at,
+      progress: calculatePhaseProgress(answers, 2),
+    },
+    conclusion: {
+      status: (assessment as any).phase_conclusion_completed
+        ? 'completed'
+        : (assessment as any).phase_investigation_completed
+        ? 'in_progress'
+        : 'locked',
+      completed_at: (assessment as any).phase_conclusion_completed_at,
+      progress: calculatePhaseProgress(answers, 3),
+    },
+  };
+
+  return { assessment, answers, phases };
+}
+
+/**
+ * Calculate phase progress based on answers
+ */
+function calculatePhaseProgress(answers: AssessmentAnswer[], phase: number): number {
+  // Simple progress calculation - can be enhanced based on business logic
+  const phaseAnswers = answers.filter((a) => (a as any).phase === phase);
+  if (phaseAnswers.length === 0) return 0;
+
+  // Assume 10 questions per phase (adjust as needed)
+  const expectedQuestions = 10;
+  return Math.min(100, Math.round((phaseAnswers.length / expectedQuestions) * 100));
+}
+
+/**
+ * Complete a phase (preliminaire, investigation, or conclusion)
+ */
+export async function completePhase(
+  assessmentId: string,
+  phase: 'preliminaire' | 'investigation' | 'conclusion',
+  userId: string
+): Promise<Assessment | null> {
+  const fieldMap = {
+    preliminaire: 'phase_preliminaire_completed',
+    investigation: 'phase_investigation_completed',
+    conclusion: 'phase_conclusion_completed',
+  };
+
+  const dateFieldMap = {
+    preliminaire: 'phase_preliminaire_completed_at',
+    investigation: 'phase_investigation_completed_at',
+    conclusion: 'phase_conclusion_completed_at',
+  };
+
+  const field = fieldMap[phase];
+  const dateField = dateFieldMap[phase];
+
+  return queryOne<Assessment>(
+    userId,
+    `UPDATE bilans 
+     SET ${field} = true, 
+         ${dateField} = NOW(), 
+         updated_at = NOW() 
+     WHERE id = $1 
+     RETURNING *`,
+    [assessmentId]
+  );
+}
+
+/**
+ * Save or update assessment answer (upsert)
+ */
+export async function saveAssessmentAnswer(
+  assessmentId: string,
+  questionId: string,
+  answer: any,
+  userId: string
+): Promise<AssessmentAnswer> {
+  // Check if answer exists
+  const existing = await query<AssessmentAnswer>(
+    userId,
+    `SELECT * FROM assessment_answers 
+     WHERE assessment_id = $1 AND question_id = $2`,
+    [assessmentId, questionId]
+  );
+
+  if (existing.length > 0) {
+    // Update existing answer
+    const result = await query<AssessmentAnswer>(
+      userId,
+      `UPDATE assessment_answers 
+       SET answer_value = $1, updated_at = NOW() 
+       WHERE assessment_id = $2 AND question_id = $3 
+       RETURNING *`,
+      [JSON.stringify(answer), assessmentId, questionId]
+    );
+    return result[0];
+  } else {
+    // Insert new answer
+    const result = await query<AssessmentAnswer>(
+      userId,
+      `INSERT INTO assessment_answers (assessment_id, question_id, answer_value, created_at, updated_at)
+       VALUES ($1, $2, $3, NOW(), NOW())
+       RETURNING *`,
+      [assessmentId, questionId, JSON.stringify(answer)]
+    );
+    return result[0];
+  }
+}
 

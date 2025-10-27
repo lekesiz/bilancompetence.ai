@@ -1,6 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import { supabase } from '../config/supabase.js';
+import {
+  getAssessmentWithParcours,
+  completePhase,
+  saveAssessmentAnswer,
+} from '../services/assessmentServiceNeon.js';
 
 const router = Router();
 
@@ -14,44 +18,11 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
     const userId = (req as any).user.userId;
 
     // Get assessment with parcours data
-    const { data: assessment, error } = await supabase
-      .from('assessments')
-      .select('*')
-      .eq('id', assessmentId)
-      .eq('user_id', userId)
-      .single();
+    const { assessment, phases } = await getAssessmentWithParcours(assessmentId, userId);
 
-    if (error || !assessment) {
+    if (!assessment) {
       return res.status(404).json({ error: 'Assessment not found' });
     }
-
-    // Get answers for each phase
-    const { data: answers } = await supabase
-      .from('assessment_answers')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('created_at', { ascending: true });
-
-    // Calculate phase completion
-    const phases = {
-      preliminaire: {
-        status: assessment.phase_preliminaire_completed ? 'completed' : 'in_progress',
-        completed_at: assessment.phase_preliminaire_completed_at,
-        progress: calculatePhaseProgress(answers || [], 1)
-      },
-      investigation: {
-        status: assessment.phase_investigation_completed ? 'completed' : 
-                assessment.phase_preliminaire_completed ? 'in_progress' : 'locked',
-        completed_at: assessment.phase_investigation_completed_at,
-        progress: calculatePhaseProgress(answers || [], 2)
-      },
-      conclusion: {
-        status: assessment.phase_conclusion_completed ? 'completed' :
-                assessment.phase_investigation_completed ? 'in_progress' : 'locked',
-        completed_at: assessment.phase_conclusion_completed_at,
-        progress: calculatePhaseProgress(answers || [], 3)
-      }
-    };
 
     res.json({
       assessment_id: assessmentId,
@@ -75,17 +46,9 @@ router.post('/:assessmentId/preliminaire/complete', authenticateToken, async (re
     const { assessmentId } = req.params;
     const userId = (req as any).user.userId;
 
-    const { error } = await supabase
-      .from('assessments')
-      .update({
-        phase_preliminaire_completed: true,
-        phase_preliminaire_completed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', assessmentId)
-      .eq('user_id', userId);
+    const result = await completePhase(assessmentId, 'preliminaire', userId);
 
-    if (error) {
+    if (!result) {
       return res.status(500).json({ error: 'Failed to update phase' });
     }
 
@@ -109,17 +72,9 @@ router.post('/:assessmentId/investigation/complete', authenticateToken, async (r
     const { assessmentId } = req.params;
     const userId = (req as any).user.userId;
 
-    const { error } = await supabase
-      .from('assessments')
-      .update({
-        phase_investigation_completed: true,
-        phase_investigation_completed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', assessmentId)
-      .eq('user_id', userId);
+    const result = await completePhase(assessmentId, 'investigation', userId);
 
-    if (error) {
+    if (!result) {
       return res.status(500).json({ error: 'Failed to update phase' });
     }
 
@@ -143,19 +98,9 @@ router.post('/:assessmentId/conclusion/complete', authenticateToken, async (req:
     const { assessmentId } = req.params;
     const userId = (req as any).user.userId;
 
-    const { error } = await supabase
-      .from('assessments')
-      .update({
-        phase_conclusion_completed: true,
-        phase_conclusion_completed_at: new Date().toISOString(),
-        status: 'completed',
-        completed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', assessmentId)
-      .eq('user_id', userId);
+    const result = await completePhase(assessmentId, 'conclusion', userId);
 
-    if (error) {
+    if (!result) {
       return res.status(500).json({ error: 'Failed to update phase' });
     }
 
@@ -180,39 +125,15 @@ router.post('/:assessmentId/answers', authenticateToken, async (req: Request, re
     const { question_id, answer_text, step_number } = req.body;
     const userId = (req as any).user.userId;
 
-    // Verify assessment belongs to user
-    const { data: assessment } = await supabase
-      .from('assessments')
-      .select('id')
-      .eq('id', assessmentId)
-      .eq('user_id', userId)
-      .single();
+    // Save answer (includes verification)
+    const answer = await saveAssessmentAnswer(
+      assessmentId,
+      question_id,
+      { answer_text, step_number },
+      userId
+    );
 
-    if (!assessment) {
-      return res.status(404).json({ error: 'Assessment not found' });
-    }
-
-    // Insert or update answer
-    const { data, error } = await supabase
-      .from('assessment_answers')
-      .upsert({
-        assessment_id: assessmentId,
-        question_id,
-        answer_text,
-        step_number,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'assessment_id,question_id'
-      })
-      .select()
-      .single();
-
-    if (error) {
-      return res.status(500).json({ error: 'Failed to save answer' });
-    }
-
-    res.json({ answer: data });
+    res.json({ answer });
 
   } catch (error) {
     console.error('Error saving answer:', error);

@@ -6,7 +6,12 @@ import multer from 'multer';
 // const pdfParse = require('pdf-parse');
 import mammoth from 'mammoth';
 import { authenticateToken } from '../middleware/auth.js';
-import { supabase } from '../config/supabase.js';
+import {
+  saveCVAnalysis,
+  saveJobRecommendation,
+  savePersonalityAnalysis,
+  saveActionPlan,
+} from '../services/aiAnalysisServiceNeon.js';
 
 const router = Router();
 
@@ -100,14 +105,7 @@ ${cv_text}`;
 
     // Save analysis to database
     if (assessment_id) {
-      await supabase
-        .from('cv_analyses')
-        .insert({
-          assessment_id,
-          cv_text,
-          analysis_result: analysis,
-          created_at: new Date().toISOString()
-        });
+      await saveCVAnalysis(assessment_id, cv_text, analysis);
     }
 
     res.json({ analysis });
@@ -155,13 +153,7 @@ Pour chaque métier, fournis au format JSON:
 
     // Save recommendations
     if (assessment_id) {
-      await supabase
-        .from('job_recommendations')
-        .insert({
-          assessment_id,
-          recommendations_data: recommendations,
-          created_at: new Date().toISOString()
-        });
+      await saveJobRecommendation(assessment_id, recommendations);
     }
 
     res.json({ recommendations });
@@ -203,15 +195,7 @@ Fournis une analyse au format JSON:
 
     // Save analysis
     if (assessment_id) {
-      await supabase
-        .from('personality_analyses')
-        .insert({
-          assessment_id,
-          mbti_type,
-          riasec_scores,
-          analysis_result: analysis,
-          created_at: new Date().toISOString()
-        });
+      await savePersonalityAnalysis(assessment_id, analysis);
     }
 
     res.json({ analysis });
@@ -269,14 +253,7 @@ Fournis un plan au format JSON:
 
     // Save action plan
     if (assessment_id) {
-      await supabase
-        .from('action_plans')
-        .insert({
-          assessment_id,
-          target_job,
-          plan_data: actionPlan,
-          created_at: new Date().toISOString()
-        });
+      await saveActionPlan(assessment_id, actionPlan);
     }
 
     res.json({ action_plan: actionPlan });

@@ -1,0 +1,32 @@
+/**
+ * DEPRECATED: This file is no longer used
+ * 
+ * Reason: Database migrations are now handled by Neon's migration system
+ * 
+ * Migration History:
+ * - This route was used for Supabase SQL migrations
+ * - Now using Neon PostgreSQL with proper migration tooling
+ * - See /apps/backend/migrations/ for current migration files
+ * 
+ * To run migrations:
+ * - Use: pnpm run migrate
+ * - Or: psql $DATABASE_URL -f migrations/xxx.sql
+ * 
+ * Date Deprecated: 2025-10-27
+ * Etap: 2 Phase 3
+ */
+
+import { Router, Request, Response } from 'express';
+
+const router = Router();
+
+router.all('*', (req: Request, res: Response) => {
+  res.status(410).json({
+    error: 'This endpoint has been deprecated',
+    message: 'Database migrations are now handled by Neon migration system',
+    documentation: 'See /apps/backend/migrations/ for current migration files'
+  });
+});
+
+export default router;
+
