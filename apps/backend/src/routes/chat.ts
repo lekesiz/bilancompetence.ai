@@ -1,6 +1,16 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
-import { supabase } from '../services/supabaseService.js';
+import {
+  createConversation,
+  getUserConversations,
+  getConversation,
+  createMessage,
+  getMessages,
+  markMessageAsRead,
+  markConversationAsRead,
+  deleteConversation,
+  deleteMessage,
+} from '../services/chatServiceNeon.js';
 
 const router = Router();
 
@@ -27,22 +37,11 @@ router.post('/conversations', authMiddleware, async (req: Request, res: Response
     }
 
     // Create conversation in database
-    const { data: conversation, error } = await supabase
-      .from('conversations')
-      .insert([
-        {
-          created_by: req.user.id,
-          participant_id: participantId,
-          title: title || `Chat with ${participantId}`,
-          created_at: new Date().toISOString(),
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
+    const conversation = await createConversation(
+      req.user.id,
+      participantId,
+      title
+    );
 
     return res.status(201).json({
       status: 'success',
@@ -72,20 +71,11 @@ router.get('/conversations', authMiddleware, async (req: Request, res: Response)
 
     const limit = parseInt(req.query.limit as string) || 50;
 
-    const { data: conversations, error } = await supabase
-      .from('conversations')
-      .select('*')
-      .or(`created_by.eq.${req.user.id},participant_id.eq.${req.user.id}`)
-      .order('updated_at', { ascending: false })
-      .limit(limit);
-
-    if (error) {
-      throw error;
-    }
+    const conversations = await getUserConversations(req.user.id, limit);
 
     return res.status(200).json({
       status: 'success',
-      data: conversations || [],
+      data: conversations,
     });
   } catch (error) {
     console.error('Get conversations error:', error);
@@ -104,13 +94,16 @@ router.get('/conversations/:conversationId', authMiddleware, async (req: Request
   try {
     const { conversationId } = req.params;
 
-    const { data: conversation, error } = await supabase
-      .from('conversations')
-      .select('*')
-      .eq('id', conversationId)
-      .single();
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
 
-    if (error || !conversation) {
+    const conversation = await getConversation(conversationId, req.user.id);
+
+    if (!conversation) {
       return res.status(404).json({
         status: 'error',
         message: 'Conversation not found',
@@ -154,30 +147,7 @@ router.post('/conversations/:conversationId/messages', authMiddleware, async (re
     }
 
     // Store message in database
-    const { data: message, error } = await supabase
-      .from('messages')
-      .insert([
-        {
-          conversation_id: conversationId,
-          sender_id: req.user.id,
-          content,
-          created_at: new Date().toISOString(),
-        },
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    // Update conversation last message timestamp
-    await supabase
-      .from('conversations')
-      .update({
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', conversationId);
+    const message = await createMessage(conversationId, req.user.id, content);
 
     return res.status(201).json({
       status: 'success',
@@ -200,22 +170,19 @@ router.get('/conversations/:conversationId/messages', authMiddleware, async (req
   try {
     const { conversationId } = req.params;
     const limit = parseInt(req.query.limit as string) || 100;
-    const offset = parseInt(req.query.offset as string) || 0;
 
-    const { data: messages, error } = await supabase
-      .from('messages')
-      .select('*')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (error) {
-      throw error;
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
     }
+
+    const messages = await getMessages(conversationId, req.user.id, limit);
 
     return res.status(200).json({
       status: 'success',
-      data: (messages || []).reverse(), // Reverse to get chronological order
+      data: messages.reverse(), // Reverse to get chronological order
     });
   } catch (error) {
     console.error('Get messages error:', error);
@@ -241,18 +208,13 @@ router.delete('/conversations/:conversationId', authMiddleware, async (req: Requ
 
     const { conversationId } = req.params;
 
-    // Delete all messages in conversation first
-    await supabase.from('messages').delete().eq('conversation_id', conversationId);
+    const deleted = await deleteConversation(conversationId, req.user.id);
 
-    // Delete conversation
-    const { error } = await supabase
-      .from('conversations')
-      .delete()
-      .eq('id', conversationId)
-      .eq('created_by', req.user.id); // Only creator can delete
-
-    if (error) {
-      throw error;
+    if (!deleted) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Conversation not found or unauthorized',
+      });
     }
 
     return res.status(200).json({
@@ -284,18 +246,7 @@ router.post('/conversations/:conversationId/mark-as-read', authMiddleware, async
     const { conversationId } = req.params;
 
     // Mark all unread messages as read
-    const { error } = await supabase
-      .from('messages')
-      .update({
-        read_at: new Date().toISOString(),
-      })
-      .eq('conversation_id', conversationId)
-      .eq('recipient_id', req.user.id)
-      .is('read_at', null);
-
-    if (error) {
-      throw error;
-    }
+    const count = await markConversationAsRead(conversationId, req.user.id);
 
     return res.status(200).json({
       status: 'success',
