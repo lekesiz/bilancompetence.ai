@@ -13,6 +13,18 @@ import * as authService from '../../services/authService';
 jest.mock('../../services/franceTravailService');
 jest.mock('../../services/authService');
 jest.mock('../../utils/logger');
+jest.mock('../../middleware/auth', () => ({
+  authMiddleware: (req: any, res: any, next: any) => {
+    req.user = {
+      id: 'test-user-123',
+      email: 'test@example.com',
+      full_name: 'Test User',
+      role: 'BENEFICIARY',
+    };
+    next();
+  },
+  requireRole: () => (req: any, res: any, next: any) => next(),
+}));
 
 import { FranceTravailService } from '../../services/franceTravailService';
 
@@ -27,18 +39,6 @@ let mockInstance: any;
 beforeEach(() => {
   app = express();
   app.use(express.json());
-
-  // Mock auth middleware to inject test user
-  app.use((req: any, res, next) => {
-    req.user = {
-      id: 'test-user-123',
-      email: 'test@example.com',
-      full_name: 'Test User',
-      role: 'BENEFICIARY',
-    };
-    next();
-  });
-
   app.use('/api/recommendations', recommendationsRouter);
 
   // Clear all mocks before each test
@@ -46,11 +46,13 @@ beforeEach(() => {
 
   // Setup default mock implementations
   mockInstance = {
-    getUserCompetencies: jest.fn(),
-    mapCompetenciesToRomeCodes: jest.fn(),
-    searchJobsByRomeCode: jest.fn(),
-    scoreJobMatches: jest.fn(),
-    saveJobToUserList: jest.fn(),
+    getUserCompetencies: jest.fn().mockResolvedValue([]),
+    mapCompetenciesToRomeCodes: jest.fn().mockResolvedValue([]),
+    searchJobsByRomeCode: jest.fn().mockResolvedValue([]),
+    scoreJobMatches: jest.fn().mockResolvedValue([]),
+    saveJobToUserList: jest.fn().mockResolvedValue({ success: true }),
+    findMatchingRomeCodes: jest.fn().mockResolvedValue([]),
+    searchRomeCodes: jest.fn().mockResolvedValue([]),
   };
   
   mockFranceTravailService.mockImplementation(() => mockInstance as any);
@@ -80,28 +82,23 @@ describe('POST /api/recommendations/jobs', () => {
     ];
 
     
-    (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce([
-      'Java',
-      'Python',
-      'Spring Boot',
-    ]);
-    (mockInstance.mapCompetenciesToRomeCodes as jest.Mock).mockResolvedValueOnce(
+    (mockInstance.findMatchingRomeCodes as jest.Mock).mockResolvedValueOnce(
       [{ code: 'E1101', label: 'Software Engineer' }]
     );
-    (mockInstance.searchJobsByRomeCode as jest.Mock).mockResolvedValueOnce([
-      mockRecommendations[0],
-      mockRecommendations[1],
-    ]);
-    (mockInstance.scoreJobMatches as jest.Mock).mockResolvedValueOnce(
-      mockRecommendations
-    );
+    (mockInstance.searchJobsByRomeCode as jest.Mock).mockResolvedValueOnce({
+      resultats: mockRecommendations,
+    });
 
     const response = await request(app)
       .post('/api/recommendations/jobs')
       .send({
         limit: 10,
-      })
-      .expect(200);
+      });
+
+    if (response.status !== 200) {
+      console.log('Error response:', response.body);
+    }
+    expect(response.status).toBe(200);
 
     expect(response.body.status).toBe('success');
     expect(response.body.data.recommendations).toHaveLength(2);
