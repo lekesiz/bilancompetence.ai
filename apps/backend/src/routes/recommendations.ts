@@ -377,59 +377,6 @@ router.get(
 
 /**
  * GET /api/recommendations/rome-codes/:code
- * Get ROME code details
- *
- * @requires Bearer token (authentication)
- * @param {string} req.params.code - ROME code (e.g., "E1101")
- * @returns {Object} ROME code details with job count and salary range
- */
-router.get(
-  '/rome-codes/:code',
-  authMiddleware,
-  async (req: Request, res: Response) => {
-    try {
-      const { code } = req.params;
-
-      if (!code || !/^[A-Z0-9]+$/.test(code)) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Invalid ROME code format',
-        });
-      }
-
-      logger.info(`Fetching ROME code details for ${code}`);
-
-      try {
-        const romeDetails = await franceTravailService.getRomeCodeDetails(code);
-
-        if (!romeDetails) {
-          return res.status(404).json({
-            status: 'error',
-            message: `ROME code ${code} not found`,
-          });
-        }
-
-        return res.status(200).json({
-          status: 'success',
-          data: romeDetails,
-        });
-      } catch (error) {
-        logger.error(`Error fetching ROME code details: ${error}`);
-        return res.status(500).json({
-          status: 'error',
-          message: 'Failed to retrieve ROME code details',
-        });
-      }
-    } catch (error) {
-      logger.error(`Error in get ROME code endpoint: ${error}`);
-      return res.status(500).json({
-        status: 'error',
-        message:
-          'An unexpected error occurred while retrieving ROME code details',
-      });
-    }
-  }
-);
 
 /**
  * GET /api/recommendations/rome-codes/search
@@ -505,6 +452,63 @@ router.get(
     }
   }
 );
+
+/**
+ * GET /api/recommendations/rome-codes/:code
+ * Get ROME code details
+ *
+ * @requires Bearer token (authentication)
+ * @param {string} req.params.code - ROME code (e.g., "E1101")
+ * @returns {Object} ROME code details with job count and salary range
+ */
+router.get(
+  '/rome-codes/:code',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { code } = req.params;
+
+      if (!code || !/^[A-Z0-9]+$/.test(code)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid ROME code format',
+        });
+      }
+
+      logger.info(`Fetching ROME code details for ${code}`);
+
+      try {
+        const romeDetails = await franceTravailService.getRomeCodeDetails(code);
+
+        if (!romeDetails) {
+          return res.status(404).json({
+            status: 'error',
+            message: `ROME code ${code} not found`,
+          });
+        }
+
+        return res.status(200).json({
+          status: 'success',
+          data: romeDetails,
+        });
+      } catch (error) {
+        logger.error(`Error fetching ROME code details: ${error}`);
+        return res.status(500).json({
+          status: 'error',
+          message: 'Failed to retrieve ROME code details',
+        });
+      }
+    } catch (error) {
+      logger.error(`Error in get ROME code endpoint: ${error}`);
+      return res.status(500).json({
+        status: 'error',
+        message:
+          'An unexpected error occurred while retrieving ROME code details',
+      });
+    }
+  }
+);
+
 
 // ============================================
 // ERROR HANDLING
