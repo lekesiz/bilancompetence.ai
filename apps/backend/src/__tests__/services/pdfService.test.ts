@@ -2,9 +2,9 @@ import {
   generateAssessmentPDF,
   generateUserAssessmentsSummary,
   generateConsultantClientReport,
-  calculateScoreStatistics,
-  getStatusColor,
-  formatDate,
+  calculateScoreStatisticsFromArray as calculateScoreStatistics,
+  getStatusColorByString as getStatusColor,
+  formatDateString as formatDate,
 } from '../../services/pdfService';
 
 // Mock Supabase client

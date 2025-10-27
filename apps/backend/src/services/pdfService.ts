@@ -1252,3 +1252,71 @@ function getPriorityColor(priority: number): any {
     return rgb(40, 167, 69); // Green - Low
   }
 }
+
+
+/**
+ * UTILITY FUNCTIONS FOR TESTING
+ * These functions are exported for testing purposes
+ */
+
+/**
+ * Calculate score statistics from array of numbers
+ * Used for test compatibility
+ */
+export function calculateScoreStatisticsFromArray(scores: number[]): {
+  average: number;
+  minimum: number;
+  maximum: number;
+  median: number;
+} {
+  if (scores.length === 0) {
+    return { average: 0, minimum: 0, maximum: 0, median: 0 };
+  }
+
+  const sorted = [...scores].sort((a, b) => a - b);
+  const sum = scores.reduce((acc, score) => acc + score, 0);
+  const average = sum / scores.length;
+  const minimum = sorted[0];
+  const maximum = sorted[sorted.length - 1];
+  
+  let median: number;
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 0) {
+    median = (sorted[mid - 1] + sorted[mid]) / 2;
+  } else {
+    median = sorted[mid];
+  }
+
+  return { average, minimum, maximum, median };
+}
+
+/**
+ * Get status color by status string
+ * Used for test compatibility
+ */
+export function getStatusColorByString(status: string): { r: number; g: number; b: number } {
+  switch (status.toUpperCase()) {
+    case 'DRAFT':
+      return { r: 255, g: 100, b: 100 }; // Red
+    case 'IN_PROGRESS':
+      return { r: 255, g: 165, b: 0 }; // Orange
+    case 'SUBMITTED':
+      return { r: 100, g: 150, b: 255 }; // Blue
+    case 'COMPLETED':
+      return { r: 100, g: 200, b: 100 }; // Green
+    default:
+      return { r: 150, g: 150, b: 150 }; // Gray
+  }
+}
+
+/**
+ * Format date to string
+ * Used for test compatibility
+ */
+export function formatDateString(date: Date): string {
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+}
+
