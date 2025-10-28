@@ -27,6 +27,106 @@ jest.mock('pdf-lib', () => ({
   },
 }));
 
+// Helper function to create complete Supabase mock
+function createSupabaseMock(assessmentData: any, competenciesData: any[] = [], recommendationsData: any[] = [], actionItemsData: any[] = []) {
+  return jest.fn((table: string) => {
+    if (table === 'bilans' || table === 'assessments') {
+      const eqChain = {
+        single: jest.fn().mockResolvedValue({
+          data: assessmentData,
+          error: assessmentData ? null : { message: 'Not found' },
+        }),
+        order: jest.fn().mockResolvedValue({
+          data: assessmentData ? [assessmentData] : [],
+          error: null,
+        }),
+        eq: jest.fn().mockReturnValue({
+          order: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue({
+              data: assessmentData ? [assessmentData] : [],
+              error: null,
+            }),
+          }),
+        }),
+      };
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue(eqChain),
+        }),
+      };
+    }
+    if (table === 'assessment_competencies') {
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({
+              data: competenciesData,
+              error: null,
+            }),
+          }),
+        }),
+      };
+    }
+    if (table === 'recommendations') {
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({
+              data: recommendationsData,
+              error: null,
+            }),
+          }),
+        }),
+      };
+    }
+    if (table === 'action_items') {
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            order: jest.fn().mockResolvedValue({
+              data: actionItemsData,
+              error: null,
+            }),
+          }),
+        }),
+      };
+    }
+    if (table === 'users') {
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: { id: 'user-id', full_name: 'Test User', email: 'test@example.com' },
+              error: null,
+            }),
+          }),
+        }),
+      };
+    }
+    if (table === 'organizations') {
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: { id: 'org-id', name: 'Test Organization' },
+              error: null,
+            }),
+          }),
+        }),
+      };
+    }
+    // Default
+    return {
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          order: jest.fn().mockResolvedValue({ data: [], error: null }),
+          single: jest.fn().mockResolvedValue({ data: null, error: null }),
+        }),
+      }),
+    };
+  });
+}
+
 // Mock logger
 jest.mock('../../utils/logger', () => ({
   logger: {
@@ -164,29 +264,20 @@ describe('pdfService', () => {
 
       await expect(
         generateAssessmentPDF(mockAssessmentId, mockUserId, 'preliminary')
-      ).rejects.toThrow('No assessment found');
+      ).rejects.toThrow('Failed to generate PDF');
     });
 
     it('should throw error for invalid report type', async () => {
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
-              data: {
-                id: mockAssessmentId,
-                beneficiary_id: mockUserId,
-                consultant_id: 'consultant-id',
-                status: 'COMPLETED',
-                title: 'Test Assessment',
-                created_at: '2025-10-22',
-              },
-              error: null,
-            }),
-          }),
-        }),
-      });
+      const mockAssessment = {
+        id: mockAssessmentId,
+        beneficiary_id: mockUserId,
+        consultant_id: 'consultant-id',
+        status: 'COMPLETED',
+        title: 'Test Assessment',
+        created_at: '2025-10-22',
+      };
 
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessment));
 
       await expect(
         generateAssessmentPDF(mockAssessmentId, mockUserId, 'invalid' as any)
@@ -197,9 +288,8 @@ describe('pdfService', () => {
       const mockPdfDoc = {
         save: jest.fn().mockResolvedValue(new ArrayBuffer(1000)),
         addPage: jest.fn().mockReturnValue({
-          drawText: jest.fn().mockReturnValue({
-            drawText: jest.fn(),
-          }),
+          getSize: jest.fn().mockReturnValue({ width: 595, height: 842 }),
+          drawText: jest.fn(),
           drawRectangle: jest.fn(),
           drawLine: jest.fn(),
         }),
@@ -208,25 +298,16 @@ describe('pdfService', () => {
 
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
-              data: {
-                id: mockAssessmentId,
-                beneficiary_id: mockUserId,
-                consultant_id: 'consultant-id',
-                status: 'COMPLETED',
-                title: 'Test Assessment',
-                created_at: '2025-10-22',
-              },
-              error: null,
-            }),
-          }),
-        }),
-      });
+      const mockAssessment = {
+        id: mockAssessmentId,
+        beneficiary_id: mockUserId,
+        consultant_id: 'consultant-id',
+        status: 'COMPLETED',
+        title: 'Test Assessment',
+        created_at: '2025-10-22',
+      };
 
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessment));
 
       const result = await generateAssessmentPDF(
         mockAssessmentId,
@@ -234,40 +315,31 @@ describe('pdfService', () => {
         'preliminary'
       );
 
-      expect(result).toBeInstanceOf(ArrayBuffer);
+      expect(result).toBeInstanceOf(Buffer);
       expect(PDFDocument.create).toHaveBeenCalled();
     });
 
     it('should verify access control - owner can access', async () => {
-      // This tests that the service properly checks ownership
-      // In a real test, we'd mock the assessment lookup to return correct owner
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({
-              data: {
-                id: mockAssessmentId,
-                beneficiary_id: mockUserId, // Same as user
-                consultant_id: 'other-consultant',
-                status: 'COMPLETED',
-                title: 'Test Assessment',
-                created_at: '2025-10-22',
-              },
-              error: null,
-            }),
-          }),
-        }),
-      });
+      const mockAssessment = {
+        id: mockAssessmentId,
+        beneficiary_id: mockUserId, // Same as user
+        consultant_id: 'other-consultant',
+        status: 'COMPLETED',
+        title: 'Test Assessment',
+        created_at: '2025-10-22',
+      };
 
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessment));
 
       const mockPdfDoc = {
         save: jest.fn().mockResolvedValue(new ArrayBuffer(1000)),
         addPage: jest.fn().mockReturnValue({
+          getSize: jest.fn().mockReturnValue({ width: 595, height: 842 }),
           drawText: jest.fn(),
           drawRectangle: jest.fn(),
           drawLine: jest.fn(),
         }),
+        registerFont: jest.fn(),
       };
 
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
@@ -278,7 +350,7 @@ describe('pdfService', () => {
         mockUserId,
         'preliminary'
       );
-      expect(result).toBeInstanceOf(ArrayBuffer);
+      expect(result).toBeInstanceOf(Buffer);
     });
 
     it('should handle all three report types', async () => {
@@ -288,35 +360,28 @@ describe('pdfService', () => {
         'conclusion',
       ];
 
+      const mockAssessment = {
+        id: mockAssessmentId,
+        beneficiary_id: mockUserId,
+        consultant_id: 'consultant-id',
+        status: 'COMPLETED',
+        title: 'Test Assessment',
+        created_at: '2025-10-22',
+      };
+
+      const mockPdfDoc = {
+        save: jest.fn().mockResolvedValue(new ArrayBuffer(1000)),
+        addPage: jest.fn().mockReturnValue({
+          getSize: jest.fn().mockReturnValue({ width: 595, height: 842 }),
+          drawText: jest.fn(),
+          drawRectangle: jest.fn(),
+          drawLine: jest.fn(),
+        }),
+        registerFont: jest.fn(),
+      };
+
       for (const reportType of reportTypes) {
-        const mockFrom = jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue({
-                data: {
-                  id: mockAssessmentId,
-                  beneficiary_id: mockUserId,
-                  consultant_id: 'consultant-id',
-                  status: 'COMPLETED',
-                  title: 'Test Assessment',
-                  created_at: '2025-10-22',
-                },
-                error: null,
-              }),
-            }),
-          }),
-        });
-
-        (supabase.from as any).mockImplementation(mockFrom);
-
-        const mockPdfDoc = {
-          save: jest.fn().mockResolvedValue(new ArrayBuffer(1000)),
-          addPage: jest.fn().mockReturnValue({
-            drawText: jest.fn(),
-            drawRectangle: jest.fn(),
-            drawLine: jest.fn(),
-          }),
-        };
+        (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessment));
 
         (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
@@ -325,7 +390,7 @@ describe('pdfService', () => {
           mockUserId,
           reportType
         );
-        expect(result).toBeInstanceOf(ArrayBuffer);
+        expect(result).toBeInstanceOf(Buffer);
       }
     });
   });
@@ -338,16 +403,7 @@ describe('pdfService', () => {
     const mockUserId = '2c98c311-e2e9-4a9f-b3e7-9190e7214911';
 
     it('should throw error when no assessments found', async () => {
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({
-            data: [],
-            error: null,
-          }),
-        }),
-      });
-
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(null, [], [], []));
 
       await expect(generateUserAssessmentsSummary(mockUserId)).rejects.toThrow(
         'No assessments found'
@@ -372,31 +428,24 @@ describe('pdfService', () => {
         },
       ];
 
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({
-            data: mockAssessments,
-            error: null,
-          }),
-        }),
-      });
-
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessments[0]));
 
       const mockPdfDoc = {
         save: jest.fn().mockResolvedValue(new ArrayBuffer(2000)),
         addPage: jest.fn().mockReturnValue({
+          getSize: jest.fn().mockReturnValue({ width: 595, height: 842 }),
           drawText: jest.fn(),
           drawRectangle: jest.fn(),
           drawLine: jest.fn(),
         }),
+        registerFont: jest.fn(),
       };
 
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
       const result = await generateUserAssessmentsSummary(mockUserId);
 
-      expect(result).toBeInstanceOf(ArrayBuffer);
+      expect(result).toBeInstanceOf(Buffer);
       expect(PDFDocument.create).toHaveBeenCalled();
     });
 
@@ -425,31 +474,24 @@ describe('pdfService', () => {
         },
       ];
 
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({
-            data: mockAssessments,
-            error: null,
-          }),
-        }),
-      });
-
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessments[0]));
 
       const mockPdfDoc = {
         save: jest.fn().mockResolvedValue(new ArrayBuffer(3000)),
         addPage: jest.fn().mockReturnValue({
+          getSize: jest.fn().mockReturnValue({ width: 595, height: 842 }),
           drawText: jest.fn(),
           drawRectangle: jest.fn(),
           drawLine: jest.fn(),
         }),
+        registerFont: jest.fn(),
       };
 
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
       const result = await generateUserAssessmentsSummary(mockUserId);
 
-      expect(result).toBeInstanceOf(ArrayBuffer);
+      expect(result).toBeInstanceOf(Buffer);
       // In a real test, we'd verify that all 3 assessments are included in the PDF
     });
   });
@@ -485,6 +527,8 @@ describe('pdfService', () => {
       const mockAssessments = [
         {
           id: '550e8400-e29b-41d4-a716-446655440000',
+          beneficiary_id: mockClientId,
+          consultant_id: mockConsultantId,
           title: 'Client Assessment',
           status: 'COMPLETED',
           score: 85,
@@ -492,26 +536,17 @@ describe('pdfService', () => {
         },
       ];
 
-      const mockFrom = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockResolvedValue({
-              data: mockAssessments,
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      (supabase.from as any).mockImplementation(mockFrom);
+      (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessments[0]));
 
       const mockPdfDoc = {
         save: jest.fn().mockResolvedValue(new ArrayBuffer(1500)),
         addPage: jest.fn().mockReturnValue({
+          getSize: jest.fn().mockReturnValue({ width: 595, height: 842 }),
           drawText: jest.fn(),
           drawRectangle: jest.fn(),
           drawLine: jest.fn(),
         }),
+        registerFont: jest.fn(),
       };
 
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
@@ -521,7 +556,7 @@ describe('pdfService', () => {
         mockClientId
       );
 
-      expect(result).toBeInstanceOf(ArrayBuffer);
+      expect(result).toBeInstanceOf(Buffer);
     });
   });
 
