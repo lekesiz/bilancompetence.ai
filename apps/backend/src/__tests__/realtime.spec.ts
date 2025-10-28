@@ -82,12 +82,12 @@ describe('Real-time Service - WebSocket Communication', () => {
       });
     });
 
-    // Note: Socket.io client doesn't properly handle auth rejection through error event
-    // Skipping this test as it's a socket.io client limitation, not a service issue
-    xit('should reject connection without token', (done) => {
+    // Using connect_error event instead of error event for auth rejection
+    it('should reject connection without token', (done) => {
       const socket = io(`http://localhost:${TEST_PORT}`, {
         auth: {
           userId: 'user-2',
+          // No token provided
         },
         transports: ['websocket', 'polling'],
       });
@@ -97,11 +97,19 @@ describe('Real-time Service - WebSocket Communication', () => {
         done(new Error('Authentication timeout'));
       }, TIMEOUT);
 
-      socket.on('error', (error) => {
+      // Socket.io uses connect_error for authentication failures
+      socket.on('connect_error', (error) => {
         clearTimeout(timeout);
-        expect(error).toBe('Authentication error');
+        expect(error.message).toContain('Authentication');
         socket.disconnect();
         done();
+      });
+
+      // Fallback: if connection succeeds, fail the test
+      socket.on('connected', () => {
+        clearTimeout(timeout);
+        socket.disconnect();
+        done(new Error('Connection should have been rejected'));
       });
     });
 
