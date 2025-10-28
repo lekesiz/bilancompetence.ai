@@ -2,7 +2,11 @@ import { Router, Request, Response } from 'express';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
 import {
   getUserActivityStats,
+  getConsultantActivityStats,
   getOrganizationStats,
+  getAssessmentStats,
+} from '../services/analyticsServiceNeon.js';
+import {
   getAssessmentAnalytics,
   getAssessmentsTimeSeries,
   getAssessmentTypeDistribution,
@@ -48,7 +52,7 @@ router.get('/user-activity', authMiddleware, async (req: Request, res: Response)
 router.get(
   '/organization',
   authMiddleware,
-  requireRole('ORG_ADMIN'),
+  requireRole('ORG_ADMIN', 'ORGANIZATION_ADMIN', 'ADMIN'),
   async (req: Request, res: Response) => {
     try {
       if (!req.user) {
@@ -58,8 +62,15 @@ router.get(
         });
       }
 
-      // In production, get organization_id from user context
-      const organizationId = req.user.id; // placeholder
+      // Get organization_id from user context
+      const organizationId = req.user.organization_id;
+
+      if (!organizationId) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Organization ID not found for user',
+        });
+      }
 
       const stats = await getOrganizationStats(organizationId);
 

@@ -125,9 +125,11 @@ export async function createAssessment(
  * Get assessment by ID
  */
 export async function getAssessment(assessmentId: string): Promise<Assessment | null> {
-  const result = await query<Assessment>(null, `SELECT * FROM assessments WHERE id = $1`, [
-    assessmentId,
-  ]);
+  const result = await query<Assessment>(
+    null,
+    `SELECT * FROM assessments WHERE id = $1 AND deleted_at IS NULL`,
+    [assessmentId]
+  );
 
   return result.length > 0 ? result[0] : null;
 }

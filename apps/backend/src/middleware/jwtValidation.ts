@@ -7,7 +7,7 @@ export const jwtPayloadSchema = z.object({
   id: z.string().uuid('Invalid user ID format'),
   email: z.string().email('Invalid email format'),
   full_name: z.string().min(1, 'Full name is required'),
-  role: z.enum(['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ADMIN'], {
+  role: z.enum(['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN', 'ORGANIZATION_ADMIN', 'ADMIN'], {
     errorMap: () => ({ message: 'Invalid role' }),
   }),
   organization_id: z.string().uuid('Invalid organization ID').optional(),

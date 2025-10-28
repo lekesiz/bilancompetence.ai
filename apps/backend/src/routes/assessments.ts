@@ -206,12 +206,13 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       });
     }
 
-    const role = (req.query.role as string) || 'beneficiary';
+    // Use authenticated user's role instead of query parameter for security
+    const userRole = req.user.role;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
     const sort = (req.query.sort as string) || undefined;
 
-    const assessments = await getUserAssessments(req.user.id, role as any, page, limit);
+    const assessments = await getUserAssessments(req.user.id, userRole, page, limit);
 
     return res.status(200).json({
       status: 'success',
@@ -254,16 +255,28 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
     const assessment = await getAssessmentWithDetails(id);
     if (!assessment) {
       return res.status(404).json({
         status: 'error',
         message: 'Assessment not found',
+        details: { assessmentId: id },
       });
     }
 
-    // Check authorization
-    if (assessment.beneficiary_id !== req.user?.id && assessment.consultant_id !== req.user?.id) {
+    // Check authorization - allow admins to view all assessments
+    const isOwner = assessment.beneficiary_id === req.user.id;
+    const isConsultant = assessment.consultant_id === req.user.id;
+    const isAdmin = req.user.role === 'ADMIN' || req.user.role === 'ORGANIZATION_ADMIN' || req.user.role === 'ORG_ADMIN';
+
+    if (!isOwner && !isConsultant && !isAdmin) {
       return res.status(403).json({
         status: 'error',
         message: 'Unauthorized access to this assessment',
@@ -279,6 +292,7 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch assessment',
+      details: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 });
