@@ -46,7 +46,7 @@ class PennylaneService {
     this.client = axios.create({
       baseURL: config.baseURL || 'https://api.pennylane.com/api/v2',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
     });
@@ -214,10 +214,7 @@ class PennylaneService {
   /**
    * List products
    */
-  async listProducts(params?: {
-    page?: number;
-    per_page?: number;
-  }): Promise<any> {
+  async listProducts(params?: { page?: number; per_page?: number }): Promise<any> {
     try {
       const response = await this.client.get('/products', { params });
       return response.data;
@@ -251,10 +248,7 @@ class PennylaneService {
   /**
    * List supplier invoices
    */
-  async listSupplierInvoices(params?: {
-    page?: number;
-    per_page?: number;
-  }): Promise<any> {
+  async listSupplierInvoices(params?: { page?: number; per_page?: number }): Promise<any> {
     try {
       const response = await this.client.get('/supplier_invoices', { params });
       return response.data;
@@ -295,10 +289,7 @@ class PennylaneService {
   /**
    * Get balance sheet
    */
-  async getBalanceSheet(params?: {
-    start_date?: string;
-    end_date?: string;
-  }): Promise<any> {
+  async getBalanceSheet(params?: { start_date?: string; end_date?: string }): Promise<any> {
     try {
       const response = await this.client.get('/balance_sheet', { params });
       return response.data;
@@ -369,4 +360,3 @@ const pennylaneService = new PennylaneService({
 
 export default pennylaneService;
 export { PennylaneService, type CustomerInvoice, type Customer };
-

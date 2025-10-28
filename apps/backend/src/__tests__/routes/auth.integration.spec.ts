@@ -13,53 +13,45 @@ describe('Auth Routes Integration Tests', () => {
 
   describe('POST /api/auth/register', () => {
     it('should reject registration with invalid email', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'invalid-email',
-          password: 'SecurePass@123',
-          full_name: 'Test User',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'invalid-email',
+        password: 'SecurePass@123',
+        full_name: 'Test User',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should reject registration with weak password', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'test@example.com',
-          password: 'weak',
-          full_name: 'Test User',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'test@example.com',
+        password: 'weak',
+        full_name: 'Test User',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should reject registration with short name', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'test@example.com',
-          password: 'SecurePass@123',
-          full_name: 'A',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'test@example.com',
+        password: 'SecurePass@123',
+        full_name: 'A',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should accept valid registration data structure', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'newuser@example.com',
-          password: 'SecurePass@123',
-          full_name: 'New User',
-          role: 'BENEFICIARY',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'newuser@example.com',
+        password: 'SecurePass@123',
+        full_name: 'New User',
+        role: 'BENEFICIARY',
+      });
 
       // Should return 201 (created) or 500 (if DB not connected)
       expect([201, 500]).toContain(response.status);
@@ -70,12 +62,10 @@ describe('Auth Routes Integration Tests', () => {
     });
 
     it('should reject missing required fields', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'test@example.com',
-          // missing password and name
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'test@example.com',
+        // missing password and name
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
@@ -84,46 +74,38 @@ describe('Auth Routes Integration Tests', () => {
 
   describe('POST /api/auth/login', () => {
     it('should reject login with invalid email', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'invalid-email',
-          password: 'password123',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'invalid-email',
+        password: 'password123',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should reject login with missing password', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should reject login with missing email', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          password: 'password123',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        password: 'password123',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should accept valid login data structure', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'ValidPass@123',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'ValidPass@123',
+      });
 
       // Should return 200 (success with mock user) or 500 (if DB not connected)
       expect([200, 500]).toContain(response.status);
@@ -137,31 +119,26 @@ describe('Auth Routes Integration Tests', () => {
 
   describe('POST /api/auth/refresh', () => {
     it('should reject invalid refresh token', async () => {
-      const response = await request(app)
-        .post('/api/auth/refresh')
-        .send({
-          refreshToken: 'short',
-        });
+      const response = await request(app).post('/api/auth/refresh').send({
+        refreshToken: 'short',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should reject missing refresh token', async () => {
-      const response = await request(app)
-        .post('/api/auth/refresh')
-        .send({});
+      const response = await request(app).post('/api/auth/refresh').send({});
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
     });
 
     it('should accept valid token format', async () => {
-      const response = await request(app)
-        .post('/api/auth/refresh')
-        .send({
-          refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ',
-        });
+      const response = await request(app).post('/api/auth/refresh').send({
+        refreshToken:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ',
+      });
 
       // Expect 400 or 401 (invalid token signature)
       expect([400, 401, 500]).toContain(response.status);
@@ -223,12 +200,10 @@ describe('Auth Routes Integration Tests', () => {
 
   describe('Error Response Format', () => {
     it('should include errors property in validation failures', async () => {
-      const response = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'invalid',
-          password: 'pass',
-        });
+      const response = await request(app).post('/api/auth/login').send({
+        email: 'invalid',
+        password: 'pass',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('errors');
@@ -237,13 +212,11 @@ describe('Auth Routes Integration Tests', () => {
     });
 
     it('should return consistent error structure', async () => {
-      const response = await request(app)
-        .post('/api/auth/register')
-        .send({
-          email: 'bad-email',
-          password: 'bad',
-          full_name: 'X',
-        });
+      const response = await request(app).post('/api/auth/register').send({
+        email: 'bad-email',
+        password: 'bad',
+        full_name: 'X',
+      });
 
       expect(response.body).toHaveProperty('errors');
       expect(response.body).toHaveProperty('status', 'error');

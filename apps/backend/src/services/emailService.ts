@@ -1,6 +1,12 @@
 import nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
 // Email configuration - using SendGrid via SMTP
@@ -62,7 +68,11 @@ export async function sendEmailVerificationEmail(
   fullName: string
 ) {
   try {
-    validateRequired({ email, verificationToken, fullName }, ['email', 'verificationToken', 'fullName']);
+    validateRequired({ email, verificationToken, fullName }, [
+      'email',
+      'verificationToken',
+      'fullName',
+    ]);
 
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
@@ -101,11 +111,7 @@ export const sendVerificationEmail = sendEmailVerificationEmail;
 /**
  * Send password reset link
  */
-export async function sendPasswordResetEmail(
-  email: string,
-  resetToken: string,
-  fullName: string
-) {
+export async function sendPasswordResetEmail(email: string, resetToken: string, fullName: string) {
   try {
     validateRequired({ email, resetToken, fullName }, ['email', 'resetToken', 'fullName']);
 
@@ -144,7 +150,10 @@ export async function sendPasswordResetEmail(
 /**
  * Send welcome email after successful registration
  */
-export async function sendWelcomeEmail(email: string, fullName: string): Promise<{ messageId: string }> {
+export async function sendWelcomeEmail(
+  email: string,
+  fullName: string
+): Promise<{ messageId: string }> {
   try {
     validateRequired({ email, fullName }, ['email', 'fullName']);
 
@@ -182,7 +191,10 @@ export async function sendWelcomeEmail(email: string, fullName: string): Promise
       throw new Error('Email send operation returned empty result');
     }
 
-    logger.info('Welcome email sent successfully', { email, messageId: result.messageId || 'unknown' });
+    logger.info('Welcome email sent successfully', {
+      email,
+      messageId: result.messageId || 'unknown',
+    });
     return { messageId: result.messageId || 'unknown' };
   } catch (error) {
     logAndThrow('Failed to send welcome email', error);
@@ -257,7 +269,10 @@ export async function sendConfirmationEmail(
       throw new Error('Email send operation returned empty result');
     }
 
-    logger.info('Confirmation email sent successfully', { email, messageId: result.messageId || 'unknown' });
+    logger.info('Confirmation email sent successfully', {
+      email,
+      messageId: result.messageId || 'unknown',
+    });
   } catch (error) {
     logAndThrow('Failed to send confirmation email', error);
   }

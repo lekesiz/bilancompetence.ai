@@ -1,6 +1,11 @@
 import { supabase } from './supabaseService.js';
 import { v4 as uuidv4 } from 'uuid';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -31,27 +36,29 @@ export async function uploadFile(
   bucket: string = 'files'
 ): Promise<FileMetadata> {
   try {
-    validateRequired({ userId, file, fileName, fileType, bucket }, ['userId', 'file', 'fileName', 'fileType', 'bucket']);
+    validateRequired({ userId, file, fileName, fileType, bucket }, [
+      'userId',
+      'file',
+      'fileName',
+      'fileType',
+      'bucket',
+    ]);
 
     const fileId = uuidv4();
     const storagePath = `${userId}/${fileId}-${fileName}`;
 
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(storagePath, file, {
-        contentType: fileType,
-        cacheControl: '3600',
-      });
+    const { data, error } = await supabase.storage.from(bucket).upload(storagePath, file, {
+      contentType: fileType,
+      cacheControl: '3600',
+    });
 
     if (error) {
       throw new DatabaseError('Failed to upload file to storage', error);
     }
 
     // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(storagePath);
+    const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(storagePath);
 
     // Save metadata to database
     const { data: fileData, error: dbError } = await supabase
@@ -92,20 +99,16 @@ export async function uploadAvatar(
 
     const avatarPath = `avatars/${userId}/${uuidv4()}-${fileName}`;
 
-    const { error } = await supabase.storage
-      .from('avatars')
-      .upload(avatarPath, file, {
-        contentType: 'image/*',
-        cacheControl: '86400', // 24 hours
-      });
+    const { error } = await supabase.storage.from('avatars').upload(avatarPath, file, {
+      contentType: 'image/*',
+      cacheControl: '86400', // 24 hours
+    });
 
     if (error) {
       throw new DatabaseError('Failed to upload avatar', error);
     }
 
-    const { data } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(avatarPath);
+    const { data } = supabase.storage.from('avatars').getPublicUrl(avatarPath);
 
     // Update user avatar_url
     const { error: updateError } = await supabase
@@ -156,11 +159,7 @@ export async function getFileMetadata(fileId: string): Promise<FileMetadata | nu
   try {
     validateRequired({ fileId }, ['fileId']);
 
-    const { data, error } = await supabase
-      .from('files')
-      .select('*')
-      .eq('id', fileId)
-      .single();
+    const { data, error } = await supabase.from('files').select('*').eq('id', fileId).single();
 
     if (error && error.code !== 'PGRST116') {
       throw new DatabaseError('Failed to fetch file metadata', error);
@@ -201,10 +200,7 @@ export async function deleteFile(fileId: string): Promise<boolean> {
     }
 
     // Delete from database
-    const { error: dbError } = await supabase
-      .from('files')
-      .delete()
-      .eq('id', fileId);
+    const { error: dbError } = await supabase.from('files').delete().eq('id', fileId);
 
     if (dbError) {
       throw new DatabaseError('Failed to delete file from database', dbError);
@@ -228,26 +224,25 @@ export async function uploadAssessmentDocument(
   fileType: string
 ): Promise<any> {
   try {
-    validateRequired(
-      { userId, assessmentId, file, fileName, fileType },
-      ['userId', 'assessmentId', 'file', 'fileName', 'fileType']
-    );
+    validateRequired({ userId, assessmentId, file, fileName, fileType }, [
+      'userId',
+      'assessmentId',
+      'file',
+      'fileName',
+      'fileType',
+    ]);
 
     const documentPath = `assessments/${assessmentId}/${uuidv4()}-${fileName}`;
 
-    const { error } = await supabase.storage
-      .from('documents')
-      .upload(documentPath, file, {
-        contentType: fileType,
-      });
+    const { error } = await supabase.storage.from('documents').upload(documentPath, file, {
+      contentType: fileType,
+    });
 
     if (error) {
       throw new DatabaseError('Failed to upload assessment document to storage', error);
     }
 
-    const { data } = supabase.storage
-      .from('documents')
-      .getPublicUrl(documentPath);
+    const { data } = supabase.storage.from('documents').getPublicUrl(documentPath);
 
     // Save document record
     const { data: docData, error: dbError } = await supabase
@@ -292,7 +287,10 @@ export async function getAssessmentDocuments(assessmentId: string): Promise<any>
       throw new DatabaseError('Failed to fetch assessment documents', error);
     }
 
-    logger.info('Assessment documents retrieved successfully', { assessmentId, count: data?.length || 0 });
+    logger.info('Assessment documents retrieved successfully', {
+      assessmentId,
+      count: data?.length || 0,
+    });
     return data || [];
   } catch (error) {
     logAndThrow('Failed to get assessment documents', error);

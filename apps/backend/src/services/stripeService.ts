@@ -2,9 +2,11 @@ import Stripe from 'stripe';
 
 // Make Stripe optional - only initialize if API key is provided
 const stripeApiKey = process.env.STRIPE_SECRET_KEY;
-const stripe = stripeApiKey ? new Stripe(stripeApiKey, {
-  apiVersion: '2025-09-30.clover',
-}) : null;
+const stripe = stripeApiKey
+  ? new Stripe(stripeApiKey, {
+      apiVersion: '2025-09-30.clover',
+    })
+  : null;
 
 export interface PaymentIntentData {
   amount: number;
@@ -22,7 +24,9 @@ export interface SubscriptionData {
 export class StripeService {
   private ensureStripeConfigured() {
     if (!stripe) {
-      throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.');
+      throw new Error(
+        'Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.'
+      );
     }
   }
 
@@ -167,7 +171,10 @@ export class StripeService {
   /**
    * Get customer portal session
    */
-  async createCustomerPortalSession(customerId: string, returnUrl: string): Promise<Stripe.BillingPortal.Session> {
+  async createCustomerPortalSession(
+    customerId: string,
+    returnUrl: string
+  ): Promise<Stripe.BillingPortal.Session> {
     this.ensureStripeConfigured();
     try {
       const session = await stripe!.billingPortal.sessions.create({
@@ -276,4 +283,3 @@ export class StripeService {
 
 // Export singleton instance
 export const stripeService = new StripeService();
-

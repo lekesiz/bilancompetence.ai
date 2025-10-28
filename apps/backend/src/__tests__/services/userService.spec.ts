@@ -101,7 +101,10 @@ describe('UserService', () => {
     });
 
     it('should include avatar URL if available', async () => {
-      const profileWithAvatar = { ...mockUserProfile, avatar_url: 'https://example.com/avatar.jpg' };
+      const profileWithAvatar = {
+        ...mockUserProfile,
+        avatar_url: 'https://example.com/avatar.jpg',
+      };
       const mockSelect = jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
           single: jest.fn().mockResolvedValue({
@@ -338,7 +341,9 @@ describe('UserService', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValueOnce({ select: mockSelect }).mockReturnValueOnce({ update: mockUpdate });
+      (supabase.from as jest.Mock)
+        .mockReturnValueOnce({ select: mockSelect })
+        .mockReturnValueOnce({ update: mockUpdate });
 
       const result = await updateUserPreferences(testUserId, updates);
 
@@ -372,7 +377,9 @@ describe('UserService', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValueOnce({ select: mockSelect }).mockReturnValueOnce({ update: mockUpdate });
+      (supabase.from as jest.Mock)
+        .mockReturnValueOnce({ select: mockSelect })
+        .mockReturnValueOnce({ update: mockUpdate });
 
       const result = await updateUserPreferences(testUserId, updates);
 
@@ -403,7 +410,9 @@ describe('UserService', () => {
         }),
       });
 
-      (supabase.from as jest.Mock).mockReturnValueOnce({ select: mockSelect }).mockReturnValueOnce({ update: mockUpdate });
+      (supabase.from as jest.Mock)
+        .mockReturnValueOnce({ select: mockSelect })
+        .mockReturnValueOnce({ update: mockUpdate });
 
       const result = await updateUserPreferences(testUserId, updates);
 

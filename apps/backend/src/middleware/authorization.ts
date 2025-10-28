@@ -9,9 +9,9 @@ import { supabase } from '../config/supabase.js';
 /**
  * Type de ressource à autoriser
  */
-export type ResourceType = 
+export type ResourceType =
   | 'bilan'
-  | 'assessment' 
+  | 'assessment'
   | 'appointment'
   | 'document'
   | 'cv_analysis'
@@ -34,7 +34,7 @@ interface AuthenticatedRequest extends Request {
 /**
  * Middleware d'autorisation basé sur les ressources
  * Vérifie que l'utilisateur a le droit d'accéder à la ressource demandée
- * 
+ *
  * @param resourceType - Type de ressource à vérifier
  * @returns Middleware Express
  */
@@ -49,13 +49,13 @@ export const authorizeResource = (resourceType: ResourceType) => {
         return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
       }
 
-  // Les ORG_ADMIN ont accès à tout dans leur organisation
-  // Les ADMIN ont accès à tout dans le système (super admin)
+      // Les ORG_ADMIN ont accès à tout dans leur organisation
+      // Les ADMIN ont accès à tout dans le système (super admin)
 
       // Récupérer l'ID de la ressource depuis les paramètres
-      const resourceId = 
-        req.params.id || 
-        req.params.bilanId || 
+      const resourceId =
+        req.params.id ||
+        req.params.bilanId ||
         req.params.assessmentId ||
         req.params.appointmentId ||
         req.params.documentId ||
@@ -77,10 +77,10 @@ export const authorizeResource = (resourceType: ResourceType) => {
       );
 
       if (!authorized) {
-        return res.status(403).json({ 
+        return res.status(403).json({
           error: 'Forbidden: You do not have access to this resource',
           resourceType,
-          resourceId
+          resourceId,
         });
       }
 
@@ -105,28 +105,28 @@ async function checkAuthorization(
   switch (resourceType) {
     case 'bilan':
       return await checkBilanAuthorization(resourceId, userId, userRole, userOrgId);
-    
+
     case 'assessment':
       return await checkAssessmentAuthorization(resourceId, userId, userRole);
-    
+
     case 'appointment':
       return await checkAppointmentAuthorization(resourceId, userId, userRole);
-    
+
     case 'document':
       return await checkDocumentAuthorization(resourceId, userId, userRole);
-    
+
     case 'cv_analysis':
       return await checkCVAnalysisAuthorization(resourceId, userId, userRole);
-    
+
     case 'job_recommendation':
       return await checkJobRecommendationAuthorization(resourceId, userId, userRole);
-    
+
     case 'personality_analysis':
       return await checkPersonalityAnalysisAuthorization(resourceId, userId, userRole);
-    
+
     case 'action_plan':
       return await checkActionPlanAuthorization(resourceId, userId, userRole);
-    
+
     default:
       console.warn(`Unknown resource type: ${resourceType}`);
       return false;
@@ -357,7 +357,7 @@ async function checkActionPlanAuthorization(
 
 /**
  * Middleware pour vérifier que l'utilisateur a un rôle spécifique
- * 
+ *
  * @param allowedRoles - Rôles autorisés
  * @returns Middleware Express
  */
@@ -370,10 +370,10 @@ export const requireRole = (...allowedRoles: string[]) => {
     }
 
     if (!allowedRoles.includes(userRole)) {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: 'Forbidden: Insufficient permissions',
         requiredRoles: allowedRoles,
-        userRole
+        userRole,
       });
     }
 
@@ -389,8 +389,8 @@ export const requireOrganization = () => {
     const userOrgId = req.user?.organization_id;
 
     if (!userOrgId) {
-      return res.status(403).json({ 
-        error: 'Forbidden: User must belong to an organization' 
+      return res.status(403).json({
+        error: 'Forbidden: User must belong to an organization',
       });
     }
 
@@ -403,4 +403,3 @@ export default {
   requireRole,
   requireOrganization,
 };
-

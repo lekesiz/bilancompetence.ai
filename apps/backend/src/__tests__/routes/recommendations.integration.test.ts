@@ -89,7 +89,7 @@ beforeEach(() => {
   mockFranceTravailMethods.searchRomeCodes.mockResolvedValue([]);
   mockFranceTravailMethods.getUserSavedJobs.mockResolvedValue([]);
   mockFranceTravailMethods.getRomeCodeDetails.mockResolvedValue(null);
-  
+
   mockInstance = mockFranceTravailMethods;
 });
 
@@ -116,22 +116,17 @@ describe('POST /api/recommendations/jobs', () => {
       },
     ];
 
-    
-    (mockInstance.findMatchingRomeCodes as jest.Mock).mockResolvedValueOnce(
-      [{ code: 'E1101', label: 'Software Engineer' }]
-    );
+    (mockInstance.findMatchingRomeCodes as jest.Mock).mockResolvedValueOnce([
+      { code: 'E1101', label: 'Software Engineer' },
+    ]);
     (mockInstance.searchJobsByRomeCode as jest.Mock).mockResolvedValueOnce({
       resultats: mockRecommendations,
     });
-    (mockInstance.scoreJobMatches as jest.Mock).mockResolvedValueOnce(
-      mockRecommendations
-    );
+    (mockInstance.scoreJobMatches as jest.Mock).mockResolvedValueOnce(mockRecommendations);
 
-    const response = await request(app)
-      .post('/api/recommendations/jobs')
-      .send({
-        limit: 10,
-      });
+    const response = await request(app).post('/api/recommendations/jobs').send({
+      limit: 10,
+    });
 
     if (response.status !== 200) {
       console.log('Error response:', response.body);
@@ -144,13 +139,9 @@ describe('POST /api/recommendations/jobs', () => {
   });
 
   it('should handle missing competencies gracefully', async () => {
-    
     (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce([]);
 
-    const response = await request(app)
-      .post('/api/recommendations/jobs')
-      .send({})
-      .expect(400);
+    const response = await request(app).post('/api/recommendations/jobs').send({}).expect(400);
 
     expect(response.body.status).toBe('error');
     expect(response.body.message).toContain('No matching job categories');
@@ -170,13 +161,10 @@ describe('POST /api/recommendations/jobs', () => {
   });
 
   it('should filter jobs by salary range', async () => {
-    
-    (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce([
-      'Java',
+    (mockInstance.getUserCompetencies as jest.Mock).mockResolvedValueOnce(['Java']);
+    (mockInstance.findMatchingRomeCodes as jest.Mock).mockResolvedValueOnce([
+      { code: 'E1101', label: 'Software Engineer' },
     ]);
-    (mockInstance.findMatchingRomeCodes as jest.Mock).mockResolvedValueOnce(
-      [{ code: 'E1101', label: 'Software Engineer' }]
-    );
     (mockInstance.searchJobsByRomeCode as jest.Mock).mockResolvedValueOnce({
       resultats: [],
     });
@@ -201,15 +189,11 @@ describe('POST /api/recommendations/jobs', () => {
   });
 
   it('should handle API errors gracefully', async () => {
-    
     (mockInstance.findMatchingRomeCodes as jest.Mock).mockRejectedValueOnce(
       new Error('API connection failed')
     );
 
-    const response = await request(app)
-      .post('/api/recommendations/jobs')
-      .send({})
-      .expect(400);
+    const response = await request(app).post('/api/recommendations/jobs').send({}).expect(400);
 
     expect(response.body.status).toBe('error');
     expect(response.body.message).toContain('No competencies found');
@@ -231,10 +215,7 @@ describe('POST /api/recommendations/:jobId/save', () => {
       createdAt: new Date().toISOString(),
     };
 
-    
-    (mockInstance.saveJobToUserList as jest.Mock).mockResolvedValueOnce(
-      mockSavedJob
-    );
+    (mockInstance.saveJobToUserList as jest.Mock).mockResolvedValueOnce(mockSavedJob);
 
     const response = await request(app)
       .post('/api/recommendations/job-123/save')
@@ -250,10 +231,7 @@ describe('POST /api/recommendations/:jobId/save', () => {
   });
 
   it('should return 400 if job ID is missing', async () => {
-    const response = await request(app)
-      .post('/api/recommendations//save')
-      .send({})
-      .expect(404);
+    const response = await request(app).post('/api/recommendations//save').send({}).expect(404);
 
     // 404 because the route pattern won't match without jobId
   });
@@ -271,7 +249,6 @@ describe('POST /api/recommendations/:jobId/save', () => {
   });
 
   it('should handle database errors when saving', async () => {
-    
     (mockInstance.saveJobToUserList as jest.Mock).mockRejectedValueOnce(
       new Error('Database error')
     );
@@ -293,10 +270,7 @@ describe('POST /api/recommendations/:jobId/save', () => {
       notes: null,
     };
 
-    
-    (mockInstance.saveJobToUserList as jest.Mock).mockResolvedValueOnce(
-      mockSavedJob
-    );
+    (mockInstance.saveJobToUserList as jest.Mock).mockResolvedValueOnce(mockSavedJob);
 
     const response = await request(app)
       .post('/api/recommendations/job-456/save')
@@ -330,10 +304,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
       },
     ];
 
-    
-    (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce(
-      mockSavedJobs
-    );
+    (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce(mockSavedJobs);
 
     const response = await request(app)
       .get('/api/recommendations/test-user-123/saved-jobs')
@@ -352,10 +323,7 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
       },
     ];
 
-    
-    (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce(
-      mockSavedJobs
-    );
+    (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce(mockSavedJobs);
 
     const response = await request(app)
       .get('/api/recommendations/test-user-123/saved-jobs')
@@ -369,12 +337,11 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
     expect(mockInstance.getUserSavedJobs).toHaveBeenCalledWith(
       'test-user-123',
       10, // limit
-      1   // page
+      1 // page
     );
   });
 
   it('should enforce limit constraints (max 100)', async () => {
-    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce([]);
 
     await request(app)
@@ -435,7 +402,6 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
   });
 
   it('should return empty list when user has no saved jobs', async () => {
-    
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce([]);
 
     const response = await request(app)
@@ -462,14 +428,9 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
       salaryRange: { min: 35000, max: 65000 },
     };
 
-    
-    (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(
-      mockRomeDetails
-    );
+    (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(mockRomeDetails);
 
-    const response = await request(app)
-      .get('/api/recommendations/rome-codes/E1101')
-      .expect(200);
+    const response = await request(app).get('/api/recommendations/rome-codes/E1101').expect(200);
 
     expect(response.body.status).toBe('success');
     expect(response.body.data.code).toBe('E1101');
@@ -486,26 +447,18 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
   });
 
   it('should return 404 for non-existent ROME codes', async () => {
-    
     (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(null);
 
-    const response = await request(app)
-      .get('/api/recommendations/rome-codes/X9999')
-      .expect(404);
+    const response = await request(app).get('/api/recommendations/rome-codes/X9999').expect(404);
 
     expect(response.body.status).toBe('error');
     expect(response.body.message).toContain('not found');
   });
 
   it('should handle API errors', async () => {
-    
-    (mockInstance.getRomeCodeDetails as jest.Mock).mockRejectedValueOnce(
-      new Error('API failed')
-    );
+    (mockInstance.getRomeCodeDetails as jest.Mock).mockRejectedValueOnce(new Error('API failed'));
 
-    const response = await request(app)
-      .get('/api/recommendations/rome-codes/E1101')
-      .expect(500);
+    const response = await request(app).get('/api/recommendations/rome-codes/E1101').expect(500);
 
     expect(response.body.status).toBe('error');
   });
@@ -516,14 +469,9 @@ describe('GET /api/recommendations/rome-codes/:code', () => {
       label: 'Sales Representative',
     };
 
-    
-    (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(
-      mockRomeDetails
-    );
+    (mockInstance.getRomeCodeDetails as jest.Mock).mockResolvedValueOnce(mockRomeDetails);
 
-    const response = await request(app)
-      .get('/api/recommendations/rome-codes/C1503')
-      .expect(200);
+    const response = await request(app).get('/api/recommendations/rome-codes/C1503').expect(200);
 
     expect(response.body.status).toBe('success');
   });
@@ -541,19 +489,16 @@ describe('GET /api/recommendations/rome-codes/search', () => {
       { code: 'E1103', label: 'Data Engineer' },
     ];
 
-    
-    (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce(
-      mockResults
-    );
+    (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce(mockResults);
 
     const response = await request(app)
       .get('/api/recommendations/rome-codes/search')
       .query({ query: 'developer' });
-    
+
     if (response.status !== 200) {
       console.log('ROME search error:', response.body);
     }
-    
+
     expect(response.status).toBe(200);
 
     expect(response.body.status).toBe('success');
@@ -577,10 +522,7 @@ describe('GET /api/recommendations/rome-codes/search', () => {
       label: `Role ${i}`,
     }));
 
-    
-    (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce(
-      mockResults
-    );
+    (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce(mockResults);
 
     const response = await request(app)
       .get('/api/recommendations/rome-codes/search')
@@ -601,7 +543,6 @@ describe('GET /api/recommendations/rome-codes/search', () => {
   });
 
   it('should handle no results gracefully', async () => {
-    
     (mockInstance.searchRomeCodes as jest.Mock).mockResolvedValueOnce([]);
 
     const response = await request(app)
@@ -614,10 +555,7 @@ describe('GET /api/recommendations/rome-codes/search', () => {
   });
 
   it('should handle API errors', async () => {
-    
-    (mockInstance.searchRomeCodes as jest.Mock).mockRejectedValueOnce(
-      new Error('Search failed')
-    );
+    (mockInstance.searchRomeCodes as jest.Mock).mockRejectedValueOnce(new Error('Search failed'));
 
     const response = await request(app)
       .get('/api/recommendations/rome-codes/search')
@@ -637,10 +575,7 @@ describe('Authentication & Authorization', () => {
     // Disable auth to simulate unauthenticated request
     mockAuthState.enabled = false;
 
-    const response = await request(app)
-      .post('/api/recommendations/jobs')
-      .send({})
-      .expect(401);
+    const response = await request(app).post('/api/recommendations/jobs').send({}).expect(401);
 
     expect(response.body.status).toBe('error');
     expect(response.body.message).toBe('Unauthorized');
@@ -667,9 +602,7 @@ describe('Authentication & Authorization', () => {
 
 describe('Error Handling', () => {
   it('should return 404 for unknown endpoints', async () => {
-    const response = await request(app).get(
-      '/api/recommendations/unknown/endpoint'
-    );
+    const response = await request(app).get('/api/recommendations/unknown/endpoint');
 
     expect(response.status).toBe(404);
     expect(response.body.status).toBe('error');

@@ -14,7 +14,13 @@ import { Database } from '../types/database.types.js';
 import QualioptService from './qualioptService.js';
 import SatisfactionSurveyService from './satisfactionSurveyService.js';
 import DocumentArchiveService from './documentArchiveService.js';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
 interface IndicatorReport {
@@ -169,7 +175,9 @@ export class ComplianceReportService {
         },
         next_steps: nextSteps,
         audit_schedule: {
-          self_assessment_deadline: this.formatDate(new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)), // 60 days
+          self_assessment_deadline: this.formatDate(
+            new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
+          ), // 60 days
           external_audit_period: '2026-Q1',
         },
       };
@@ -177,7 +185,7 @@ export class ComplianceReportService {
       logger.info('Compliance report generated successfully', {
         reportId: report.report_id,
         compliancePercentage: report.overall_compliance_percentage,
-        auditReady: report.audit_readiness
+        auditReady: report.audit_readiness,
       });
       return report;
     } catch (error) {
@@ -188,9 +196,7 @@ export class ComplianceReportService {
   /**
    * Assess audit readiness
    */
-  private async assessAuditReadiness(
-    metrics: any
-  ): Promise<AuditReadinessAssessment> {
+  private async assessAuditReadiness(metrics: any): Promise<AuditReadinessAssessment> {
     const criticalGaps: string[] = [];
     const recommendations: string[] = [];
 
@@ -249,7 +255,9 @@ export class ComplianceReportService {
 
     // Check survey response rate
     if (surveyAnalytics.response_rate < 70) {
-      steps.push('Improve survey response rate to 70%+ for better evidence of participant satisfaction');
+      steps.push(
+        'Improve survey response rate to 70%+ for better evidence of participant satisfaction'
+      );
     }
 
     // Check NPS score
@@ -359,7 +367,9 @@ export class ComplianceReportService {
       rows.push('ID,Name,Status,Evidence Count,Notes');
       report.indicators.forEach((ind) => {
         const notes = (ind.notes || '').replace(/,/g, ';'); // Escape commas
-        rows.push(`${ind.indicator_id},"${ind.indicator_name}",${ind.status},${ind.evidence_count},"${notes}"`);
+        rows.push(
+          `${ind.indicator_id},"${ind.indicator_name}",${ind.status},${ind.evidence_count},"${notes}"`
+        );
       });
 
       const csvString = rows.join('\n');
@@ -398,4 +408,3 @@ export class ComplianceReportService {
 }
 
 export default ComplianceReportService;
-

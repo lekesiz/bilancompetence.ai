@@ -129,7 +129,9 @@ jest.mock('../../services/assessmentServiceNeon', () => ({
   }),
   submitAssessment: jest.fn().mockImplementation((id: string) => {
     if (id === 'incomplete-assessment') {
-      return Promise.reject(new Error('Assessment is incomplete. Please complete all required steps.'));
+      return Promise.reject(
+        new Error('Assessment is incomplete. Please complete all required steps.')
+      );
     }
     return Promise.resolve({
       id,
@@ -201,12 +203,10 @@ describe('Assessment Routes Integration Tests', () => {
       // Note: Auth middleware is globally mocked in this test suite
       // In production, this would return 401, but here it passes
       // This test verifies the route exists and accepts requests
-      const response = await request(app)
-        .post('/api/assessments')
-        .send({
-          title: 'Assessment',
-          assessment_type: 'career',
-        });
+      const response = await request(app).post('/api/assessments').send({
+        title: 'Assessment',
+        assessment_type: 'career',
+      });
 
       expect([201, 401]).toContain(response.status);
       if (response.status === 201) {
@@ -219,27 +219,21 @@ describe('Assessment Routes Integration Tests', () => {
     it('should return assessment with full details', async () => {
       const assessmentId = 'assessment-123';
 
-      const response = await request(app)
-        .get(`/api/assessments/${assessmentId}`)
-        .expect(200);
+      const response = await request(app).get(`/api/assessments/${assessmentId}`).expect(200);
 
       expect(response.body).toHaveProperty('status', 'success');
       expect(response.body).toHaveProperty('data');
     });
 
     it('should return 404 if assessment not found', async () => {
-      const response = await request(app)
-        .get('/api/assessments/nonexistent-id')
-        .expect(404);
+      const response = await request(app).get('/api/assessments/nonexistent-id').expect(404);
 
       expect(response.body).toHaveProperty('status', 'error');
       expect(response.body.message).toContain('not found');
     });
 
     it('should return 403 if unauthorized', async () => {
-      const response = await request(app)
-        .get('/api/assessments/other-user-assessment')
-        .expect(403);
+      const response = await request(app).get('/api/assessments/other-user-assessment').expect(403);
 
       expect(response.body).toHaveProperty('status', 'error');
     });
@@ -386,12 +380,10 @@ describe('Assessment Routes Integration Tests', () => {
     it('should reject unauthorized auto-save', async () => {
       const assessmentId = 'other-user-assessment';
 
-      const response = await request(app)
-        .post(`/api/assessments/${assessmentId}/auto-save`)
-        .send({
-          step_number: 1,
-          partial_data: {},
-        });
+      const response = await request(app).post(`/api/assessments/${assessmentId}/auto-save`).send({
+        step_number: 1,
+        partial_data: {},
+      });
 
       expect([400, 403]).toContain(response.status);
       expect(response.body).toHaveProperty('status', 'error');
@@ -473,9 +465,7 @@ describe('Assessment Routes Integration Tests', () => {
     it('should verify all required fields before submission', async () => {
       const assessmentId = 'assessment-123';
 
-      const response = await request(app)
-        .post(`/api/assessments/${assessmentId}/submit`)
-        .send({});
+      const response = await request(app).post(`/api/assessments/${assessmentId}/submit`).send({});
 
       expect([200, 400]).toContain(response.status);
       if (response.status === 200) {

@@ -153,7 +153,8 @@ export const RecommendationPriority = {
   CRITICAL: 'CRITICAL',
 } as const;
 
-export type RecommendationPriorityType = (typeof RecommendationPriority)[keyof typeof RecommendationPriority];
+export type RecommendationPriorityType =
+  (typeof RecommendationPriority)[keyof typeof RecommendationPriority];
 
 /**
  * Recommendation Type Enumeration
@@ -218,7 +219,7 @@ export function getEnumLabel(value: string): string {
   return value
     .toLowerCase()
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
 

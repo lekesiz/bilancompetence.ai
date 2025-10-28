@@ -122,10 +122,9 @@ class WedofService {
    */
   async declareEntreeFormation(folderId: string, startDate: string): Promise<any> {
     try {
-      const response = await this.client.post(
-        `/registration_folders/${folderId}/in_training`,
-        { start_date: startDate }
-      );
+      const response = await this.client.post(`/registration_folders/${folderId}/in_training`, {
+        start_date: startDate,
+      });
       return response.data;
     } catch (error: any) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
@@ -137,10 +136,9 @@ class WedofService {
    */
   async declareSortieFormation(folderId: string, endDate: string): Promise<any> {
     try {
-      const response = await this.client.post(
-        `/registration_folders/${folderId}/terminate`,
-        { end_date: endDate }
-      );
+      const response = await this.client.post(`/registration_folders/${folderId}/terminate`, {
+        end_date: endDate,
+      });
       return response.data;
     } catch (error: any) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
@@ -152,9 +150,7 @@ class WedofService {
    */
   async declareServiceFait(folderId: string): Promise<any> {
     try {
-      const response = await this.client.post(
-        `/registration_folders/${folderId}/service_done`
-      );
+      const response = await this.client.post(`/registration_folders/${folderId}/service_done`);
       return response.data;
     } catch (error: any) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
@@ -245,10 +241,7 @@ class WedofService {
   /**
    * Create webhook
    */
-  async createWebhook(data: {
-    url: string;
-    events: string[];
-  }): Promise<any> {
+  async createWebhook(data: { url: string; events: string[] }): Promise<any> {
     try {
       const response = await this.client.post(`/webhooks`, data);
       return response.data;
@@ -288,4 +281,3 @@ const wedofService = new WedofService({
 
 export default wedofService;
 export { WedofService, type RegistrationFolder, type Attendee };
-

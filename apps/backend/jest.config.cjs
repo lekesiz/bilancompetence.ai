@@ -5,7 +5,12 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.spec.ts', '**/__tests__/**/*.test.ts', '**/?(*.)+(spec|test).ts'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/__tests__/setup.ts', '/__tests__/helpers/'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/__tests__/setup.ts',
+    '/__tests__/helpers/',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
   // FIX 5: Handle .js imports in TypeScript files
@@ -15,13 +20,16 @@ module.exports = {
 
   // FIX 1: Remove deprecated globals configuration
   transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      isolatedModules: true,
-      tsconfig: {
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true,
-      }
-    }]
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        isolatedModules: true,
+        tsconfig: {
+          esModuleInterop: true,
+          allowSyntheticDefaultImports: true,
+        },
+      },
+    ],
   },
 
   // FIX 2: Run tests serially to avoid worker serialization issues
@@ -33,11 +41,7 @@ module.exports = {
   // FIX 4: Setup file for test environment
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
 
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/index.ts',
-  ],
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts', '!src/index.ts'],
 
   coverageThreshold: {
     global: {
@@ -48,4 +52,3 @@ module.exports = {
     },
   },
 };
-

@@ -48,7 +48,14 @@ interface ArchiveStats {
 }
 
 const RETENTION_POLICY_DAYS = 1825; // 5 years
-const DOCUMENT_TYPES = ['PRELIMINARY', 'INVESTIGATION', 'CONCLUSION', 'REPORT', 'EVIDENCE', 'OTHER'];
+const DOCUMENT_TYPES = [
+  'PRELIMINARY',
+  'INVESTIGATION',
+  'CONCLUSION',
+  'REPORT',
+  'EVIDENCE',
+  'OTHER',
+];
 
 export class DocumentArchiveService {
   private supabase: ReturnType<typeof createClient<Database>>;
@@ -156,16 +163,14 @@ export class DocumentArchiveService {
   /**
    * Get all archived documents for organization
    */
-  async getArchivedDocuments(
-    filters?: {
-      documentType?: string;
-      bilanId?: string;
-      dateFrom?: string;
-      dateTo?: string;
-      limit?: number;
-      offset?: number;
-    }
-  ): Promise<ArchivedDocument[]> {
+  async getArchivedDocuments(filters?: {
+    documentType?: string;
+    bilanId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<ArchivedDocument[]> {
     try {
       let query = this.supabase
         .from('document_archive')
@@ -383,14 +388,17 @@ export class DocumentArchiveService {
         return retentionDate <= thirtyDaysFromNow && retentionDate > new Date();
       }).length;
 
-      const createdDates = docs.map((d: any) => new Date(d.created_at)).sort((a, b) => a.getTime() - b.getTime());
+      const createdDates = docs
+        .map((d: any) => new Date(d.created_at))
+        .sort((a, b) => a.getTime() - b.getTime());
 
       return {
         total_documents: docs.length,
         total_size: totalSize,
         by_type: byType,
         earliest_document: createdDates[0]?.toISOString() || new Date().toISOString(),
-        latest_document: createdDates[createdDates.length - 1]?.toISOString() || new Date().toISOString(),
+        latest_document:
+          createdDates[createdDates.length - 1]?.toISOString() || new Date().toISOString(),
         documents_expiring_soon: expiringsoon,
       };
     } catch (error) {
@@ -476,7 +484,8 @@ export class DocumentArchiveService {
       const fileHash = this.calculateHash(fileContent);
 
       // Calculate file size
-      const fileSize = typeof fileContent === 'string' ? Buffer.byteLength(fileContent) : fileContent.length;
+      const fileSize =
+        typeof fileContent === 'string' ? Buffer.byteLength(fileContent) : fileContent.length;
 
       // Archive document
       return await this.archiveDocument(
@@ -497,4 +506,3 @@ export class DocumentArchiveService {
 }
 
 export default DocumentArchiveService;
-

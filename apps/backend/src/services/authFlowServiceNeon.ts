@@ -74,7 +74,9 @@ export async function createEmailVerificationToken(
 /**
  * Get valid email verification token
  */
-export async function getEmailVerificationToken(token: string): Promise<EmailVerificationToken | null> {
+export async function getEmailVerificationToken(
+  token: string
+): Promise<EmailVerificationToken | null> {
   return queryOne<EmailVerificationToken>(
     null,
     `SELECT * FROM email_verification_tokens
@@ -89,11 +91,9 @@ export async function getEmailVerificationToken(token: string): Promise<EmailVer
  * Mark email verification token as used
  */
 export async function useEmailVerificationToken(tokenId: string): Promise<void> {
-  await query(
-    null,
-    'UPDATE email_verification_tokens SET used_at = NOW() WHERE id = $1',
-    [tokenId]
-  );
+  await query(null, 'UPDATE email_verification_tokens SET used_at = NOW() WHERE id = $1', [
+    tokenId,
+  ]);
 }
 
 // ============================================================================
@@ -104,11 +104,10 @@ export async function useEmailVerificationToken(tokenId: string): Promise<void> 
  * Update user password
  */
 export async function updateUserPassword(userId: string, passwordHash: string): Promise<void> {
-  await query(
-    null,
-    'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2',
-    [passwordHash, userId]
-  );
+  await query(null, 'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [
+    passwordHash,
+    userId,
+  ]);
 }
 
 /**
@@ -147,11 +146,7 @@ export async function getPasswordResetToken(token: string): Promise<PasswordRese
  * Mark password reset token as used
  */
 export async function usePasswordResetToken(tokenId: string): Promise<void> {
-  await query(
-    null,
-    'UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1',
-    [tokenId]
-  );
+  await query(null, 'UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1', [tokenId]);
 }
 
 // ============================================================================
@@ -174,7 +169,14 @@ export async function createAuditLog(
     `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, new_values, ip_address, created_at)
      VALUES ($1, $2, $3, $4, $5, $6, NOW())
      RETURNING *`,
-    [userId, action, resourceType, resourceId, metadata ? JSON.stringify(metadata) : null, ipAddress || null]
+    [
+      userId,
+      action,
+      resourceType,
+      resourceId,
+      metadata ? JSON.stringify(metadata) : null,
+      ipAddress || null,
+    ]
   );
   return result[0];
 }
@@ -189,4 +191,3 @@ export async function getAuditLogsByUser(userId: string, limit: number = 50): Pr
     [userId, limit]
   );
 }
-

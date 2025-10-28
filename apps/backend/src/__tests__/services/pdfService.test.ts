@@ -28,7 +28,12 @@ jest.mock('pdf-lib', () => ({
 }));
 
 // Helper function to create complete Supabase mock
-function createSupabaseMock(assessmentData: any, competenciesData: any[] = [], recommendationsData: any[] = [], actionItemsData: any[] = []) {
+function createSupabaseMock(
+  assessmentData: any,
+  competenciesData: any[] = [],
+  recommendationsData: any[] = [],
+  actionItemsData: any[] = []
+) {
   return jest.fn((table: string) => {
     if (table === 'bilans' || table === 'assessments') {
       const eqChain = {
@@ -309,11 +314,7 @@ describe('pdfService', () => {
 
       (supabase.from as any).mockImplementation(createSupabaseMock(mockAssessment));
 
-      const result = await generateAssessmentPDF(
-        mockAssessmentId,
-        mockUserId,
-        'preliminary'
-      );
+      const result = await generateAssessmentPDF(mockAssessmentId, mockUserId, 'preliminary');
 
       expect(result).toBeInstanceOf(Buffer);
       expect(PDFDocument.create).toHaveBeenCalled();
@@ -345,11 +346,7 @@ describe('pdfService', () => {
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
       // Should not throw for owner
-      const result = await generateAssessmentPDF(
-        mockAssessmentId,
-        mockUserId,
-        'preliminary'
-      );
+      const result = await generateAssessmentPDF(mockAssessmentId, mockUserId, 'preliminary');
       expect(result).toBeInstanceOf(Buffer);
     });
 
@@ -385,11 +382,7 @@ describe('pdfService', () => {
 
         (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
-        const result = await generateAssessmentPDF(
-          mockAssessmentId,
-          mockUserId,
-          reportType
-        );
+        const result = await generateAssessmentPDF(mockAssessmentId, mockUserId, reportType);
         expect(result).toBeInstanceOf(Buffer);
       }
     });
@@ -551,10 +544,7 @@ describe('pdfService', () => {
 
       (PDFDocument.create as any).mockResolvedValue(mockPdfDoc);
 
-      const result = await generateConsultantClientReport(
-        mockConsultantId,
-        mockClientId
-      );
+      const result = await generateConsultantClientReport(mockConsultantId, mockClientId);
 
       expect(result).toBeInstanceOf(Buffer);
     });
@@ -609,9 +599,7 @@ describe('pdfService', () => {
 
       (supabase.from as any).mockImplementation(mockFrom);
 
-      (PDFDocument.create as any).mockRejectedValue(
-        new Error('PDF creation failed')
-      );
+      (PDFDocument.create as any).mockRejectedValue(new Error('PDF creation failed'));
 
       await expect(
         generateAssessmentPDF(

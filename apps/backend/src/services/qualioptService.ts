@@ -46,11 +46,13 @@ export class QualioptService {
   constructor(organizationId: string | null) {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-    
+
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Supabase configuration is missing. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+      throw new Error(
+        'Supabase configuration is missing. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.'
+      );
     }
-    
+
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
     this.organizationId = organizationId;
   }
@@ -415,4 +417,3 @@ export class QualioptService {
 }
 
 export default QualioptService;
-

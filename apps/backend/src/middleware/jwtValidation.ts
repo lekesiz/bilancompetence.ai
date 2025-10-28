@@ -23,4 +23,3 @@ export type JWTPayload = z.infer<typeof jwtPayloadSchema>;
 export function validateJWTPayload(payload: unknown): JWTPayload {
   return jwtPayloadSchema.parse(payload);
 }
-

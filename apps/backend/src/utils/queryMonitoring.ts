@@ -36,11 +36,7 @@ class QueryMonitor {
   /**
    * Record query execution
    */
-  recordQuery(
-    query: string,
-    duration: number,
-    params?: any[]
-  ): void {
+  recordQuery(query: string, duration: number, params?: any[]): void {
     const isSlow = duration > this.slowQueryThreshold;
 
     const metric: QueryMetrics = {
@@ -202,16 +198,11 @@ export function queryMonitoringMiddleware(req: any, res: any, next: any) {
 
     // Log slow requests
     if (duration > 1000) {
-      logger.warn(
-        `[SLOW REQUEST] ${req.method} ${req.path} took ${duration.toFixed(2)}ms`
-      );
+      logger.warn(`[SLOW REQUEST] ${req.method} ${req.path} took ${duration.toFixed(2)}ms`);
     }
 
     // Record in monitoring
-    queryMonitor.recordQuery(
-      `HTTP ${req.method} ${req.path}`,
-      duration
-    );
+    queryMonitor.recordQuery(`HTTP ${req.method} ${req.path}`, duration);
   });
 
   next();

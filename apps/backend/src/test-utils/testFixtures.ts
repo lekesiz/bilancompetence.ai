@@ -11,7 +11,11 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { createSupabaseMock, createFullSupabaseMock, mockDataBuilders } from './supabaseMockHelper.js';
+import {
+  createSupabaseMock,
+  createFullSupabaseMock,
+  mockDataBuilders,
+} from './supabaseMockHelper.js';
 
 /**
  * Test database configuration
@@ -85,8 +89,12 @@ export async function createTestApp(config: TestAppConfig = {}): Promise<TestApp
     assessments: { selectData: dbConfig.assessments || [mockDataBuilders.assessment()] },
     users: { selectData: dbConfig.users || [mockDataBuilders.user()] },
     notifications: { selectData: dbConfig.notifications || [] },
-    session_bookings: { selectData: dbConfig.session_bookings || [mockDataBuilders.sessionBooking()] },
-    assessment_answers: { selectData: dbConfig.assessment_answers || [mockDataBuilders.assessmentAnswer()] },
+    session_bookings: {
+      selectData: dbConfig.session_bookings || [mockDataBuilders.sessionBooking()],
+    },
+    assessment_answers: {
+      selectData: dbConfig.assessment_answers || [mockDataBuilders.assessmentAnswer()],
+    },
   });
 
   // Health check endpoint

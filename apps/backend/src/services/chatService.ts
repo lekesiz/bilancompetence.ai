@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 // Make Supabase optional - only initialize if credentials are provided
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 /**
  * Service de gestion du chat et de la messagerie
@@ -259,10 +259,7 @@ export async function deleteMessage(messageId: string, userId: string): Promise<
       throw new Error('Non autorisé à supprimer ce message');
     }
 
-    const { error: deleteError } = await supabase
-      .from('messages')
-      .delete()
-      .eq('id', messageId);
+    const { error: deleteError } = await supabase.from('messages').delete().eq('id', messageId);
 
     if (deleteError) {
       throw new Error(`Erreur lors de la suppression du message: ${deleteError.message}`);
@@ -312,21 +309,17 @@ export async function uploadChatFile(
   try {
     const filePath = `chat/${conversationId}/${Date.now()}_${fileName}`;
 
-    const { data, error } = await supabase.storage
-      .from('chat-files')
-      .upload(filePath, file, {
-        contentType: 'application/octet-stream',
-        upsert: false,
-      });
+    const { data, error } = await supabase.storage.from('chat-files').upload(filePath, file, {
+      contentType: 'application/octet-stream',
+      upsert: false,
+    });
 
     if (error) {
       throw new Error(`Erreur lors de l'upload du fichier: ${error.message}`);
     }
 
     // Obtenir l'URL publique
-    const { data: publicUrlData } = supabase.storage
-      .from('chat-files')
-      .getPublicUrl(filePath);
+    const { data: publicUrlData } = supabase.storage.from('chat-files').getPublicUrl(filePath);
 
     return publicUrlData.publicUrl;
   } catch (error: any) {
@@ -359,4 +352,3 @@ export async function sendSystemMessage(
     throw error;
   }
 }
-

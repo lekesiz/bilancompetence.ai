@@ -11,18 +11,18 @@ const router = Router();
 router.post('/setup', authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.userId;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Non authentifié' });
     }
-    
+
     const twoFactorData = await twoFactorService.generateTwoFactorSecret(userId);
-    
+
     res.status(200).json({
       message: 'Secret 2FA généré avec succès',
       secret: twoFactorData.secret,
       qrCode: twoFactorData.qrCode,
-      backupCodes: twoFactorData.backupCodes
+      backupCodes: twoFactorData.backupCodes,
     });
   } catch (error: any) {
     console.error('Erreur /2fa/setup:', error);
@@ -38,25 +38,25 @@ router.post('/enable', authenticateToken, async (req: Request, res: Response) =>
   try {
     const userId = (req as any).user?.userId;
     const { token } = req.body;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Non authentifié' });
     }
-    
+
     if (!token || typeof token !== 'string') {
       return res.status(400).json({ error: 'Token requis' });
     }
-    
+
     const result = await twoFactorService.enableTwoFactor(userId, token);
-    
+
     if (!result.isValid) {
       return res.status(400).json({ error: result.message });
     }
-    
+
     res.status(200).json({ message: result.message });
   } catch (error: any) {
     console.error('Erreur /2fa/enable:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de l\'activation du 2FA' });
+    res.status(500).json({ error: error.message || "Erreur lors de l'activation du 2FA" });
   }
 });
 
@@ -67,17 +67,17 @@ router.post('/enable', authenticateToken, async (req: Request, res: Response) =>
 router.post('/verify', async (req: Request, res: Response) => {
   try {
     const { userId, token } = req.body;
-    
+
     if (!userId || !token) {
       return res.status(400).json({ error: 'userId et token requis' });
     }
-    
+
     const result = await twoFactorService.verifyTwoFactorToken(userId, token);
-    
+
     if (!result.isValid) {
       return res.status(400).json({ error: result.message });
     }
-    
+
     res.status(200).json({ message: result.message, isValid: true });
   } catch (error: any) {
     console.error('Erreur /2fa/verify:', error);
@@ -93,20 +93,20 @@ router.post('/disable', authenticateToken, async (req: Request, res: Response) =
   try {
     const userId = (req as any).user?.userId;
     const { password } = req.body;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Non authentifié' });
     }
-    
+
     // Vérifier le mot de passe avant de désactiver (sécurité)
     if (!password) {
       return res.status(400).json({ error: 'Mot de passe requis pour désactiver le 2FA' });
     }
-    
+
     // TODO: Vérifier le mot de passe avec authService
-    
+
     await twoFactorService.disableTwoFactor(userId);
-    
+
     res.status(200).json({ message: '2FA désactivé avec succès' });
   } catch (error: any) {
     console.error('Erreur /2fa/disable:', error);
@@ -121,19 +121,20 @@ router.post('/disable', authenticateToken, async (req: Request, res: Response) =
 router.get('/status', authenticateToken, async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.userId;
-    
+
     if (!userId) {
       return res.status(401).json({ error: 'Non authentifié' });
     }
-    
+
     const isEnabled = await twoFactorService.isTwoFactorEnabled(userId);
-    
+
     res.status(200).json({ isEnabled });
   } catch (error: any) {
     console.error('Erreur /2fa/status:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de la vérification du statut 2FA' });
+    res
+      .status(500)
+      .json({ error: error.message || 'Erreur lors de la vérification du statut 2FA' });
   }
 });
 
 export default router;
-

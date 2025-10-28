@@ -1,9 +1,10 @@
 # Database Migrations Guide
+
 ## BilanCompetence.AI - PostgreSQL Schema Migrations
 
 **Last Updated:** 2025-10-27  
 **Database:** Neon PostgreSQL  
-**Total Migrations:** 29  
+**Total Migrations:** 29
 
 ---
 
@@ -23,6 +24,7 @@
 This directory contains all database schema migrations for BilanCompetence.AI. Migrations are numbered sequentially (001, 002, 003, etc.) and should be run in order.
 
 **Database Schema Includes:**
+
 - 43 tables
 - 100+ indexes
 - Row Level Security (RLS) policies
@@ -35,62 +37,62 @@ This directory contains all database schema migrations for BilanCompetence.AI. M
 
 ### Core Schema (001-007)
 
-| Migration | Description | Tables Created | Status |
-|-----------|-------------|----------------|--------|
-| **001** | Initial schema | users, organizations, bilans, competencies, recommendations, documents, messages, sessions, audit_logs | ✅ Applied |
-| **002** | Security & standardization | - (indexes, RLS, constraints) | ✅ Applied |
-| **003** | Add cv_url to users | - (column addition) | ✅ Applied |
-| **004** | Add cv_uploaded_at | - (column addition) | ✅ Applied |
-| **005** | Assessment competencies | assessment_competencies | ✅ Applied |
-| **006** | Assessment drafts | assessment_drafts | ✅ Applied |
-| **007** | Seed assessment questions | - (seed data) | ✅ Applied |
+| Migration | Description                | Tables Created                                                                                         | Status     |
+| --------- | -------------------------- | ------------------------------------------------------------------------------------------------------ | ---------- |
+| **001**   | Initial schema             | users, organizations, bilans, competencies, recommendations, documents, messages, sessions, audit_logs | ✅ Applied |
+| **002**   | Security & standardization | - (indexes, RLS, constraints)                                                                          | ✅ Applied |
+| **003**   | Add cv_url to users        | - (column addition)                                                                                    | ✅ Applied |
+| **004**   | Add cv_uploaded_at         | - (column addition)                                                                                    | ✅ Applied |
+| **005**   | Assessment competencies    | assessment_competencies                                                                                | ✅ Applied |
+| **006**   | Assessment drafts          | assessment_drafts                                                                                      | ✅ Applied |
+| **007**   | Seed assessment questions  | - (seed data)                                                                                          | ✅ Applied |
 
 ### Qualiopi Compliance (008-013)
 
-| Migration | Description | Tables Created | Status |
-|-----------|-------------|----------------|--------|
-| **008** | Qualiopi indicators | qualiopi_indicators | ✅ Applied |
-| **009** | Organization Qualiopi status | organization_qualiopi_status | ✅ Applied |
-| **010** | Qualiopi evidence | qualiopi_evidence | ✅ Applied |
-| **011** | Satisfaction surveys | satisfaction_surveys, survey_responses | ✅ Applied |
-| **012** | Document archive | document_archive, document_access_log | ✅ Applied |
-| **013** | Qualiopi audit log | qualiopi_audit_log | ✅ Applied |
+| Migration | Description                  | Tables Created                         | Status     |
+| --------- | ---------------------------- | -------------------------------------- | ---------- |
+| **008**   | Qualiopi indicators          | qualiopi_indicators                    | ✅ Applied |
+| **009**   | Organization Qualiopi status | organization_qualiopi_status           | ✅ Applied |
+| **010**   | Qualiopi evidence            | qualiopi_evidence                      | ✅ Applied |
+| **011**   | Satisfaction surveys         | satisfaction_surveys, survey_responses | ✅ Applied |
+| **012**   | Document archive             | document_archive, document_access_log  | ✅ Applied |
+| **013**   | Qualiopi audit log           | qualiopi_audit_log                     | ✅ Applied |
 
 ### Scheduling System (014-017)
 
-| Migration | Description | Tables Created | Status |
-|-----------|-------------|----------------|--------|
-| **014** | Availability slots | availability_slots | ✅ Applied |
-| **015** | Session bookings | session_bookings | ✅ Applied |
-| **016** | Session reminders | session_reminders | ✅ Applied |
-| **017** | Session analytics | session_analytics | ✅ Applied |
+| Migration | Description        | Tables Created     | Status     |
+| --------- | ------------------ | ------------------ | ---------- |
+| **014**   | Availability slots | availability_slots | ✅ Applied |
+| **015**   | Session bookings   | session_bookings   | ✅ Applied |
+| **016**   | Session reminders  | session_reminders  | ✅ Applied |
+| **017**   | Session analytics  | session_analytics  | ✅ Applied |
 
 ### Assessments & AI (018-022)
 
-| Migration | Description | Tables Created | Status |
-|-----------|-------------|----------------|--------|
-| **018** | Assessments table | assessments, assessment_questions, assessment_answers | ✅ Applied |
-| **019** | Update foreign keys | - (FK updates) | ✅ Applied |
-| **020** | AI tables | cv_analyses, job_recommendations, personality_analyses, action_plans, files, consultant_analytics | ✅ Applied |
-| **021** | Seed MBTI questions | mbti_questions (seed data) | ✅ Applied |
-| **022** | Seed RIASEC questions | riasec_questions (seed data) | ✅ Applied |
+| Migration | Description           | Tables Created                                                                                    | Status     |
+| --------- | --------------------- | ------------------------------------------------------------------------------------------------- | ---------- |
+| **018**   | Assessments table     | assessments, assessment_questions, assessment_answers                                             | ✅ Applied |
+| **019**   | Update foreign keys   | - (FK updates)                                                                                    | ✅ Applied |
+| **020**   | AI tables             | cv_analyses, job_recommendations, personality_analyses, action_plans, files, consultant_analytics | ✅ Applied |
+| **021**   | Seed MBTI questions   | mbti_questions (seed data)                                                                        | ✅ Applied |
+| **022**   | Seed RIASEC questions | riasec_questions (seed data)                                                                      | ✅ Applied |
 
 ### Fixes & Enhancements (023-028)
 
-| Migration | Description | Tables Created | Status |
-|-----------|-------------|----------------|--------|
-| **023** | Add CV columns to users | - (column additions) | ✅ Applied |
-| **024** | Fix assessments RLS | - (RLS policies) | ✅ Applied |
-| **025** | Fix cv_analyses trigger | - (trigger fix) | ✅ Applied |
-| **026** | Add verification token | - (column addition) | ✅ Applied |
-| **027** | Auth flow tokens | email_verification_tokens, password_reset_tokens, auth_sessions, user_preferences | ✅ Applied |
-| **028** | Files & scheduling | conversations (+ updates to existing tables) | ✅ Applied |
+| Migration | Description             | Tables Created                                                                    | Status     |
+| --------- | ----------------------- | --------------------------------------------------------------------------------- | ---------- |
+| **023**   | Add CV columns to users | - (column additions)                                                              | ✅ Applied |
+| **024**   | Fix assessments RLS     | - (RLS policies)                                                                  | ✅ Applied |
+| **025**   | Fix cv_analyses trigger | - (trigger fix)                                                                   | ✅ Applied |
+| **026**   | Add verification token  | - (column addition)                                                               | ✅ Applied |
+| **027**   | Auth flow tokens        | email_verification_tokens, password_reset_tokens, auth_sessions, user_preferences | ✅ Applied |
+| **028**   | Files & scheduling      | conversations (+ updates to existing tables)                                      | ✅ Applied |
 
 ### Migration Tracking (029)
 
-| Migration | Description | Tables Created | Status |
-|-----------|-------------|----------------|--------|
-| **029** | Migration tracking system | schema_migrations | ✅ Applied |
+| Migration | Description               | Tables Created    | Status     |
+| --------- | ------------------------- | ----------------- | ---------- |
+| **029**   | Migration tracking system | schema_migrations | ✅ Applied |
 
 ---
 
@@ -99,6 +101,7 @@ This directory contains all database schema migrations for BilanCompetence.AI. M
 ### Prerequisites
 
 1. **Database Connection:**
+
    ```bash
    export DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
    ```
@@ -146,26 +149,29 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 async function runMigration(version, filename) {
   const sql = readFileSync(join(__dirname, filename), 'utf8');
-  
+
   try {
     const start = Date.now();
     await pool.query(sql);
     const executionTime = Date.now() - start;
-    
+
     // Record migration
-    await pool.query(
-      `SELECT record_migration($1, $2, NULL, $3, $4)`,
-      [version, filename, 'system', executionTime]
-    );
-    
+    await pool.query(`SELECT record_migration($1, $2, NULL, $3, $4)`, [
+      version,
+      filename,
+      'system',
+      executionTime,
+    ]);
+
     console.log(`✅ Migration ${version} applied (${executionTime}ms)`);
   } catch (error) {
     // Record failure
-    await pool.query(
-      `SELECT record_migration_failure($1, $2, $3)`,
-      [version, filename, error.message]
-    );
-    
+    await pool.query(`SELECT record_migration_failure($1, $2, $3)`, [
+      version,
+      filename,
+      error.message,
+    ]);
+
     console.error(`❌ Migration ${version} failed:`, error.message);
     throw error;
   }
@@ -222,6 +228,7 @@ SELECT * FROM schema_migrations WHERE success = FALSE;
 ### General Rollback Approach
 
 1. **Backup First:**
+
    ```bash
    pg_dump $DATABASE_URL > backup_$(date +%Y%m%d_%H%M%S).sql
    ```
@@ -231,12 +238,13 @@ SELECT * FROM schema_migrations WHERE success = FALSE;
    - Example: `001_create_schema_rollback.sql`
 
 3. **Rollback Template:**
+
    ```sql
    -- Rollback for Migration 001
    DROP TABLE IF EXISTS users CASCADE;
    DROP TABLE IF EXISTS organizations CASCADE;
    -- ... drop all tables created in 001
-   
+
    -- Remove from migration tracking
    DELETE FROM schema_migrations WHERE version = '001';
    ```
@@ -244,6 +252,7 @@ SELECT * FROM schema_migrations WHERE success = FALSE;
 ### Rollback Examples
 
 #### Rollback Column Addition (003, 004, 023, 026)
+
 ```sql
 -- Rollback 003: Remove cv_url column
 ALTER TABLE users DROP COLUMN IF EXISTS cv_url;
@@ -251,6 +260,7 @@ DELETE FROM schema_migrations WHERE version = '003';
 ```
 
 #### Rollback Table Creation (005, 006, 008-020, 027-029)
+
 ```sql
 -- Rollback 029: Remove migration tracking
 DROP TABLE IF EXISTS schema_migrations CASCADE;
@@ -304,7 +314,7 @@ COMMIT;
 
 ```sql
 -- Check table exists
-SELECT table_name FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public' AND table_name = 'new_table';
 
 -- Check indexes
@@ -317,6 +327,7 @@ SELECT * FROM pg_policies WHERE tablename = 'new_table';
 ### 5. Document Breaking Changes
 
 If a migration contains breaking changes:
+
 - Update this document
 - Notify team members
 - Update application code before deploying migration
@@ -339,7 +350,7 @@ Some migrations depend on others. Run in order:
 
 **Qualiopi chain:** 008 → 009 → 010 → 011 → 012 → 013  
 **Scheduling chain:** 014 → 015 → 016 → 017  
-**Fixes chain:** 023 → 024 → 025 → 026  
+**Fixes chain:** 023 → 024 → 025 → 026
 
 ---
 
@@ -349,7 +360,7 @@ Some migrations depend on others. Run in order:
 
 ```sql
 -- Check if table exists
-SELECT table_name FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public' AND table_name = 'your_table';
 
 -- If exists, migration may have already been applied
@@ -379,7 +390,7 @@ CREATE POLICY policy_name ON table_name ...;
 **Total Indexes:** 100+  
 **RLS Enabled:** 15 tables  
 **Triggers:** 20+  
-**Functions:** 15+  
+**Functions:** 15+
 
 ### Table Categories
 
@@ -399,6 +410,7 @@ CREATE POLICY policy_name ON table_name ...;
 ## Support
 
 For migration issues or questions:
+
 - Check migration tracking: `SELECT * FROM schema_migrations;`
 - Review error logs: `SELECT * FROM schema_migrations WHERE success = FALSE;`
 - Consult database audit report: `/MANUS/REPORTS/etap3-database-schema-audit.md`
@@ -408,4 +420,3 @@ For migration issues or questions:
 **Document Version:** 1.0.0  
 **Last Updated:** 2025-10-27  
 **Maintained By:** BilanCompetence.AI Team
-

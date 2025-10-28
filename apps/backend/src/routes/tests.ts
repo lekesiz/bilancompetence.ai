@@ -50,7 +50,6 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
     const tests = await getTestResults(assessmentId, userId);
 
     res.json({ tests });
-
   } catch (error) {
     console.error('Error fetching tests:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -82,17 +81,16 @@ router.post('/:assessmentId/mbti', authenticateToken, async (req: Request, res: 
       {
         type: mbtiType,
         description,
-        answers
+        answers,
       },
       userId
     );
 
-    res.json({ 
+    res.json({
       test,
       mbti_type: mbtiType,
-      description
+      description,
     });
-
   } catch (error) {
     console.error('Error saving MBTI test:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -124,17 +122,16 @@ router.post('/:assessmentId/riasec', authenticateToken, async (req: Request, res
       {
         scores,
         top_three: topThree,
-        answers
+        answers,
       },
       userId
     );
 
-    res.json({ 
+    res.json({
       test,
       scores,
-      top_three: topThree
+      top_three: topThree,
     });
-
   } catch (error) {
     console.error('Error saving RIASEC test:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -145,34 +142,37 @@ router.post('/:assessmentId/riasec', authenticateToken, async (req: Request, res
  * POST /api/tests/:assessmentId/competences
  * Submit competences test results
  */
-router.post('/:assessmentId/competences', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
-    const { competences } = req.body;
-    const userId = (req as any).user.userId;
+router.post(
+  '/:assessmentId/competences',
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
+      const { competences } = req.body;
+      const userId = (req as any).user.userId;
 
-    if (!competences || !Array.isArray(competences)) {
-      return res.status(400).json({ error: 'Invalid competences format' });
+      if (!competences || !Array.isArray(competences)) {
+        return res.status(400).json({ error: 'Invalid competences format' });
+      }
+
+      // Save test result
+      const test = await saveTestResult(
+        assessmentId,
+        'competences',
+        {
+          competences,
+          top_competences: competences.filter((c: any) => c.level >= 4),
+        },
+        userId
+      );
+
+      res.json({ test });
+    } catch (error) {
+      console.error('Error saving competences test:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-
-    // Save test result
-    const test = await saveTestResult(
-      assessmentId,
-      'competences',
-      {
-        competences,
-        top_competences: competences.filter((c: any) => c.level >= 4)
-      },
-      userId
-    );
-
-    res.json({ test });
-
-  } catch (error) {
-    console.error('Error saving competences test:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
-});
+);
 
 /**
  * POST /api/tests/:assessmentId/valeurs
@@ -194,13 +194,12 @@ router.post('/:assessmentId/valeurs', authenticateToken, async (req: Request, re
       'valeurs',
       {
         valeurs,
-        top_valeurs: valeurs.slice(0, 5) // Top 5 values
+        top_valeurs: valeurs.slice(0, 5), // Top 5 values
       },
       userId
     );
 
     res.json({ test });
-
   } catch (error) {
     console.error('Error saving valeurs test:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -215,20 +214,20 @@ function calculateMBTI(answers: any[]): string {
     EI: 0, // Extraversion vs Introversion
     SN: 0, // Sensing vs Intuition
     TF: 0, // Thinking vs Feeling
-    JP: 0  // Judging vs Perceiving
+    JP: 0, // Judging vs Perceiving
   };
 
   answers.forEach((answer, index) => {
     const dimension = Math.floor(index / 10);
     const value = answer.value || 0;
-    
+
     if (dimension === 0) dimensions.EI += value;
     else if (dimension === 1) dimensions.SN += value;
     else if (dimension === 2) dimensions.TF += value;
     else if (dimension === 3) dimensions.JP += value;
   });
 
-  const type = 
+  const type =
     (dimensions.EI > 0 ? 'E' : 'I') +
     (dimensions.SN > 0 ? 'N' : 'S') +
     (dimensions.TF > 0 ? 'T' : 'F') +
@@ -239,22 +238,22 @@ function calculateMBTI(answers: any[]): string {
 
 function getMBTIDescription(type: string): string {
   const descriptions: { [key: string]: string } = {
-    'INTJ': 'Architecte - Penseur stratégique avec soif de connaissance',
-    'INTP': 'Logicien - Innovateur avec une soif de connaissance',
-    'ENTJ': 'Commandant - Leader audacieux et imaginatif',
-    'ENTP': 'Innovateur - Penseur curieux qui relève les défis intellectuels',
-    'INFJ': 'Avocat - Idéaliste calme et mystique',
-    'INFP': 'Médiateur - Poétique, gentil et altruiste',
-    'ENFJ': 'Protagoniste - Leader charismatique et inspirant',
-    'ENFP': 'Inspirateur - Enthousiaste, créatif et sociable',
-    'ISTJ': 'Logisticien - Pratique et factuel',
-    'ISFJ': 'Défenseur - Protecteur dévoué et chaleureux',
-    'ESTJ': 'Directeur - Excellent administrateur',
-    'ESFJ': 'Consul - Attentionné, sociable et populaire',
-    'ISTP': 'Virtuose - Expérimentateur audacieux et pratique',
-    'ISFP': 'Aventurier - Artiste flexible et charmant',
-    'ESTP': 'Entrepreneur - Énergique et perceptif',
-    'ESFP': 'Amuseur - Spontané, énergique et enthousiaste'
+    INTJ: 'Architecte - Penseur stratégique avec soif de connaissance',
+    INTP: 'Logicien - Innovateur avec une soif de connaissance',
+    ENTJ: 'Commandant - Leader audacieux et imaginatif',
+    ENTP: 'Innovateur - Penseur curieux qui relève les défis intellectuels',
+    INFJ: 'Avocat - Idéaliste calme et mystique',
+    INFP: 'Médiateur - Poétique, gentil et altruiste',
+    ENFJ: 'Protagoniste - Leader charismatique et inspirant',
+    ENFP: 'Inspirateur - Enthousiaste, créatif et sociable',
+    ISTJ: 'Logisticien - Pratique et factuel',
+    ISFJ: 'Défenseur - Protecteur dévoué et chaleureux',
+    ESTJ: 'Directeur - Excellent administrateur',
+    ESFJ: 'Consul - Attentionné, sociable et populaire',
+    ISTP: 'Virtuose - Expérimentateur audacieux et pratique',
+    ISFP: 'Aventurier - Artiste flexible et charmant',
+    ESTP: 'Entrepreneur - Énergique et perceptif',
+    ESFP: 'Amuseur - Spontané, énergique et enthousiaste',
   };
 
   return descriptions[type] || 'Type de personnalité unique';
@@ -267,7 +266,7 @@ function calculateRIASEC(answers: any[]): any {
     A: 0, // Artistique
     S: 0, // Social
     E: 0, // Entreprenant
-    C: 0  // Conventionnel
+    C: 0, // Conventionnel
   };
 
   answers.forEach((answer, index) => {
@@ -285,13 +284,10 @@ function getTopThreeRIASEC(scores: any): any[] {
     { code: 'A', name: 'Artistique', score: scores.A },
     { code: 'S', name: 'Social', score: scores.S },
     { code: 'E', name: 'Entreprenant', score: scores.E },
-    { code: 'C', name: 'Conventionnel', score: scores.C }
+    { code: 'C', name: 'Conventionnel', score: scores.C },
   ];
 
-  return types
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+  return types.sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
 export default router;
-

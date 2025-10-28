@@ -1,6 +1,11 @@
 import { Parser } from 'json2csv';
 import { supabase } from './supabaseService.js';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -71,7 +76,15 @@ export async function exportRecommendationsToCSV(userId: string): Promise<string
       return 'No recommendations to export';
     }
 
-    const fields = ['id', 'title', 'description', 'status', 'action_items', 'created_at', 'updated_at'];
+    const fields = [
+      'id',
+      'title',
+      'description',
+      'status',
+      'action_items',
+      'created_at',
+      'updated_at',
+    ];
 
     const parser = new Parser({ fields });
     const csv = parser.parse(recommendations);
@@ -206,7 +219,14 @@ export async function exportAssessmentResultsToCSV(assessmentId: string): Promis
       };
     });
 
-    const fields = ['question_id', 'question', 'question_type', 'category', 'answer', 'answered_at'];
+    const fields = [
+      'question_id',
+      'question',
+      'question_type',
+      'category',
+      'answer',
+      'answered_at',
+    ];
 
     const parser = new Parser({ fields });
     const csv = parser.parse(results);

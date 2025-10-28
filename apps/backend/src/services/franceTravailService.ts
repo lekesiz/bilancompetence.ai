@@ -145,56 +145,56 @@ interface ApiErrorResponse {
  */
 const COMPETENCY_TO_ROME_MAP: Record<string, string[]> = {
   // Technical skills
-  'Java': ['E1101', 'E1102', 'C1501'],
-  'Python': ['E1101', 'E1102', 'E1103'],
-  'JavaScript': ['E1101', 'E1102', 'C1501'],
-  'TypeScript': ['E1101', 'E1102', 'C1501'],
+  Java: ['E1101', 'E1102', 'C1501'],
+  Python: ['E1101', 'E1102', 'E1103'],
+  JavaScript: ['E1101', 'E1102', 'C1501'],
+  TypeScript: ['E1101', 'E1102', 'C1501'],
   'Spring Boot': ['E1101', 'E1102'],
-  'React': ['E1101', 'E1102'],
-  'Angular': ['E1101', 'E1102'],
+  React: ['E1101', 'E1102'],
+  Angular: ['E1101', 'E1102'],
   'Vue.js': ['E1101', 'E1102'],
-  'Docker': ['E1101', 'E1102', 'E1104'],
-  'Kubernetes': ['E1101', 'E1104'],
-  'AWS': ['E1101', 'E1104'],
-  'Azure': ['E1101', 'E1104'],
+  Docker: ['E1101', 'E1102', 'E1104'],
+  Kubernetes: ['E1101', 'E1104'],
+  AWS: ['E1101', 'E1104'],
+  Azure: ['E1101', 'E1104'],
   'Google Cloud': ['E1101', 'E1104'],
-  'Microservices': ['E1101', 'E1102', 'E1104'],
+  Microservices: ['E1101', 'E1102', 'E1104'],
   'REST API': ['E1101', 'E1102'],
-  'GraphQL': ['E1101', 'E1102'],
-  'SQL': ['E1104', 'E1103'],
-  'NoSQL': ['E1104', 'E1103'],
-  'MongoDB': ['E1104', 'E1103'],
-  'PostgreSQL': ['E1104', 'E1103'],
+  GraphQL: ['E1101', 'E1102'],
+  SQL: ['E1104', 'E1103'],
+  NoSQL: ['E1104', 'E1103'],
+  MongoDB: ['E1104', 'E1103'],
+  PostgreSQL: ['E1104', 'E1103'],
 
   // Professional skills
   'Project Management': ['E1106', 'M1101', 'M1102'],
-  'Agile': ['E1106', 'M1101'],
-  'Scrum': ['E1106', 'M1101'],
-  'Leadership': ['M1101', 'M1102', 'E1108'],
+  Agile: ['E1106', 'M1101'],
+  Scrum: ['E1106', 'M1101'],
+  Leadership: ['M1101', 'M1102', 'E1108'],
   'Team Management': ['M1101', 'M1102'],
-  'Communication': ['M1202', 'M1203'],
-  'Presentation': ['M1202', 'M1203'],
+  Communication: ['M1202', 'M1203'],
+  Presentation: ['M1202', 'M1203'],
 
   // Domain skills
-  'Sales': ['C1503', 'C1504', 'C1505'],
-  'Marketing': ['M1507', 'M1402'],
-  'Finance': ['M1601', 'M1602'],
-  'HR': ['K1601', 'K1602'],
+  Sales: ['C1503', 'C1504', 'C1505'],
+  Marketing: ['M1507', 'M1402'],
+  Finance: ['M1601', 'M1602'],
+  HR: ['K1601', 'K1602'],
   'Business Analysis': ['M1403', 'E1106'],
   'Data Analysis': ['E1101', 'E1104', 'M1501'],
   'Machine Learning': ['E1101', 'E1104', 'E1103'],
-  'AI': ['E1101', 'E1104', 'E1103'],
-  'DevOps': ['E1101', 'E1104'],
+  AI: ['E1101', 'E1104', 'E1103'],
+  DevOps: ['E1101', 'E1104'],
   'System Administration': ['E1104', 'E1107'],
   'Network Administration': ['E1104', 'E1107'],
-  'Security': ['E1101', 'E1107'],
-  'Cybersecurity': ['E1107', 'E1101'],
+  Security: ['E1101', 'E1107'],
+  Cybersecurity: ['E1107', 'E1101'],
 
   // Languages
-  'French': ['K1202', 'K2406'],
-  'English': ['K1202', 'K2406'],
-  'German': ['K1202', 'K2406'],
-  'Spanish': ['K1202', 'K2406'],
+  French: ['K1202', 'K2406'],
+  English: ['K1202', 'K2406'],
+  German: ['K1202', 'K2406'],
+  Spanish: ['K1202', 'K2406'],
 };
 
 // ============================================================================
@@ -273,11 +273,11 @@ class FranceTravailService {
         throw new Error(`France Travail authentication failed: ${response.statusText}`);
       }
 
-      const data = await response.json() as TokenResponse;
+      const data = (await response.json()) as TokenResponse;
 
       // Cache the token
       this.accessToken = data.access_token;
-      this.tokenExpiryTime = Date.now() + (data.expires_in * 1000) - 60000; // Refresh 1 min before expiry
+      this.tokenExpiryTime = Date.now() + data.expires_in * 1000 - 60000; // Refresh 1 min before expiry
 
       logger.debug('France Travail access token refreshed successfully');
       return data.access_token;
@@ -341,8 +341,8 @@ class FranceTravailService {
         return await fetch(`${this.baseUrl}/offres/search?${params}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
       });
@@ -388,8 +388,8 @@ class FranceTravailService {
         return await fetch(`${this.baseUrl}/offres/search?${params}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
       });
@@ -430,8 +430,8 @@ class FranceTravailService {
         return await fetch(`${this.baseUrl}/referentiel/codeROME/${code}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
       });
@@ -472,8 +472,8 @@ class FranceTravailService {
         return await fetch(`${this.baseUrl}/referentiel/codeROME/search?${params}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
           },
         });
       });
@@ -560,9 +560,7 @@ class FranceTravailService {
    * @param userCompetencies User competency profiles
    * @returns Ranked ROME code matches
    */
-  async findMatchingRomeCodes(
-    userCompetencies: CompetencyProfile[]
-  ): Promise<RomeCodeMatch[]> {
+  async findMatchingRomeCodes(userCompetencies: CompetencyProfile[]): Promise<RomeCodeMatch[]> {
     try {
       const romeScores = new Map<string, number>();
 
@@ -621,9 +619,10 @@ class FranceTravailService {
 
     let matchedCount = 0;
     for (const required of jobRequiredSkills) {
-      const hasSkill = userSkills.some(skill =>
-        skill.toLowerCase() === required.toLowerCase() ||
-        this.stringSimilarity(skill, required) > 0.7
+      const hasSkill = userSkills.some(
+        (skill) =>
+          skill.toLowerCase() === required.toLowerCase() ||
+          this.stringSimilarity(skill, required) > 0.7
       );
       if (hasSkill) matchedCount++;
     }
@@ -637,24 +636,22 @@ class FranceTravailService {
    * @param jobs Jobs to score
    * @returns Scored jobs sorted by match
    */
-  async scoreJobMatches(
-    userId: string,
-    jobs: JobPosting[]
-  ): Promise<ScoredJob[]> {
+  async scoreJobMatches(userId: string, jobs: JobPosting[]): Promise<ScoredJob[]> {
     try {
       // Get user's assessment and competencies
       const userCompetencies = await this.getUserCompetencies(userId);
-      const userSkillNames = userCompetencies.map(c => c.name);
+      const userSkillNames = userCompetencies.map((c) => c.name);
 
       const scoredJobs: ScoredJob[] = [];
 
       for (const job of jobs) {
         const matchScore = this.calculateSkillMatch(userSkillNames, job.competences);
-        const matchedCompetencies = userSkillNames.filter(skill =>
-          job.competences.some(req => this.stringSimilarity(skill, req) > 0.7)
+        const matchedCompetencies = userSkillNames.filter((skill) =>
+          job.competences.some((req) => this.stringSimilarity(skill, req) > 0.7)
         );
-        const missingCompetencies = job.competences.filter(required =>
-          !matchedCompetencies.some(skill => this.stringSimilarity(skill, required) > 0.7)
+        const missingCompetencies = job.competences.filter(
+          (required) =>
+            !matchedCompetencies.some((skill) => this.stringSimilarity(skill, required) > 0.7)
         );
 
         const salaryMatch = this.calculateSalaryMatch(job.salaireMois);
@@ -725,9 +722,9 @@ class FranceTravailService {
    * Calculate Levenshtein distance between two strings
    */
   private levenshteinDistance(str1: string, str2: string): number {
-    const track = Array(str2.length + 1).fill(null).map(() =>
-      Array(str1.length + 1).fill(null)
-    );
+    const track = Array(str2.length + 1)
+      .fill(null)
+      .map(() => Array(str1.length + 1).fill(null));
 
     for (let i = 0; i <= str1.length; i += 1) {
       track[0][i] = i;
@@ -753,7 +750,9 @@ class FranceTravailService {
   /**
    * Find fuzzy matching competencies
    */
-  private findFuzzyCompetencyMatches(competency: string): Array<{ competency: string; similarity: number }> {
+  private findFuzzyCompetencyMatches(
+    competency: string
+  ): Array<{ competency: string; similarity: number }> {
     const matches: Array<{ competency: string; similarity: number }> = [];
 
     for (const mapped of Object.keys(COMPETENCY_TO_ROME_MAP)) {
@@ -800,13 +799,14 @@ class FranceTravailService {
     userCompetencies: CompetencyProfile[],
     romeDetails: RomeCodeDetails
   ): string[] {
-    const userSkills = userCompetencies.map(c => c.name.toLowerCase());
+    const userSkills = userCompetencies.map((c) => c.name.toLowerCase());
     const gap: string[] = [];
 
     for (const requiredSkill of romeDetails.competences) {
-      const hasSkill = userSkills.some(skill =>
-        skill === requiredSkill.toLowerCase() ||
-        this.stringSimilarity(skill, requiredSkill.toLowerCase()) > 0.7
+      const hasSkill = userSkills.some(
+        (skill) =>
+          skill === requiredSkill.toLowerCase() ||
+          this.stringSimilarity(skill, requiredSkill.toLowerCase()) > 0.7
       );
 
       if (!hasSkill) {
@@ -848,7 +848,7 @@ class FranceTravailService {
       } catch (error) {
         lastError = error;
         if (attempt < maxRetries - 1) {
-          await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempt)));
+          await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, attempt)));
         }
       }
     }
@@ -1000,14 +1000,18 @@ class FranceTravailService {
     matchedCompetencies: string[]
   ): Promise<string> {
     try {
-      const { data, error } = await supabase.from('job_recommendations').insert({
-        user_id: userId,
-        assessment_id: assessmentId,
-        job_id: jobId,
-        france_travail_job_data: jobData,
-        match_score: matchScore,
-        matched_competencies: matchedCompetencies,
-      }).select('id').single();
+      const { data, error } = await supabase
+        .from('job_recommendations')
+        .insert({
+          user_id: userId,
+          assessment_id: assessmentId,
+          job_id: jobId,
+          france_travail_job_data: jobData,
+          match_score: matchScore,
+          matched_competencies: matchedCompetencies,
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
@@ -1028,12 +1032,16 @@ class FranceTravailService {
     notes?: string
   ): Promise<string> {
     try {
-      const { data, error } = await supabase.from('saved_jobs').insert({
-        user_id: userId,
-        france_travail_job_id: jobId,
-        job_data: jobData,
-        notes,
-      }).select('id').single();
+      const { data, error } = await supabase
+        .from('saved_jobs')
+        .insert({
+          user_id: userId,
+          france_travail_job_id: jobId,
+          job_data: jobData,
+          notes,
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 

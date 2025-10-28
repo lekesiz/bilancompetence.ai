@@ -1,6 +1,6 @@
 /**
  * Test Server Utilities
- * 
+ *
  * Provides utilities for starting/stopping Express server for integration tests
  */
 
@@ -34,10 +34,12 @@ export function createTestApp(): Express {
 
   // Middleware
   app.use(helmet());
-  app.use(cors({
-    origin: true, // Allow all origins in test
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      origin: true, // Allow all origins in test
+      credentials: true,
+    })
+  );
   app.use(morgan('dev'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -179,4 +181,3 @@ export async function teardownTestServer(): Promise<void> {
   const server = getGlobalTestServer();
   await server.stop();
 }
-

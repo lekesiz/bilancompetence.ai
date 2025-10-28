@@ -11,7 +11,7 @@ if (!DATABASE_URL) {
 export const pool = new Pool({
   connectionString: DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
   },
   max: 20, // Maximum de connexions dans le pool
   idleTimeoutMillis: 30000,
@@ -34,24 +34,18 @@ export async function withUserContext<T>(
   queryFn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
   const client = await pool.connect();
-  
+
   try {
     // Définir l'user_id dans la session pour RLS
-    await client.query('SELECT set_config($1, $2, true)', [
-      'app.current_user_id',
-      userId
-    ]);
-    
+    await client.query('SELECT set_config($1, $2, true)', ['app.current_user_id', userId]);
+
     // Exécuter la fonction de requête
     const result = await queryFn(client);
-    
+
     return result;
   } finally {
     // Nettoyer la session et libérer le client
-    await client.query('SELECT set_config($1, $2, true)', [
-      'app.current_user_id',
-      ''
-    ]);
+    await client.query('SELECT set_config($1, $2, true)', ['app.current_user_id', '']);
     client.release();
   }
 }
@@ -64,7 +58,7 @@ export async function withoutUserContext<T>(
   queryFn: (client: PoolClient) => Promise<T>
 ): Promise<T> {
   const client = await pool.connect();
-  
+
   try {
     const result = await queryFn(client);
     return result;
@@ -168,4 +162,3 @@ export async function closePool(): Promise<void> {
 checkConnection();
 
 export default pool;
-

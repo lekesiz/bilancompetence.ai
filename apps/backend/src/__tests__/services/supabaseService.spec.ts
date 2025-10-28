@@ -302,7 +302,13 @@ describe('SupabaseService', () => {
       });
 
       it('should handle status filtering', () => {
-        const validStatuses = ['PRELIMINARY', 'INVESTIGATION', 'CONCLUSION', 'COMPLETED', 'ARCHIVED'];
+        const validStatuses = [
+          'PRELIMINARY',
+          'INVESTIGATION',
+          'CONCLUSION',
+          'COMPLETED',
+          'ARCHIVED',
+        ];
         const testStatus = 'COMPLETED';
 
         expect(validStatuses).toContain(testStatus);

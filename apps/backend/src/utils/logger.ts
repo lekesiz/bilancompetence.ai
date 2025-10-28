@@ -191,7 +191,11 @@ export const log = {
   /**
    * Log security event
    */
-  security: (event: string, severity: 'low' | 'medium' | 'high' | 'critical', context?: LogContext) => {
+  security: (
+    event: string,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    context?: LogContext
+  ) => {
     const level = severity === 'critical' ? 'error' : severity === 'high' ? 'warn' : 'info';
     logger.log(level, `SECURITY ${event}`, {
       event,
@@ -218,7 +222,8 @@ export const log = {
  */
 export function loggerMiddleware(req: any, res: any, next: any) {
   // Generate or get request ID
-  const requestId = req.headers['x-request-id'] || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const requestId =
+    req.headers['x-request-id'] || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   req.requestId = requestId;
 
   // Log request start

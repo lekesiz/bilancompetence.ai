@@ -80,11 +80,9 @@ export async function createMessage(
   content: string
 ): Promise<Message> {
   // Update conversation updated_at
-  await query(
-    senderId,
-    `UPDATE conversations SET updated_at = NOW() WHERE id = $1`,
-    [conversationId]
-  );
+  await query(senderId, `UPDATE conversations SET updated_at = NOW() WHERE id = $1`, [
+    conversationId,
+  ]);
 
   const result = await query<Message>(
     senderId,
@@ -168,10 +166,7 @@ export async function markConversationAsRead(
 /**
  * Delete conversation (soft delete)
  */
-export async function deleteConversation(
-  conversationId: string,
-  userId: string
-): Promise<boolean> {
+export async function deleteConversation(conversationId: string, userId: string): Promise<boolean> {
   // First delete all messages
   await query(
     userId,
@@ -203,10 +198,7 @@ export async function deleteConversation(
 /**
  * Delete message
  */
-export async function deleteMessage(
-  messageId: string,
-  userId: string
-): Promise<boolean> {
+export async function deleteMessage(messageId: string, userId: string): Promise<boolean> {
   const result = await query<{ id: string }>(
     userId,
     `DELETE FROM messages m
@@ -225,4 +217,3 @@ export async function deleteMessage(
   }
   return deleted;
 }
-

@@ -1,5 +1,11 @@
 import { supabase } from './supabaseService.js';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -34,7 +40,9 @@ export async function createNotification(
 
     const validTypes = ['assessment', 'recommendation', 'message', 'system'];
     if (!validTypes.includes(type)) {
-      throw new ValidationError(`Invalid notification type. Must be one of: ${validTypes.join(', ')}`);
+      throw new ValidationError(
+        `Invalid notification type. Must be one of: ${validTypes.join(', ')}`
+      );
     }
 
     const { data: notification, error } = await supabase
@@ -172,10 +180,7 @@ export async function deleteNotification(notificationId: string) {
   try {
     validateRequired({ notificationId }, ['notificationId']);
 
-    const { error } = await supabase
-      .from('notifications')
-      .delete()
-      .eq('id', notificationId);
+    const { error } = await supabase.from('notifications').delete().eq('id', notificationId);
 
     if (error) {
       throw new DatabaseError('Failed to delete notification', error);
@@ -274,17 +279,22 @@ export async function notifyRecommendationCreated(userId: string, title: string)
 /**
  * Send message notification
  */
-export async function notifyNewMessage(recipientId: string, senderName: string, messagePreview: string) {
+export async function notifyNewMessage(
+  recipientId: string,
+  senderName: string,
+  messagePreview: string
+) {
   try {
-    validateRequired({ recipientId, senderName, messagePreview }, ['recipientId', 'senderName', 'messagePreview']);
+    validateRequired({ recipientId, senderName, messagePreview }, [
+      'recipientId',
+      'senderName',
+      'messagePreview',
+    ]);
 
-    await createNotification(
-      recipientId,
-      'message',
-      `Message from ${senderName}`,
-      messagePreview,
-      { type: 'new_message', sender_name: senderName }
-    );
+    await createNotification(recipientId, 'message', `Message from ${senderName}`, messagePreview, {
+      type: 'new_message',
+      sender_name: senderName,
+    });
 
     logger.info('Message notification sent', { recipientId, senderName });
   } catch (error) {
@@ -299,13 +309,7 @@ export async function notifySystem(userId: string, title: string, message: strin
   try {
     validateRequired({ userId, title, message }, ['userId', 'title', 'message']);
 
-    await createNotification(
-      userId,
-      'system',
-      title,
-      message,
-      { type: 'system' }
-    );
+    await createNotification(userId, 'system', title, message, { type: 'system' });
 
     logger.info('System notification sent', { userId });
   } catch (error) {

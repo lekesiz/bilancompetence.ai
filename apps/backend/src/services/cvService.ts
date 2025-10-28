@@ -181,11 +181,7 @@ export async function deleteCv(userId: string): Promise<void> {
  */
 export async function getUserCv(userId: string): Promise<string | null> {
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('cv_url')
-      .eq('id', userId)
-      .single();
+    const { data, error } = await supabase.from('users').select('cv_url').eq('id', userId).single();
 
     if (error) {
       console.error('Failed to fetch CV:', error);
@@ -198,4 +194,3 @@ export async function getUserCv(userId: string): Promise<string | null> {
     return null;
   }
 }
-

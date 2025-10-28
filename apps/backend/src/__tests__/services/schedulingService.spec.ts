@@ -25,9 +25,10 @@ jest.mock('../../services/supabaseService.js', () => ({
         neq: jest.fn().mockReturnThis(),
         in: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
-          data: table === 'bilans' 
-            ? { id: 'test-bilan-id', status: 'ACTIVE', phase: 'INVESTIGATION' }
-            : { id: uuidv4(), status: 'SCHEDULED' },
+          data:
+            table === 'bilans'
+              ? { id: 'test-bilan-id', status: 'ACTIVE', phase: 'INVESTIGATION' }
+              : { id: uuidv4(), status: 'SCHEDULED' },
           error: null,
         }),
       }),

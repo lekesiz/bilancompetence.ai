@@ -143,24 +143,28 @@ router.get(
  * GET /api/export/assessment/:assessmentId/results
  * Export assessment results to CSV
  */
-router.get('/assessment/:assessmentId/results', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
+router.get(
+  '/assessment/:assessmentId/results',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
 
-    const csv = await exportAssessmentResultsToCSV(assessmentId);
-    const filename = generateCSVFilename(`assessment_results_${assessmentId}`);
+      const csv = await exportAssessmentResultsToCSV(assessmentId);
+      const filename = generateCSVFilename(`assessment_results_${assessmentId}`);
 
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send(csv);
-  } catch (error) {
-    console.error('Export assessment results error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to export assessment results',
-    });
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(csv);
+    } catch (error) {
+      console.error('Export assessment results error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to export assessment results',
+      });
+    }
   }
-});
+);
 
 /**
  * GET /api/export/analytics
@@ -196,95 +200,106 @@ router.get('/analytics', authMiddleware, async (req: Request, res: Response) => 
  * Export assessment as PDF report
  * Query params: type='preliminary'|'investigation'|'conclusion'
  */
-router.post('/assessment/:assessmentId/pdf', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
-    const { type = 'preliminary' } = req.query;
+router.post(
+  '/assessment/:assessmentId/pdf',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
+      const { type = 'preliminary' } = req.query;
 
-    // Validate report type
-    if (!['preliminary', 'investigation', 'conclusion'].includes(type as string)) {
-      return res.status(400).json({
+      // Validate report type
+      if (!['preliminary', 'investigation', 'conclusion'].includes(type as string)) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Invalid report type. Must be one of: preliminary, investigation, conclusion',
+        });
+      }
+
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
+
+      // Fetch assessment to verify access control
+      const assessment = await getAssessment(assessmentId);
+
+      if (!assessment) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'Assessment not found',
+        });
+      }
+
+      // Verify user has access to this assessment
+      // Access allowed if: user is the beneficiary OR user is the assigned consultant
+      const isOwner = (assessment as any).beneficiary_id === req.user.id;
+      const isConsultant = (assessment as any).consultant_id === req.user.id;
+      const isAdmin = req.user.role === 'ORG_ADMIN';
+
+      if (!isOwner && !isConsultant && !isAdmin) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'You do not have permission to access this assessment',
+        });
+      }
+
+      // Generate PDF
+      const pdfBuffer = await generateAssessmentPDF(
+        assessmentId,
+        req.user.id,
+        type as 'preliminary' | 'investigation' | 'conclusion'
+      );
+
+      // Generate filename
+      const timestamp = new Date().toISOString().split('T')[0];
+      const reportType =
+        type === 'preliminary'
+          ? 'Preliminary'
+          : type === 'investigation'
+            ? 'Investigation'
+            : 'Conclusion';
+      const filename = `Assessment_${reportType}_${assessmentId.slice(0, 8)}_${timestamp}.pdf`;
+
+      // Send PDF response
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('Export assessment PDF error:', error);
+
+      // Check if error is due to insufficient assessment data
+      if (
+        (error as Error).message.includes('No assessment found') ||
+        (error as Error).message.includes('not found')
+      ) {
+        return res.status(404).json({
+          status: 'error',
+          code: 'NOT_FOUND',
+          message: 'Assessment or required data not found',
+        });
+      }
+
+      // Check if error is due to access denial
+      if ((error as Error).message.includes('Unauthorized')) {
+        return res.status(403).json({
+          status: 'error',
+          code: 'FORBIDDEN',
+          message: 'You do not have permission to access this assessment',
+        });
+      }
+
+      res.status(500).json({
         status: 'error',
-        message: 'Invalid report type. Must be one of: preliminary, investigation, conclusion',
+        code: 'PDF_GENERATION_ERROR',
+        message: 'Failed to generate PDF: ' + ((error as Error).message || 'Unknown error'),
       });
     }
-
-    if (!req.user) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'Authentication required',
-      });
-    }
-
-    // Fetch assessment to verify access control
-    const assessment = await getAssessment(assessmentId);
-
-    if (!assessment) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Assessment not found',
-      });
-    }
-
-    // Verify user has access to this assessment
-    // Access allowed if: user is the beneficiary OR user is the assigned consultant
-    const isOwner = (assessment as any).beneficiary_id === req.user.id;
-    const isConsultant = (assessment as any).consultant_id === req.user.id;
-    const isAdmin = req.user.role === 'ORG_ADMIN';
-
-    if (!isOwner && !isConsultant && !isAdmin) {
-      return res.status(403).json({
-        status: 'error',
-        message: 'You do not have permission to access this assessment',
-      });
-    }
-
-    // Generate PDF
-    const pdfBuffer = await generateAssessmentPDF(
-      assessmentId,
-      req.user.id,
-      type as 'preliminary' | 'investigation' | 'conclusion'
-    );
-
-    // Generate filename
-    const timestamp = new Date().toISOString().split('T')[0];
-    const reportType = type === 'preliminary' ? 'Preliminary' : type === 'investigation' ? 'Investigation' : 'Conclusion';
-    const filename = `Assessment_${reportType}_${assessmentId.slice(0, 8)}_${timestamp}.pdf`;
-
-    // Send PDF response
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', pdfBuffer.length);
-    res.send(pdfBuffer);
-
-  } catch (error) {
-    console.error('Export assessment PDF error:', error);
-
-    // Check if error is due to insufficient assessment data
-    if ((error as Error).message.includes('No assessment found') || (error as Error).message.includes('not found')) {
-      return res.status(404).json({
-        status: 'error',
-        code: 'NOT_FOUND',
-        message: 'Assessment or required data not found',
-      });
-    }
-
-    // Check if error is due to access denial
-    if ((error as Error).message.includes('Unauthorized')) {
-      return res.status(403).json({
-        status: 'error',
-        code: 'FORBIDDEN',
-        message: 'You do not have permission to access this assessment',
-      });
-    }
-
-    res.status(500).json({
-      status: 'error',
-      code: 'PDF_GENERATION_ERROR',
-      message: 'Failed to generate PDF: ' + ((error as Error).message || 'Unknown error'),
-    });
   }
-});
+);
 
 /**
  * POST /api/export/assessments/summary/pdf
@@ -311,7 +326,6 @@ router.post('/assessments/summary/pdf', authMiddleware, async (req: Request, res
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-Length', pdfBuffer.length);
     res.send(pdfBuffer);
-
   } catch (error) {
     console.error('Export assessments summary PDF error:', error);
 

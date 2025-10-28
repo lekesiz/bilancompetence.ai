@@ -1,5 +1,11 @@
 import { supabase } from './supabaseService.js';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 import { isValidUserRole } from '../types/enums.js';
 
@@ -31,11 +37,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
 
     if (error && error.code !== 'PGRST116') {
       throw new DatabaseError('Failed to fetch user profile', error);
@@ -111,11 +113,7 @@ export async function getUsersByRole(role: string, limit: number = 100): Promise
       throw new ValidationError(`Invalid role: ${role}`);
     }
 
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('role', role)
-      .limit(limit);
+    const { data, error } = await supabase.from('users').select('*').eq('role', role).limit(limit);
 
     if (error) {
       throw new DatabaseError('Failed to fetch users by role', error);
@@ -144,7 +142,10 @@ export async function getOrganizationUsers(organizationId: string): Promise<any>
       throw new DatabaseError('Failed to fetch organization users', error);
     }
 
-    logger.info('Organization users retrieved successfully', { organizationId, count: data?.length || 0 });
+    logger.info('Organization users retrieved successfully', {
+      organizationId,
+      count: data?.length || 0,
+    });
     return data || [];
   } catch (error) {
     logAndThrow('Failed to get organization users', error);
@@ -303,7 +304,11 @@ export async function getUserStats(userId: string) {
     }
 
     // Get bilans count
-    const { data: bilans, count: bilansCount, error: bilansError } = await supabase
+    const {
+      data: bilans,
+      count: bilansCount,
+      error: bilansError,
+    } = await supabase
       .from('bilans')
       .select('id', { count: 'exact' })
       .or(`beneficiary_id.eq.${userId},consultant_id.eq.${userId}`);
@@ -313,7 +318,11 @@ export async function getUserStats(userId: string) {
     }
 
     // Get recommendations count
-    const { data: recommendations, count: recommendationsCount, error: recommendationsError } = await supabase
+    const {
+      data: recommendations,
+      count: recommendationsCount,
+      error: recommendationsError,
+    } = await supabase
       .from('recommendations')
       .select('id', { count: 'exact' })
       .eq('user_id', userId);

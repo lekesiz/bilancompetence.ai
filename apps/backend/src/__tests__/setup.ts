@@ -53,8 +53,12 @@ jest.mock('../services/supabaseService', () => ({
   supabase: {
     from: jest.fn(() => createMockSupabaseQuery()),
     auth: {
-      signIn: jest.fn().mockResolvedValue({ data: { user: { id: '123' }, session: {} }, error: null }),
-      signUp: jest.fn().mockResolvedValue({ data: { user: { id: '123' }, session: {} }, error: null }),
+      signIn: jest
+        .fn()
+        .mockResolvedValue({ data: { user: { id: '123' }, session: {} }, error: null }),
+      signUp: jest
+        .fn()
+        .mockResolvedValue({ data: { user: { id: '123' }, session: {} }, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
       getUser: jest.fn().mockResolvedValue({ data: { user: { id: '123' } }, error: null }),
       getSession: jest.fn().mockResolvedValue({ data: { session: {} }, error: null }),
@@ -64,7 +68,9 @@ jest.mock('../services/supabaseService', () => ({
       from: jest.fn(() => ({
         upload: jest.fn().mockResolvedValue({ data: { path: 'test.pdf' }, error: null }),
         download: jest.fn().mockResolvedValue({ data: new Blob(), error: null }),
-        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'https://example.com/test.pdf' } }),
+        getPublicUrl: jest
+          .fn()
+          .mockReturnValue({ data: { publicUrl: 'https://example.com/test.pdf' } }),
         remove: jest.fn().mockResolvedValue({ data: null, error: null }),
         list: jest.fn().mockResolvedValue({ data: [], error: null }),
       })),
@@ -76,7 +82,7 @@ jest.mock('../services/supabaseService', () => ({
 // Clean up after all tests
 afterAll(async () => {
   // Close any open connections
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 });
 
 // Reset mocks before each test

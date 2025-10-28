@@ -12,7 +12,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/database.types.js';
 import crypto from 'crypto';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 
 interface SurveyQuestion {
@@ -286,9 +292,7 @@ export class SatisfactionSurveyService {
         return response;
       });
 
-      const { error: insertError } = await this.supabase
-        .from('survey_responses')
-        .insert(responses);
+      const { error: insertError } = await this.supabase.from('survey_responses').insert(responses);
 
       if (insertError) {
         throw new DatabaseError('Failed to save responses', insertError);
@@ -307,7 +311,10 @@ export class SatisfactionSurveyService {
         throw new DatabaseError('Failed to update survey status', updateError);
       }
 
-      logger.info('Survey response submitted successfully', { surveyId: s.id, questionCount: responses.length });
+      logger.info('Survey response submitted successfully', {
+        surveyId: s.id,
+        questionCount: responses.length,
+      });
     } catch (error) {
       logAndThrow('Failed to submit survey response', error);
     }
@@ -404,8 +411,13 @@ export class SatisfactionSurveyService {
         const questionResponses = (responses || []).filter(
           (r: any) => r.question_number === q.number
         );
-        const scores = questionResponses.filter((r: any) => r.score_value).map((r: any) => r.score_value);
-        const average_score = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b) / scores.length) : 0;
+        const scores = questionResponses
+          .filter((r: any) => r.score_value)
+          .map((r: any) => r.score_value);
+        const average_score =
+          scores.length > 0
+            ? Math.round(scores.reduce((a: number, b: number) => a + b) / scores.length)
+            : 0;
 
         return {
           question_number: q.number,
@@ -421,11 +433,17 @@ export class SatisfactionSurveyService {
       // Get consultant performance
       const consultantPerformance = await this.getConsultantPerformance();
 
-      const average_satisfaction = questionsData
-        .filter((q) => q.type === 'SCORE')
-        .reduce((sum, q) => sum + (q.average_score || 0), 0) / (questionsData.filter((q) => q.type === 'SCORE').length || 1);
+      const average_satisfaction =
+        questionsData
+          .filter((q) => q.type === 'SCORE')
+          .reduce((sum, q) => sum + (q.average_score || 0), 0) /
+        (questionsData.filter((q) => q.type === 'SCORE').length || 1);
 
-      logger.info('Survey analytics retrieved successfully', { total_sent, total_responded, response_rate });
+      logger.info('Survey analytics retrieved successfully', {
+        total_sent,
+        total_responded,
+        response_rate,
+      });
       return {
         total_sent,
         total_responded,
@@ -480,11 +498,16 @@ export class SatisfactionSurveyService {
       const performance = Array.from(consultantMap.entries()).map(([id, data]) => ({
         consultant_id: id,
         consultant_name: data.name,
-        average_score: data.scores.length > 0 ? Math.round(data.scores.reduce((a, b) => a + b) / data.scores.length) : 0,
+        average_score:
+          data.scores.length > 0
+            ? Math.round(data.scores.reduce((a, b) => a + b) / data.scores.length)
+            : 0,
         survey_count: data.scores.length,
       }));
 
-      logger.info('Consultant performance retrieved successfully', { consultantCount: performance.length });
+      logger.info('Consultant performance retrieved successfully', {
+        consultantCount: performance.length,
+      });
       return performance;
     } catch (error) {
       logAndThrow('Failed to get consultant performance', error);
@@ -525,4 +548,3 @@ export class SatisfactionSurveyService {
 }
 
 export default SatisfactionSurveyService;
-

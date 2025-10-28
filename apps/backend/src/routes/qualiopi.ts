@@ -41,13 +41,7 @@ const addEvidenceSchema = z.object({
  * Schema for survey response submission
  */
 const submitSurveySchema = z.object({
-  answers: z.record(
-    z.union([
-      z.number().min(1).max(10),
-      z.string(),
-      z.boolean(),
-    ])
-  ),
+  answers: z.record(z.union([z.number().min(1).max(10), z.string(), z.boolean()])),
 });
 
 /**
@@ -65,7 +59,9 @@ const surveyQuerySchema = z.object({
  * Schema for document query
  */
 const documentQuerySchema = z.object({
-  documentType: z.enum(['PRELIMINARY', 'INVESTIGATION', 'CONCLUSION', 'REPORT', 'EVIDENCE', 'OTHER']).optional(),
+  documentType: z
+    .enum(['PRELIMINARY', 'INVESTIGATION', 'CONCLUSION', 'REPORT', 'EVIDENCE', 'OTHER'])
+    .optional(),
   bilanId: z.string().uuid().optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
@@ -150,163 +146,183 @@ router.get('/indicators', authMiddleware, requireAdminRole, async (req: Request,
  * Get only core indicators (1, 11, 22)
  * NOTE: This must come BEFORE /indicators/:id to avoid route collision
  */
-router.get('/indicators/core', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const qualioptService = new QualioptService(orgId);
+router.get(
+  '/indicators/core',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const qualioptService = new QualioptService(orgId);
 
-    const coreIndicators = await qualioptService.getCoreIndicators();
+      const coreIndicators = await qualioptService.getCoreIndicators();
 
-    res.json({
-      success: true,
-      data: coreIndicators,
-      count: coreIndicators.length,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching core indicators:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch core indicators',
-    });
+      res.json({
+        success: true,
+        data: coreIndicators,
+        count: coreIndicators.length,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching core indicators:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch core indicators',
+      });
+    }
   }
-});
+);
 
 /**
  * GET /api/admin/qualiopi/indicators/:id
  * Get single indicator with full details
  */
-router.get('/indicators/:id', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const indicatorId = parseInt(req.params.id);
+router.get(
+  '/indicators/:id',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const indicatorId = parseInt(req.params.id);
 
-    if (isNaN(indicatorId) || indicatorId < 1 || indicatorId > 32) {
-      return res.status(400).json({
+      if (isNaN(indicatorId) || indicatorId < 1 || indicatorId > 32) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid indicator ID (must be 1-32)',
+        });
+      }
+
+      const qualioptService = new QualioptService(orgId);
+      const details = await qualioptService.getIndicatorDetails(indicatorId);
+
+      res.json({
+        success: true,
+        data: details,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching indicator details:', error);
+      res.status(500).json({
         success: false,
-        error: 'Invalid indicator ID (must be 1-32)',
+        error: error.message || 'Failed to fetch indicator details',
       });
     }
-
-    const qualioptService = new QualioptService(orgId);
-    const details = await qualioptService.getIndicatorDetails(indicatorId);
-
-    res.json({
-      success: true,
-      data: details,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching indicator details:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch indicator details',
-    });
   }
-});
+);
 
 /**
  * PUT /api/admin/qualiopi/indicators/:id
  * Update indicator status
  */
-router.put('/indicators/:id', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const indicatorId = parseInt(req.params.id);
-    const userId = (req as any).user?.id;
+router.put(
+  '/indicators/:id',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const indicatorId = parseInt(req.params.id);
+      const userId = (req as any).user?.id;
 
-    if (isNaN(indicatorId) || indicatorId < 1 || indicatorId > 32) {
-      return res.status(400).json({
+      if (isNaN(indicatorId) || indicatorId < 1 || indicatorId > 32) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid indicator ID (must be 1-32)',
+        });
+      }
+
+      // Validate request body
+      const validationResult = updateIndicatorSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request body',
+          details: validationResult.error.flatten(),
+        });
+      }
+
+      const { status, notes } = validationResult.data;
+      const qualioptService = new QualioptService(orgId);
+
+      const updated = await qualioptService.updateIndicatorStatus(
+        indicatorId,
+        status,
+        notes || '',
+        userId
+      );
+
+      res.json({
+        success: true,
+        data: updated,
+        message: `Indicator ${indicatorId} status updated to ${status}`,
+      });
+    } catch (error: any) {
+      logger.error('Error updating indicator:', error);
+      res.status(500).json({
         success: false,
-        error: 'Invalid indicator ID (must be 1-32)',
+        error: error.message || 'Failed to update indicator',
       });
     }
-
-    // Validate request body
-    const validationResult = updateIndicatorSchema.safeParse(req.body);
-    if (!validationResult.success) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid request body',
-        details: validationResult.error.flatten(),
-      });
-    }
-
-    const { status, notes } = validationResult.data;
-    const qualioptService = new QualioptService(orgId);
-
-    const updated = await qualioptService.updateIndicatorStatus(
-      indicatorId,
-      status,
-      notes || '',
-      userId
-    );
-
-    res.json({
-      success: true,
-      data: updated,
-      message: `Indicator ${indicatorId} status updated to ${status}`,
-    });
-  } catch (error: any) {
-    logger.error('Error updating indicator:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to update indicator',
-    });
   }
-});
+);
 
 /**
  * POST /api/admin/qualiopi/indicators/:id/evidence
  * Add evidence file for indicator
  */
-router.post('/indicators/:id/evidence', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const indicatorId = parseInt(req.params.id);
-    const userId = (req as any).user?.id;
+router.post(
+  '/indicators/:id/evidence',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const indicatorId = parseInt(req.params.id);
+      const userId = (req as any).user?.id;
 
-    if (isNaN(indicatorId) || indicatorId < 1 || indicatorId > 32) {
-      return res.status(400).json({
+      if (isNaN(indicatorId) || indicatorId < 1 || indicatorId > 32) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid indicator ID (must be 1-32)',
+        });
+      }
+
+      // Validate request body
+      const validationResult = addEvidenceSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request body',
+          details: validationResult.error.flatten(),
+        });
+      }
+
+      const { fileName, fileUrl, fileSize, fileType, description } = validationResult.data;
+      const qualioptService = new QualioptService(orgId);
+
+      const evidence = await qualioptService.addEvidence(
+        indicatorId,
+        fileName,
+        fileUrl,
+        fileSize,
+        fileType,
+        description || '',
+        userId
+      );
+
+      res.status(201).json({
+        success: true,
+        data: evidence,
+        message: `Evidence added to indicator ${indicatorId}`,
+      });
+    } catch (error: any) {
+      logger.error('Error adding evidence:', error);
+      res.status(500).json({
         success: false,
-        error: 'Invalid indicator ID (must be 1-32)',
+        error: error.message || 'Failed to add evidence',
       });
     }
-
-    // Validate request body
-    const validationResult = addEvidenceSchema.safeParse(req.body);
-    if (!validationResult.success) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid request body',
-        details: validationResult.error.flatten(),
-      });
-    }
-
-    const { fileName, fileUrl, fileSize, fileType, description } = validationResult.data;
-    const qualioptService = new QualioptService(orgId);
-
-    const evidence = await qualioptService.addEvidence(
-      indicatorId,
-      fileName,
-      fileUrl,
-      fileSize,
-      fileType,
-      description || '',
-      userId
-    );
-
-    res.status(201).json({
-      success: true,
-      data: evidence,
-      message: `Evidence added to indicator ${indicatorId}`,
-    });
-  } catch (error: any) {
-    logger.error('Error adding evidence:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to add evidence',
-    });
   }
-});
+);
 
 /**
  * GET /api/admin/qualiopi/compliance
@@ -417,25 +433,30 @@ router.get('/surveys', authMiddleware, requireAdminRole, async (req: Request, re
  * GET /api/admin/qualiopi/surveys/analytics
  * Get detailed survey analytics
  */
-router.get('/surveys/analytics', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const surveyService = new SatisfactionSurveyService(orgId);
+router.get(
+  '/surveys/analytics',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const surveyService = new SatisfactionSurveyService(orgId);
 
-    const analytics = await surveyService.getAnalytics();
+      const analytics = await surveyService.getAnalytics();
 
-    res.json({
-      success: true,
-      data: analytics,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching analytics:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch analytics',
-    });
+      res.json({
+        success: true,
+        data: analytics,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching analytics:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch analytics',
+      });
+    }
   }
-});
+);
 
 // ============================================
 // DOCUMENT ARCHIVE ENDPOINTS
@@ -479,77 +500,92 @@ router.get('/documents', authMiddleware, requireAdminRole, async (req: Request, 
  * GET /api/admin/qualiopi/documents/:id
  * Get document details with access log
  */
-router.get('/documents/:id', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const documentId = req.params.id;
+router.get(
+  '/documents/:id',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const documentId = req.params.id;
 
-    const archiveService = new DocumentArchiveService(orgId);
-    const details = await archiveService.getDocumentDetails(documentId);
+      const archiveService = new DocumentArchiveService(orgId);
+      const details = await archiveService.getDocumentDetails(documentId);
 
-    res.json({
-      success: true,
-      data: details,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching document details:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch document details',
-    });
+      res.json({
+        success: true,
+        data: details,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching document details:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch document details',
+      });
+    }
   }
-});
+);
 
 /**
  * GET /api/admin/qualiopi/documents/:id/access-log
  * Get document access audit trail
  */
-router.get('/documents/:id/access-log', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const documentId = req.params.id;
-    const limit = Math.min(parseInt(req.query.limit as string) || 100, 500);
+router.get(
+  '/documents/:id/access-log',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const documentId = req.params.id;
+      const limit = Math.min(parseInt(req.query.limit as string) || 100, 500);
 
-    const archiveService = new DocumentArchiveService(orgId);
-    const accessLog = await archiveService.getAccessLog(documentId, limit);
+      const archiveService = new DocumentArchiveService(orgId);
+      const accessLog = await archiveService.getAccessLog(documentId, limit);
 
-    res.json({
-      success: true,
-      data: accessLog,
-      count: accessLog.length,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching access log:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch access log',
-    });
+      res.json({
+        success: true,
+        data: accessLog,
+        count: accessLog.length,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching access log:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch access log',
+      });
+    }
   }
-});
+);
 
 /**
  * GET /api/admin/qualiopi/archive-stats
  * Get archive statistics
  */
-router.get('/archive-stats', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const archiveService = new DocumentArchiveService(orgId);
+router.get(
+  '/archive-stats',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const archiveService = new DocumentArchiveService(orgId);
 
-    const stats = await archiveService.getArchiveStats();
+      const stats = await archiveService.getArchiveStats();
 
-    res.json({
-      success: true,
-      data: stats,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching archive stats:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch archive stats',
-    });
+      res.json({
+        success: true,
+        data: stats,
+      });
+    } catch (error: any) {
+      logger.error('Error fetching archive stats:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch archive stats',
+      });
+    }
   }
-});
+);
 
 // ============================================
 // COMPLIANCE REPORT ENDPOINTS
@@ -559,77 +595,87 @@ router.get('/archive-stats', authMiddleware, requireAdminRole, async (req: Reque
  * GET /api/admin/qualiopi/compliance-report
  * Generate compliance report
  */
-router.get('/compliance-report', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
+router.get(
+  '/compliance-report',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
 
-    // Parse query parameters
-    const queryResult = generateReportSchema.safeParse(req.query);
-    if (!queryResult.success) {
-      return res.status(400).json({
+      // Parse query parameters
+      const queryResult = generateReportSchema.safeParse(req.query);
+      if (!queryResult.success) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid query parameters',
+        });
+      }
+
+      const { format, includeEvidence } = queryResult.data;
+      const reportService = new ComplianceReportService(orgId);
+
+      const report = await reportService.generateReport(includeEvidence);
+
+      // Export in requested format
+      let responseData;
+      let contentType = 'application/json';
+
+      if (format === 'csv') {
+        responseData = reportService.exportAsCSV(report);
+        contentType = 'text/csv';
+        res.setHeader('Content-Disposition', 'attachment; filename="compliance-report.csv"');
+      } else if (format === 'json') {
+        responseData = reportService.exportAsJSON(report);
+        contentType = 'application/json';
+      }
+      // TODO: Implement PDF export with pdfkit
+
+      res.setHeader('Content-Type', contentType);
+      res.send(responseData);
+    } catch (error: any) {
+      logger.error('Error generating report:', error);
+      res.status(500).json({
         success: false,
-        error: 'Invalid query parameters',
+        error: error.message || 'Failed to generate report',
       });
     }
-
-    const { format, includeEvidence } = queryResult.data;
-    const reportService = new ComplianceReportService(orgId);
-
-    const report = await reportService.generateReport(includeEvidence);
-
-    // Export in requested format
-    let responseData;
-    let contentType = 'application/json';
-
-    if (format === 'csv') {
-      responseData = reportService.exportAsCSV(report);
-      contentType = 'text/csv';
-      res.setHeader('Content-Disposition', 'attachment; filename="compliance-report.csv"');
-    } else if (format === 'json') {
-      responseData = reportService.exportAsJSON(report);
-      contentType = 'application/json';
-    }
-    // TODO: Implement PDF export with pdfkit
-
-    res.setHeader('Content-Type', contentType);
-    res.send(responseData);
-  } catch (error: any) {
-    logger.error('Error generating report:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to generate report',
-    });
   }
-});
+);
 
 /**
  * POST /api/admin/qualiopi/compliance-report/pdf
  * Generate PDF report (async)
  */
-router.post('/compliance-report/pdf', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const { includeEvidence } = req.body;
+router.post(
+  '/compliance-report/pdf',
+  authMiddleware,
+  requireAdminRole,
+  async (req: Request, res: Response) => {
+    try {
+      const orgId = getOrgId(req);
+      const { includeEvidence } = req.body;
 
-    const reportService = new ComplianceReportService(orgId);
-    const report = await reportService.generateReport(includeEvidence);
+      const reportService = new ComplianceReportService(orgId);
+      const report = await reportService.generateReport(includeEvidence);
 
-    // TODO: Implement PDF generation with pdfkit
-    // const pdfBuffer = await reportService.generatePDFReport(report);
+      // TODO: Implement PDF generation with pdfkit
+      // const pdfBuffer = await reportService.generatePDFReport(report);
 
-    res.status(501).json({
-      success: false,
-      error: 'PDF generation not yet implemented',
-      message: 'Use JSON or CSV format for now',
-    });
-  } catch (error: any) {
-    logger.error('Error generating PDF report:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to generate PDF report',
-    });
+      res.status(501).json({
+        success: false,
+        error: 'PDF generation not yet implemented',
+        message: 'Use JSON or CSV format for now',
+      });
+    } catch (error: any) {
+      logger.error('Error generating PDF report:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to generate PDF report',
+      });
+    }
   }
-});
+);
 
 /**
  * GET /api/admin/qualiopi/audit-log
@@ -674,4 +720,3 @@ router.get('/health', (req: Request, res: Response) => {
 });
 
 export default router;
-

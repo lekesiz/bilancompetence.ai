@@ -18,6 +18,7 @@ Requête → authMiddleware → authorizeResource → Route Handler
 Vérifie que l'utilisateur a le droit d'accéder à une ressource spécifique.
 
 **Types de ressources supportés:**
+
 - `bilan` - Bilans de compétences
 - `assessment` - Évaluations
 - `appointment` - Rendez-vous
@@ -29,22 +30,23 @@ Vérifie que l'utilisateur a le droit d'accéder à une ressource spécifique.
 
 **Logique d'autorisation:**
 
-| Ressource | Bénéficiaire | Consultant | Org Admin | Admin |
-|-----------|--------------|------------|-----------|-------|
-| bilan | Ses bilans | Bilans qu'il gère | Bilans de son org | Tous |
-| assessment | Ses évaluations | Toutes | - | Tous |
-| appointment | Ses RDV | RDV qu'il anime | - | Tous |
-| document | Ses documents | Documents des bilans gérés | - | Tous |
-| cv_analysis | Ses analyses | Toutes | - | Tous |
-| job_recommendation | Ses recommandations | Toutes | - | Tous |
-| personality_analysis | Ses analyses | Toutes | - | Tous |
-| action_plan | Ses plans | Tous | - | Tous |
+| Ressource            | Bénéficiaire        | Consultant                 | Org Admin         | Admin |
+| -------------------- | ------------------- | -------------------------- | ----------------- | ----- |
+| bilan                | Ses bilans          | Bilans qu'il gère          | Bilans de son org | Tous  |
+| assessment           | Ses évaluations     | Toutes                     | -                 | Tous  |
+| appointment          | Ses RDV             | RDV qu'il anime            | -                 | Tous  |
+| document             | Ses documents       | Documents des bilans gérés | -                 | Tous  |
+| cv_analysis          | Ses analyses        | Toutes                     | -                 | Tous  |
+| job_recommendation   | Ses recommandations | Toutes                     | -                 | Tous  |
+| personality_analysis | Ses analyses        | Toutes                     | -                 | Tous  |
+| action_plan          | Ses plans           | Tous                       | -                 | Tous  |
 
 ### 2. `requireRole(...roles)`
 
 Vérifie que l'utilisateur a l'un des rôles spécifiés.
 
 **Rôles disponibles:**
+
 - `ADMIN` - Administrateur système
 - `CONSULTANT` - Consultant
 - `BENEFICIARY` - Bénéficiaire
@@ -59,6 +61,7 @@ Vérifie que l'utilisateur appartient à une organisation.
 ### Exemple 1: Protéger l'accès à un bilan spécifique
 
 **Avant:**
+
 ```typescript
 router.get('/bilans/:id', authMiddleware, async (req, res) => {
   const bilan = await getBilanById(req.params.id);
@@ -67,25 +70,23 @@ router.get('/bilans/:id', authMiddleware, async (req, res) => {
 ```
 
 **Après:**
+
 ```typescript
 import { authorizeResource } from '../middleware/authorization.js';
 
-router.get('/bilans/:id', 
-  authMiddleware, 
-  authorizeResource('bilan'), 
-  async (req, res) => {
-    const bilan = await getBilanById(req.params.id);
-    res.json(bilan);
-  }
-);
+router.get('/bilans/:id', authMiddleware, authorizeResource('bilan'), async (req, res) => {
+  const bilan = await getBilanById(req.params.id);
+  res.json(bilan);
+});
 ```
 
 ### Exemple 2: Protéger l'accès à une évaluation
 
 ```typescript
-router.get('/assessments/:assessmentId', 
-  authMiddleware, 
-  authorizeResource('assessment'), 
+router.get(
+  '/assessments/:assessmentId',
+  authMiddleware,
+  authorizeResource('assessment'),
   async (req, res) => {
     const assessment = await getAssessmentById(req.params.assessmentId);
     res.json(assessment);
@@ -99,22 +100,19 @@ router.get('/assessments/:assessmentId',
 import { requireRole } from '../middleware/authorization.js';
 
 // Seuls les consultants et admins peuvent créer des bilans
-router.post('/bilans', 
-  authMiddleware, 
-  requireRole('CONSULTANT', 'ADMIN'), 
-  async (req, res) => {
-    const bilan = await createBilan(req.body);
-    res.json(bilan);
-  }
-);
+router.post('/bilans', authMiddleware, requireRole('CONSULTANT', 'ADMIN'), async (req, res) => {
+  const bilan = await createBilan(req.body);
+  res.json(bilan);
+});
 ```
 
 ### Exemple 4: Combiner plusieurs middlewares
 
 ```typescript
 // Seuls les consultants de l'organisation peuvent accéder
-router.get('/organization/stats', 
-  authMiddleware, 
+router.get(
+  '/organization/stats',
+  authMiddleware,
   requireRole('CONSULTANT', 'ORGANIZATION_ADMIN'),
   requireOrganization(),
   async (req, res) => {
@@ -132,9 +130,10 @@ router.get('/organization/stats',
 import { authorizeResource } from '../middleware/authorization.js';
 
 // Analyse de CV - l'utilisateur peut seulement accéder à ses propres analyses
-router.get('/analyze-cv/:analysisId', 
-  authenticateToken, 
-  authorizeResource('cv_analysis'), 
+router.get(
+  '/analyze-cv/:analysisId',
+  authenticateToken,
+  authorizeResource('cv_analysis'),
   async (req, res) => {
     const analysis = await getCVAnalysis(req.params.analysisId);
     res.json(analysis);
@@ -142,9 +141,10 @@ router.get('/analyze-cv/:analysisId',
 );
 
 // Recommandations d'emploi
-router.get('/job-recommendations/:recommendationId', 
-  authenticateToken, 
-  authorizeResource('job_recommendation'), 
+router.get(
+  '/job-recommendations/:recommendationId',
+  authenticateToken,
+  authorizeResource('job_recommendation'),
   async (req, res) => {
     const recommendation = await getJobRecommendation(req.params.recommendationId);
     res.json(recommendation);
@@ -152,9 +152,10 @@ router.get('/job-recommendations/:recommendationId',
 );
 
 // Analyse de personnalité (MBTI/RIASEC)
-router.get('/personality/:analysisId', 
-  authenticateToken, 
-  authorizeResource('personality_analysis'), 
+router.get(
+  '/personality/:analysisId',
+  authenticateToken,
+  authorizeResource('personality_analysis'),
   async (req, res) => {
     const analysis = await getPersonalityAnalysis(req.params.analysisId);
     res.json(analysis);
@@ -202,35 +203,43 @@ describe('Authorization Middleware', () => {
   it('should allow beneficiary to access their own bilan', async () => {
     const req = {
       user: { id: 'user-123', role: 'BENEFICIARY' },
-      params: { id: 'bilan-123' }
+      params: { id: 'bilan-123' },
     };
-    
+
     // Mock Supabase response
-    supabase.from().select().eq().single.mockResolvedValue({
-      data: { beneficiary_id: 'user-123' },
-      error: null
-    });
-    
+    supabase
+      .from()
+      .select()
+      .eq()
+      .single.mockResolvedValue({
+        data: { beneficiary_id: 'user-123' },
+        error: null,
+      });
+
     const next = jest.fn();
     await authorizeResource('bilan')(req, res, next);
-    
+
     expect(next).toHaveBeenCalled();
   });
 
-  it('should deny access to another user\'s bilan', async () => {
+  it("should deny access to another user's bilan", async () => {
     const req = {
       user: { id: 'user-123', role: 'BENEFICIARY' },
-      params: { id: 'bilan-456' }
+      params: { id: 'bilan-456' },
     };
-    
-    supabase.from().select().eq().single.mockResolvedValue({
-      data: { beneficiary_id: 'user-789' },
-      error: null
-    });
-    
+
+    supabase
+      .from()
+      .select()
+      .eq()
+      .single.mockResolvedValue({
+        data: { beneficiary_id: 'user-789' },
+        error: null,
+      });
+
     const next = jest.fn();
     await authorizeResource('bilan')(req, res, next);
-    
+
     expect(res.status).toHaveBeenCalledWith(403);
     expect(next).not.toHaveBeenCalled();
   });
@@ -244,25 +253,25 @@ import request from 'supertest';
 import app from '../index';
 
 describe('Protected Routes', () => {
-  it('should return 403 when accessing another user\'s bilan', async () => {
+  it("should return 403 when accessing another user's bilan", async () => {
     const token = generateToken({ id: 'user-123', role: 'BENEFICIARY' });
-    
+
     const response = await request(app)
       .get('/api/bilans/bilan-456')
       .set('Authorization', `Bearer ${token}`)
       .expect(403);
-    
+
     expect(response.body.error).toContain('Forbidden');
   });
 
   it('should return 200 when consultant accesses managed bilan', async () => {
     const token = generateToken({ id: 'consultant-123', role: 'CONSULTANT' });
-    
+
     const response = await request(app)
       .get('/api/bilans/bilan-456')
       .set('Authorization', `Bearer ${token}`)
       .expect(200);
-    
+
     expect(response.body).toHaveProperty('id', 'bilan-456');
   });
 });
@@ -340,11 +349,11 @@ if (!authorized) {
     userRole,
     resourceType,
     resourceId,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
-  
-  return res.status(403).json({ 
-    error: 'Forbidden: You do not have access to this resource'
+
+  return res.status(403).json({
+    error: 'Forbidden: You do not have access to this resource',
   });
 }
 ```
@@ -354,8 +363,8 @@ if (!authorized) {
 Le middleware d'autorisation est maintenant prêt à être intégré. Suivez ce guide pour protéger toutes les routes qui manipulent des ressources sensibles.
 
 **Prochaines étapes:**
+
 1. Intégrer le middleware dans les routes existantes
 2. Ajouter des tests unitaires et d'intégration
 3. Monitorer les logs pour détecter les problèmes
 4. Optimiser les performances si nécessaire
-

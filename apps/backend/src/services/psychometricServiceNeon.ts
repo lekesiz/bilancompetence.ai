@@ -49,10 +49,7 @@ export async function getRIASECQuestions(): Promise<RIASECQuestion[]> {
 /**
  * Get test results for an assessment
  */
-export async function getTestResults(
-  assessmentId: string,
-  userId?: string
-): Promise<TestResult[]> {
+export async function getTestResults(assessmentId: string, userId?: string): Promise<TestResult[]> {
   return query<TestResult>(
     userId || null,
     `SELECT * FROM test_results 
@@ -106,10 +103,7 @@ export async function getTestResultByType(
 /**
  * Delete test result
  */
-export async function deleteTestResult(
-  resultId: string,
-  userId?: string
-): Promise<boolean> {
+export async function deleteTestResult(resultId: string, userId?: string): Promise<boolean> {
   const result = await query<{ id: string }>(
     userId || null,
     `DELETE FROM test_results 
@@ -124,4 +118,3 @@ export async function deleteTestResult(
   }
   return deleted;
 }
-

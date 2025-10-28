@@ -32,9 +32,15 @@ jest.mock('../../services/documentArchiveService.js');
 jest.mock('../../services/complianceReportService.js');
 
 const mockQualioptService = QualioptService as jest.MockedClass<typeof QualioptService>;
-const mockSatisfactionService = SatisfactionSurveyService as jest.MockedClass<typeof SatisfactionSurveyService>;
-const mockDocumentService = DocumentArchiveService as jest.MockedClass<typeof DocumentArchiveService>;
-const mockComplianceService = ComplianceReportService as jest.MockedClass<typeof ComplianceReportService>;
+const mockSatisfactionService = SatisfactionSurveyService as jest.MockedClass<
+  typeof SatisfactionSurveyService
+>;
+const mockDocumentService = DocumentArchiveService as jest.MockedClass<
+  typeof DocumentArchiveService
+>;
+const mockComplianceService = ComplianceReportService as jest.MockedClass<
+  typeof ComplianceReportService
+>;
 
 // Test data
 const mockUser = {
@@ -91,9 +97,15 @@ beforeEach(() => {
 
   // Setup QualioptService mocks
   mockQualioptService.prototype.getIndicators = jest.fn().mockResolvedValue(mockIndicators);
-  mockQualioptService.prototype.getIndicatorDetails = jest.fn().mockResolvedValue(mockIndicators[0]);
-  mockQualioptService.prototype.getCoreIndicators = jest.fn().mockResolvedValue([mockIndicators[0]]);
-  mockQualioptService.prototype.getCompliancePercentage = jest.fn().mockResolvedValue(mockComplianceMetrics);
+  mockQualioptService.prototype.getIndicatorDetails = jest
+    .fn()
+    .mockResolvedValue(mockIndicators[0]);
+  mockQualioptService.prototype.getCoreIndicators = jest
+    .fn()
+    .mockResolvedValue([mockIndicators[0]]);
+  mockQualioptService.prototype.getCompliancePercentage = jest
+    .fn()
+    .mockResolvedValue(mockComplianceMetrics);
   mockQualioptService.prototype.getAuditLog = jest.fn().mockResolvedValue([
     {
       id: '1',
@@ -103,7 +115,7 @@ beforeEach(() => {
       timestamp: '2025-10-23T10:00:00Z',
     },
   ]);
-  
+
   // Setup SatisfactionSurveyService mocks
   mockSatisfactionService.prototype.getAnalytics = jest.fn().mockResolvedValue({
     total_responses: 100,
@@ -111,15 +123,13 @@ beforeEach(() => {
     total_responded: 100,
     nps_score: 45,
     average_rating: 4.5,
-    questions_data: [
-      { question_id: 1, average_score: 4.5, response_count: 100 },
-    ],
+    questions_data: [{ question_id: 1, average_score: 4.5, response_count: 100 }],
     consultant_performance: {
       total_consultants: 5,
       average_rating: 4.5,
     },
   });
-  
+
   // Setup DocumentArchiveService mocks
   mockDocumentService.prototype.getArchivedDocuments = jest.fn().mockResolvedValue([
     {
@@ -164,18 +174,24 @@ beforeEach(() => {
       CONCLUSION: 2,
     },
   });
-  
+
   // Setup ComplianceReportService mocks
   const mockReport = {
     indicators: mockIndicators,
     metrics: mockComplianceMetrics,
     generated_at: '2025-10-23T10:00:00Z',
   };
-  
-  mockComplianceService.prototype.getComplianceMetrics = jest.fn().mockResolvedValue(mockComplianceMetrics);
+
+  mockComplianceService.prototype.getComplianceMetrics = jest
+    .fn()
+    .mockResolvedValue(mockComplianceMetrics);
   mockComplianceService.prototype.generateReport = jest.fn().mockResolvedValue(mockReport);
-  mockComplianceService.prototype.exportAsJSON = jest.fn().mockReturnValue(JSON.stringify(mockReport));
-  mockComplianceService.prototype.exportAsCSV = jest.fn().mockReturnValue('indicator_id,name,status\n1,Test,COMPLIANT');
+  mockComplianceService.prototype.exportAsJSON = jest
+    .fn()
+    .mockReturnValue(JSON.stringify(mockReport));
+  mockComplianceService.prototype.exportAsCSV = jest
+    .fn()
+    .mockReturnValue('indicator_id,name,status\n1,Test,COMPLIANT');
 });
 
 describe('Qualiopi Routes', () => {
@@ -232,12 +248,10 @@ describe('Qualiopi Routes', () => {
 
   describe('PUT /indicators/:id', () => {
     it('should update indicator status to COMPLIANT', async () => {
-      const response = await request(app)
-        .put('/api/qualiopi/indicators/1')
-        .send({
-          status: 'COMPLIANT',
-          notes: 'All evidence provided',
-        });
+      const response = await request(app).put('/api/qualiopi/indicators/1').send({
+        status: 'COMPLIANT',
+        notes: 'All evidence provided',
+      });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('success', true);
@@ -245,44 +259,36 @@ describe('Qualiopi Routes', () => {
     });
 
     it('should update indicator status to UNDER_REVIEW', async () => {
-      const response = await request(app)
-        .put('/api/qualiopi/indicators/11')
-        .send({
-          status: 'UNDER_REVIEW',
-          notes: 'Reviewing submitted documents',
-        });
+      const response = await request(app).put('/api/qualiopi/indicators/11').send({
+        status: 'UNDER_REVIEW',
+        notes: 'Reviewing submitted documents',
+      });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('success', true);
     });
 
     it('should reject invalid status', async () => {
-      const response = await request(app)
-        .put('/api/qualiopi/indicators/1')
-        .send({
-          status: 'INVALID_STATUS',
-        });
+      const response = await request(app).put('/api/qualiopi/indicators/1').send({
+        status: 'INVALID_STATUS',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('success', false);
     });
 
     it('should reject request without status', async () => {
-      const response = await request(app)
-        .put('/api/qualiopi/indicators/1')
-        .send({
-          notes: 'Missing status field',
-        });
+      const response = await request(app).put('/api/qualiopi/indicators/1').send({
+        notes: 'Missing status field',
+      });
 
       expect(response.status).toBe(400);
     });
 
     it('should allow notes to be optional', async () => {
-      const response = await request(app)
-        .put('/api/qualiopi/indicators/1')
-        .send({
-          status: 'COMPLIANT',
-        });
+      const response = await request(app).put('/api/qualiopi/indicators/1').send({
+        status: 'COMPLIANT',
+      });
 
       expect(response.status).toBe(200);
     });
@@ -290,15 +296,13 @@ describe('Qualiopi Routes', () => {
 
   describe('POST /indicators/:id/evidence', () => {
     it('should add evidence file for indicator', async () => {
-      const response = await request(app)
-        .post('/api/qualiopi/indicators/1/evidence')
-        .send({
-          fileName: 'service-description.pdf',
-          fileUrl: 'https://example.com/docs/service-desc.pdf',
-          fileSize: 102400,
-          fileType: 'application/pdf',
-          description: 'Service description document',
-        });
+      const response = await request(app).post('/api/qualiopi/indicators/1/evidence').send({
+        fileName: 'service-description.pdf',
+        fileUrl: 'https://example.com/docs/service-desc.pdf',
+        fileSize: 102400,
+        fileType: 'application/pdf',
+        description: 'Service description document',
+      });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('success', true);
@@ -306,39 +310,33 @@ describe('Qualiopi Routes', () => {
     });
 
     it('should reject invalid file URL', async () => {
-      const response = await request(app)
-        .post('/api/qualiopi/indicators/1/evidence')
-        .send({
-          fileName: 'doc.pdf',
-          fileUrl: 'not-a-url',
-          fileSize: 1000,
-          fileType: 'application/pdf',
-        });
+      const response = await request(app).post('/api/qualiopi/indicators/1/evidence').send({
+        fileName: 'doc.pdf',
+        fileUrl: 'not-a-url',
+        fileSize: 1000,
+        fileType: 'application/pdf',
+      });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('success', false);
     });
 
     it('should reject missing required fields', async () => {
-      const response = await request(app)
-        .post('/api/qualiopi/indicators/1/evidence')
-        .send({
-          fileName: 'doc.pdf',
-          // Missing fileUrl, fileSize, fileType
-        });
+      const response = await request(app).post('/api/qualiopi/indicators/1/evidence').send({
+        fileName: 'doc.pdf',
+        // Missing fileUrl, fileSize, fileType
+      });
 
       expect(response.status).toBe(400);
     });
 
     it('should reject negative file size', async () => {
-      const response = await request(app)
-        .post('/api/qualiopi/indicators/1/evidence')
-        .send({
-          fileName: 'doc.pdf',
-          fileUrl: 'https://example.com/doc.pdf',
-          fileSize: -100,
-          fileType: 'application/pdf',
-        });
+      const response = await request(app).post('/api/qualiopi/indicators/1/evidence').send({
+        fileName: 'doc.pdf',
+        fileUrl: 'https://example.com/doc.pdf',
+        fileSize: -100,
+        fileType: 'application/pdf',
+      });
 
       expect(response.status).toBe(400);
     });
@@ -571,4 +569,3 @@ describe('Qualiopi Routes', () => {
     });
   });
 });
-

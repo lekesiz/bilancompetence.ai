@@ -28,9 +28,8 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
       assessment_id: assessmentId,
       current_phase: getCurrentPhase(phases),
       phases,
-      overall_progress: calculateOverallProgress(phases)
+      overall_progress: calculateOverallProgress(phases),
     });
-
   } catch (error) {
     console.error('Error fetching parcours:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -41,79 +40,88 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
  * POST /api/parcours/:assessmentId/preliminaire/complete
  * Mark phase préliminaire as completed
  */
-router.post('/:assessmentId/preliminaire/complete', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
-    const userId = (req as any).user.userId;
+router.post(
+  '/:assessmentId/preliminaire/complete',
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
+      const userId = (req as any).user.userId;
 
-    const result = await completePhase(assessmentId, 'preliminaire', userId);
+      const result = await completePhase(assessmentId, 'preliminaire', userId);
 
-    if (!result) {
-      return res.status(500).json({ error: 'Failed to update phase' });
+      if (!result) {
+        return res.status(500).json({ error: 'Failed to update phase' });
+      }
+
+      res.json({
+        message: 'Phase préliminaire completed',
+        next_phase: 'investigation',
+      });
+    } catch (error) {
+      console.error('Error completing phase:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-
-    res.json({ 
-      message: 'Phase préliminaire completed',
-      next_phase: 'investigation'
-    });
-
-  } catch (error) {
-    console.error('Error completing phase:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
-});
+);
 
 /**
  * POST /api/parcours/:assessmentId/investigation/complete
  * Mark phase investigation as completed
  */
-router.post('/:assessmentId/investigation/complete', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
-    const userId = (req as any).user.userId;
+router.post(
+  '/:assessmentId/investigation/complete',
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
+      const userId = (req as any).user.userId;
 
-    const result = await completePhase(assessmentId, 'investigation', userId);
+      const result = await completePhase(assessmentId, 'investigation', userId);
 
-    if (!result) {
-      return res.status(500).json({ error: 'Failed to update phase' });
+      if (!result) {
+        return res.status(500).json({ error: 'Failed to update phase' });
+      }
+
+      res.json({
+        message: 'Phase investigation completed',
+        next_phase: 'conclusion',
+      });
+    } catch (error) {
+      console.error('Error completing phase:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-
-    res.json({ 
-      message: 'Phase investigation completed',
-      next_phase: 'conclusion'
-    });
-
-  } catch (error) {
-    console.error('Error completing phase:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
-});
+);
 
 /**
  * POST /api/parcours/:assessmentId/conclusion/complete
  * Mark phase conclusion as completed
  */
-router.post('/:assessmentId/conclusion/complete', authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
-    const userId = (req as any).user.userId;
+router.post(
+  '/:assessmentId/conclusion/complete',
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
+      const userId = (req as any).user.userId;
 
-    const result = await completePhase(assessmentId, 'conclusion', userId);
+      const result = await completePhase(assessmentId, 'conclusion', userId);
 
-    if (!result) {
-      return res.status(500).json({ error: 'Failed to update phase' });
+      if (!result) {
+        return res.status(500).json({ error: 'Failed to update phase' });
+      }
+
+      res.json({
+        message: 'Bilan de compétences completed!',
+        status: 'completed',
+      });
+    } catch (error) {
+      console.error('Error completing phase:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
-
-    res.json({ 
-      message: 'Bilan de compétences completed!',
-      status: 'completed'
-    });
-
-  } catch (error) {
-    console.error('Error completing phase:', error);
-    res.status(500).json({ error: 'Internal server error' });
   }
-});
+);
 
 /**
  * POST /api/parcours/:assessmentId/answers
@@ -134,7 +142,6 @@ router.post('/:assessmentId/answers', authenticateToken, async (req: Request, re
     );
 
     res.json({ answer });
-
   } catch (error) {
     console.error('Error saving answer:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -143,7 +150,7 @@ router.post('/:assessmentId/answers', authenticateToken, async (req: Request, re
 
 // Helper functions
 function calculatePhaseProgress(answers: any[], phase: number): number {
-  const phaseAnswers = answers.filter(a => {
+  const phaseAnswers = answers.filter((a) => {
     if (phase === 1) return a.step_number >= 1 && a.step_number <= 2;
     if (phase === 2) return a.step_number >= 3 && a.step_number <= 4;
     if (phase === 3) return a.step_number === 5;
@@ -168,11 +175,9 @@ function getCurrentPhase(phases: any): string {
 }
 
 function calculateOverallProgress(phases: any): number {
-  const total = phases.preliminaire.progress + 
-                phases.investigation.progress + 
-                phases.conclusion.progress;
+  const total =
+    phases.preliminaire.progress + phases.investigation.progress + phases.conclusion.progress;
   return Math.round(total / 3);
 }
 
 export default router;
-

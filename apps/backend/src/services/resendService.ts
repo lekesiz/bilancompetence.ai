@@ -250,4 +250,3 @@ export class ResendService {
 
 // Export singleton instance
 export const resendService = new ResendService();
-

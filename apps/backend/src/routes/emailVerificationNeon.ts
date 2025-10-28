@@ -8,91 +8,142 @@ import {
   useEmailVerificationToken,
   createAuditLog,
 } from '../services/authFlowServiceNeon.js';
-import { generateToken, sendEmailVerificationEmail, sendAccountConfirmationEmail } from '../services/emailService.js';
+import {
+  generateToken,
+  sendEmailVerificationEmail,
+  sendAccountConfirmationEmail,
+} from '../services/emailService.js';
 import { emailVerificationLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
 
 /**
- * POST /api/email-verification/send
- * Send verification email
+ * @swagger
+ * /api/email-verification/send:
+ *   post:
+ *     summary: Send a verification email
+ *     tags: [Email Verification]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Verification email sent successfully.
+ *       400:
+ *         description: Email already verified.
+ *       401:
+ *         description: Authentication required.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to send verification email.
  */
-router.post('/send', authMiddleware, emailVerificationLimiter, async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'Authentication required',
-      });
-    }
-
-    // Get user
-    const user = await getUserById(req.user.id);
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'User not found',
-      });
-    }
-
-    // Check if already verified
-    if (user.email_verified_at) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Email already verified',
-      });
-    }
-
-    // Generate verification token
-    const verificationToken = generateToken(32);
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 1); // 24 hours expiry
-
-    // Save token
-    await createEmailVerificationToken(user.id, verificationToken, expiresAt);
-
-    // Send email (optional - log to console if not configured)
-    let emailSent = false;
-    if (process.env.SENDGRID_API_KEY) {
-      try {
-        await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
-        emailSent = true;
-      } catch (emailError) {
-        console.warn('Failed to send verification email:', emailError);
+router.post(
+  '/send',
+  authMiddleware,
+  emailVerificationLimiter,
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
       }
-    }
-    
-    if (!emailSent) {
-      console.log('📧 Email verification token:', verificationToken);
-      console.log('📧 Verification URL:', `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`);
-    }
 
-    // Log action
-    await createAuditLog(user.id, 'EMAIL_VERIFICATION_SENT', 'user', user.id, null, req.ip);
+      // Get user
+      const user = await getUserById(req.user.id);
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'User not found',
+        });
+      }
 
-    return res.status(200).json({
-      status: 'success',
-      message: 'Verification email sent',
-      data: {
-        emailSent,
-        // Include token in development for testing
-        token: !emailSent ? verificationToken : undefined,
-      },
-    });
-  } catch (error) {
-    console.error('Send verification email error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to send verification email',
-      debug: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
-    });
+      // Check if already verified
+      if (user.email_verified_at) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Email already verified',
+        });
+      }
+
+      // Generate verification token
+      const verificationToken = generateToken(32);
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 1); // 24 hours expiry
+
+      // Save token
+      await createEmailVerificationToken(user.id, verificationToken, expiresAt);
+
+      // Send email (optional - log to console if not configured)
+      let emailSent = false;
+      if (process.env.SENDGRID_API_KEY) {
+        try {
+          await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
+          emailSent = true;
+        } catch (emailError) {
+          console.warn('Failed to send verification email:', emailError);
+        }
+      }
+
+      if (!emailSent) {
+        console.log('📧 Email verification token:', verificationToken);
+        console.log(
+          '📧 Verification URL:',
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`
+        );
+      }
+
+      // Log action
+      await createAuditLog(user.id, 'EMAIL_VERIFICATION_SENT', 'user', user.id, null, req.ip);
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Verification email sent',
+        data: {
+          emailSent,
+          // Include token in development for testing
+          token: !emailSent ? verificationToken : undefined,
+        },
+      });
+    } catch (error) {
+      console.error('Send verification email error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to send verification email',
+        debug: process.env.NODE_ENV === 'development' ? errorMessage : undefined,
+      });
+    }
   }
-});
+);
 
 /**
- * POST /api/email-verification/verify
- * Verify email with token
+ * @swagger
+ * /api/email-verification/verify:
+ *   post:
+ *     summary: Verify an email
+ *     tags: [Email Verification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email verified successfully.
+ *       400:
+ *         description: Invalid or expired token.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to verify email.
  */
 router.post('/verify', async (req: Request, res: Response) => {
   try {
@@ -161,8 +212,22 @@ router.post('/verify', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/email-verification/status
- * Check email verification status
+ * @swagger
+ * /api/email-verification/status:
+ *   get:
+ *     summary: Check email verification status
+ *     tags: [Email Verification]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Email verification status retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to check verification status.
  */
 router.get('/status', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -199,4 +264,3 @@ router.get('/status', authMiddleware, async (req: Request, res: Response) => {
 });
 
 export default router;
-

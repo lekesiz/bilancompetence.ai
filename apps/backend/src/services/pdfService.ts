@@ -119,7 +119,6 @@ export async function generateAssessmentPDF(
     // Serialize PDF to bytes
     const pdfBytes = await pdfDoc.save();
     return Buffer.from(pdfBytes);
-
   } catch (error) {
     console.error('Error generating assessment PDF:', error);
     throw new Error(`Failed to generate PDF: ${(error as Error).message}`);
@@ -146,11 +145,7 @@ export async function generateUserAssessmentsSummary(userId: string): Promise<Bu
     }
 
     // Fetch user details
-    const { data: user } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    const { data: user } = await supabase.from('users').select('*').eq('id', userId).single();
 
     if (!user) {
       throw new Error('User not found');
@@ -160,14 +155,18 @@ export async function generateUserAssessmentsSummary(userId: string): Promise<Bu
 
     // Add cover page
     let page = pdfDoc.addPage([595.28, 841.89]); // A4
-    await addReportHeader(page, 'Assessment Summary', `User: ${(user as any).full_name}`, new Date());
+    await addReportHeader(
+      page,
+      'Assessment Summary',
+      `User: ${(user as any).full_name}`,
+      new Date()
+    );
 
     // Add summary table of all assessments
     await addAssessmentsSummaryTable(page, assessments, user);
 
     const pdfBytes = await pdfDoc.save();
     return Buffer.from(pdfBytes);
-
   } catch (error) {
     console.error('Error generating assessments summary:', error);
     throw new Error(`Failed to generate assessments summary: ${(error as Error).message}`);
@@ -201,7 +200,6 @@ export async function generateConsultantClientReport(
 
     // Generate conclusion report for the latest assessment
     return generateAssessmentPDF((assessments[0] as any).id, consultantId, 'conclusion');
-
   } catch (error) {
     console.error('Error generating consultant client report:', error);
     throw new Error(`Failed to generate consultant report: ${(error as Error).message}`);
@@ -428,7 +426,10 @@ async function addExecutiveSummary(
   // Key metrics
   const metrics = [
     { label: 'Average Score', value: `${scoreStats.averageScore.toFixed(1)}/4.0` },
-    { label: 'Proficient Competencies', value: `${scoreStats.proficientCount}/${scoreStats.totalCompetencies}` },
+    {
+      label: 'Proficient Competencies',
+      value: `${scoreStats.proficientCount}/${scoreStats.totalCompetencies}`,
+    },
     { label: 'Completion', value: `${scoreStats.completionPercentage}%` },
     { label: 'Total Recommendations', value: `${recommendations.length}` },
   ];
@@ -504,10 +505,7 @@ async function addExecutiveSummary(
 /**
  * Add assessment details section
  */
-async function addAssessmentDetails(
-  page: PDFPage,
-  assessment: FormattedAssessment
-): Promise<void> {
+async function addAssessmentDetails(page: PDFPage, assessment: FormattedAssessment): Promise<void> {
   let y = 780;
 
   page.drawText('Assessment Details', {
@@ -954,8 +952,20 @@ async function addAssessmentsSummaryTable(
     color: rgb(0, 102, 204),
   });
 
-  page.drawText('Assessment', { x: 50, y: y + 3, size: 10, color: rgb(255, 255, 255), font: undefined });
-  page.drawText('Status', { x: 250, y: y + 3, size: 10, color: rgb(255, 255, 255), font: undefined });
+  page.drawText('Assessment', {
+    x: 50,
+    y: y + 3,
+    size: 10,
+    color: rgb(255, 255, 255),
+    font: undefined,
+  });
+  page.drawText('Status', {
+    x: 250,
+    y: y + 3,
+    size: 10,
+    color: rgb(255, 255, 255),
+    font: undefined,
+  });
   page.drawText('Type', { x: 350, y: y + 3, size: 10, color: rgb(255, 255, 255), font: undefined });
   page.drawText('Date', { x: 450, y: y + 3, size: 10, color: rgb(255, 255, 255), font: undefined });
 
@@ -1016,10 +1026,7 @@ async function addAssessmentsSummaryTable(
 /**
  * Add report footer with page numbers
  */
-async function addReportFooter(
-  page: PDFPage,
-  pageNumber: number
-): Promise<void> {
+async function addReportFooter(page: PDFPage, pageNumber: number): Promise<void> {
   const { width, height } = page.getSize();
 
   // Footer line
@@ -1159,8 +1166,12 @@ async function formatAssessmentData(assessment: any): Promise<FormattedAssessmen
     beneficiaryEmail: (beneficiary as any)?.email || 'Unknown',
     consultantName,
     organizationName,
-    startDate: assessment.start_date ? new Date(assessment.start_date).toLocaleDateString() : 'Not started',
-    endDate: assessment.actual_end_date ? new Date(assessment.actual_end_date).toLocaleDateString() : undefined,
+    startDate: assessment.start_date
+      ? new Date(assessment.start_date).toLocaleDateString()
+      : 'Not started',
+    endDate: assessment.actual_end_date
+      ? new Date(assessment.actual_end_date).toLocaleDateString()
+      : undefined,
     duration: assessment.duration_hours || undefined,
     progressPercentage: assessment.progress_percentage || 0,
     satisfactionScore: assessment.satisfaction_score,
@@ -1201,7 +1212,7 @@ export function calculateScoreStatistics(competencies: AssessmentCompetency[]): 
 
   const averageScore = totalScore / competencies.length;
   const completionPercentage = Math.round(
-    (competencies.filter(c => c.self_assessment_level > 0).length / competencies.length) * 100
+    (competencies.filter((c) => c.self_assessment_level > 0).length / competencies.length) * 100
   );
 
   return {
@@ -1253,7 +1264,6 @@ function getPriorityColor(priority: number): any {
   }
 }
 
-
 /**
  * UTILITY FUNCTIONS FOR TESTING
  * These functions are exported for testing purposes
@@ -1278,7 +1288,7 @@ export function calculateScoreStatisticsFromArray(scores: number[]): {
   const average = sum / scores.length;
   const minimum = sorted[0];
   const maximum = sorted[sorted.length - 1];
-  
+
   let median: number;
   const mid = Math.floor(sorted.length / 2);
   if (sorted.length % 2 === 0) {
@@ -1319,4 +1329,3 @@ export function formatDateString(date: Date): string {
   const year = date.getUTCFullYear();
   return `${day}/${month}/${year}`;
 }
-

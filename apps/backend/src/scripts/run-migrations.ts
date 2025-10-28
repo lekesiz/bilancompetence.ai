@@ -21,19 +21,20 @@ if (!DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
 });
 
 async function runMigrations() {
   console.log('🚀 Starting database migrations...\n');
 
   const migrationsDir = path.join(__dirname, '../../migrations');
-  const migrationFiles = fs.readdirSync(migrationsDir)
-    .filter(file => file.endsWith('.sql'))
+  const migrationFiles = fs
+    .readdirSync(migrationsDir)
+    .filter((file) => file.endsWith('.sql'))
     .sort(); // Run in alphabetical order (001, 002, 003...)
 
   console.log(`📁 Found ${migrationFiles.length} migration files:\n`);
-  migrationFiles.forEach(file => console.log(`   - ${file}`));
+  migrationFiles.forEach((file) => console.log(`   - ${file}`));
   console.log('');
 
   for (const file of migrationFiles) {
@@ -48,7 +49,7 @@ async function runMigrations() {
     } catch (error: any) {
       console.error(`❌ Migration ${file} failed:`);
       console.error(`   Error: ${error.message}\n`);
-      
+
       // Continue with other migrations even if one fails
       // (some migrations might be idempotent with IF NOT EXISTS)
     }
@@ -72,8 +73,7 @@ async function runMigrations() {
   console.log('\n✨ Migration process completed!');
 }
 
-runMigrations().catch(error => {
+runMigrations().catch((error) => {
   console.error('💥 Fatal error:', error);
   process.exit(1);
 });
-

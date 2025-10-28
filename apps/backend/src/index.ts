@@ -1,17 +1,4 @@
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-// Load environment variables from .env.local or .env
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rootDir = path.resolve(__dirname, '../../');
-const backendDir = path.resolve(__dirname, '../');
-
-// Try loading from root first, then from backend directory
-dotenv.config({ path: path.join(rootDir, '.env.local') });
-dotenv.config({ path: path.join(backendDir, '.env.local') });
-dotenv.config({ path: path.join(rootDir, '.env') });
-dotenv.config({ path: path.join(backendDir, '.env') });
+import './config/env.js';
 
 import express from 'express';
 import cors from 'cors';
@@ -48,6 +35,8 @@ import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeader
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
 import RealtimeService from './services/realtimeService.js';
 import { logger } from './utils/logger.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swaggerConfig.js';
 
 // Initialize Express app
 const app = express();
@@ -63,38 +52,43 @@ app.set('trust proxy', true);
 // Middleware - Security & Logging
 app.use(helmet());
 // Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
-const corsOrigins = process.env.CORS_ORIGIN 
-  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+const corsOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
   : process.env.NODE_ENV === 'production'
-    ? ['https://bilancompetence.vercel.app', 'https://bilancompetence-git-main-lekesizs-projects.vercel.app']
+    ? [
+        'https://bilancompetence.vercel.app',
+        'https://bilancompetence-git-main-lekesizs-projects.vercel.app',
+      ]
     : ['http://localhost:3000', 'http://localhost:3001'];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin matches allowed patterns
-    const allowedPatterns = [
-      /^https:\/\/.*\.vercel\.app$/,  // All Vercel deployments
-      /^http:\/\/localhost:\d+$/,      // Local development
-      /^https:\/\/bilancompetence\.ai$/,  // Production domain
-      /^https:\/\/app\.bilancompetence\.ai$/,  // Production app subdomain
-      /^https:\/\/.*\.bilancompetence\.ai$/,  // All subdomains
-    ];
-    
-    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin)) || 
-                      corsOrigins.includes(origin);
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      logger.warn(`CORS blocked origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // Check if origin matches allowed patterns
+      const allowedPatterns = [
+        /^https:\/\/.*\.vercel\.app$/, // All Vercel deployments
+        /^http:\/\/localhost:\d+$/, // Local development
+        /^https:\/\/bilancompetence\.ai$/, // Production domain
+        /^https:\/\/app\.bilancompetence\.ai$/, // Production app subdomain
+        /^https:\/\/.*\.bilancompetence\.ai$/, // All subdomains
+      ];
+
+      const isAllowed =
+        allowedPatterns.some((pattern) => pattern.test(origin)) || corsOrigins.includes(origin);
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        logger.warn(`CORS blocked origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -147,6 +141,9 @@ app.get('/api/admin/monitoring/frequent-queries', (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.frequentQueries(limit));
 });
+
+// API Docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Mount routes
 app.use('/api/auth', authRoutes);
@@ -212,7 +209,7 @@ if (!isServerless || isRailway) {
       // Continue anyway - migrations might have already run
     }
   }
-  
+
   // Start the HTTP server
   server.listen(PORT, '0.0.0.0', () => {
     logger.info(`✅ Backend server running on port ${PORT}`);
@@ -224,7 +221,7 @@ if (!isServerless || isRailway) {
       logger.info(`🚂 Running on Railway`);
     }
   });
-  
+
   // Graceful shutdown
   process.on('SIGTERM', () => {
     logger.info('SIGTERM signal received: closing HTTP server');
@@ -233,7 +230,7 @@ if (!isServerless || isRailway) {
       process.exit(0);
     });
   });
-  
+
   process.on('SIGINT', () => {
     logger.info('SIGINT signal received: closing HTTP server');
     server.close(() => {
@@ -254,6 +251,6 @@ app.get('/api/test/deployment-version', (req, res) => {
     version: 'v2.0-phase3-complete',
     timestamp: new Date().toISOString(),
     commit: 'c2382ac',
-    features: ['email-verification', 'password-reset', 'optional-email-service']
+    features: ['email-verification', 'password-reset', 'optional-email-service'],
   });
 });

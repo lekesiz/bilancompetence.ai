@@ -1,13 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
-import {
-  hashPassword,
-  comparePassword,
-} from '../services/authService.js';
-import {
-  getUserByEmail,
-  getUserById,
-} from '../services/userServiceNeon.js';
+import { hashPassword, comparePassword } from '../services/authService.js';
+import { getUserByEmail, getUserById } from '../services/userServiceNeon.js';
 import {
   updateUserPassword,
   createPasswordResetToken,
@@ -37,83 +31,131 @@ const resetPasswordSchema = z.object({
 });
 
 /**
- * POST /api/password-reset/request
- * Request password reset
+ * @swagger
+ * /api/password-reset/request:
+ *   post:
+ *     summary: Request a password reset
+ *     tags: [Password Reset]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *       400:
+ *         description: Invalid email format.
+ *       500:
+ *         description: Failed to process password reset request.
  */
-router.post(
-  '/request',
-  passwordResetLimiter,
-  async (req: Request, res: Response) => {
-    try {
-      const validation = requestResetSchema.safeParse(req.body);
-      if (!validation.success) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Invalid email format',
-        });
-      }
+router.post('/request', passwordResetLimiter, async (req: Request, res: Response) => {
+  try {
+    const validation = requestResetSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid email format',
+      });
+    }
 
-      const { email } = validation.data;
+    const { email } = validation.data;
 
-      // Check if user exists
-      const user = await getUserByEmail(email);
-      if (!user) {
-        // Don't reveal if user exists (security best practice)
-        return res.status(200).json({
-          status: 'success',
-          message: 'If an account with this email exists, a password reset link will be sent.',
-        });
-      }
-
-      // Generate reset token
-      const resetToken = generateToken(32);
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
-
-      // Save token to database
-      await createPasswordResetToken(user.id, resetToken, expiresAt);
-
-      // Send email (optional - log to console if not configured)
-      let emailSent = false;
-      if (process.env.SENDGRID_API_KEY) {
-        try {
-          await sendPasswordResetEmail(email, resetToken, user.full_name);
-          emailSent = true;
-        } catch (emailError) {
-          console.warn('Failed to send password reset email:', emailError);
-        }
-      }
-      
-      if (!emailSent) {
-        console.log('🔑 Password reset token:', resetToken);
-        console.log('🔑 Reset URL:', `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`);
-      }
-
-      // Log action
-      await createAuditLog(user.id, 'PASSWORD_RESET_REQUESTED', 'user', user.id, null, req.ip);
-
+    // Check if user exists
+    const user = await getUserByEmail(email);
+    if (!user) {
+      // Don't reveal if user exists (security best practice)
       return res.status(200).json({
         status: 'success',
         message: 'If an account with this email exists, a password reset link will be sent.',
-        data: {
-          emailSent,
-          // Include token in development for testing
-          token: !emailSent ? resetToken : undefined,
-        },
-      });
-    } catch (error) {
-      console.error('Password reset request error:', error);
-      res.status(500).json({
-        status: 'error',
-        message: 'Failed to process password reset request',
       });
     }
+
+    // Generate reset token
+    const resetToken = generateToken(32);
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
+
+    // Save token to database
+    await createPasswordResetToken(user.id, resetToken, expiresAt);
+
+    // Send email (optional - log to console if not configured)
+    let emailSent = false;
+    if (process.env.SENDGRID_API_KEY) {
+      try {
+        await sendPasswordResetEmail(email, resetToken, user.full_name);
+        emailSent = true;
+      } catch (emailError) {
+        console.warn('Failed to send password reset email:', emailError);
+      }
+    }
+
+    if (!emailSent) {
+      console.log('🔑 Password reset token:', resetToken);
+      console.log(
+        '🔑 Reset URL:',
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
+      );
+    }
+
+    // Log action
+    await createAuditLog(user.id, 'PASSWORD_RESET_REQUESTED', 'user', user.id, null, req.ip);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'If an account with this email exists, a password reset link will be sent.',
+      data: {
+        emailSent,
+        // Include token in development for testing
+        token: !emailSent ? resetToken : undefined,
+      },
+    });
+  } catch (error) {
+    console.error('Password reset request error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to process password reset request',
+    });
   }
-);
+});
 
 /**
- * POST /api/password-reset/confirm
- * Confirm password reset with token
+ * @swagger
+ * /api/password-reset/confirm:
+ *   post:
+ *     summary: Confirm password reset
+ *     tags: [Password Reset]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Password reset successful.
+ *       400:
+ *         description: Invalid request, token, or password.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to reset password.
  */
 router.post('/confirm', async (req: Request, res: Response) => {
   try {
@@ -186,8 +228,29 @@ router.post('/confirm', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/password-reset/validate-token
- * Validate password reset token
+ * @swagger
+ * /api/password-reset/validate-token:
+ *   post:
+ *     summary: Validate password reset token
+ *     tags: [Password Reset]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token is valid.
+ *       400:
+ *         description: Invalid or expired token.
+ *       500:
+ *         description: Failed to validate token.
  */
 router.post('/validate-token', async (req: Request, res: Response) => {
   try {
@@ -226,4 +289,3 @@ router.post('/validate-token', async (req: Request, res: Response) => {
 });
 
 export default router;
-

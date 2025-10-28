@@ -14,8 +14,22 @@ import {
 const router = Router();
 
 /**
- * GET /api/dashboard/me
- * Get current user profile
+ * @swagger
+ * /api/dashboard/me:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to fetch user profile.
  */
 router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -58,164 +72,236 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/dashboard/beneficiary
- * Beneficiary dashboard (assessments, recommendations)
+ * @swagger
+ * /api/dashboard/beneficiary:
+ *   get:
+ *     summary: Get beneficiary dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Beneficiary dashboard data retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       403:
+ *         description: Forbidden.
+ *       500:
+ *         description: Failed to fetch beneficiary dashboard.
  */
-router.get('/beneficiary', authMiddleware, requireRole('BENEFICIARY'), async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
-        status: 'error',
-        message: 'Authentication required',
-      });
-    }
+router.get(
+  '/beneficiary',
+  authMiddleware,
+  requireRole('BENEFICIARY'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
 
-    // Get beneficiary's bilans
-    const bilans = await getBilansByBeneficiary(req.user.id);
+      // Get beneficiary's bilans
+      const bilans = await getBilansByBeneficiary(req.user.id);
 
-    // Get recommendations for beneficiary
-    const recommendations = await getRecommendationsByBeneficiary(req.user.id);
+      // Get recommendations for beneficiary
+      const recommendations = await getRecommendationsByBeneficiary(req.user.id);
 
-    // Calculate stats
-    const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-    const pendingBilans = bilans.filter(b => 
-      b.status !== 'COMPLETED' && b.status !== 'ARCHIVED'
-    ).length;
+      // Calculate stats
+      const completedBilans = bilans.filter((b) => b.status === 'COMPLETED').length;
+      const pendingBilans = bilans.filter(
+        (b) => b.status !== 'COMPLETED' && b.status !== 'ARCHIVED'
+      ).length;
 
-    const totalSatisfaction = bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0);
-    const averageSatisfaction = bilans.length > 0 
-      ? Math.round(totalSatisfaction / bilans.length * 10) / 10 
-      : 0;
+      const totalSatisfaction = bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0);
+      const averageSatisfaction =
+        bilans.length > 0 ? Math.round((totalSatisfaction / bilans.length) * 10) / 10 : 0;
 
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        bilans,
-        recommendations,
-        stats: {
-          totalBilans: bilans.length,
-          completedBilans,
-          pendingBilans,
-          averageSatisfaction,
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          bilans,
+          recommendations,
+          stats: {
+            totalBilans: bilans.length,
+            completedBilans,
+            pendingBilans,
+            averageSatisfaction,
+          },
         },
-      },
-    });
-  } catch (error) {
-    console.error('Beneficiary dashboard error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch beneficiary dashboard',
-    });
-  }
-});
-
-/**
- * GET /api/dashboard/consultant
- * Consultant dashboard (manage assessments, clients)
- */
-router.get('/consultant', authMiddleware, requireRole('CONSULTANT'), async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
+      });
+    } catch (error) {
+      console.error('Beneficiary dashboard error:', error);
+      res.status(500).json({
         status: 'error',
-        message: 'Authentication required',
+        message: 'Failed to fetch beneficiary dashboard',
       });
     }
+  }
+);
 
-    // Get consultant's bilans
-    const bilans = await getBilansByConsultant(req.user.id);
+/**
+ * @swagger
+ * /api/dashboard/consultant:
+ *   get:
+ *     summary: Get consultant dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Consultant dashboard data retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       403:
+ *         description: Forbidden.
+ *       500:
+ *         description: Failed to fetch consultant dashboard.
+ */
+router.get(
+  '/consultant',
+  authMiddleware,
+  requireRole('CONSULTANT'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
 
-    // Get unique clients
-    const clients = await getClientsByConsultant(req.user.id);
+      // Get consultant's bilans
+      const bilans = await getBilansByConsultant(req.user.id);
 
-    // Calculate stats
-    const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-    const activeBilans = bilans.filter(b => 
-      b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION'
-    ).length;
+      // Get unique clients
+      const clients = await getClientsByConsultant(req.user.id);
 
-    const totalSatisfaction = bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0);
-    const averageSatisfaction = bilans.length > 0 
-      ? Math.round(totalSatisfaction / bilans.length * 10) / 10 
-      : 0;
+      // Calculate stats
+      const completedBilans = bilans.filter((b) => b.status === 'COMPLETED').length;
+      const activeBilans = bilans.filter(
+        (b) =>
+          b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION'
+      ).length;
 
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        bilans,
-        clients,
-        stats: {
-          totalBilans: bilans.length,
-          activeBilans,
-          completedBilans,
-          totalClients: clients.length,
-          averageSatisfaction,
+      const totalSatisfaction = bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0);
+      const averageSatisfaction =
+        bilans.length > 0 ? Math.round((totalSatisfaction / bilans.length) * 10) / 10 : 0;
+
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          bilans,
+          clients,
+          stats: {
+            totalBilans: bilans.length,
+            activeBilans,
+            completedBilans,
+            totalClients: clients.length,
+            averageSatisfaction,
+          },
         },
-      },
-    });
-  } catch (error) {
-    console.error('Consultant dashboard error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch consultant dashboard',
-    });
+      });
+    } catch (error) {
+      console.error('Consultant dashboard error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to fetch consultant dashboard',
+      });
+    }
   }
-});
+);
 
 /**
- * GET /api/dashboard/admin
- * Admin dashboard (organization management, analytics)
+ * @swagger
+ * /api/dashboard/admin:
+ *   get:
+ *     summary: Get admin dashboard data
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin dashboard data retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       403:
+ *         description: Forbidden.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to fetch admin dashboard.
  */
-router.get('/admin', authMiddleware, requireRole('ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
+router.get(
+  '/admin',
+  authMiddleware,
+  requireRole('ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
+
+      // Get user to extract organization_id
+      const user = await getUserById(req.user.id);
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'User not found',
+        });
+      }
+
+      if (!user.organization_id) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'User is not associated with an organization',
+        });
+      }
+
+      // Get organization stats
+      const stats = await getOrganizationStats(user.organization_id);
+
+      // Get recent activity
+      const recentActivity = await getRecentActivityByOrganization(user.organization_id, 20);
+
+      return res.status(200).json({
+        status: 'success',
+        data: {
+          stats,
+          recentActivity,
+        },
+      });
+    } catch (error) {
+      console.error('Admin dashboard error:', error);
+      res.status(500).json({
         status: 'error',
-        message: 'Authentication required',
+        message: 'Failed to fetch admin dashboard',
       });
     }
-
-    // Get user to extract organization_id
-    const user = await getUserById(req.user.id);
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'User not found',
-      });
-    }
-
-    if (!user.organization_id) {
-      return res.status(403).json({
-        status: 'error',
-        message: 'User is not associated with an organization',
-      });
-    }
-
-    // Get organization stats
-    const stats = await getOrganizationStats(user.organization_id);
-
-    // Get recent activity
-    const recentActivity = await getRecentActivityByOrganization(user.organization_id, 20);
-
-    return res.status(200).json({
-      status: 'success',
-      data: {
-        stats,
-        recentActivity,
-      },
-    });
-  } catch (error) {
-    console.error('Admin dashboard error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch admin dashboard',
-    });
   }
-});
+);
 
 /**
- * GET /api/dashboard/stats
- * Get user-specific statistics
+ * @swagger
+ * /api/dashboard/stats:
+ *   get:
+ *     summary: Get user-specific statistics
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User statistics retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to fetch statistics.
  */
 router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -256,8 +342,24 @@ router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/dashboard
- * Get dashboard data based on user role
+ * @swagger
+ * /api/dashboard:
+ *   get:
+ *     summary: Get dashboard data based on user role
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data retrieved successfully.
+ *       401:
+ *         description: Authentication required.
+ *       403:
+ *         description: Invalid user role.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Failed to fetch dashboard data.
  */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -279,15 +381,15 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 
     // Redirect to role-specific dashboard data
     let dashboardData;
-    
+
     switch (user.role) {
       case 'BENEFICIARY': {
         const bilans = await getBilansByBeneficiary(user.id);
         const recommendations = await getRecommendationsByBeneficiary(user.id);
-        
-        const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-        const pendingBilans = bilans.filter(b => b.status === 'INVESTIGATION').length;
-        
+
+        const completedBilans = bilans.filter((b) => b.status === 'COMPLETED').length;
+        const pendingBilans = bilans.filter((b) => b.status === 'INVESTIGATION').length;
+
         dashboardData = {
           role: 'BENEFICIARY',
           user: {
@@ -305,14 +407,14 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         };
         break;
       }
-      
+
       case 'CONSULTANT': {
         const bilans = await getBilansByConsultant(user.id);
         const clients = await getClientsByConsultant(user.id);
-        
-        const activeBilans = bilans.filter(b => b.status === 'INVESTIGATION').length;
-        const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-        
+
+        const activeBilans = bilans.filter((b) => b.status === 'INVESTIGATION').length;
+        const completedBilans = bilans.filter((b) => b.status === 'COMPLETED').length;
+
         dashboardData = {
           role: 'CONSULTANT',
           user: {
@@ -330,16 +432,16 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
         };
         break;
       }
-      
+
       case 'ORG_ADMIN': {
         const allBilans = await getAllBilans();
-        const orgStats = user.organization_id 
+        const orgStats = user.organization_id
           ? await getOrganizationStats(user.organization_id)
           : null;
         const recentActivity = user.organization_id
           ? await getRecentActivityByOrganization(user.organization_id)
           : [];
-        
+
         dashboardData = {
           role: user.role,
           user: {
@@ -350,14 +452,14 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
           bilans: allBilans || [],
           stats: orgStats || {
             totalBilans: allBilans?.length || 0,
-            activeBilans: allBilans?.filter(b => b.status === 'INVESTIGATION').length || 0,
-            completedBilans: allBilans?.filter(b => b.status === 'COMPLETED').length || 0,
+            activeBilans: allBilans?.filter((b) => b.status === 'INVESTIGATION').length || 0,
+            completedBilans: allBilans?.filter((b) => b.status === 'COMPLETED').length || 0,
           },
           recentActivity: recentActivity || [],
         };
         break;
       }
-      
+
       default:
         return res.status(403).json({
           status: 'error',
@@ -379,4 +481,3 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 });
 
 export default router;
-

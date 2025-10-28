@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 /**
  * Middleware de sanitization pour protéger contre XSS et SQL Injection
- * 
+ *
  * Nettoie les données entrantes (body, query, params) en:
  * - Échappant les caractères HTML dangereux
  * - Détectant les patterns SQL suspects
@@ -19,7 +19,7 @@ interface SanitizationOptions {
 const DEFAULT_OPTIONS: SanitizationOptions = {
   maxStringLength: 10000,
   allowHTML: false,
-  strictMode: true
+  strictMode: true,
 };
 
 /**
@@ -30,7 +30,7 @@ const SQL_INJECTION_PATTERNS = [
   /(--|;|\/\*|\*\/)/g,
   /(\bOR\b.*=.*)/gi,
   /(\bAND\b.*=.*)/gi,
-  /(\'|\"|`)/g
+  /(\'|\"|`)/g,
 ];
 
 /**
@@ -42,7 +42,7 @@ const XSS_PATTERNS = [
   /javascript:/gi,
   /on\w+\s*=/gi, // onclick, onerror, etc.
   /<embed/gi,
-  /<object/gi
+  /<object/gi,
 ];
 
 /**
@@ -55,9 +55,9 @@ function escapeHTML(str: string): string {
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#x27;',
-    '/': '&#x2F;'
+    '/': '&#x2F;',
   };
-  
+
   return str.replace(/[&<>"'\/]/g, (char) => htmlEscapeMap[char] || char);
 }
 
@@ -65,14 +65,14 @@ function escapeHTML(str: string): string {
  * Détecte les tentatives d'injection SQL
  */
 function detectSQLInjection(str: string): boolean {
-  return SQL_INJECTION_PATTERNS.some(pattern => pattern.test(str));
+  return SQL_INJECTION_PATTERNS.some((pattern) => pattern.test(str));
 }
 
 /**
  * Détecte les tentatives XSS
  */
 function detectXSS(str: string): boolean {
-  return XSS_PATTERNS.some(pattern => pattern.test(str));
+  return XSS_PATTERNS.some((pattern) => pattern.test(str));
 }
 
 /**
@@ -83,22 +83,22 @@ function sanitizeString(value: string, options: SanitizationOptions): string {
   if (options.maxStringLength && value.length > options.maxStringLength) {
     throw new Error(`String trop longue (max: ${options.maxStringLength} caractères)`);
   }
-  
+
   // Détecter SQL Injection
   if (options.strictMode && detectSQLInjection(value)) {
-    throw new Error('Tentative d\'injection SQL détectée');
+    throw new Error("Tentative d'injection SQL détectée");
   }
-  
+
   // Détecter XSS
   if (options.strictMode && detectXSS(value)) {
     throw new Error('Tentative XSS détectée');
   }
-  
+
   // Échapper HTML si nécessaire
   if (!options.allowHTML) {
     return escapeHTML(value);
   }
-  
+
   return value;
 }
 
@@ -109,19 +109,19 @@ function sanitizeObject(obj: any, options: SanitizationOptions): any {
   if (obj === null || obj === undefined) {
     return obj;
   }
-  
+
   if (typeof obj === 'string') {
     return sanitizeString(obj, options);
   }
-  
+
   if (typeof obj === 'number' || typeof obj === 'boolean') {
     return obj;
   }
-  
+
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObject(item, options));
+    return obj.map((item) => sanitizeObject(item, options));
   }
-  
+
   if (typeof obj === 'object') {
     const sanitized: any = {};
     for (const key in obj) {
@@ -131,7 +131,7 @@ function sanitizeObject(obj: any, options: SanitizationOptions): any {
     }
     return sanitized;
   }
-  
+
   return obj;
 }
 
@@ -140,30 +140,30 @@ function sanitizeObject(obj: any, options: SanitizationOptions): any {
  */
 export function sanitizeInput(options: SanitizationOptions = {}) {
   const mergedOptions = { ...DEFAULT_OPTIONS, ...options };
-  
+
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       // Sanitize body
       if (req.body && typeof req.body === 'object') {
         req.body = sanitizeObject(req.body, mergedOptions);
       }
-      
+
       // Sanitize query parameters
       if (req.query && typeof req.query === 'object') {
         req.query = sanitizeObject(req.query, mergedOptions);
       }
-      
+
       // Sanitize URL parameters
       if (req.params && typeof req.params === 'object') {
         req.params = sanitizeObject(req.params, mergedOptions);
       }
-      
+
       next();
     } catch (error: any) {
       console.error('Erreur de sanitization:', error);
-      res.status(400).json({ 
+      res.status(400).json({
         error: 'Données invalides',
-        message: error.message 
+        message: error.message,
       });
     }
   };
@@ -175,7 +175,7 @@ export function sanitizeInput(options: SanitizationOptions = {}) {
 export const strictSanitization = sanitizeInput({
   maxStringLength: 5000,
   allowHTML: false,
-  strictMode: true
+  strictMode: true,
 });
 
 /**
@@ -184,7 +184,7 @@ export const strictSanitization = sanitizeInput({
 export const permissiveSanitization = sanitizeInput({
   maxStringLength: 50000,
   allowHTML: true,
-  strictMode: false
+  strictMode: false,
 });
 
 /**
@@ -211,7 +211,7 @@ export function validateSIRET(siret: string): boolean {
   if (!siretRegex.test(siret)) {
     return false;
   }
-  
+
   // Algorithme de Luhn pour vérifier le SIRET
   let sum = 0;
   for (let i = 0; i < 14; i++) {
@@ -224,7 +224,7 @@ export function validateSIRET(siret: string): boolean {
     }
     sum += digit;
   }
-  
+
   return sum % 10 === 0;
 }
 
@@ -242,21 +242,20 @@ export function validateCPF(cpf: string): boolean {
  */
 export function sanitizeForLogging(data: any): any {
   const sensitiveFields = ['password', 'token', 'secret', 'apiKey', 'creditCard'];
-  
+
   if (typeof data !== 'object' || data === null) {
     return data;
   }
-  
+
   const sanitized = { ...data };
-  
+
   for (const key in sanitized) {
-    if (sensitiveFields.some(field => key.toLowerCase().includes(field.toLowerCase()))) {
+    if (sensitiveFields.some((field) => key.toLowerCase().includes(field.toLowerCase()))) {
       sanitized[key] = '[REDACTED]';
     } else if (typeof sanitized[key] === 'object') {
       sanitized[key] = sanitizeForLogging(sanitized[key]);
     }
   }
-  
+
   return sanitized;
 }
-

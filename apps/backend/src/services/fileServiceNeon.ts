@@ -6,7 +6,12 @@
 import { query } from '../config/neon.js';
 import { logger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+} from '../utils/errorHandler.js';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -40,11 +45,17 @@ export async function uploadFile(
   bucket: string = 'files'
 ): Promise<FileMetadata> {
   try {
-    validateRequired({ userId, file, fileName, fileType, bucket }, ['userId', 'file', 'fileName', 'fileType', 'bucket']);
+    validateRequired({ userId, file, fileName, fileType, bucket }, [
+      'userId',
+      'file',
+      'fileName',
+      'fileType',
+      'bucket',
+    ]);
 
     const fileId = uuidv4();
     const storagePath = `${userId}/${fileId}-${fileName}`;
-    
+
     // In production, this would upload to S3 or similar
     // For now, we just record metadata
     const fileUrl = `/files/${storagePath}`;
@@ -89,11 +100,10 @@ export async function uploadAvatar(
     );
 
     // Update user's avatar_url
-    await query(
-      null,
-      `UPDATE users SET avatar_url = $1, updated_at = NOW() WHERE id = $2`,
-      [avatarUrl, userId]
-    );
+    await query(null, `UPDATE users SET avatar_url = $1, updated_at = NOW() WHERE id = $2`, [
+      avatarUrl,
+      userId,
+    ]);
 
     logger.info('Avatar uploaded successfully', { userId });
     return avatarUrl;
@@ -128,11 +138,7 @@ export async function getFileMetadata(fileId: string): Promise<FileMetadata | nu
   try {
     validateRequired({ fileId }, ['fileId']);
 
-    const result = await query<FileMetadata>(
-      null,
-      `SELECT * FROM files WHERE id = $1`,
-      [fileId]
-    );
+    const result = await query<FileMetadata>(null, `SELECT * FROM files WHERE id = $1`, [fileId]);
 
     if (result.length === 0) {
       return null;
@@ -158,11 +164,7 @@ export async function deleteFile(fileId: string): Promise<boolean> {
     }
 
     // Delete from database
-    await query(
-      null,
-      `DELETE FROM files WHERE id = $1`,
-      [fileId]
-    );
+    await query(null, `DELETE FROM files WHERE id = $1`, [fileId]);
 
     // In production, would also delete from S3/storage
     logger.info('File deleted successfully', { fileId });
@@ -184,8 +186,13 @@ export async function uploadAssessmentDocument(
   fileType: string
 ): Promise<FileMetadata> {
   try {
-    validateRequired({ userId, assessmentId, file, fileName, fileType }, 
-      ['userId', 'assessmentId', 'file', 'fileName', 'fileType']);
+    validateRequired({ userId, assessmentId, file, fileName, fileType }, [
+      'userId',
+      'assessmentId',
+      'file',
+      'fileName',
+      'fileType',
+    ]);
 
     const fileId = uuidv4();
     const storagePath = `assessments/${assessmentId}/${fileId}-${fileName}`;
@@ -257,4 +264,3 @@ export async function getDownloadUrl(fileId: string, expirySeconds: number = 360
     logAndThrow('Failed to get download URL', error);
   }
 }
-

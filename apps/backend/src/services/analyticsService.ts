@@ -1,6 +1,12 @@
 import { supabase } from './supabaseService.js';
 import { withCache } from '../utils/cache.js';
-import { logAndThrow, validateRequired, DatabaseError, NotFoundError, ValidationError } from '../utils/errorHandler.js';
+import {
+  logAndThrow,
+  validateRequired,
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from '../utils/errorHandler.js';
 import { logger } from '../utils/logger.js';
 import { BilanStatus } from '../types/enums.js';
 
@@ -22,7 +28,11 @@ export async function getUserActivityStats(userId: string) {
       `analytics:user:${userId}`,
       async () => {
         // Get total assessments
-        const { data: assessments, count: assessmentCount, error: assessmentError } = await supabase
+        const {
+          data: assessments,
+          count: assessmentCount,
+          error: assessmentError,
+        } = await supabase
           .from('bilans')
           .select('*', { count: 'exact', head: true })
           .eq('beneficiary_id', userId);
@@ -32,7 +42,11 @@ export async function getUserActivityStats(userId: string) {
         }
 
         // Get completed assessments
-        const { data: completed, count: completedCount, error: completedError } = await supabase
+        const {
+          data: completed,
+          count: completedCount,
+          error: completedError,
+        } = await supabase
           .from('bilans')
           .select('*', { count: 'exact', head: true })
           .eq('beneficiary_id', userId)
@@ -43,7 +57,11 @@ export async function getUserActivityStats(userId: string) {
         }
 
         // Get recommendations count
-        const { data: recommendations, count: recommendationCount, error: recommendationError } = await supabase
+        const {
+          data: recommendations,
+          count: recommendationCount,
+          error: recommendationError,
+        } = await supabase
           .from('recommendations')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', userId);
@@ -57,7 +75,9 @@ export async function getUserActivityStats(userId: string) {
           completedAssessments: completedCount || 0,
           pendingAssessments: (assessmentCount || 0) - (completedCount || 0),
           recommendations: recommendationCount || 0,
-          completionRate: assessmentCount ? Math.round((completedCount || 0) / assessmentCount * 100) : 0,
+          completionRate: assessmentCount
+            ? Math.round(((completedCount || 0) / assessmentCount) * 100)
+            : 0,
         };
 
         logger.info('User activity statistics calculated', { userId });
@@ -116,7 +136,9 @@ export async function getOrganizationStats(organizationId: string) {
           totalUsers: userCount || 0,
           totalAssessments: assessmentCount || 0,
           completedAssessments: completedCount || 0,
-          completionRate: assessmentCount ? Math.round((completedCount || 0) / assessmentCount * 100) : 0,
+          completionRate: assessmentCount
+            ? Math.round(((completedCount || 0) / assessmentCount) * 100)
+            : 0,
         };
 
         logger.info('Organization statistics calculated', { organizationId });
@@ -152,7 +174,11 @@ export async function getAssessmentAnalytics(assessmentId: string) {
     }
 
     // Get answers count
-    const { data: answers, count: answerCount, error: answerError } = await supabase
+    const {
+      data: answers,
+      count: answerCount,
+      error: answerError,
+    } = await supabase
       .from('assessment_answers')
       .select('*', { count: 'exact', head: true })
       .eq('bilan_id', assessmentId);
@@ -162,7 +188,11 @@ export async function getAssessmentAnalytics(assessmentId: string) {
     }
 
     // Get questions count
-    const { data: questions, count: questionCount, error: questionError } = await supabase
+    const {
+      data: questions,
+      count: questionCount,
+      error: questionError,
+    } = await supabase
       .from('assessment_questions')
       .select('*', { count: 'exact', head: true })
       .eq('bilan_id', assessmentId);
@@ -178,7 +208,9 @@ export async function getAssessmentAnalytics(assessmentId: string) {
       status: typedAssessment.status,
       totalQuestions: questionCount || 0,
       totalAnswers: answerCount || 0,
-      completionPercentage: questionCount ? Math.round((answerCount || 0) / questionCount * 100) : 0,
+      completionPercentage: questionCount
+        ? Math.round(((answerCount || 0) / questionCount) * 100)
+        : 0,
       startDate: typedAssessment.start_date,
       endDate: typedAssessment.end_date,
     };
@@ -197,7 +229,10 @@ export async function getAssessmentsTimeSeries(userId: string, weeks: number = 1
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data, error } = await supabase.from('bilans').select('created_at').eq('beneficiary_id', userId);
+    const { data, error } = await supabase
+      .from('bilans')
+      .select('created_at')
+      .eq('beneficiary_id', userId);
 
     if (error) {
       throw new DatabaseError('Failed to fetch assessment time series data', error);
@@ -261,7 +296,10 @@ export async function getAssessmentTypeDistribution(organizationId?: string) {
       });
     }
 
-    logger.info('Assessment type distribution calculated', { organizationId, typesCount: Object.keys(distribution).length });
+    logger.info('Assessment type distribution calculated', {
+      organizationId,
+      typesCount: Object.keys(distribution).length,
+    });
     return distribution;
   } catch (error) {
     logAndThrow('Failed to get assessment type distribution', error);
@@ -308,7 +346,10 @@ export async function getRecommendationEffectiveness(userId: string) {
       completionRate: Math.round((completed / recommendations.length) * 100),
     };
 
-    logger.info('Recommendation effectiveness calculated', { userId, completionRate: effectiveness.completionRate });
+    logger.info('Recommendation effectiveness calculated', {
+      userId,
+      completionRate: effectiveness.completionRate,
+    });
     return effectiveness;
   } catch (error) {
     logAndThrow('Failed to get recommendation effectiveness', error);
@@ -352,7 +393,10 @@ export async function getSkillProficiency(userId: string) {
 /**
  * Generate report data
  */
-export async function generateReportData(userId: string, reportType: 'detailed' | 'summary' = 'detailed') {
+export async function generateReportData(
+  userId: string,
+  reportType: 'detailed' | 'summary' = 'detailed'
+) {
   try {
     validateRequired({ userId }, ['userId']);
 

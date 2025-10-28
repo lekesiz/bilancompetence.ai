@@ -144,7 +144,7 @@ export function handleApiError(error: any, endpoint: string): never {
  * Validate required fields
  */
 export function validateRequired(data: Record<string, any>, fields: string[]): void {
-  const missing = fields.filter(field => !data[field]);
+  const missing = fields.filter((field) => !data[field]);
 
   if (missing.length > 0) {
     throw new ValidationError('Missing required fields', { missing });

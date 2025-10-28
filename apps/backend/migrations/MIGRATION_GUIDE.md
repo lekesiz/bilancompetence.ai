@@ -88,12 +88,14 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 ### 002_expand_assessments_schema.sql
 
 **Adds to `assessments` table**:
+
 - `current_step` (INTEGER) - Current wizard step (0-5)
 - `progress_percentage` (INTEGER) - Completion % (0-100)
 - `submitted_at` (TIMESTAMP) - When submitted for review
 - `completed_at` (TIMESTAMP) - When fully completed
 
 **Indexes Created**:
+
 - idx_assessments_status_beneficiary
 - idx_assessments_current_step
 - idx_assessments_progress
@@ -105,6 +107,7 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 ### 003_expand_assessment_questions.sql
 
 **Adds to `assessment_questions` table**:
+
 - `step_number` (INTEGER 1-5) - Wizard step
 - `section` (TEXT) - work_history | education | skills | motivations | constraints
 - `question_type` (TEXT) - text, textarea, select, multiselect, rating, checkbox_array, etc.
@@ -115,6 +118,7 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 - `placeholder` (TEXT) - Input placeholder
 
 **Indexes Created**:
+
 - idx_assessment_questions_step
 - idx_assessment_questions_section
 - idx_assessment_questions_assessment_step
@@ -126,11 +130,13 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 ### 004_expand_assessment_answers.sql
 
 **Adds to `assessment_answers` table**:
+
 - `step_number` (INTEGER 1-5) - Wizard step
 - `section` (TEXT) - work_history | education | skills | motivations | constraints
 - `answer_type` (TEXT) - Type of answer value
 
 **Indexes Created**:
+
 - idx_assessment_answers_step
 - idx_assessment_answers_section
 - idx_assessment_answers_assessment_section
@@ -143,6 +149,7 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 ### 005_create_assessment_competencies.sql (NEW TABLE)
 
 **Creates `assessment_competencies` table** with:
+
 - `id` (UUID PRIMARY KEY)
 - `assessment_id` (UUID FK → assessments.id)
 - `skill_name` (TEXT) - Name of skill/competency
@@ -156,6 +163,7 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 - Timestamps (created_at, updated_at)
 
 **Indexes Created**:
+
 - idx_assessment_competencies_assessment_id
 - idx_assessment_competencies_category
 - idx_assessment_competencies_skill_name
@@ -170,6 +178,7 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 ### 006_create_assessment_drafts.sql (NEW TABLE)
 
 **Creates `assessment_drafts` table** with:
+
 - `id` (UUID PRIMARY KEY)
 - `assessment_id` (UUID UNIQUE FK)
 - `current_step_number` (INTEGER 0-5)
@@ -179,6 +188,7 @@ psql -h $SUPABASE_HOST -U $SUPABASE_USER -d $SUPABASE_DB -f 007_seed_assessment_
 - Timestamps
 
 **Indexes Created**:
+
 - idx_assessment_drafts_assessment_id
 - idx_assessment_drafts_last_saved
 - idx_assessment_drafts_current_step
@@ -232,29 +242,35 @@ After applying migrations, verify everything was applied correctly:
 ### Using Supabase Dashboard
 
 1. **Check Tables Exist**:
+
    ```sql
    SELECT table_name
    FROM information_schema.tables
    WHERE table_schema = 'public'
    AND table_name IN ('assessments', 'assessment_questions', 'assessment_answers', 'assessment_competencies', 'assessment_drafts');
    ```
+
    ✅ Should return 5 tables
 
 2. **Check Columns Added to assessments**:
+
    ```sql
    SELECT column_name, data_type
    FROM information_schema.columns
    WHERE table_name = 'assessments'
    AND column_name IN ('current_step', 'progress_percentage', 'submitted_at', 'completed_at');
    ```
+
    ✅ Should return 4 columns
 
 3. **Check Seed Data Inserted**:
+
    ```sql
    SELECT COUNT(*)
    FROM assessment_questions
    WHERE assessment_id IS NULL;
    ```
+
    ✅ Should return 16 (16 template questions)
 
 4. **Check Indexes Created**:
@@ -370,14 +386,17 @@ USING (
 ## ⚡ Performance Considerations
 
 ### Indexes Created
+
 - **13 new indexes** for faster queries
 - **Covers common query patterns**: step, section, status, assessment_id
 
 ### Triggers
+
 - **2 automatic timestamp triggers** for audit trail
 - **No performance impact** (background)
 
 ### JSONB Storage
+
 - `draft_data` and `options` stored as JSONB
 - Allows flexible, schema-less data
 - Indexes can be created if needed later
@@ -436,20 +455,24 @@ After migrations are applied:
 ## ❓ Troubleshooting
 
 ### Error: "table already exists"
+
 - Some tables might exist from previous versions
 - Migration scripts use `IF NOT EXISTS`, so they're safe to rerun
 - Just continue with next migration
 
 ### Error: "column already exists"
+
 - Column was previously added
 - Script has `IF NOT EXISTS` protection
 - Continue with next migration
 
 ### Error: "permission denied"
+
 - You need Admin/Owner permissions in Supabase
 - Ask project admin to run migrations
 
 ### Queries seem slow
+
 - Indexes are created automatically
 - Queries should speed up after migration
 - Run analyze: `ANALYZE assessment_competencies;`
@@ -458,4 +481,3 @@ After migrations are applied:
 
 **Status**: ✅ Migration scripts READY
 **Awaiting**: User approval to apply migrations to production Supabase instance
-

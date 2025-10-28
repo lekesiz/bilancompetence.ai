@@ -2,7 +2,13 @@ import { supabase } from './supabaseService.js';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { logger } from '../utils/logger.js';
-import { parsePaginationParams, createPaginatedResponse, parseSortParams, PaginationParams, PaginatedResponse } from '../utils/pagination.js';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  parseSortParams,
+  PaginationParams,
+  PaginatedResponse,
+} from '../utils/pagination.js';
 
 /**
  * Assessment Service - Bilan management with Wizard support
@@ -15,7 +21,16 @@ export interface Assessment {
   organization_id?: string;
   title: string;
   description?: string;
-  status: 'DRAFT' | 'IN_PROGRESS' | 'SUBMITTED' | 'UNDER_REVIEW' | 'COMPLETED' | 'draft' | 'in_progress' | 'completed' | 'archived';
+  status:
+    | 'DRAFT'
+    | 'IN_PROGRESS'
+    | 'SUBMITTED'
+    | 'UNDER_REVIEW'
+    | 'COMPLETED'
+    | 'draft'
+    | 'in_progress'
+    | 'completed'
+    | 'archived';
   assessment_type: 'career' | 'skills' | 'comprehensive';
   current_step?: number;
   progress_percentage?: number;
@@ -70,12 +85,16 @@ export const educationStepSchema = z.object({
 });
 
 export const skillsStepSchema = z.object({
-  competencies: z.array(z.object({
-    skillName: z.string().min(2),
-    selfAssessmentLevel: z.number().int().min(1).max(4),
-    selfInterestLevel: z.number().int().min(1).max(10),
-    context: z.string().optional(),
-  })).min(5, 'Please select at least 5 skills'),
+  competencies: z
+    .array(
+      z.object({
+        skillName: z.string().min(2),
+        selfAssessmentLevel: z.number().int().min(1).max(4),
+        selfInterestLevel: z.number().int().min(1).max(10),
+        context: z.string().optional(),
+      })
+    )
+    .min(5, 'Please select at least 5 skills'),
   additionalSkills: z.string().optional(),
 });
 
@@ -187,7 +206,12 @@ export async function getUserAssessments(
       throw error;
     }
 
-    return createPaginatedResponse<Assessment>((data as unknown as Assessment[]) || [], pageNum, limitNum, total || 0);
+    return createPaginatedResponse<Assessment>(
+      (data as unknown as Assessment[]) || [],
+      pageNum,
+      limitNum,
+      total || 0
+    );
   }
 
   // Fallback: return all assessments without pagination (legacy support)
@@ -405,7 +429,7 @@ export async function getUserRecommendations(userId: string): Promise<any> {
   }
 
   const typedBilans = bilans as any[];
-  const bilanIds = typedBilans.map(b => b.id);
+  const bilanIds = typedBilans.map((b) => b.id);
 
   const { data, error } = await supabase
     .from('recommendations')
@@ -482,7 +506,9 @@ export async function getAssessmentStats(assessmentId: string) {
     questionsCount: questionsCount || 0,
     answersCount: answersCount || 0,
     recommendationsCount: recommendationsCount || 0,
-    completionPercentage: questionsCount ? Math.round(((answersCount || 0) / questionsCount) * 100) : 0,
+    completionPercentage: questionsCount
+      ? Math.round(((answersCount || 0) / questionsCount) * 100)
+      : 0,
   };
 }
 
@@ -503,7 +529,8 @@ export async function createAssessmentDraft(
     .insert({
       beneficiary_id: beneficiaryId,
       assessment_type: assessmentType,
-      title: title || `${assessmentType.charAt(0).toUpperCase() + assessmentType.slice(1)} Assessment`,
+      title:
+        title || `${assessmentType.charAt(0).toUpperCase() + assessmentType.slice(1)} Assessment`,
       status: 'DRAFT',
       current_step: 0,
       progress_percentage: 0,
@@ -607,9 +634,8 @@ export async function saveDraftStep(
 
   // Save answers for each question
   for (const [questionId, answerValue] of Object.entries(answers)) {
-    await supabase
-      .from('assessment_answers')
-      .upsert({
+    await supabase.from('assessment_answers').upsert(
+      {
         assessment_id: assessmentId,
         question_id: questionId,
         step_number: stepNumber,
@@ -618,17 +644,18 @@ export async function saveDraftStep(
         answer_type: typeof answerValue,
         submitted_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      }, {
+      },
+      {
         onConflict: 'assessment_id,question_id',
-      });
+      }
+    );
   }
 
   // Save competencies if provided (Step 3)
   if (competencies && competencies.length > 0) {
     for (const comp of competencies) {
-      await supabase
-        .from('assessment_competencies')
-        .upsert({
+      await supabase.from('assessment_competencies').upsert(
+        {
           assessment_id: assessmentId,
           skill_name: comp.skillName || comp.skill_name,
           category: comp.category || 'technical',
@@ -636,9 +663,11 @@ export async function saveDraftStep(
           self_interest_level: comp.selfInterestLevel || comp.self_interest_level || 5,
           context: comp.context,
           updated_at: new Date().toISOString(),
-        }, {
+        },
+        {
           onConflict: 'assessment_id,skill_name',
-        });
+        }
+      );
     }
   }
 
@@ -710,15 +739,13 @@ export async function autoSaveDraft(
       .eq('assessment_id', assessmentId);
   } else {
     // Create new draft
-    await supabase
-      .from('assessment_drafts')
-      .insert({
-        assessment_id: assessmentId,
-        current_step_number: stepNumber,
-        draft_data: updatedDraftData,
-        auto_save_enabled: true,
-        last_saved_at: now,
-      });
+    await supabase.from('assessment_drafts').insert({
+      assessment_id: assessmentId,
+      current_step_number: stepNumber,
+      draft_data: updatedDraftData,
+      auto_save_enabled: true,
+      last_saved_at: now,
+    });
   }
 
   return { savedAt: now };
@@ -842,10 +869,7 @@ export async function submitAssessment(
   }
 
   // Clean up draft after submission
-  await supabase
-    .from('assessment_drafts')
-    .delete()
-    .eq('assessment_id', assessmentId);
+  await supabase.from('assessment_drafts').delete().eq('assessment_id', assessmentId);
 
   return {
     status: 'submitted',
@@ -861,12 +885,12 @@ async function getCompletedSteps(assessmentId: string): Promise<number[]> {
 
   try {
     for (let step = 1; step <= 5; step++) {
-      const { data, error } = await supabase
+      const { data, error } = (await supabase
         .from('assessment_answers')
         .select('id')
         .eq('assessment_id', assessmentId)
         .eq('step_number', step)
-        .limit(1) as any;
+        .limit(1)) as any;
 
       if (error) {
         logger.warn(`Error checking step ${step} completion`, { error: error.message });

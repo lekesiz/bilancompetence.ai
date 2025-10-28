@@ -25,58 +25,64 @@ const upload = multer({
     const allowedMimes = [
       'application/pdf',
       'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {
       cb(new Error('Invalid file type. Only PDF and Word documents are allowed.'));
     }
-  }
+  },
 });
 
 // Use Gemini API (from environment variables)
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+const GEMINI_API_URL =
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
 /**
  * POST /api/ai/analyze-cv
  * Analyze CV and extract competences from uploaded file
  */
-router.post('/analyze-cv', authenticateToken, upload.single('cv'), async (req: Request, res: Response) => {
-  try {
-    const file = req.file;
-    const { assessment_id } = req.body;
-
-    if (!file) {
-      return res.status(400).json({ error: 'CV file is required' });
-    }
-
-    // Extract text from uploaded file
-    let cv_text = '';
+router.post(
+  '/analyze-cv',
+  authenticateToken,
+  upload.single('cv'),
+  async (req: Request, res: Response) => {
     try {
-      if (file.mimetype === 'application/pdf') {
-        // Temporarily disabled due to pdf-parse compatibility issues with Node.js 18
-        return res.status(501).json({ 
-          error: 'PDF analysis temporarily unavailable. Please upgrade to Node.js 20+ or use Word documents.' 
-        });
-      } else if (file.mimetype.includes('word') || file.mimetype.includes('document')) {
-        const result = await mammoth.extractRawText({ buffer: file.buffer });
-        cv_text = result.value;
-      } else {
-        return res.status(400).json({ error: 'Unsupported file type' });
+      const file = req.file;
+      const { assessment_id } = req.body;
+
+      if (!file) {
+        return res.status(400).json({ error: 'CV file is required' });
       }
-    } catch (extractError) {
-      console.error('Error extracting text from file:', extractError);
-      return res.status(500).json({ error: 'Failed to extract text from CV file' });
-    }
 
-    if (!cv_text || cv_text.trim().length === 0) {
-      return res.status(400).json({ error: 'CV file appears to be empty or unreadable' });
-    }
+      // Extract text from uploaded file
+      let cv_text = '';
+      try {
+        if (file.mimetype === 'application/pdf') {
+          // Temporarily disabled due to pdf-parse compatibility issues with Node.js 18
+          return res.status(501).json({
+            error:
+              'PDF analysis temporarily unavailable. Please upgrade to Node.js 20+ or use Word documents.',
+          });
+        } else if (file.mimetype.includes('word') || file.mimetype.includes('document')) {
+          const result = await mammoth.extractRawText({ buffer: file.buffer });
+          cv_text = result.value;
+        } else {
+          return res.status(400).json({ error: 'Unsupported file type' });
+        }
+      } catch (extractError) {
+        console.error('Error extracting text from file:', extractError);
+        return res.status(500).json({ error: 'Failed to extract text from CV file' });
+      }
 
-    // Call Gemini API for CV analysis
-    const prompt = `Analyse ce CV et extrais les informations suivantes au format JSON:
+      if (!cv_text || cv_text.trim().length === 0) {
+        return res.status(400).json({ error: 'CV file appears to be empty or unreadable' });
+      }
+
+      // Call Gemini API for CV analysis
+      const prompt = `Analyse ce CV et extrais les informations suivantes au format JSON:
 {
   "competences": ["compétence 1", "compétence 2", ...],
   "experiences": [
@@ -101,20 +107,20 @@ router.post('/analyze-cv', authenticateToken, upload.single('cv'), async (req: R
 CV:
 ${cv_text}`;
 
-    const analysis = await callGeminiAPI(prompt);
+      const analysis = await callGeminiAPI(prompt);
 
-    // Save analysis to database
-    if (assessment_id) {
-      await saveCVAnalysis(assessment_id, cv_text, analysis);
+      // Save analysis to database
+      if (assessment_id) {
+        await saveCVAnalysis(assessment_id, cv_text, analysis);
+      }
+
+      res.json({ analysis });
+    } catch (error) {
+      console.error('Error analyzing CV:', error);
+      res.status(500).json({ error: 'Failed to analyze CV' });
     }
-
-    res.json({ analysis });
-
-  } catch (error) {
-    console.error('Error analyzing CV:', error);
-    res.status(500).json({ error: 'Failed to analyze CV' });
   }
-});
+);
 
 /**
  * POST /api/ai/job-recommendations
@@ -157,7 +163,6 @@ Pour chaque métier, fournis au format JSON:
     }
 
     res.json({ recommendations });
-
   } catch (error) {
     console.error('Error getting job recommendations:', error);
     res.status(500).json({ error: 'Failed to get recommendations' });
@@ -199,7 +204,6 @@ Fournis une analyse au format JSON:
     }
 
     res.json({ analysis });
-
   } catch (error) {
     console.error('Error analyzing personality:', error);
     res.status(500).json({ error: 'Failed to analyze personality' });
@@ -257,7 +261,6 @@ Fournis un plan au format JSON:
     }
 
     res.json({ action_plan: actionPlan });
-
   } catch (error) {
     console.error('Error generating action plan:', error);
     res.status(500).json({ error: 'Failed to generate action plan' });
@@ -277,19 +280,23 @@ async function callGeminiAPI(prompt: string): Promise<any> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }]
-      })
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt,
+              },
+            ],
+          },
+        ],
+      }),
     });
 
     if (!response.ok) {
       throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    const data = await response.json() as any;
+    const data = (await response.json()) as any;
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!text) {
@@ -308,7 +315,6 @@ async function callGeminiAPI(prompt: string): Promise<any> {
       // If not JSON, return as text
       return { result: text };
     }
-
   } catch (error) {
     console.error('Gemini API call failed:', error);
     throw error;
@@ -316,4 +322,3 @@ async function callGeminiAPI(prompt: string): Promise<any> {
 }
 
 export default router;
-

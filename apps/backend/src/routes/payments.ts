@@ -32,7 +32,6 @@ router.post('/create-payment-intent', async (req: Request, res: Response) => {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
     });
-
   } catch (error: any) {
     console.error('Create payment intent error:', error);
     res.status(500).json({ error: error.message });
@@ -68,7 +67,6 @@ router.post('/create-subscription', async (req: Request, res: Response) => {
       clientSecret: (subscription.latest_invoice as any)?.payment_intent?.client_secret,
       status: subscription.status,
     });
-
   } catch (error: any) {
     console.error('Create subscription error:', error);
     res.status(500).json({ error: error.message });
@@ -108,7 +106,6 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       sessionId: session.id,
       url: session.url,
     });
-
   } catch (error: any) {
     console.error('Create checkout session error:', error);
     res.status(500).json({ error: error.message });
@@ -134,7 +131,6 @@ router.post('/cancel-subscription', async (req: Request, res: Response) => {
       status: subscription.status,
       canceledAt: subscription.canceled_at,
     });
-
   } catch (error: any) {
     console.error('Cancel subscription error:', error);
     res.status(500).json({ error: error.message });
@@ -158,7 +154,6 @@ router.get('/subscription/:subscriptionId', async (req: Request, res: Response) 
       cancelAtPeriodEnd: (subscription as any).cancel_at_period_end,
       items: subscription.items.data,
     });
-
   } catch (error: any) {
     console.error('Get subscription error:', error);
     res.status(500).json({ error: error.message });
@@ -182,7 +177,6 @@ router.post('/customer-portal', async (req: Request, res: Response) => {
     res.json({
       url: session.url,
     });
-
   } catch (error: any) {
     console.error('Customer portal error:', error);
     res.status(500).json({ error: error.message });
@@ -198,7 +192,7 @@ router.get('/prices', async (req: Request, res: Response) => {
     const prices = await stripeService.listPrices();
 
     res.json({
-      prices: prices.map(price => ({
+      prices: prices.map((price) => ({
         id: price.id,
         productId: price.product,
         amount: price.unit_amount,
@@ -207,7 +201,6 @@ router.get('/prices', async (req: Request, res: Response) => {
         intervalCount: price.recurring?.interval_count,
       })),
     });
-
   } catch (error: any) {
     console.error('List prices error:', error);
     res.status(500).json({ error: error.message });
@@ -226,7 +219,7 @@ router.get('/invoices/:customerId', async (req: Request, res: Response) => {
     const invoices = await stripeService.listCustomerInvoices(customerId, limit);
 
     res.json({
-      invoices: invoices.map(invoice => ({
+      invoices: invoices.map((invoice) => ({
         id: invoice.id,
         amount: invoice.amount_paid,
         currency: invoice.currency,
@@ -236,7 +229,6 @@ router.get('/invoices/:customerId', async (req: Request, res: Response) => {
         createdAt: invoice.created,
       })),
     });
-
   } catch (error: any) {
     console.error('List invoices error:', error);
     res.status(500).json({ error: error.message });
@@ -299,7 +291,6 @@ router.post('/webhook', async (req: Request, res: Response) => {
     }
 
     res.json({ received: true });
-
   } catch (error: any) {
     console.error('Webhook error:', error);
     res.status(400).json({ error: error.message });
@@ -307,4 +298,3 @@ router.post('/webhook', async (req: Request, res: Response) => {
 });
 
 export default router;
-

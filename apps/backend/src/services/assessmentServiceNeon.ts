@@ -94,7 +94,8 @@ export async function createAssessment(
   consultantId?: string
 ): Promise<Assessment> {
   const assessmentId = uuidv4();
-  const defaultTitle = title || `${assessmentType.charAt(0).toUpperCase() + assessmentType.slice(1)} Assessment`;
+  const defaultTitle =
+    title || `${assessmentType.charAt(0).toUpperCase() + assessmentType.slice(1)} Assessment`;
 
   const result = await query<Assessment>(
     null,
@@ -103,7 +104,17 @@ export async function createAssessment(
       assessment_type, status, current_step, progress_percentage, created_at, updated_at
     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
     RETURNING *`,
-    [assessmentId, beneficiaryId, consultantId || null, defaultTitle, description || null, assessmentType, 'DRAFT', 0, 0]
+    [
+      assessmentId,
+      beneficiaryId,
+      consultantId || null,
+      defaultTitle,
+      description || null,
+      assessmentType,
+      'DRAFT',
+      0,
+      0,
+    ]
   );
 
   logger.info(`Assessment created: ${assessmentId}`, { beneficiaryId, assessmentType });
@@ -114,11 +125,9 @@ export async function createAssessment(
  * Get assessment by ID
  */
 export async function getAssessment(assessmentId: string): Promise<Assessment | null> {
-  const result = await query<Assessment>(
-    null,
-    `SELECT * FROM assessments WHERE id = $1`,
-    [assessmentId]
-  );
+  const result = await query<Assessment>(null, `SELECT * FROM assessments WHERE id = $1`, [
+    assessmentId,
+  ]);
 
   return result.length > 0 ? result[0] : null;
 }
@@ -133,8 +142,12 @@ export async function getAssessmentWithDetails(assessmentId: string): Promise<an
   const [questions, answers, competencies, draft] = await Promise.all([
     getAssessmentQuestions(assessmentId),
     getAssessmentAnswers(assessmentId),
-    query(null, `SELECT * FROM assessment_competencies WHERE assessment_id = $1 ORDER BY created_at`, [assessmentId]),
-    query(null, `SELECT * FROM assessment_drafts WHERE assessment_id = $1`, [assessmentId])
+    query(
+      null,
+      `SELECT * FROM assessment_competencies WHERE assessment_id = $1 ORDER BY created_at`,
+      [assessmentId]
+    ),
+    query(null, `SELECT * FROM assessment_drafts WHERE assessment_id = $1`, [assessmentId]),
   ]);
 
   return {
@@ -142,7 +155,7 @@ export async function getAssessmentWithDetails(assessmentId: string): Promise<an
     questions,
     answers,
     competencies,
-    draft: draft.length > 0 ? draft[0] : null
+    draft: draft.length > 0 ? draft[0] : null,
   };
 }
 
@@ -182,14 +195,17 @@ export async function getUserAssessments(
 
   return {
     assessments,
-    total: countResult[0]?.count || 0
+    total: countResult[0]?.count || 0,
   };
 }
 
 /**
  * Update assessment
  */
-export async function updateAssessment(assessmentId: string, updates: Partial<Assessment>): Promise<Assessment> {
+export async function updateAssessment(
+  assessmentId: string,
+  updates: Partial<Assessment>
+): Promise<Assessment> {
   const fields: string[] = [];
   const values: any[] = [];
   let paramIndex = 1;
@@ -293,7 +309,15 @@ export async function createAssessmentQuestion(
       id, assessment_id, question, question_type, options, category, order_number, created_at
     ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
     RETURNING *`,
-    [questionId, assessmentId, question, questionType, options ? JSON.stringify(options) : null, category, orderNumber]
+    [
+      questionId,
+      assessmentId,
+      question,
+      questionType,
+      options ? JSON.stringify(options) : null,
+      category,
+      orderNumber,
+    ]
   );
 
   return result[0];
@@ -440,21 +464,29 @@ export async function updateRecommendationStatus(
  */
 export async function getAssessmentStats(assessmentId: string): Promise<any> {
   const [questionsCount, answersCount, competenciesCount] = await Promise.all([
-    query(null, `SELECT COUNT(*)::int as count FROM assessment_questions WHERE assessment_id = $1`, [assessmentId]),
-    query(null, `SELECT COUNT(*)::int as count FROM assessment_answers WHERE assessment_id = $1`, [assessmentId]),
-    query(null, `SELECT COUNT(*)::int as count FROM assessment_competencies WHERE assessment_id = $1`, [assessmentId])
+    query(
+      null,
+      `SELECT COUNT(*)::int as count FROM assessment_questions WHERE assessment_id = $1`,
+      [assessmentId]
+    ),
+    query(null, `SELECT COUNT(*)::int as count FROM assessment_answers WHERE assessment_id = $1`, [
+      assessmentId,
+    ]),
+    query(
+      null,
+      `SELECT COUNT(*)::int as count FROM assessment_competencies WHERE assessment_id = $1`,
+      [assessmentId]
+    ),
   ]);
 
   return {
     totalQuestions: questionsCount[0]?.count || 0,
     answeredQuestions: answersCount[0]?.count || 0,
-    totalCompetencies: competenciesCount[0]?.count || 0
+    totalCompetencies: competenciesCount[0]?.count || 0,
   };
 }
 
 // File continues in Part 2...
-
-
 
 // ============================================================================
 // WIZARD FUNCTIONS
@@ -504,9 +536,10 @@ export async function saveDraftStep(
 
   let draftData: any = {};
   if (existingDraft.length > 0 && existingDraft[0].draft_data) {
-    draftData = typeof existingDraft[0].draft_data === 'string' 
-      ? JSON.parse(existingDraft[0].draft_data) 
-      : existingDraft[0].draft_data;
+    draftData =
+      typeof existingDraft[0].draft_data === 'string'
+        ? JSON.parse(existingDraft[0].draft_data)
+        : existingDraft[0].draft_data;
   }
 
   // Update draft data with new section
@@ -558,9 +591,10 @@ export async function autoSaveDraft(
 
   let draftData: any = {};
   if (existingDraft.length > 0 && existingDraft[0].draft_data) {
-    draftData = typeof existingDraft[0].draft_data === 'string' 
-      ? JSON.parse(existingDraft[0].draft_data) 
-      : existingDraft[0].draft_data;
+    draftData =
+      typeof existingDraft[0].draft_data === 'string'
+        ? JSON.parse(existingDraft[0].draft_data)
+        : existingDraft[0].draft_data;
   }
 
   // Merge partial data
@@ -607,7 +641,7 @@ export async function getAssessmentProgress(assessmentId: string): Promise<any> 
     status: assessment.status,
     draftData: draft.length > 0 ? draft[0].draft_data : {},
     competencies: competencies,
-    lastSavedAt: draft.length > 0 ? draft[0].last_saved_at : null
+    lastSavedAt: draft.length > 0 ? draft[0].last_saved_at : null,
   };
 }
 
@@ -652,7 +686,7 @@ export async function validateAssessmentStep(
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -671,13 +705,12 @@ export async function submitAssessment(assessmentId: string): Promise<Assessment
     throw new Error('No draft found for this assessment');
   }
 
-  const draftData = typeof draft[0].draft_data === 'string' 
-    ? JSON.parse(draft[0].draft_data) 
-    : draft[0].draft_data;
+  const draftData =
+    typeof draft[0].draft_data === 'string' ? JSON.parse(draft[0].draft_data) : draft[0].draft_data;
 
   // Check if all required sections are completed
   const requiredSections = ['work_history', 'education', 'skills', 'motivations', 'constraints'];
-  const missingSections = requiredSections.filter(section => !draftData[section]);
+  const missingSections = requiredSections.filter((section) => !draftData[section]);
 
   if (missingSections.length > 0) {
     throw new Error(`Missing required sections: ${missingSections.join(', ')}`);
@@ -714,7 +747,7 @@ export async function extractAndCreateCompetencies(
           competencies.push({
             skill_name: skill,
             category: 'professional',
-            context: `${position.title} at ${position.company}`
+            context: `${position.title} at ${position.company}`,
           });
         });
       }
@@ -728,7 +761,7 @@ export async function extractAndCreateCompetencies(
         skill_name: skill.name || skill.skillName,
         self_assessment_level: skill.level || skill.selfAssessmentLevel,
         self_interest_level: skill.interest || skill.selfInterestLevel,
-        category: skill.category || 'general'
+        category: skill.category || 'general',
       });
     });
   }
@@ -768,7 +801,7 @@ async function saveCompetencies(
         comp.self_assessment_level || comp.selfAssessmentLevel || null,
         comp.self_interest_level || comp.selfInterestLevel || null,
         comp.category || 'general',
-        comp.context || null
+        comp.context || null,
       ]
     );
 
@@ -783,24 +816,32 @@ async function saveCompetencies(
 /**
  * Validate competencies
  */
-export async function validateCompetencies(competencies: any[]): Promise<{ valid: boolean; errors: string[] }> {
+export async function validateCompetencies(
+  competencies: any[]
+): Promise<{ valid: boolean; errors: string[] }> {
   const errors: string[] = [];
 
   competencies.forEach((comp, index) => {
     if (!comp.skill_name && !comp.skillName) {
       errors.push(`Competency ${index + 1}: skill_name is required`);
     }
-    if (comp.self_assessment_level && (comp.self_assessment_level < 1 || comp.self_assessment_level > 5)) {
+    if (
+      comp.self_assessment_level &&
+      (comp.self_assessment_level < 1 || comp.self_assessment_level > 5)
+    ) {
       errors.push(`Competency ${index + 1}: self_assessment_level must be between 1 and 5`);
     }
-    if (comp.self_interest_level && (comp.self_interest_level < 1 || comp.self_interest_level > 5)) {
+    if (
+      comp.self_interest_level &&
+      (comp.self_interest_level < 1 || comp.self_interest_level > 5)
+    ) {
       errors.push(`Competency ${index + 1}: self_interest_level must be between 1 and 5`);
     }
   });
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -810,29 +851,28 @@ export async function validateCompetencies(competencies: any[]): Promise<{ valid
 
 export const workHistoryStepSchema = {
   positions: 'array',
-  required: ['positions']
+  required: ['positions'],
 };
 
 export const educationStepSchema = {
   education: 'array',
-  required: ['education']
+  required: ['education'],
 };
 
 export const skillsStepSchema = {
   skills: 'array',
-  required: ['skills']
+  required: ['skills'],
 };
 
 export const motivationsStepSchema = {
   primaryMotivation: 'string',
-  required: ['primaryMotivation']
+  required: ['primaryMotivation'],
 };
 
 export const constraintsStepSchema = {
   constraints: 'object',
-  required: ['constraints']
+  required: ['constraints'],
 };
-
 
 // ============================================================================
 // PARCOURS (ASSESSMENT PHASES) FUNCTIONS
@@ -882,8 +922,8 @@ export async function getAssessmentWithParcours(
       status: (assessment as any).phase_investigation_completed
         ? 'completed'
         : (assessment as any).phase_preliminaire_completed
-        ? 'in_progress'
-        : 'locked',
+          ? 'in_progress'
+          : 'locked',
       completed_at: (assessment as any).phase_investigation_completed_at,
       progress: calculatePhaseProgress(answers, 2),
     },
@@ -891,8 +931,8 @@ export async function getAssessmentWithParcours(
       status: (assessment as any).phase_conclusion_completed
         ? 'completed'
         : (assessment as any).phase_investigation_completed
-        ? 'in_progress'
-        : 'locked',
+          ? 'in_progress'
+          : 'locked',
       completed_at: (assessment as any).phase_conclusion_completed_at,
       progress: calculatePhaseProgress(answers, 3),
     },
@@ -989,4 +1029,3 @@ export async function saveAssessmentAnswer(
     return result[0];
   }
 }
-

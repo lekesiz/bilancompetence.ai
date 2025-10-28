@@ -6,7 +6,11 @@
 import { query } from '../config/neon.js';
 import { logger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
-import { parsePaginationParams, createPaginatedResponse, PaginatedResponse } from '../utils/pagination.js';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  PaginatedResponse,
+} from '../utils/pagination.js';
 import { DatabaseError } from '../utils/errorHandler.js';
 
 // ============================================================================
@@ -118,7 +122,7 @@ class SchedulingServiceNeon {
           data.timezone || 'UTC',
           data.is_recurring || false,
           data.recurring_until || null,
-          data.is_available !== false
+          data.is_available !== false,
         ]
       );
 
@@ -193,7 +197,13 @@ class SchedulingServiceNeon {
       let paramIndex = 1;
 
       Object.entries(updates).forEach(([key, value]) => {
-        if (value !== undefined && key !== 'id' && key !== 'created_at' && key !== 'consultant_id' && key !== 'organization_id') {
+        if (
+          value !== undefined &&
+          key !== 'id' &&
+          key !== 'created_at' &&
+          key !== 'consultant_id' &&
+          key !== 'organization_id'
+        ) {
           fields.push(`${key} = $${paramIndex}`);
           values.push(value);
           paramIndex++;
@@ -231,7 +241,11 @@ class SchedulingServiceNeon {
   /**
    * Delete availability slot
    */
-  async deleteAvailabilitySlot(slotId: string, consultantId: string, organizationId: string): Promise<void> {
+  async deleteAvailabilitySlot(
+    slotId: string,
+    consultantId: string,
+    organizationId: string
+  ): Promise<void> {
     try {
       await query(
         null,
@@ -300,11 +314,9 @@ class SchedulingServiceNeon {
     message?: string;
   }> {
     try {
-      const result = await query<any>(
-        null,
-        `SELECT id, status FROM bilans WHERE id = $1`,
-        [bilanId]
-      );
+      const result = await query<any>(null, `SELECT id, status FROM bilans WHERE id = $1`, [
+        bilanId,
+      ]);
 
       if (result.length === 0) {
         return { valid: false, message: 'Bilan not found' };
@@ -313,7 +325,10 @@ class SchedulingServiceNeon {
       const bilan = result[0];
 
       if (bilan.status === 'ARCHIVED' || bilan.status === 'COMPLETED') {
-        return { valid: false, message: `Cannot book sessions for ${bilan.status.toLowerCase()} bilan` };
+        return {
+          valid: false,
+          message: `Cannot book sessions for ${bilan.status.toLowerCase()} bilan`,
+        };
       }
 
       return { valid: true };
@@ -382,12 +397,16 @@ class SchedulingServiceNeon {
           data.meeting_link || null,
           data.beneficiary_notes || null,
           data.preparation_materials || null,
-          data.availability_slot_id || null
+          data.availability_slot_id || null,
         ]
       );
 
       // Create reminders (async, don't wait)
-      this.createSessionReminders(bookingId, data.scheduled_date!, data.scheduled_start_time!).catch(err => {
+      this.createSessionReminders(
+        bookingId,
+        data.scheduled_date!,
+        data.scheduled_start_time!
+      ).catch((err) => {
         logger.error('Failed to create session reminders', err);
       });
 
@@ -678,20 +697,21 @@ class SchedulingServiceNeon {
       );
 
       const totalSessions = bookings.length;
-      const completedSessions = bookings.filter(b => b.status === 'COMPLETED').length;
-      const cancelledSessions = bookings.filter(b => b.status === 'CANCELLED').length;
+      const completedSessions = bookings.filter((b) => b.status === 'COMPLETED').length;
+      const cancelledSessions = bookings.filter((b) => b.status === 'CANCELLED').length;
 
       const ratingsArray = bookings
-        .filter(b => b.beneficiary_rating !== null && b.beneficiary_rating !== undefined)
-        .map(b => b.beneficiary_rating!);
+        .filter((b) => b.beneficiary_rating !== null && b.beneficiary_rating !== undefined)
+        .map((b) => b.beneficiary_rating!);
 
-      const averageRating = ratingsArray.length > 0
-        ? ratingsArray.reduce((sum, r) => sum + r, 0) / ratingsArray.length
-        : null;
+      const averageRating =
+        ratingsArray.length > 0
+          ? ratingsArray.reduce((sum, r) => sum + r, 0) / ratingsArray.length
+          : null;
 
       const totalHours = bookings
-        .filter(b => b.status === 'COMPLETED')
-        .reduce((sum, b) => sum + (b.duration_minutes / 60), 0);
+        .filter((b) => b.status === 'COMPLETED')
+        .reduce((sum, b) => sum + b.duration_minutes / 60, 0);
 
       // Check if analytics exist
       const existing = await query<ConsultantAnalytics>(
@@ -713,7 +733,16 @@ class SchedulingServiceNeon {
                last_session_date = $6,
                updated_at = NOW()
            WHERE consultant_id = $7 AND organization_id = $8`,
-          [totalSessions, completedSessions, cancelledSessions, averageRating, totalHours, sessionDate, consultantId, organizationId]
+          [
+            totalSessions,
+            completedSessions,
+            cancelledSessions,
+            averageRating,
+            totalHours,
+            sessionDate,
+            consultantId,
+            organizationId,
+          ]
         );
       } else {
         // Insert new
@@ -723,7 +752,16 @@ class SchedulingServiceNeon {
             consultant_id, organization_id, total_sessions, completed_sessions, cancelled_sessions,
             average_rating, total_hours, last_session_date, updated_at
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
-          [consultantId, organizationId, totalSessions, completedSessions, cancelledSessions, averageRating, totalHours, sessionDate]
+          [
+            consultantId,
+            organizationId,
+            totalSessions,
+            completedSessions,
+            cancelledSessions,
+            averageRating,
+            totalHours,
+            sessionDate,
+          ]
         );
       }
 
@@ -767,4 +805,3 @@ class SchedulingServiceNeon {
 }
 
 export default new SchedulingServiceNeon();
-

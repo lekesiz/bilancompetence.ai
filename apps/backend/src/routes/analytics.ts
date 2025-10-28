@@ -45,32 +45,37 @@ router.get('/user-activity', authMiddleware, async (req: Request, res: Response)
  * GET /api/analytics/organization
  * Get organization statistics (admin only)
  */
-router.get('/organization', authMiddleware, requireRole('ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
+router.get(
+  '/organization',
+  authMiddleware,
+  requireRole('ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
+
+      // In production, get organization_id from user context
+      const organizationId = req.user.id; // placeholder
+
+      const stats = await getOrganizationStats(organizationId);
+
+      return res.status(200).json({
+        status: 'success',
+        data: stats,
+      });
+    } catch (error) {
+      console.error('Organization stats error:', error);
+      res.status(500).json({
         status: 'error',
-        message: 'Authentication required',
+        message: 'Failed to fetch organization statistics',
       });
     }
-
-    // In production, get organization_id from user context
-    const organizationId = req.user.id; // placeholder
-
-    const stats = await getOrganizationStats(organizationId);
-
-    return res.status(200).json({
-      status: 'success',
-      data: stats,
-    });
-  } catch (error) {
-    console.error('Organization stats error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch organization statistics',
-    });
   }
-});
+);
 
 /**
  * GET /api/analytics/assessment/:assessmentId

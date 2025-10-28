@@ -12,7 +12,10 @@ import { logger } from './logger.js';
  * Custom error classes for better error handling
  */
 export class DatabaseError extends Error {
-  constructor(message: string, public originalError?: any) {
+  constructor(
+    message: string,
+    public originalError?: any
+  ) {
     super(message);
     this.name = 'DatabaseError';
     Object.setPrototypeOf(this, DatabaseError.prototype);
@@ -65,7 +68,7 @@ export interface SelectCountResponse<T> {
  */
 export async function selectSingle<T>(
   table: string,
-  filters: Record<string, any>,
+  filters: Record<string, any>
 ): Promise<T | null> {
   try {
     let query = supabase.from(table).select('*');
@@ -101,7 +104,7 @@ export async function selectSingle<T>(
  */
 export async function selectMultiple<T>(
   table: string,
-  filters?: Record<string, any>,
+  filters?: Record<string, any>
 ): Promise<T[]> {
   try {
     let query = supabase.from(table).select('*');
@@ -136,12 +139,10 @@ export async function selectMultiple<T>(
 export async function selectWithCount<T>(
   table: string,
   filters?: Record<string, any>,
-  options?: { limit?: number; offset?: number },
+  options?: { limit?: number; offset?: number }
 ): Promise<{ data: T[]; count: number }> {
   try {
-    let query = supabase
-      .from(table)
-      .select('*', { count: 'exact' });
+    let query = supabase.from(table).select('*', { count: 'exact' });
 
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -181,14 +182,9 @@ export async function selectWithCount<T>(
  * const total = await countRows('users', { role: 'BENEFICIARY' });
  * console.log(`Total beneficiaries: ${total}`);
  */
-export async function countRows(
-  table: string,
-  filters?: Record<string, any>,
-): Promise<number> {
+export async function countRows(table: string, filters?: Record<string, any>): Promise<number> {
   try {
-    let query = supabase
-      .from(table)
-      .select('*', { count: 'exact', head: true });
+    let query = supabase.from(table).select('*', { count: 'exact', head: true });
 
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
@@ -218,10 +214,7 @@ export async function countRows(
  *   full_name: 'Test User',
  * });
  */
-export async function insertRow<T>(
-  table: string,
-  data: Partial<T>,
-): Promise<T> {
+export async function insertRow<T>(table: string, data: Partial<T>): Promise<T> {
   try {
     const { data: inserted, error } = await supabase
       .from(table)
@@ -249,10 +242,7 @@ export async function insertRow<T>(
  *   { email: 'user2@example.com', full_name: 'User 2' },
  * ]);
  */
-export async function insertRows<T>(
-  table: string,
-  dataArray: Partial<T>[],
-): Promise<T[]> {
+export async function insertRows<T>(table: string, dataArray: Partial<T>[]): Promise<T[]> {
   try {
     const { data: inserted, error } = await supabase
       .from(table)
@@ -282,12 +272,10 @@ export async function insertRows<T>(
 export async function updateRow<T>(
   table: string,
   filters: Record<string, any>,
-  updates: Partial<T>,
+  updates: Partial<T>
 ): Promise<T> {
   try {
-    let query = supabase
-      .from(table)
-      .update(updates as any);
+    let query = supabase.from(table).update(updates as any);
 
     Object.entries(filters).forEach(([key, value]) => {
       query = query.eq(key, value);
@@ -317,12 +305,10 @@ export async function updateRow<T>(
 export async function updateRows<T>(
   table: string,
   filters: Record<string, any>,
-  updates: Partial<T>,
+  updates: Partial<T>
 ): Promise<T[]> {
   try {
-    let query = supabase
-      .from(table)
-      .update(updates as any);
+    let query = supabase.from(table).update(updates as any);
 
     Object.entries(filters).forEach(([key, value]) => {
       query = query.eq(key, value);
@@ -347,10 +333,7 @@ export async function updateRows<T>(
  * @example
  * await deleteRow('users', { id: userId });
  */
-export async function deleteRow(
-  table: string,
-  filters: Record<string, any>,
-): Promise<void> {
+export async function deleteRow(table: string, filters: Record<string, any>): Promise<void> {
   try {
     let query = supabase.from(table).delete();
 
@@ -376,14 +359,9 @@ export async function deleteRow(
  * @example
  * await softDeleteRow('users', { id: userId });
  */
-export async function softDeleteRow<T>(
-  table: string,
-  filters: Record<string, any>,
-): Promise<T> {
+export async function softDeleteRow<T>(table: string, filters: Record<string, any>): Promise<T> {
   try {
-    let query = supabase
-      .from(table)
-      .update({ deleted_at: new Date().toISOString() } as any);
+    let query = supabase.from(table).update({ deleted_at: new Date().toISOString() } as any);
 
     Object.entries(filters).forEach(([key, value]) => {
       query = query.eq(key, value);

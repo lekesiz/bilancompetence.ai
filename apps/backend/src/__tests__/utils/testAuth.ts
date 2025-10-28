@@ -1,6 +1,6 @@
 /**
  * Test Authentication Utilities
- * 
+ *
  * Provides mock authentication middleware and utilities for integration tests
  */
 
@@ -43,7 +43,7 @@ export const testTokens = {
 
 /**
  * Mock authentication middleware for tests
- * 
+ *
  * Accepts predefined test tokens and sets req.user accordingly
  */
 export function mockAuthMiddleware(req: Request, res: Response, next: NextFunction) {
@@ -129,7 +129,7 @@ export function mockVerifyToken(token: string): JWTPayload | null {
 
 /**
  * Setup mock authentication for tests
- * 
+ *
  * Call this in beforeAll to mock the auth service
  */
 export function setupMockAuth() {
@@ -172,4 +172,3 @@ export const testAuth = {
 };
 
 export default testAuth;
-

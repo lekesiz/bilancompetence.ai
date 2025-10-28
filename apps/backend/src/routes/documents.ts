@@ -35,9 +35,8 @@ router.post('/synthese', async (req: Request, res: Response) => {
     res.json({
       message: 'Synthèse generated successfully',
       filename: path.basename(filepath),
-      downloadUrl: `/api/documents/download/${path.basename(filepath)}`
+      downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
-
   } catch (error: any) {
     console.error('Synthese generation error:', error);
     res.status(500).json({ error: error.message });
@@ -53,7 +52,9 @@ router.post('/attestation', async (req: Request, res: Response) => {
     const { user, assessment, consultant } = req.body;
 
     if (!user || !assessment || !consultant) {
-      return res.status(400).json({ error: 'Missing required fields: user, assessment, consultant' });
+      return res
+        .status(400)
+        .json({ error: 'Missing required fields: user, assessment, consultant' });
     }
 
     const pdfGenerator = createPDFGenerator(DOCUMENTS_DIR);
@@ -62,9 +63,8 @@ router.post('/attestation', async (req: Request, res: Response) => {
     res.json({
       message: 'Attestation generated successfully',
       filename: path.basename(filepath),
-      downloadUrl: `/api/documents/download/${path.basename(filepath)}`
+      downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
-
   } catch (error: any) {
     console.error('Attestation generation error:', error);
     res.status(500).json({ error: error.message });
@@ -89,9 +89,8 @@ router.post('/action-plan', async (req: Request, res: Response) => {
     res.json({
       message: 'Action plan generated successfully',
       filename: path.basename(filepath),
-      downloadUrl: `/api/documents/download/${path.basename(filepath)}`
+      downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
-
   } catch (error: any) {
     console.error('Action plan generation error:', error);
     res.status(500).json({ error: error.message });
@@ -117,7 +116,6 @@ router.get('/download/:filename', (req: Request, res: Response) => {
         res.status(500).json({ error: 'Download failed' });
       }
     });
-
   } catch (error: any) {
     console.error('Download error:', error);
     res.status(500).json({ error: error.message });
@@ -132,20 +130,19 @@ router.get('/list', (req: Request, res: Response) => {
   try {
     const files = fs.readdirSync(DOCUMENTS_DIR);
     const documents = files
-      .filter(file => file.endsWith('.pdf'))
-      .map(file => {
+      .filter((file) => file.endsWith('.pdf'))
+      .map((file) => {
         const stats = fs.statSync(path.join(DOCUMENTS_DIR, file));
         return {
           filename: file,
           size: stats.size,
           createdAt: stats.birthtime,
-          downloadUrl: `/api/documents/download/${file}`
+          downloadUrl: `/api/documents/download/${file}`,
         };
       })
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     res.json({ documents });
-
   } catch (error: any) {
     console.error('List documents error:', error);
     res.status(500).json({ error: error.message });
@@ -168,7 +165,6 @@ router.delete('/:filename', (req: Request, res: Response) => {
     fs.unlinkSync(filepath);
 
     res.json({ message: 'Document deleted successfully' });
-
   } catch (error: any) {
     console.error('Delete document error:', error);
     res.status(500).json({ error: error.message });
@@ -176,4 +172,3 @@ router.delete('/:filename', (req: Request, res: Response) => {
 });
 
 export default router;
-

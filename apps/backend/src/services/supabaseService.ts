@@ -7,14 +7,15 @@ import { ValidationError } from '../utils/errorHandler.js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const supabase = (supabaseUrl && supabaseKey) 
-  ? createClient<Database>(supabaseUrl, supabaseKey)
-  : null;
+export const supabase =
+  supabaseUrl && supabaseKey ? createClient<Database>(supabaseUrl, supabaseKey) : null;
 
 // Helper function to ensure Supabase is configured
 export function ensureSupabaseConfigured() {
   if (!supabase) {
-    throw new Error('Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+    throw new Error(
+      'Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.'
+    );
   }
   return supabase;
 }
@@ -40,11 +41,7 @@ interface BilanWithBeneficiary extends BilanRow {
 }
 
 export async function getUserByEmail(email: string): Promise<UserRow | null> {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('email', email)
-    .single();
+  const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
 
   if (error && error.code !== 'PGRST116') {
     throw error;
@@ -54,11 +51,7 @@ export async function getUserByEmail(email: string): Promise<UserRow | null> {
 }
 
 export async function getUserById(id: string): Promise<UserRow | null> {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
 
   if (error && error.code !== 'PGRST116') {
     throw error;
@@ -121,7 +114,10 @@ export async function verifyUserEmail(userId: string): Promise<UserRow> {
   return data as unknown as UserRow;
 }
 
-export async function updateUserPassword(userId: string, newPasswordHash: string): Promise<UserRow> {
+export async function updateUserPassword(
+  userId: string,
+  newPasswordHash: string
+): Promise<UserRow> {
   const { data, error } = await supabase
     .from('users')
     .update({ password_hash: newPasswordHash })
@@ -151,7 +147,11 @@ export async function updateUserLastLogin(userId: string): Promise<UserRow> {
   return data as unknown as UserRow;
 }
 
-export async function createPasswordResetToken(userId: string, token: string, expiresAt: Date): Promise<any> {
+export async function createPasswordResetToken(
+  userId: string,
+  token: string,
+  expiresAt: Date
+): Promise<any> {
   const { data, error } = await supabase
     .from('password_reset_tokens')
     .insert({
@@ -200,7 +200,11 @@ export async function usePasswordResetToken(tokenId: string): Promise<any> {
   return data;
 }
 
-export async function createEmailVerificationToken(userId: string, token: string, expiresAt: Date): Promise<any> {
+export async function createEmailVerificationToken(
+  userId: string,
+  token: string,
+  expiresAt: Date
+): Promise<any> {
   const { data, error } = await supabase
     .from('email_verification_tokens')
     .insert({
@@ -276,11 +280,7 @@ export async function createOrganization(
 }
 
 export async function getOrganization(id: string): Promise<any> {
-  const { data, error } = await supabase
-    .from('organizations')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('organizations').select('*').eq('id', id).single();
 
   if (error && error.code !== 'PGRST116') {
     throw error;
@@ -381,10 +381,13 @@ export async function createAuditLog(
  * Bilan Service - Query operations for dashboard
  */
 
-export async function getBilansByBeneficiary(beneficiaryId: string): Promise<BilanWithConsultant[]> {
+export async function getBilansByBeneficiary(
+  beneficiaryId: string
+): Promise<BilanWithConsultant[]> {
   const { data, error } = await supabase
     .from('bilans')
-    .select(`
+    .select(
+      `
       id,
       status,
       start_date,
@@ -395,7 +398,8 @@ export async function getBilansByBeneficiary(beneficiaryId: string): Promise<Bil
       created_at,
       updated_at,
       consultant:consultant_id(id, full_name, email)
-    `)
+    `
+    )
     .eq('beneficiary_id', beneficiaryId)
     .order('created_at', { ascending: false });
 
@@ -409,7 +413,8 @@ export async function getBilansByBeneficiary(beneficiaryId: string): Promise<Bil
 export async function getBilansByConsultant(consultantId: string): Promise<BilanWithBeneficiary[]> {
   const { data, error } = await supabase
     .from('bilans')
-    .select(`
+    .select(
+      `
       id,
       status,
       start_date,
@@ -420,7 +425,8 @@ export async function getBilansByConsultant(consultantId: string): Promise<Bilan
       created_at,
       updated_at,
       beneficiary:beneficiary_id(id, full_name, email)
-    `)
+    `
+    )
     .eq('consultant_id', consultantId)
     .order('created_at', { ascending: false });
 
@@ -444,7 +450,7 @@ export async function getClientsByConsultant(consultantId: string) {
   // Extract unique beneficiaries by creating a Set of IDs
   const uniqueMap = new Map();
   const typedData = (data as unknown as BilanWithBeneficiary[]) || [];
-  typedData.forEach(row => {
+  typedData.forEach((row) => {
     if (row.beneficiary && row.beneficiary.id) {
       uniqueMap.set(row.beneficiary.id, row.beneficiary);
     }
@@ -465,7 +471,7 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string): Pr
   }
 
   const typedBilans = (bilans as unknown as BilanRow[]) || [];
-  const bilanIds = typedBilans.map(b => b.id) || [];
+  const bilanIds = typedBilans.map((b) => b.id) || [];
 
   // If no bilans, return empty array
   if (bilanIds.length === 0) {
@@ -475,7 +481,8 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string): Pr
   // Get recommendations for all bilans
   const { data, error } = await supabase
     .from('recommendations')
-    .select(`
+    .select(
+      `
       id,
       type,
       title,
@@ -485,7 +492,8 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string): Pr
       created_at,
       updated_at,
       bilan:bilan_id(id, status)
-    `)
+    `
+    )
     .in('bilan_id', bilanIds)
     .order('priority', { ascending: true })
     .order('created_at', { ascending: false });
@@ -500,7 +508,8 @@ export async function getRecommendationsByBeneficiary(beneficiaryId: string): Pr
 export async function getAllBilans(): Promise<any> {
   const { data, error } = await supabase
     .from('bilans')
-    .select(`
+    .select(
+      `
       id,
       status,
       start_date,
@@ -509,7 +518,8 @@ export async function getAllBilans(): Promise<any> {
       created_at,
       beneficiary:beneficiary_id(id, full_name, email),
       consultant:consultant_id(id, full_name, email)
-    `)
+    `
+    )
     .order('created_at', { ascending: false });
 
   if (error && error.code !== 'PGRST116') {
@@ -560,7 +570,7 @@ export async function getOrganizationStats(organizationId: string) {
 
     // Count unique consultants
     const typedBilanData = (bilanData as unknown as BilanRow[]) || [];
-    const uniqueConsultants = new Set(typedBilanData.map(b => b.consultant_id) || []);
+    const uniqueConsultants = new Set(typedBilanData.map((b) => b.consultant_id) || []);
 
     // Get completed bilans
     const { count: completedBilans, error: completedError } = await supabase
@@ -577,9 +587,11 @@ export async function getOrganizationStats(organizationId: string) {
       .not('satisfaction_score', 'is', null);
 
     const typedSatisfactionData = (satisfactionData as unknown as BilanRow[]) || [];
-    const avgSatisfaction = typedSatisfactionData.length > 0
-      ? typedSatisfactionData.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) / typedSatisfactionData.length
-      : 0;
+    const avgSatisfaction =
+      typedSatisfactionData.length > 0
+        ? typedSatisfactionData.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0) /
+          typedSatisfactionData.length
+        : 0;
 
     return {
       totalUsers: totalUsers || 0,
@@ -588,7 +600,7 @@ export async function getOrganizationStats(organizationId: string) {
       completedBilans: completedBilans || 0,
       averageSatisfaction: Math.round(avgSatisfaction * 10) / 10,
       successRate: totalAssessments
-        ? Math.round((completedBilans || 0) / totalAssessments * 100)
+        ? Math.round(((completedBilans || 0) / totalAssessments) * 100)
         : 0,
     };
   } catch (error) {
@@ -601,7 +613,10 @@ export async function getOrganizationStats(organizationId: string) {
  * Recent Activity Service
  */
 
-export async function getRecentActivityByOrganization(organizationId: string, limit: number = 20): Promise<any> {
+export async function getRecentActivityByOrganization(
+  organizationId: string,
+  limit: number = 20
+): Promise<any> {
   // First, get all user IDs in the organization
   const { data: users, error: usersError } = await supabase
     .from('users')
@@ -613,7 +628,7 @@ export async function getRecentActivityByOrganization(organizationId: string, li
   }
 
   const typedUsers = (users as unknown as UserRow[]) || [];
-  const userIds = typedUsers.map(u => u.id) || [];
+  const userIds = typedUsers.map((u) => u.id) || [];
 
   // If no users, return empty array
   if (userIds.length === 0) {
@@ -623,13 +638,15 @@ export async function getRecentActivityByOrganization(organizationId: string, li
   // Get recent activity for all users
   const { data, error } = await supabase
     .from('audit_logs')
-    .select(`
+    .select(
+      `
       id,
       user:user_id(id, full_name, email),
       action,
       entity_type,
       created_at
-    `)
+    `
+    )
     .in('user_id', userIds)
     .order('created_at', { ascending: false })
     .limit(limit);

@@ -183,64 +183,72 @@ router.get('/:id/download', authMiddleware, async (req: Request, res: Response) 
  * POST /api/files/assessments/:assessmentId/upload
  * Upload assessment document
  */
-router.post('/assessments/:assessmentId/upload', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
+router.post(
+  '/assessments/:assessmentId/upload',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
+
+      const { assessmentId } = req.params;
+      const { fileName, fileType } = req.body;
+
+      if (!fileName || !fileType) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Missing fileName or fileType',
+        });
+      }
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Document upload endpoint ready.',
+        data: {
+          assessmentId,
+          fileName,
+          fileType,
+        },
+      });
+    } catch (error) {
+      console.error('Document upload error:', error);
+      res.status(500).json({
         status: 'error',
-        message: 'Authentication required',
+        message: 'Failed to upload document',
       });
     }
-
-    const { assessmentId } = req.params;
-    const { fileName, fileType } = req.body;
-
-    if (!fileName || !fileType) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Missing fileName or fileType',
-      });
-    }
-
-    return res.status(200).json({
-      status: 'success',
-      message: 'Document upload endpoint ready.',
-      data: {
-        assessmentId,
-        fileName,
-        fileType,
-      },
-    });
-  } catch (error) {
-    console.error('Document upload error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to upload document',
-    });
   }
-});
+);
 
 /**
  * GET /api/files/assessments/:assessmentId/documents
  * Get assessment documents
  */
-router.get('/assessments/:assessmentId/documents', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const { assessmentId } = req.params;
+router.get(
+  '/assessments/:assessmentId/documents',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const { assessmentId } = req.params;
 
-    const documents = await getAssessmentDocuments(assessmentId);
+      const documents = await getAssessmentDocuments(assessmentId);
 
-    return res.status(200).json({
-      status: 'success',
-      data: documents,
-    });
-  } catch (error) {
-    console.error('Get documents error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch documents',
-    });
+      return res.status(200).json({
+        status: 'success',
+        data: documents,
+      });
+    } catch (error) {
+      console.error('Get documents error:', error);
+      res.status(500).json({
+        status: 'error',
+        message: 'Failed to fetch documents',
+      });
+    }
   }
-});
+);
 
 export default router;

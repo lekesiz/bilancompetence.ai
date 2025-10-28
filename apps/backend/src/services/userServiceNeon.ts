@@ -25,7 +25,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
     'SELECT * FROM users WHERE email = $1',
     [email]
   );
-  
+
   return result.length > 0 ? result[0] : null;
 }
 
@@ -68,7 +68,7 @@ export async function createUser(userData: {
      RETURNING id, email, full_name, role, organization_id, cv_url, cv_uploaded_at, created_at, updated_at`,
     [userData.id, userData.email, userData.password_hash, userData.full_name, userData.role]
   );
-  
+
   return result[0];
 }
 
@@ -85,7 +85,13 @@ export async function updateUserProfile(
 
   // Construire dynamiquement la requête UPDATE
   Object.entries(updates).forEach(([key, value]) => {
-    if (value !== undefined && key !== 'id' && key !== 'email' && key !== 'password_hash' && key !== 'created_at') {
+    if (
+      value !== undefined &&
+      key !== 'id' &&
+      key !== 'email' &&
+      key !== 'password_hash' &&
+      key !== 'created_at'
+    ) {
       fields.push(`${key} = $${paramIndex}`);
       values.push(value);
       paramIndex++;
@@ -112,10 +118,7 @@ export async function updateUserProfile(
 /**
  * Mettre à jour l'URL du CV (avec RLS)
  */
-export async function updateUserCV(
-  userId: string,
-  cvUrl: string
-): Promise<User | null> {
+export async function updateUserCV(userId: string, cvUrl: string): Promise<User | null> {
   const result = await query<User>(
     userId, // Contexte utilisateur pour RLS
     `UPDATE users 
@@ -211,7 +214,6 @@ export async function emailExists(email: string): Promise<boolean> {
   return result.length > 0 && parseInt(result[0].count) > 0;
 }
 
-
 /**
  * Get users by role
  */
@@ -255,11 +257,7 @@ export async function updateUserRole(
  * Get user preferences
  */
 export async function getUserPreferences(userId: string): Promise<any | null> {
-  return queryOne<any>(
-    userId,
-    'SELECT * FROM user_preferences WHERE user_id = $1',
-    [userId]
-  );
+  return queryOne<any>(userId, 'SELECT * FROM user_preferences WHERE user_id = $1', [userId]);
 }
 
 /**
@@ -318,7 +316,7 @@ export async function updateUserPreferences(
         preferences.notifications_email ?? true,
         preferences.notifications_sms ?? false,
         preferences.theme ?? 'light',
-        preferences.language ?? 'fr'
+        preferences.language ?? 'fr',
       ]
     );
 
@@ -415,18 +413,14 @@ export async function exportUserData(userId: string): Promise<{
   const user = await getUserById(userId);
 
   // Get user sessions
-  const sessions = await query<any>(
+  const sessions = await query<any>(userId, 'SELECT * FROM auth_sessions WHERE user_id = $1', [
     userId,
-    'SELECT * FROM auth_sessions WHERE user_id = $1',
-    [userId]
-  );
+  ]);
 
   // Get user audit logs
-  const auditLogs = await query<any>(
+  const auditLogs = await query<any>(userId, 'SELECT * FROM audit_logs WHERE user_id = $1', [
     userId,
-    'SELECT * FROM audit_logs WHERE user_id = $1',
-    [userId]
-  );
+  ]);
 
   return {
     user,
@@ -435,4 +429,3 @@ export async function exportUserData(userId: string): Promise<{
     exportedAt: new Date().toISOString(),
   };
 }
-

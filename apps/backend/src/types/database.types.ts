@@ -327,7 +327,16 @@ export type Database = {
           step_number: number;
           section: 'work_history' | 'education' | 'skills' | 'motivations' | 'constraints';
           question_text: string;
-          question_type: 'text' | 'textarea' | 'select' | 'multiselect' | 'rating' | 'checkbox_array' | 'date' | 'email' | 'open_ended';
+          question_type:
+            | 'text'
+            | 'textarea'
+            | 'select'
+            | 'multiselect'
+            | 'rating'
+            | 'checkbox_array'
+            | 'date'
+            | 'email'
+            | 'open_ended';
           options?: any[] | null;
           order: number;
           required: boolean;

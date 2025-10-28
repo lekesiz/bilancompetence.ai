@@ -42,7 +42,9 @@ export async function getBilansByBeneficiary(beneficiaryId: string): Promise<Bil
  * Get all recommendations for a beneficiary
  * Recommendations are linked to bilans, so we need to join through bilans table
  */
-export async function getRecommendationsByBeneficiary(beneficiaryId: string): Promise<Recommendation[]> {
+export async function getRecommendationsByBeneficiary(
+  beneficiaryId: string
+): Promise<Recommendation[]> {
   return query<Recommendation>(
     beneficiaryId,
     `SELECT r.* FROM recommendations r
@@ -67,7 +69,9 @@ export async function getBilansByConsultant(consultantId: string): Promise<Bilan
 /**
  * Get unique clients (beneficiaries) for a consultant
  */
-export async function getClientsByConsultant(consultantId: string): Promise<Array<{ id: string; full_name: string; email: string }>> {
+export async function getClientsByConsultant(
+  consultantId: string
+): Promise<Array<{ id: string; full_name: string; email: string }>> {
   return query<{ id: string; full_name: string; email: string }>(
     consultantId,
     `SELECT DISTINCT u.id, u.full_name, u.email 
@@ -83,11 +87,7 @@ export async function getClientsByConsultant(consultantId: string): Promise<Arra
  * Get all bilans (for admin)
  */
 export async function getAllBilans(): Promise<Bilan[]> {
-  return query<Bilan>(
-    null,
-    'SELECT * FROM bilans ORDER BY created_at DESC LIMIT 100',
-    []
-  );
+  return query<Bilan>(null, 'SELECT * FROM bilans ORDER BY created_at DESC LIMIT 100', []);
 }
 
 /**
@@ -102,15 +102,14 @@ export async function getOrganizationStats(organizationId: string): Promise<Dash
     [organizationId]
   );
 
-  const completedBilans = bilans.filter(b => b.status === 'COMPLETED').length;
-  const activeBilans = bilans.filter(b => 
-    b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION'
+  const completedBilans = bilans.filter((b) => b.status === 'COMPLETED').length;
+  const activeBilans = bilans.filter(
+    (b) => b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION'
   ).length;
 
   const totalSatisfaction = bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0);
-  const averageSatisfaction = bilans.length > 0 
-    ? Math.round(totalSatisfaction / bilans.length * 10) / 10 
-    : 0;
+  const averageSatisfaction =
+    bilans.length > 0 ? Math.round((totalSatisfaction / bilans.length) * 10) / 10 : 0;
 
   return {
     totalBilans: bilans.length,
@@ -138,4 +137,3 @@ export async function getRecentActivityByOrganization(
     [organizationId, limit]
   );
 }
-

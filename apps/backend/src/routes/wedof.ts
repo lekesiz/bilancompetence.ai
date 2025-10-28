@@ -74,7 +74,7 @@ router.post('/folders/:id/entree-formation', async (req: Request, res: Response)
   try {
     const { id } = req.params;
     const { start_date } = req.body;
-    
+
     if (!start_date) {
       return res.status(400).json({ success: false, error: 'start_date is required' });
     }
@@ -94,7 +94,7 @@ router.post('/folders/:id/sortie-formation', async (req: Request, res: Response)
   try {
     const { id } = req.params;
     const { end_date } = req.body;
-    
+
     if (!end_date) {
       return res.status(400).json({ success: false, error: 'end_date is required' });
     }
@@ -223,7 +223,7 @@ router.get('/webhooks', async (req: Request, res: Response) => {
 router.post('/webhooks', async (req: Request, res: Response) => {
   try {
     const { url, events } = req.body;
-    
+
     if (!url || !events || !Array.isArray(events)) {
       return res.status(400).json({
         success: false,
@@ -263,20 +263,20 @@ router.delete('/webhooks/:id', async (req: Request, res: Response) => {
 router.post('/sync/import-folder', async (req: Request, res: Response) => {
   try {
     const { reference } = req.body;
-    
+
     if (!reference) {
       return res.status(400).json({ success: false, error: 'reference is required' });
     }
 
     // Get folder from Wedof
     const folder = await wedofService.getRegistrationFolderByReference(reference);
-    
+
     // Get attendee details
     const attendee = await wedofService.getAttendee(folder.attendee_id);
-    
+
     // TODO: Save to our database
     // This would typically involve creating/updating records in Supabase
-    
+
     res.json({
       success: true,
       data: {
@@ -291,4 +291,3 @@ router.post('/sync/import-folder', async (req: Request, res: Response) => {
 });
 
 export default router;
-

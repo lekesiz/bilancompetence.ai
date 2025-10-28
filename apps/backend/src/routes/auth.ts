@@ -24,8 +24,75 @@ import { logger } from '../utils/logger.js';
 const router = Router();
 
 /**
- * POST /api/auth/register
- * Register a new user
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - full_name
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address.
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: User's password (min. 8 characters).
+ *               full_name:
+ *                 type: string
+ *                 description: User's full name.
+ *               role:
+ *                 type: string
+ *                 enum: [BENEFICIARY, CONSULTANT, ADMIN]
+ *                 description: User's role (defaults to BENEFICIARY).
+ *     responses:
+ *       201:
+ *         description: User registered successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: User registered successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         full_name:
+ *                           type: string
+ *                         role:
+ *                           type: string
+ *                     accessToken:
+ *                       type: string
+ *                     refreshToken:
+ *                       type: string
+ *       400:
+ *         description: Validation failed.
+ *       409:
+ *         description: User with this email already exists.
+ *       500:
+ *         description: Registration failed.
  */
 router.post('/register', async (req: Request, res: Response) => {
   try {
@@ -114,8 +181,72 @@ router.post('/register', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/auth/login
- * Login user and return tokens
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Log in a user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: User logged in successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         full_name:
+ *                           type: string
+ *                         role:
+ *                           type: string
+ *                         cv_url:
+ *                           type: string
+ *                           nullable: true
+ *                         cv_uploaded_at:
+ *                           type: string
+ *                           format: date-time
+ *                           nullable: true
+ *                     accessToken:
+ *                       type: string
+ *                     refreshToken:
+ *                       type: string
+ *       400:
+ *         description: Validation failed.
+ *       401:
+ *         description: Invalid email or password.
+ *       500:
+ *         description: Login failed.
  */
 router.post('/login', async (req: Request, res: Response) => {
   try {
@@ -188,8 +319,40 @@ router.post('/login', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/auth/refresh
- * Refresh access token using refresh token
+ * @swagger
+ * /api/auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                 refreshToken:
+ *                   type: string
+ *       400:
+ *         description: Validation failed.
+ *       401:
+ *         description: Invalid or expired refresh token.
+ *       500:
+ *         description: Token refresh failed.
  */
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
@@ -250,14 +413,22 @@ router.post('/refresh', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/auth/logout
- * Logout user (client should delete tokens)
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Log out a user
+ *     tags: [Authentication]
+ *     responses:
+ *       200:
+ *         description: Logout successful.
+ *       500:
+ *         description: Logout failed.
  */
 router.post('/logout', async (req: Request, res: Response) => {
   try {
     // In a stateless JWT system, logout is handled client-side
     // The client should delete the tokens from storage
-    
+
     // If you want to implement token blacklisting, you can add it here
     // For now, we just return success
 
@@ -279,8 +450,36 @@ router.post('/logout', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/auth/verify
- * Verify if the current token is valid
+ * @swagger
+ * /api/auth/verify:
+ *   get:
+ *     summary: Verify JWT token
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token is valid.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     full_name:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *       401:
+ *         description: Missing, invalid or expired token.
+ *       500:
+ *         description: Token verification failed.
  */
 router.get('/verify', async (req: Request, res: Response) => {
   try {
@@ -336,4 +535,3 @@ router.get('/verify', async (req: Request, res: Response) => {
 });
 
 export default router;
-

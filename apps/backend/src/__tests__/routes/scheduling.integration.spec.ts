@@ -48,13 +48,15 @@ jest.mock('../../middleware/auth', () => ({
     });
     next();
   },
-  requireRole: (...roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
-    const userRole = (req as any).user?.role;
-    if (!roles.includes(userRole)) {
-      return res.status(403).json({ status: 'error', message: 'Forbidden' });
-    }
-    next();
-  },
+  requireRole:
+    (...roles: string[]) =>
+    (req: Request, res: Response, next: NextFunction) => {
+      const userRole = (req as any).user?.role;
+      if (!roles.includes(userRole)) {
+        return res.status(403).json({ status: 'error', message: 'Forbidden' });
+      }
+      next();
+    },
 }));
 
 // Import routes AFTER mocks

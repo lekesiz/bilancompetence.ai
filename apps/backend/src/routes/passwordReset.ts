@@ -1,9 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
-import {
-  hashPassword,
-  comparePassword,
-} from '../services/authService.js';
+import { hashPassword, comparePassword } from '../services/authService.js';
 import { getUserByEmail, getUserById } from '../services/userServiceNeon.js';
 import {
   updateUserPassword,
@@ -37,58 +34,54 @@ const resetPasswordSchema = z.object({
  * POST /api/password-reset/request
  * Request password reset
  */
-router.post(
-  '/request',
-  passwordResetLimiter,
-  async (req: Request, res: Response) => {
-    try {
-      const validation = requestResetSchema.safeParse(req.body);
-      if (!validation.success) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Invalid email format',
-        });
-      }
+router.post('/request', passwordResetLimiter, async (req: Request, res: Response) => {
+  try {
+    const validation = requestResetSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid email format',
+      });
+    }
 
-      const { email } = validation.data;
+    const { email } = validation.data;
 
-      // Check if user exists
-      const user = await getUserByEmail(email);
-      if (!user) {
-        // Don't reveal if user exists (security best practice)
-        return res.status(200).json({
-          status: 'success',
-          message: 'If an account with this email exists, a password reset link will be sent.',
-        });
-      }
-
-      // Generate reset token
-      const resetToken = generateToken(32);
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
-
-      // Save token to database
-      await createPasswordResetToken(user.id, resetToken, expiresAt);
-
-      // Send email
-      await sendPasswordResetEmail(email, resetToken, user.full_name);
-
-      // Log action
-      await createAuditLog(user.id, 'PASSWORD_RESET_REQUESTED', 'user', user.id, null, req.ip);
-
+    // Check if user exists
+    const user = await getUserByEmail(email);
+    if (!user) {
+      // Don't reveal if user exists (security best practice)
       return res.status(200).json({
         status: 'success',
         message: 'If an account with this email exists, a password reset link will be sent.',
       });
-    } catch (error) {
-      console.error('Password reset request error:', error);
-      res.status(500).json({
-        status: 'error',
-        message: 'Failed to process password reset request',
-      });
     }
+
+    // Generate reset token
+    const resetToken = generateToken(32);
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 1); // 1 hour expiry
+
+    // Save token to database
+    await createPasswordResetToken(user.id, resetToken, expiresAt);
+
+    // Send email
+    await sendPasswordResetEmail(email, resetToken, user.full_name);
+
+    // Log action
+    await createAuditLog(user.id, 'PASSWORD_RESET_REQUESTED', 'user', user.id, null, req.ip);
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'If an account with this email exists, a password reset link will be sent.',
+    });
+  } catch (error) {
+    console.error('Password reset request error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to process password reset request',
+    });
   }
-);
+});
 
 /**
  * POST /api/password-reset/confirm

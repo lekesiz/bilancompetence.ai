@@ -6,8 +6,17 @@
 import { supabase } from './supabaseService.js';
 import { logger } from '../utils/logger.js';
 import { v4 as uuidv4 } from 'uuid';
-import { parsePaginationParams, createPaginatedResponse, PaginatedResponse } from '../utils/pagination.js';
-import { throwIfError, extractArray, extractArrayFromUnion, extractSingleRow } from '../utils/supabaseTypeGuards.js';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  PaginatedResponse,
+} from '../utils/pagination.js';
+import {
+  throwIfError,
+  extractArray,
+  extractArrayFromUnion,
+  extractSingleRow,
+} from '../utils/supabaseTypeGuards.js';
 import { DatabaseError } from '../utils/errorHandler.js';
 
 export interface AvailabilitySlot {
@@ -358,7 +367,11 @@ class SchedulingService {
 
       const typedBooking = booking as unknown as SessionBooking;
       // Create reminder entries for the booking
-      await this.createSessionReminders(typedBooking.id, typedBooking.scheduled_date, typedBooking.scheduled_start_time);
+      await this.createSessionReminders(
+        typedBooking.id,
+        typedBooking.scheduled_date,
+        typedBooking.scheduled_start_time
+      );
 
       return typedBooking;
     } catch (error) {
@@ -540,7 +553,12 @@ class SchedulingService {
           throw error;
         }
 
-        return createPaginatedResponse<SessionBooking>((data as unknown as SessionBooking[]) || [], pageNum, limitNum, total || 0);
+        return createPaginatedResponse<SessionBooking>(
+          (data as unknown as SessionBooking[]) || [],
+          pageNum,
+          limitNum,
+          total || 0
+        );
       }
 
       // Non-paginated response
@@ -619,7 +637,12 @@ class SchedulingService {
           throw error;
         }
 
-        return createPaginatedResponse<SessionBooking>((data as unknown as SessionBooking[]) || [], pageNum, limitNum, total || 0);
+        return createPaginatedResponse<SessionBooking>(
+          (data as unknown as SessionBooking[]) || [],
+          pageNum,
+          limitNum,
+          total || 0
+        );
       }
 
       // Non-paginated response
@@ -681,7 +704,11 @@ class SchedulingService {
       const typedOriginalBooking = booking as unknown as SessionBooking;
       // Update analytics if session was completed
       if (attended) {
-        await this.updateSessionAnalytics(typedOriginalBooking.consultant_id, typedOriginalBooking.organization_id, typedOriginalBooking.scheduled_date);
+        await this.updateSessionAnalytics(
+          typedOriginalBooking.consultant_id,
+          typedOriginalBooking.organization_id,
+          typedOriginalBooking.scheduled_date
+        );
       }
 
       return updatedBooking as unknown as SessionBooking;
@@ -761,10 +788,14 @@ class SchedulingService {
         total_sessions_no_show: typedSessions.filter((s) => s.status === 'NO_SHOW').length || 0,
         total_sessions_cancelled: typedSessions.filter((s) => s.status === 'CANCELLED').length || 0,
         average_rating:
-          typedSessions.filter((s) => s.beneficiary_rating).reduce((sum, s) => sum + (s.beneficiary_rating || 0), 0) /
+          typedSessions
+            .filter((s) => s.beneficiary_rating)
+            .reduce((sum, s) => sum + (s.beneficiary_rating || 0), 0) /
             (typedSessions.filter((s) => s.beneficiary_rating).length || 1) || null,
         total_hours_completed:
-          (typedSessions.filter((s) => s.status === 'COMPLETED').reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0) / 60,
+          (typedSessions
+            .filter((s) => s.status === 'COMPLETED')
+            .reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0) / 60,
       };
 
       const typedAnalytics = existingAnalytics as unknown as SessionAnalytics;
@@ -779,17 +810,15 @@ class SchedulingService {
           .eq('id', typedAnalytics.id);
       } else {
         // Create new record
-        await supabase
-          .from('session_analytics')
-          .insert({
-            id: uuidv4(),
-            consultant_id: consultantId,
-            organization_id: organizationId,
-            session_date: sessionDate,
-            ...stats,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
+        await supabase.from('session_analytics').insert({
+          id: uuidv4(),
+          consultant_id: consultantId,
+          organization_id: organizationId,
+          session_date: sessionDate,
+          ...stats,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
       }
     } catch (error) {
       logger.error('SchedulingService.updateSessionAnalytics failed', error);

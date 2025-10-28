@@ -116,12 +116,7 @@ describe('NotificationService', () => {
 
         (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-        const result = await createNotification(
-          testUserId,
-          type,
-          'Test',
-          'Test message'
-        );
+        const result = await createNotification(testUserId, type, 'Test', 'Test message');
 
         expect(result.type).toBe(type);
       }
@@ -354,12 +349,7 @@ describe('NotificationService', () => {
 
         (supabase.from as jest.Mock).mockReturnValue({ insert: mockInsert });
 
-        const result = await createNotification(
-          userId,
-          'system',
-          'Test',
-          'Test'
-        );
+        const result = await createNotification(userId, 'system', 'Test', 'Test');
 
         expect(result.user_id).toBe(userId);
       }

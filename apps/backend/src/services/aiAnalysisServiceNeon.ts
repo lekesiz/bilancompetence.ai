@@ -77,10 +77,7 @@ export async function saveActionPlan(
 /**
  * Get CV analysis by assessment ID
  */
-export async function getCVAnalysis(
-  assessmentId: string,
-  userId?: string
-): Promise<any | null> {
+export async function getCVAnalysis(assessmentId: string, userId?: string): Promise<any | null> {
   const result = await query<{ analysis_result: string }>(
     userId || null,
     `SELECT analysis_result FROM cv_analyses 
@@ -140,10 +137,7 @@ export async function getPersonalityAnalysis(
 /**
  * Get action plan by assessment ID
  */
-export async function getActionPlan(
-  assessmentId: string,
-  userId?: string
-): Promise<any | null> {
+export async function getActionPlan(assessmentId: string, userId?: string): Promise<any | null> {
   const result = await query<{ action_plan: string }>(
     userId || null,
     `SELECT action_plan FROM action_plans 
@@ -157,4 +151,3 @@ export async function getActionPlan(
 
   return JSON.parse(result[0].action_plan);
 }
-

@@ -232,7 +232,8 @@ describe('AssessmentService - Wizard Functions', () => {
       const validData = {
         topValues: ['Growth', 'Autonomy'],
         careerGoals: ['Leadership', 'Expertise'],
-        motivationDescription: 'This is a long enough motivation description with meaningful content.',
+        motivationDescription:
+          'This is a long enough motivation description with meaningful content.',
       };
 
       const result = await validateAssessmentStep(4, 'motivations', validData);

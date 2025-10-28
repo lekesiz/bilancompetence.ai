@@ -55,10 +55,7 @@ jest.mock('../../utils/logger', () => ({
 }));
 
 import { supabase } from '../../services/supabaseService';
-import {
-  generateAssessmentPDF,
-  generateUserAssessmentsSummary,
-} from '../../services/pdfService';
+import { generateAssessmentPDF, generateUserAssessmentsSummary } from '../../services/pdfService';
 
 describe('PDF Export Routes Integration Tests', () => {
   const mockAssessmentId = '550e8400-e29b-41d4-a716-446655440000';
@@ -258,8 +255,7 @@ describe('PDF Export Routes Integration Tests', () => {
       if (!validTypes.includes(req.query.type)) {
         res.status(400).json({
           status: 'error',
-          message:
-            'Invalid report type. Must be one of: preliminary, investigation, conclusion',
+          message: 'Invalid report type. Must be one of: preliminary, investigation, conclusion',
         });
       }
 
@@ -381,9 +377,7 @@ describe('PDF Export Routes Integration Tests', () => {
     });
 
     it('should return 500 on PDF generation error', async () => {
-      (generateAssessmentPDF as any).mockRejectedValue(
-        new Error('PDF generation failed')
-      );
+      (generateAssessmentPDF as any).mockRejectedValue(new Error('PDF generation failed'));
 
       const mockFrom = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
@@ -480,9 +474,7 @@ describe('PDF Export Routes Integration Tests', () => {
     });
 
     it('should return 404 when user has no assessments', async () => {
-      (generateUserAssessmentsSummary as any).mockRejectedValue(
-        new Error('No assessments found')
-      );
+      (generateUserAssessmentsSummary as any).mockRejectedValue(new Error('No assessments found'));
 
       const req = {
         user: { id: mockUserId, role: 'USER' },
@@ -517,9 +509,7 @@ describe('PDF Export Routes Integration Tests', () => {
       const expectedFilename = `Assessments_Summary_${userIdShort}_${timestamp}.pdf`;
 
       // Verify filename format
-      expect(expectedFilename).toMatch(
-        /^Assessments_Summary_[a-f0-9]{8}_\d{4}-\d{2}-\d{2}\.pdf$/
-      );
+      expect(expectedFilename).toMatch(/^Assessments_Summary_[a-f0-9]{8}_\d{4}-\d{2}-\d{2}\.pdf$/);
     });
 
     it('should set proper HTTP headers for PDF response', async () => {
@@ -554,9 +544,7 @@ describe('PDF Export Routes Integration Tests', () => {
     });
 
     it('should return 500 on PDF generation error', async () => {
-      (generateUserAssessmentsSummary as any).mockRejectedValue(
-        new Error('PDF generation failed')
-      );
+      (generateUserAssessmentsSummary as any).mockRejectedValue(new Error('PDF generation failed'));
 
       const req = {
         user: { id: mockUserId, role: 'USER' },
@@ -601,14 +589,12 @@ describe('PDF Export Routes Integration Tests', () => {
 
       // Owner should have access
       const ownerHasAccess =
-        assessment.beneficiary_id === ownerUserId ||
-        assessment.consultant_id === ownerUserId;
+        assessment.beneficiary_id === ownerUserId || assessment.consultant_id === ownerUserId;
       expect(ownerHasAccess).toBe(true);
 
       // Non-owner without consultant role should not have access
       const nonOwnerHasAccess =
-        assessment.beneficiary_id === nonOwnerUserId ||
-        assessment.consultant_id === nonOwnerUserId;
+        assessment.beneficiary_id === nonOwnerUserId || assessment.consultant_id === nonOwnerUserId;
       expect(nonOwnerHasAccess).toBe(false);
     });
 
@@ -645,10 +631,7 @@ describe('PDF Export Routes Integration Tests', () => {
 
       res.setHeader('Content-Type', 'application/pdf');
 
-      expect(res.setHeader).toHaveBeenCalledWith(
-        'Content-Type',
-        'application/pdf'
-      );
+      expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'application/pdf');
     });
 
     it('should set Content-Disposition header with filename', async () => {

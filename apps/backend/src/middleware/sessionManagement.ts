@@ -5,11 +5,11 @@ import jwt from 'jsonwebtoken';
 // Make Supabase optional - only initialize if credentials are provided
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 /**
  * Middleware de gestion de session avancée
- * 
+ *
  * Fonctionnalités:
  * - Gestion de sessions multiples (plusieurs appareils)
  * - Détection de sessions suspectes
@@ -46,12 +46,12 @@ export async function createSession(
     const deviceInfo = extractDeviceInfo(req);
     const ipAddress = extractIpAddress(req);
     const userAgent = req.headers['user-agent'] || '';
-    
+
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 jours
-    
+
     // Vérifier le nombre de sessions actives
     await cleanupOldSessions(userId);
-    
+
     const sessionData: SessionData = {
       user_id: userId,
       token,
@@ -63,17 +63,17 @@ export async function createSession(
       is_active: true,
       created_at: new Date().toISOString(),
     };
-    
+
     const { data: session, error } = await supabase
       .from('user_sessions')
       .insert(sessionData)
       .select()
       .single();
-    
+
     if (error) {
       throw new Error(`Erreur lors de la création de la session: ${error.message}`);
     }
-    
+
     return session;
   } catch (error: any) {
     console.error('Erreur createSession:', error);
@@ -89,7 +89,7 @@ export async function validateSession(token: string, req: Request): Promise<Sess
     // Décoder le token pour obtenir l'userId
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
     const userId = decoded.userId;
-    
+
     // Récupérer la session
     const { data: session, error } = await supabase
       .from('user_sessions')
@@ -98,39 +98,39 @@ export async function validateSession(token: string, req: Request): Promise<Sess
       .eq('user_id', userId)
       .eq('is_active', true)
       .single();
-    
+
     if (error || !session) {
       return null;
     }
-    
+
     // Vérifier l'expiration
     const expiresAt = new Date(session.expires_at);
     if (expiresAt < new Date()) {
       await revokeSession(session.id!);
       return null;
     }
-    
+
     // Vérifier le timeout d'inactivité
     const lastActivity = new Date(session.last_activity || session.created_at);
     const timeSinceActivity = Date.now() - lastActivity.getTime();
-    
+
     if (timeSinceActivity > SESSION_TIMEOUT) {
       await revokeSession(session.id!);
       return null;
     }
-    
+
     // Mettre à jour l'activité
     await updateSessionActivity(session.id!);
-    
+
     // Détecter les sessions suspectes (changement d'IP ou user-agent)
     const currentIp = extractIpAddress(req);
     const currentUserAgent = req.headers['user-agent'] || '';
-    
+
     if (session.ip_address !== currentIp || session.user_agent !== currentUserAgent) {
       console.warn(`Session suspecte détectée pour l'utilisateur ${userId}`);
       // En production, envoyer une alerte email
     }
-    
+
     return session;
   } catch (error: any) {
     console.error('Erreur validateSession:', error);
@@ -185,11 +185,11 @@ export async function revokeAllUserSessions(
         is_active: false,
       })
       .eq('user_id', userId);
-    
+
     if (exceptSessionId) {
       query = query.neq('id', exceptSessionId);
     }
-    
+
     await query;
   } catch (error: any) {
     console.error('Erreur revokeAllUserSessions:', error);
@@ -208,7 +208,7 @@ async function cleanupOldSessions(userId: string): Promise<void> {
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .eq('is_active', true);
-    
+
     if (count && count >= MAX_SESSIONS_PER_USER) {
       // Supprimer les sessions les plus anciennes
       const { data: oldSessions } = await supabase
@@ -218,13 +218,10 @@ async function cleanupOldSessions(userId: string): Promise<void> {
         .eq('is_active', true)
         .order('last_activity', { ascending: true })
         .limit(count - MAX_SESSIONS_PER_USER + 1);
-      
+
       if (oldSessions && oldSessions.length > 0) {
-        const sessionIds = oldSessions.map(s => s.id);
-        await supabase
-          .from('user_sessions')
-          .update({ is_active: false })
-          .in('id', sessionIds);
+        const sessionIds = oldSessions.map((s) => s.id);
+        await supabase.from('user_sessions').update({ is_active: false }).in('id', sessionIds);
       }
     }
   } catch (error: any) {
@@ -243,11 +240,11 @@ export async function getUserActiveSessions(userId: string): Promise<SessionData
       .eq('user_id', userId)
       .eq('is_active', true)
       .order('last_activity', { ascending: false });
-    
+
     if (error) {
       throw new Error(`Erreur lors de la récupération des sessions: ${error.message}`);
     }
-    
+
     return sessions || [];
   } catch (error: any) {
     console.error('Erreur getUserActiveSessions:', error);
@@ -258,26 +255,22 @@ export async function getUserActiveSessions(userId: string): Promise<SessionData
 /**
  * Middleware de validation de session
  */
-export function sessionValidationMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export function sessionValidationMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  
+
   if (!token) {
     return res.status(401).json({ error: 'Token manquant' });
   }
-  
+
   validateSession(token, req)
     .then((session) => {
       if (!session) {
-        return res.status(401).json({ 
+        return res.status(401).json({
           error: 'Session invalide ou expirée',
-          code: 'SESSION_EXPIRED'
+          code: 'SESSION_EXPIRED',
         });
       }
-      
+
       // Attacher les données de session à la requête
       (req as any).session = session;
       next();
@@ -293,7 +286,7 @@ export function sessionValidationMiddleware(
  */
 function extractDeviceInfo(req: Request): string {
   const userAgent = req.headers['user-agent'] || '';
-  
+
   if (userAgent.includes('Mobile')) {
     return 'Mobile';
   } else if (userAgent.includes('Tablet')) {
@@ -324,7 +317,7 @@ export async function cleanupExpiredSessions(): Promise<void> {
       .update({ is_active: false })
       .lt('expires_at', new Date().toISOString())
       .eq('is_active', true);
-    
+
     console.log('Sessions expirées nettoyées');
   } catch (error: any) {
     console.error('Erreur cleanupExpiredSessions:', error);
@@ -333,4 +326,3 @@ export async function cleanupExpiredSessions(): Promise<void> {
 
 // Planifier le nettoyage des sessions toutes les heures
 setInterval(cleanupExpiredSessions, 60 * 60 * 1000);
-

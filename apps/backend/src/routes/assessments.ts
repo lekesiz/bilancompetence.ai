@@ -59,16 +59,20 @@ const submitAnswerSchema = z.object({
 const saveDraftStepSchema = z.object({
   section: z.enum(['work_history', 'education', 'skills', 'motivations', 'constraints']),
   answers: z.record(z.string(), z.any()),
-  competencies: z.array(z.object({
-    skillName: z.string().optional(),
-    skill_name: z.string().optional(),
-    selfAssessmentLevel: z.number().optional(),
-    self_assessment_level: z.number().optional(),
-    selfInterestLevel: z.number().optional(),
-    self_interest_level: z.number().optional(),
-    category: z.string().optional(),
-    context: z.string().optional(),
-  })).optional(),
+  competencies: z
+    .array(
+      z.object({
+        skillName: z.string().optional(),
+        skill_name: z.string().optional(),
+        selfAssessmentLevel: z.number().optional(),
+        self_assessment_level: z.number().optional(),
+        selfInterestLevel: z.number().optional(),
+        self_interest_level: z.number().optional(),
+        category: z.string().optional(),
+        context: z.string().optional(),
+      })
+    )
+    .optional(),
 });
 
 const autoSaveSchema = z.object({
@@ -77,9 +81,36 @@ const autoSaveSchema = z.object({
 });
 
 /**
- * POST /api/assessments
- * Create new assessment (wizard draft or traditional)
- * Body: { title?, description?, assessment_type: 'career' | 'skills' | 'comprehensive', consultant_id? }
+ * @swagger
+ * /api/assessments:
+ *   post:
+ *     summary: Create a new assessment draft
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - assessment_type
+ *             properties:
+ *               assessment_type:
+ *                 type: string
+ *                 enum: [career, skills, comprehensive]
+ *               title:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Assessment draft created successfully.
+ *       400:
+ *         description: Invalid assessment type.
+ *       401:
+ *         description: Authentication required.
+ *       500:
+ *         description: Failed to create assessment draft.
  */
 router.post('/', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -101,11 +132,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
     }
 
     // Use wizard draft creation (automatically creates draft record)
-    const assessment = await createAssessmentDraft(
-      req.user.id,
-      assessment_type,
-      title
-    );
+    const assessment = await createAssessmentDraft(req.user.id, assessment_type, title);
 
     // Log action
     await createAuditLog(
@@ -133,17 +160,42 @@ router.post('/', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/assessments
- * Get user's assessments
- */
-/**
- * GET /api/assessments
- * Get user assessments with optional pagination
- * Query params:
- *   - role: 'beneficiary' (default) or 'consultant'
- *   - page: page number (optional, enables pagination)
- *   - limit: items per page, max 100 (optional, default 20)
- *   - sort: sort column:direction, e.g., 'created_at:desc' (optional)
+ * @swagger
+ * /api/assessments:
+ *   get:
+ *     summary: Get user assessments with optional pagination
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           enum: [beneficiary, consultant]
+ *         description: Role of the user.
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number for pagination.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of items per page.
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: Sort order.
+ *     responses:
+ *       200:
+ *         description: A list of assessments.
+ *       401:
+ *         description: Authentication required.
+ *       500:
+ *         description: Failed to fetch assessments.
  */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -175,8 +227,28 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/assessments/:id
- * Get assessment details with all related data (questions, answers, draft, competencies)
+ * @swagger
+ * /api/assessments/{id}:
+ *   get:
+ *     summary: Get assessment details
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Assessment details retrieved successfully.
+ *       403:
+ *         description: Unauthorized access to this assessment.
+ *       404:
+ *         description: Assessment not found.
+ *       500:
+ *         description: Failed to fetch assessment.
  */
 router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -212,8 +284,39 @@ router.get('/:id', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * PUT /api/assessments/:id
- * Update assessment
+ * @swagger
+ * /api/assessments/{id}:
+ *   put:
+ *     summary: Update an assessment
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Assessment updated successfully.
+ *       401:
+ *         description: Authentication required.
+ *       500:
+ *         description: Failed to update assessment.
  */
 router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -250,8 +353,26 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/assessments/:id/start
- * Start assessment
+ * @swagger
+ * /api/assessments/{id}/start:
+ *   post:
+ *     summary: Start an assessment
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Assessment started successfully.
+ *       401:
+ *         description: Authentication required.
+ *       500:
+ *         description: Failed to start assessment.
  */
 router.post('/:id/start', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -282,8 +403,35 @@ router.post('/:id/start', authMiddleware, async (req: Request, res: Response) =>
 });
 
 /**
- * POST /api/assessments/:id/complete
- * Complete assessment
+ * @swagger
+ * /api/assessments/{id}/complete:
+ *   post:
+ *     summary: Complete an assessment
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               results:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Assessment completed successfully.
+ *       401:
+ *         description: Authentication required.
+ *       500:
+ *         description: Failed to complete assessment.
  */
 router.post('/:id/complete', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -361,7 +509,13 @@ router.post('/:id/questions', authMiddleware, async (req: Request, res: Response
     const { id } = req.params;
     const { question, question_type, options, category } = validation.data;
 
-    const questionData = await createAssessmentQuestion(id, question, question_type, options, category);
+    const questionData = await createAssessmentQuestion(
+      id,
+      question,
+      question_type,
+      options,
+      category
+    );
 
     return res.status(201).json({
       status: 'success',
@@ -500,7 +654,7 @@ router.post('/:id/steps/:stepNumber', authMiddleware, async (req: Request, res: 
       return res.status(400).json({
         status: 'error',
         message: 'Invalid data',
-        errors: validation.error.issues.map(e => e.message),
+        errors: validation.error.issues.map((e) => e.message),
       });
     }
 
@@ -562,7 +716,7 @@ router.post('/:id/auto-save', authMiddleware, async (req: Request, res: Response
       return res.status(400).json({
         status: 'error',
         message: 'Invalid data',
-        errors: validation.error.issues.map(e => e.message),
+        errors: validation.error.issues.map((e) => e.message),
       });
     }
 
@@ -605,7 +759,10 @@ router.get('/:id/progress', authMiddleware, async (req: Request, res: Response) 
 
     // Verify assessment belongs to user
     const assessment = await getAssessment(id);
-    if (!assessment || (assessment.beneficiary_id !== req.user?.id && assessment.consultant_id !== req.user?.id)) {
+    if (
+      !assessment ||
+      (assessment.beneficiary_id !== req.user?.id && assessment.consultant_id !== req.user?.id)
+    ) {
       return res.status(403).json({
         status: 'error',
         message: 'Unauthorized',

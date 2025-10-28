@@ -121,7 +121,9 @@ describe('EmailService', () => {
       const invalidEmail = 'not-an-email';
       mockSendMail.mockRejectedValueOnce(new Error('Invalid email'));
 
-      await expect(sendPasswordResetEmail(invalidEmail, resetToken, testFullName)).rejects.toThrow();
+      await expect(
+        sendPasswordResetEmail(invalidEmail, resetToken, testFullName)
+      ).rejects.toThrow();
     });
   });
 

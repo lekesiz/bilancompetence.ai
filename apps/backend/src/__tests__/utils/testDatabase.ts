@@ -1,6 +1,6 @@
 /**
  * Test Database Utilities
- * 
+ *
  * Provides utilities for database seeding and cleanup for integration tests
  */
 
@@ -90,24 +90,24 @@ export async function seedTestDatabase(): Promise<void> {
     // 1. Create test users in Supabase Auth
     // 2. Insert test data into database tables
     // 3. Set up relationships between entities
-    
+
     console.log('Seeding test database...');
-    
+
     // For now, we'll use mocked Supabase, so no actual seeding needed
     // When using real database, uncomment and implement:
-    
+
     // await supabase.from('users').insert([
     //   testData.users.beneficiary,
     //   testData.users.consultant,
     //   testData.users.admin,
     // ]);
-    
+
     // await supabase.from('assessments').insert([
     //   testData.assessments.draft,
     //   testData.assessments.inProgress,
     //   testData.assessments.completed,
     // ]);
-    
+
     console.log('Test database seeded successfully');
   } catch (error) {
     console.error('Error seeding test database:', error);
@@ -121,20 +121,20 @@ export async function seedTestDatabase(): Promise<void> {
 export async function cleanupTestDatabase(): Promise<void> {
   try {
     console.log('Cleaning up test database...');
-    
+
     // Note: In a real implementation, you would:
     // 1. Delete all test data
     // 2. Reset sequences/auto-increment
     // 3. Clear caches
-    
+
     // For now, we'll use mocked Supabase, so no actual cleanup needed
     // When using real database, uncomment and implement:
-    
+
     // await supabase.from('notifications').delete().like('id', 'test-%');
     // await supabase.from('conversations').delete().like('id', 'test-%');
     // await supabase.from('assessments').delete().like('id', 'test-%');
     // await supabase.from('users').delete().like('id', 'test-%');
-    
+
     console.log('Test database cleaned up successfully');
   } catch (error) {
     console.error('Error cleaning up test database:', error);
@@ -159,42 +159,46 @@ export async function createTestUser(userData: Partial<typeof testData.users.ben
     ...userData,
     id: userData.id || `test-user-${Date.now()}`,
   };
-  
+
   // In real implementation:
   // await supabase.from('users').insert(user);
-  
+
   return user;
 }
 
 /**
  * Create a test assessment
  */
-export async function createTestAssessment(assessmentData: Partial<typeof testData.assessments.draft>) {
+export async function createTestAssessment(
+  assessmentData: Partial<typeof testData.assessments.draft>
+) {
   const assessment = {
     ...testData.assessments.draft,
     ...assessmentData,
     id: assessmentData.id || `test-assessment-${Date.now()}`,
   };
-  
+
   // In real implementation:
   // await supabase.from('assessments').insert(assessment);
-  
+
   return assessment;
 }
 
 /**
  * Create a test conversation
  */
-export async function createTestConversation(conversationData: Partial<typeof testData.conversations.active>) {
+export async function createTestConversation(
+  conversationData: Partial<typeof testData.conversations.active>
+) {
   const conversation = {
     ...testData.conversations.active,
     ...conversationData,
     id: conversationData.id || `test-conversation-${Date.now()}`,
   };
-  
+
   // In real implementation:
   // await supabase.from('conversations').insert(conversation);
-  
+
   return conversation;
 }
 
@@ -266,4 +270,3 @@ export async function teardownTestDatabase(): Promise<void> {
   const db = getGlobalTestDatabase();
   await db.teardown();
 }
-

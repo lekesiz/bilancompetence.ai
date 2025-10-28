@@ -8,7 +8,11 @@ import {
   useEmailVerificationToken,
   createAuditLog,
 } from '../services/authFlowServiceNeon.js';
-import { generateToken, sendEmailVerificationEmail, sendAccountConfirmationEmail } from '../services/emailService.js';
+import {
+  generateToken,
+  sendEmailVerificationEmail,
+  sendAccountConfirmationEmail,
+} from '../services/emailService.js';
 import { emailVerificationLimiter } from '../middleware/rateLimit.js';
 
 const router = Router();
@@ -17,58 +21,63 @@ const router = Router();
  * POST /api/email-verification/send
  * Send verification email
  */
-router.post('/send', authMiddleware, emailVerificationLimiter, async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
+router.post(
+  '/send',
+  authMiddleware,
+  emailVerificationLimiter,
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
+
+      // Get user
+      const user = await getUserById(req.user.id);
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'User not found',
+        });
+      }
+
+      // Check if already verified
+      if (user.email_verified_at) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Email already verified',
+        });
+      }
+
+      // Generate verification token
+      const verificationToken = generateToken(32);
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 1); // 24 hours expiry
+
+      // Save token
+      await createEmailVerificationToken(user.id, verificationToken, expiresAt);
+
+      // Send email
+      await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
+
+      // Log action
+      await createAuditLog(user.id, 'EMAIL_VERIFICATION_SENT', 'user', user.id, null, req.ip);
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Verification email sent',
+      });
+    } catch (error) {
+      console.error('Send verification email error:', error);
+      res.status(500).json({
         status: 'error',
-        message: 'Authentication required',
+        message: 'Failed to send verification email',
       });
     }
-
-    // Get user
-    const user = await getUserById(req.user.id);
-    if (!user) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'User not found',
-      });
-    }
-
-    // Check if already verified
-    if (user.email_verified_at) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Email already verified',
-      });
-    }
-
-    // Generate verification token
-    const verificationToken = generateToken(32);
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 1); // 24 hours expiry
-
-    // Save token
-    await createEmailVerificationToken(user.id, verificationToken, expiresAt);
-
-    // Send email
-    await sendEmailVerificationEmail(user.email, verificationToken, user.full_name);
-
-    // Log action
-    await createAuditLog(user.id, 'EMAIL_VERIFICATION_SENT', 'user', user.id, null, req.ip);
-
-    return res.status(200).json({
-      status: 'success',
-      message: 'Verification email sent',
-    });
-  } catch (error) {
-    console.error('Send verification email error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to send verification email',
-    });
   }
-});
+);
 
 /**
  * POST /api/email-verification/verify

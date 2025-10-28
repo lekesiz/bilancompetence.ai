@@ -55,27 +55,25 @@ jest.mock('../../services/dashboardServiceNeon', () => ({
     { id: 'bilan-1', title: 'Assessment 1', status: 'IN_PROGRESS' },
     { id: 'bilan-2', title: 'Assessment 2', status: 'COMPLETED' },
   ]),
-  getRecommendationsByBeneficiary: jest.fn().mockResolvedValue([
-    { id: 'rec-1', title: 'Recommendation 1' },
-  ]),
-  getBilansByConsultant: jest.fn().mockResolvedValue([
-    { id: 'bilan-3', title: 'Client Assessment 1' },
-  ]),
-  getClientsByConsultant: jest.fn().mockResolvedValue([
-    { id: 'client-1', full_name: 'Client 1' },
-  ]),
-  getAllBilans: jest.fn().mockResolvedValue([
-    { id: 'bilan-1', title: 'All Assessments' },
-  ]),
+  getRecommendationsByBeneficiary: jest
+    .fn()
+    .mockResolvedValue([{ id: 'rec-1', title: 'Recommendation 1' }]),
+  getBilansByConsultant: jest
+    .fn()
+    .mockResolvedValue([{ id: 'bilan-3', title: 'Client Assessment 1' }]),
+  getClientsByConsultant: jest.fn().mockResolvedValue([{ id: 'client-1', full_name: 'Client 1' }]),
+  getAllBilans: jest.fn().mockResolvedValue([{ id: 'bilan-1', title: 'All Assessments' }]),
   getOrganizationStats: jest.fn().mockResolvedValue({
     totalBeneficiaries: 100,
     totalConsultants: 10,
     totalBilans: 50,
     activeBilans: 20,
   }),
-  getRecentActivityByOrganization: jest.fn().mockResolvedValue([
-    { id: 'activity-1', action: 'LOGIN', timestamp: new Date().toISOString() },
-  ]),
+  getRecentActivityByOrganization: jest
+    .fn()
+    .mockResolvedValue([
+      { id: 'activity-1', action: 'LOGIN', timestamp: new Date().toISOString() },
+    ]),
 }));
 
 // Import routes AFTER mocks
@@ -96,9 +94,7 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('GET /api/dashboard/me - User Profile', () => {
     it('should return authenticated user profile', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/me')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/me').expect(200);
 
       expect(response.body).toHaveProperty('status', 'success');
       expect(response.body).toHaveProperty('data');
@@ -109,9 +105,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return user with correct data fields', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/me')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/me').expect(200);
 
       const userData = response.body.data;
       expect(userData.id).toBeDefined();
@@ -120,9 +114,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should include user metadata in response', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/me')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/me').expect(200);
 
       const userData = response.body.data;
       expect(userData).toHaveProperty('email_verified_at');
@@ -133,9 +125,7 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('GET /api/dashboard/beneficiary - Beneficiary Dashboard', () => {
     it('should return dashboard structure with bilans and recommendations', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       expect(response.body).toHaveProperty('status', 'success');
       expect(response.body).toHaveProperty('data');
@@ -145,25 +135,19 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return bilans as an array', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       expect(Array.isArray(response.body.data.bilans)).toBe(true);
     });
 
     it('should return recommendations as an array', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       expect(Array.isArray(response.body.data.recommendations)).toBe(true);
     });
 
     it('should return stats object with required metrics', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       const stats = response.body.data.stats;
       expect(stats).toHaveProperty('totalBilans');
@@ -173,9 +157,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return stats with numeric values', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       const stats = response.body.data.stats;
       expect(typeof stats.totalBilans).toBe('number');
@@ -185,9 +167,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should ensure stats are non-negative', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       const stats = response.body.data.stats;
       expect(stats.totalBilans).toBeGreaterThanOrEqual(0);
@@ -199,8 +179,7 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('GET /api/dashboard/consultant - Consultant Dashboard', () => {
     it('should return consultant dashboard structure', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/consultant');
+      const response = await request(app).get('/api/dashboard/consultant');
 
       // Mock user is BENEFICIARY, so this returns 403
       // In production with CONSULTANT role, it would return 200
@@ -216,8 +195,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return bilans as array for consultant', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/consultant');
+      const response = await request(app).get('/api/dashboard/consultant');
 
       expect([200, 403]).toContain(response.status);
 
@@ -227,8 +205,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return clients as array', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/consultant');
+      const response = await request(app).get('/api/dashboard/consultant');
 
       expect([200, 403]).toContain(response.status);
 
@@ -238,8 +215,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return consultant stats with required fields', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/consultant');
+      const response = await request(app).get('/api/dashboard/consultant');
 
       expect([200, 403]).toContain(response.status);
 
@@ -256,8 +232,7 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('GET /api/dashboard/admin - Admin Dashboard', () => {
     it('should return admin dashboard structure', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/admin');
+      const response = await request(app).get('/api/dashboard/admin');
 
       // Mock user is BENEFICIARY, so this returns 403
       // In production with ORG_ADMIN role, it would return 200
@@ -272,8 +247,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return organization stats object', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/admin');
+      const response = await request(app).get('/api/dashboard/admin');
 
       expect([200, 403]).toContain(response.status);
 
@@ -289,8 +263,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return recent activity as array', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/admin');
+      const response = await request(app).get('/api/dashboard/admin');
 
       expect([200, 403]).toContain(response.status);
 
@@ -300,8 +273,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return stats with proper numeric values', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/admin');
+      const response = await request(app).get('/api/dashboard/admin');
 
       expect([200, 403]).toContain(response.status);
 
@@ -318,18 +290,14 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('GET /api/dashboard/stats - User Statistics', () => {
     it('should return user statistics', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/stats')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/stats').expect(200);
 
       expect(response.body).toHaveProperty('status', 'success');
       expect(response.body).toHaveProperty('data');
     });
 
     it('should return user stats with required fields', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/stats')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/stats').expect(200);
 
       const stats = response.body.data;
       expect(stats).toHaveProperty('userId');
@@ -342,9 +310,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return real dates (not hardcoded)', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/stats')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/stats').expect(200);
 
       const stats = response.body.data;
       const now = Date.now();
@@ -357,18 +323,14 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return emailVerified as boolean', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/stats')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/stats').expect(200);
 
       const stats = response.body.data;
       expect(typeof stats.emailVerified).toBe('boolean');
     });
 
     it('should return valid user role', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/stats')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/stats').expect(200);
 
       const stats = response.body.data;
       expect(['BENEFICIARY', 'CONSULTANT', 'ORG_ADMIN']).toContain(stats.userRole);
@@ -417,8 +379,7 @@ describe('Dashboard Routes Integration Tests', () => {
       // Auth middleware is globally mocked, so this test isn't valid in current setup
       // In production without auth, it would return 401
       // This test verifies the endpoint exists and responds
-      const response = await request(app)
-        .get('/api/dashboard/me');
+      const response = await request(app).get('/api/dashboard/me');
 
       expect([200, 401]).toContain(response.status);
     });
@@ -426,9 +387,7 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('Data Consistency', () => {
     it('beneficiary stats should be consistent', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       const stats = response.body.data.stats;
       // Completed + pending should be <= total
@@ -436,8 +395,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('admin success rate should be calculated correctly', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/admin');
+      const response = await request(app).get('/api/dashboard/admin');
 
       // Mock returns 403 for non-admin users
       expect([200, 403]).toContain(response.status);
@@ -451,9 +409,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('average satisfaction should be in valid range', async () => {
-      const response = await request(app)
-        .get('/api/dashboard/beneficiary')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard/beneficiary').expect(200);
 
       const stats = response.body.data.stats;
       // Satisfaction typically 0-5
@@ -464,9 +420,7 @@ describe('Dashboard Routes Integration Tests', () => {
 
   describe('GET /api/dashboard - Generic Dashboard (Role-based)', () => {
     it('should return dashboard data for BENEFICIARY role', async () => {
-      const response = await request(app)
-        .get('/api/dashboard')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard').expect(200);
 
       expect(response.body).toHaveProperty('status', 'success');
       expect(response.body.data).toHaveProperty('role', 'BENEFICIARY');
@@ -477,9 +431,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should include user information in generic dashboard', async () => {
-      const response = await request(app)
-        .get('/api/dashboard')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard').expect(200);
 
       const { user } = response.body.data;
       expect(user).toHaveProperty('id');
@@ -490,9 +442,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return beneficiary-specific data in generic dashboard', async () => {
-      const response = await request(app)
-        .get('/api/dashboard')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard').expect(200);
 
       expect(response.body.data.role).toBe('BENEFICIARY');
       expect(Array.isArray(response.body.data.bilans)).toBe(true);
@@ -505,9 +455,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should return proper stats structure for beneficiary', async () => {
-      const response = await request(app)
-        .get('/api/dashboard')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard').expect(200);
 
       const { stats } = response.body.data;
       expect(typeof stats.completedBilans).toBe('number');
@@ -520,9 +468,7 @@ describe('Dashboard Routes Integration Tests', () => {
     });
 
     it('should handle empty data gracefully', async () => {
-      const response = await request(app)
-        .get('/api/dashboard')
-        .expect(200);
+      const response = await request(app).get('/api/dashboard').expect(200);
 
       // Even with empty data, arrays should exist
       expect(Array.isArray(response.body.data.bilans)).toBe(true);
@@ -533,8 +479,7 @@ describe('Dashboard Routes Integration Tests', () => {
     it('should require authentication', async () => {
       // This test verifies the endpoint requires auth
       // In actual implementation, missing auth returns 401
-      const response = await request(app)
-        .get('/api/dashboard');
+      const response = await request(app).get('/api/dashboard');
 
       // With our mock middleware, it will return 200
       // In production without auth, it would return 401

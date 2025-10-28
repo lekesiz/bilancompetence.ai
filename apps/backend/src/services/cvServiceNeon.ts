@@ -33,9 +33,12 @@ export async function uploadCV(userId: string, file: Express.Multer.File): Promi
 
     if (uploadError) {
       // If bucket doesn't exist, try to create it
-      if (uploadError.message.includes('not found') || uploadError.message.includes('Bucket not found')) {
+      if (
+        uploadError.message.includes('not found') ||
+        uploadError.message.includes('Bucket not found')
+      ) {
         logger.info('Creating cvs bucket in Supabase Storage');
-        
+
         const { error: bucketError } = await supabase.storage.createBucket('cvs', {
           public: false,
           fileSizeLimit: 5242880, // 5MB
@@ -176,4 +179,3 @@ export async function getUserCV(userId: string): Promise<string | null> {
     return null;
   }
 }
-

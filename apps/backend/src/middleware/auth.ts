@@ -112,4 +112,3 @@ export function optionalAuthMiddleware(req: Request, res: Response, next: NextFu
 export const authenticateToken = authMiddleware;
 
 export default authMiddleware;
-

@@ -221,7 +221,10 @@ export function startTransaction(name: string, op: string = 'http.server') {
  * Set user context for error tracking
  * DISABLED: Sentry not installed
  */
-export function setSentryUserContext(userId: string, context?: { organizationId?: string; role?: string }) {
+export function setSentryUserContext(
+  userId: string,
+  context?: { organizationId?: string; role?: string }
+) {
   return;
 
   /* COMMENTED OUT - Install @sentry/node to re-enable

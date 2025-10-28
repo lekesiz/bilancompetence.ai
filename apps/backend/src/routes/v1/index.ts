@@ -29,4 +29,3 @@ v1Router.use('/wedof', wedofRoutes);
 v1Router.use('/pennylane', pennylaneRoutes);
 
 export default v1Router;
-

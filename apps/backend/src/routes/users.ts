@@ -179,54 +179,59 @@ router.put('/profile', authMiddleware, async (req: Request, res: Response) => {
  * POST /api/users/upload-cv
  * Upload CV file
  */
-router.post('/upload-cv', authMiddleware, upload.single('cv'), async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
+router.post(
+  '/upload-cv',
+  authMiddleware,
+  upload.single('cv'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          status: 'error',
+          message: 'Authentication required',
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'No file uploaded',
+        });
+      }
+
+      const userId = req.user.id;
+
+      // Upload CV to Supabase Storage and update Neon database
+      const result = await uploadCV(userId, req.file);
+      const updatedUser = await getUserById(userId);
+
+      if (!updatedUser) {
+        return res.status(500).json({
+          status: 'error',
+          message: 'Failed to update CV URL in database',
+        });
+      }
+
+      logger.info('CV uploaded successfully', { userId, cvUrl: result.cv_url });
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'CV uploaded successfully',
+        data: {
+          cv_url: updatedUser.cv_url,
+          cv_uploaded_at: updatedUser.cv_uploaded_at,
+        },
+      });
+    } catch (error: any) {
+      logger.error('CV upload error:', error);
+      res.status(500).json({
         status: 'error',
-        message: 'Authentication required',
+        message: 'Failed to upload CV',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
       });
     }
-
-    if (!req.file) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'No file uploaded',
-      });
-    }
-
-    const userId = req.user.id;
-
-    // Upload CV to Supabase Storage and update Neon database
-    const result = await uploadCV(userId, req.file);
-    const updatedUser = await getUserById(userId);
-
-    if (!updatedUser) {
-      return res.status(500).json({
-        status: 'error',
-        message: 'Failed to update CV URL in database',
-      });
-    }
-
-    logger.info('CV uploaded successfully', { userId, cvUrl: result.cv_url });
-
-    return res.status(200).json({
-      status: 'success',
-      message: 'CV uploaded successfully',
-      data: {
-        cv_url: updatedUser.cv_url,
-        cv_uploaded_at: updatedUser.cv_uploaded_at,
-      },
-    });
-  } catch (error: any) {
-    logger.error('CV upload error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to upload CV',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-    });
   }
-});
+);
 
 /**
  * DELETE /api/users/delete-cv
@@ -344,4 +349,3 @@ router.get(
 );
 
 export default router;
-

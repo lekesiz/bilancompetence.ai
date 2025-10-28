@@ -26,7 +26,10 @@ export interface PaginatedResponse<T> {
  * @param limit - Items per page (default: 20, max: 100)
  * @returns Pagination parameters object
  */
-export function parsePaginationParams(page?: string | number, limit?: string | number): PaginationParams {
+export function parsePaginationParams(
+  page?: string | number,
+  limit?: string | number
+): PaginationParams {
   let pageNum = parseInt(String(page || 1), 10);
   let limitNum = parseInt(String(limit || 20), 10);
 

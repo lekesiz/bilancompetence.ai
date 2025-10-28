@@ -78,11 +78,9 @@ export async function generateAssessmentPDF(
     }
 
     // Fetch user data
-    const userResult = await query<any>(
-      null,
-      `SELECT full_name, email FROM users WHERE id = $1`,
-      [assessment.beneficiary_id]
-    );
+    const userResult = await query<any>(null, `SELECT full_name, email FROM users WHERE id = $1`, [
+      assessment.beneficiary_id,
+    ]);
 
     const beneficiaryName = userResult[0]?.full_name || 'Unknown';
     const beneficiaryEmail = userResult[0]?.email || '';
@@ -188,7 +186,8 @@ export async function generateAssessmentPDF(
 
       yPosition -= 30;
 
-      for (const comp of competencies.slice(0, 10)) { // Limit to 10 for first page
+      for (const comp of competencies.slice(0, 10)) {
+        // Limit to 10 for first page
         if (yPosition < 100) break; // Avoid page overflow
 
         page.drawText(`• ${comp.skill_name} (${comp.category})`, {
@@ -200,13 +199,16 @@ export async function generateAssessmentPDF(
 
         yPosition -= 15;
 
-        page.drawText(`  Auto-évaluation: ${comp.self_assessment_level}/5, Intérêt: ${comp.self_interest_level}/5`, {
-          x: 70,
-          y: yPosition,
-          size: 9,
-          font,
-          color: rgb(0.3, 0.3, 0.3),
-        });
+        page.drawText(
+          `  Auto-évaluation: ${comp.self_assessment_level}/5, Intérêt: ${comp.self_interest_level}/5`,
+          {
+            x: 70,
+            y: yPosition,
+            size: 9,
+            font,
+            color: rgb(0.3, 0.3, 0.3),
+          }
+        );
 
         yPosition -= 20;
       }
@@ -226,7 +228,8 @@ export async function generateAssessmentPDF(
 
       yPosition -= 30;
 
-      for (const rec of recommendations.slice(0, 5)) { // Limit to 5
+      for (const rec of recommendations.slice(0, 5)) {
+        // Limit to 5
         if (yPosition < 100) break;
 
         page.drawText(`• ${rec.title}`, {
@@ -240,7 +243,8 @@ export async function generateAssessmentPDF(
 
         if (rec.description) {
           const descLines = wrapText(rec.description, 70);
-          for (const line of descLines.slice(0, 2)) { // Max 2 lines per recommendation
+          for (const line of descLines.slice(0, 2)) {
+            // Max 2 lines per recommendation
             if (yPosition < 100) break;
             page.drawText(`  ${line}`, {
               x: 70,
@@ -276,10 +280,9 @@ export async function generateAssessmentPDF(
 
     // Serialize PDF to bytes
     const pdfBytes = await pdfDoc.save();
-    
+
     logger.info(`PDF generated for assessment: ${assessmentId}`);
     return Buffer.from(pdfBytes);
-
   } catch (error) {
     logger.error('Error generating assessment PDF', error);
     throw new Error(`Failed to generate PDF: ${(error as Error).message}`);
@@ -299,11 +302,9 @@ export async function generateUserAssessmentsSummary(userId: string): Promise<Bu
     );
 
     // Fetch user data
-    const userResult = await query<any>(
-      null,
-      `SELECT full_name, email FROM users WHERE id = $1`,
-      [userId]
-    );
+    const userResult = await query<any>(null, `SELECT full_name, email FROM users WHERE id = $1`, [
+      userId,
+    ]);
 
     const userName = userResult[0]?.full_name || 'Unknown';
 
@@ -358,13 +359,16 @@ export async function generateUserAssessmentsSummary(userId: string): Promise<Bu
 
       yPosition -= 18;
 
-      page.drawText(`  Statut: ${assessment.status} | Progression: ${assessment.progress_percentage}%`, {
-        x: 70,
-        y: yPosition,
-        size: 9,
-        font,
-        color: rgb(0.3, 0.3, 0.3),
-      });
+      page.drawText(
+        `  Statut: ${assessment.status} | Progression: ${assessment.progress_percentage}%`,
+        {
+          x: 70,
+          y: yPosition,
+          size: 9,
+          font,
+          color: rgb(0.3, 0.3, 0.3),
+        }
+      );
 
       yPosition -= 15;
 
@@ -390,10 +394,9 @@ export async function generateUserAssessmentsSummary(userId: string): Promise<Bu
 
     // Serialize PDF to bytes
     const pdfBytes = await pdfDoc.save();
-    
+
     logger.info(`Summary PDF generated for user: ${userId}`);
     return Buffer.from(pdfBytes);
-
   } catch (error) {
     logger.error('Error generating user summary PDF', error);
     throw new Error(`Failed to generate summary PDF: ${(error as Error).message}`);
@@ -479,8 +482,8 @@ export async function generateConsultantClientReport(
     yPosition -= 40;
 
     // Statistics
-    const completedCount = assessments.filter(a => a.status === 'COMPLETED').length;
-    const inProgressCount = assessments.filter(a => a.status === 'IN_PROGRESS').length;
+    const completedCount = assessments.filter((a) => a.status === 'COMPLETED').length;
+    const inProgressCount = assessments.filter((a) => a.status === 'IN_PROGRESS').length;
 
     page.drawText(`Bilans terminés: ${completedCount}`, {
       x: 60,
@@ -510,7 +513,8 @@ export async function generateConsultantClientReport(
 
     yPosition -= 25;
 
-    for (const assessment of assessments.slice(0, 15)) { // Limit to 15
+    for (const assessment of assessments.slice(0, 15)) {
+      // Limit to 15
       if (yPosition < 100) break;
 
       page.drawText(`• ${assessment.title} - ${assessment.status}`, {
@@ -534,10 +538,9 @@ export async function generateConsultantClientReport(
 
     // Serialize PDF to bytes
     const pdfBytes = await pdfDoc.save();
-    
+
     logger.info(`Consultant report PDF generated for: ${consultantId}`);
     return Buffer.from(pdfBytes);
-
   } catch (error) {
     logger.error('Error generating consultant report PDF', error);
     throw new Error(`Failed to generate consultant report PDF: ${(error as Error).message}`);
@@ -568,4 +571,3 @@ function wrapText(text: string, maxChars: number): string[] {
   if (currentLine) lines.push(currentLine);
   return lines;
 }
-

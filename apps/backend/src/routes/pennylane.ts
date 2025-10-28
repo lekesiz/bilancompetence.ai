@@ -88,7 +88,7 @@ router.get('/invoices/:id/pdf', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const pdf = await pennylaneService.getInvoicePDF(id);
-    
+
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="invoice-${id}.pdf"`);
     res.send(pdf);
@@ -277,7 +277,7 @@ router.get('/balance-sheet', async (req: Request, res: Response) => {
 router.post('/bilan/create-invoice', async (req: Request, res: Response) => {
   try {
     const { customerName, customerEmail, bilanReference, amount, description } = req.body;
-    
+
     if (!customerName || !customerEmail || !bilanReference || !amount) {
       return res.status(400).json({
         success: false,
@@ -300,4 +300,3 @@ router.post('/bilan/create-invoice', async (req: Request, res: Response) => {
 });
 
 export default router;
-

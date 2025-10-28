@@ -9,7 +9,7 @@ jest.mock('../middleware/auth', () => ({
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ status: 'error', message: 'Unauthorized' });
     }
-    
+
     Object.assign(req, {
       user: {
         id: 'test-beneficiary-1',
@@ -96,13 +96,10 @@ describe('Chat API Integration', () => {
 
   describe('POST /api/chat/conversations', () => {
     it('should create conversation with valid data', async () => {
-      const response = await request(app)
-        .post('/api/chat/conversations')
-        .set(authHeader)
-        .send({
-          participantId: 'test-consultant-1',
-          title: 'Test Conversation',
-        });
+      const response = await request(app).post('/api/chat/conversations').set(authHeader).send({
+        participantId: 'test-consultant-1',
+        title: 'Test Conversation',
+      });
 
       expect([201, 200]).toContain(response.status);
       expect(response.body.status).toBe('success');
@@ -134,9 +131,7 @@ describe('Chat API Integration', () => {
 
   describe('GET /api/chat/conversations', () => {
     it('should get user conversations', async () => {
-      const response = await request(app)
-        .get('/api/chat/conversations')
-        .set(authHeader);
+      const response = await request(app).get('/api/chat/conversations').set(authHeader);
 
       expect([200, 404]).toContain(response.status);
       if (response.status === 200) {
@@ -146,9 +141,7 @@ describe('Chat API Integration', () => {
     });
 
     it('should respect limit parameter', async () => {
-      const response = await request(app)
-        .get('/api/chat/conversations?limit=5')
-        .set(authHeader);
+      const response = await request(app).get('/api/chat/conversations?limit=5').set(authHeader);
 
       expect([200, 404]).toContain(response.status);
       if (response.status === 200 && response.body.data) {
@@ -181,12 +174,12 @@ describe('Chat API Integration', () => {
 
       if (createResponse.status === 201 || createResponse.status === 200) {
         const conversationId = createResponse.body.data?.id;
-        
+
         if (conversationId) {
           const deleteResponse = await request(app)
             .delete(`/api/chat/conversations/${conversationId}`)
             .set(authHeader);
-          
+
           expect([200, 204]).toContain(deleteResponse.status);
         }
       }
@@ -202,4 +195,3 @@ describe('Chat API Integration', () => {
     });
   });
 });
-

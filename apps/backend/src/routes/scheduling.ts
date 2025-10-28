@@ -85,11 +85,22 @@ const cancelBookingSchema = z.object({
  * Schema for availability query parameters
  */
 const availabilityQuerySchema = z.object({
-  day_of_week: z.string().transform((v) => parseInt(v)).optional(),
+  day_of_week: z
+    .string()
+    .transform((v) => parseInt(v))
+    .optional(),
   date_from: z.string().date().optional(),
   date_to: z.string().date().optional(),
-  limit: z.string().transform((v) => parseInt(v)).default('50').optional(),
-  offset: z.string().transform((v) => parseInt(v)).default('0').optional(),
+  limit: z
+    .string()
+    .transform((v) => parseInt(v))
+    .default('50')
+    .optional(),
+  offset: z
+    .string()
+    .transform((v) => parseInt(v))
+    .default('0')
+    .optional(),
 });
 
 /**
@@ -99,8 +110,16 @@ const bookingQuerySchema = z.object({
   status: z.string().optional(),
   date_from: z.string().date().optional(),
   date_to: z.string().date().optional(),
-  limit: z.string().transform((v) => parseInt(v)).default('50').optional(),
-  offset: z.string().transform((v) => parseInt(v)).default('0').optional(),
+  limit: z
+    .string()
+    .transform((v) => parseInt(v))
+    .default('50')
+    .optional(),
+  offset: z
+    .string()
+    .transform((v) => parseInt(v))
+    .default('0')
+    .optional(),
 });
 
 // ============================================
@@ -140,7 +159,9 @@ router.get('/availability', authMiddleware, async (req: Request, res: Response) 
     // Validate query parameters
     const queryParams = availabilityQuerySchema.safeParse(req.query);
     if (!queryParams.success) {
-      return res.status(400).json({ error: 'Invalid query parameters', details: queryParams.error });
+      return res
+        .status(400)
+        .json({ error: 'Invalid query parameters', details: queryParams.error });
     }
 
     const slots = await SchedulingService.getAvailableSlotsForConsultant(
@@ -168,134 +189,155 @@ router.get('/availability', authMiddleware, async (req: Request, res: Response) 
  * POST /api/scheduling/availability
  * Create a new availability slot
  */
-router.post('/availability', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const consultantId = (req as any).user?.id;
+router.post(
+  '/availability',
+  authMiddleware,
+  requireRole('CONSULTANT', 'ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const consultantId = (req as any).user?.id;
 
-    if (!consultantId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      if (!consultantId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      // Validate request body
+      const validation = createAvailabilitySlotSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ error: 'Invalid request body', details: validation.error });
+      }
+
+      const slot = await SchedulingService.createAvailabilitySlot(
+        organizationId,
+        consultantId,
+        validation.data
+      );
+
+      res.status(201).json({
+        success: true,
+        data: slot,
+        message: 'Availability slot created successfully',
+      });
+    } catch (error) {
+      logger.error('POST /api/scheduling/availability failed', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to create availability slot';
+      res.status(400).json({ error: errorMessage });
     }
-
-    // Validate request body
-    const validation = createAvailabilitySlotSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ error: 'Invalid request body', details: validation.error });
-    }
-
-    const slot = await SchedulingService.createAvailabilitySlot(organizationId, consultantId, validation.data);
-
-    res.status(201).json({
-      success: true,
-      data: slot,
-      message: 'Availability slot created successfully',
-    });
-  } catch (error) {
-    logger.error('POST /api/scheduling/availability failed', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to create availability slot';
-    res.status(400).json({ error: errorMessage });
   }
-});
+);
 
 /**
  * PUT /api/scheduling/availability/:slotId
  * Update an availability slot
  */
-router.put('/availability/:slotId', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const { slotId } = req.params;
+router.put(
+  '/availability/:slotId',
+  authMiddleware,
+  requireRole('CONSULTANT', 'ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const { slotId } = req.params;
 
-    // Validate request body
-    const validation = updateAvailabilitySlotSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ error: 'Invalid request body', details: validation.error });
+      // Validate request body
+      const validation = updateAvailabilitySlotSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ error: 'Invalid request body', details: validation.error });
+      }
+
+      const { supabase } = await import('../services/supabaseService.js');
+
+      // Verify ownership
+      const { data: slot, error: fetchError } = await supabase
+        .from('availability_slots')
+        .select('*')
+        .eq('id', slotId)
+        .eq('organization_id', organizationId)
+        .single();
+
+      if (fetchError || !slot) {
+        return res.status(404).json({ error: 'Availability slot not found' });
+      }
+
+      const { data: updatedSlot, error } = await supabase
+        .from('availability_slots')
+        .update({
+          ...validation.data,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', slotId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      res.json({
+        success: true,
+        data: updatedSlot,
+        message: 'Availability slot updated successfully',
+      });
+    } catch (error) {
+      logger.error(`PUT /api/scheduling/availability/${req.params.slotId} failed`, error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to update availability slot';
+      res.status(400).json({ error: errorMessage });
     }
-
-    const { supabase } = await import('../services/supabaseService.js');
-
-    // Verify ownership
-    const { data: slot, error: fetchError } = await supabase
-      .from('availability_slots')
-      .select('*')
-      .eq('id', slotId)
-      .eq('organization_id', organizationId)
-      .single();
-
-    if (fetchError || !slot) {
-      return res.status(404).json({ error: 'Availability slot not found' });
-    }
-
-    const { data: updatedSlot, error } = await supabase
-      .from('availability_slots')
-      .update({
-        ...validation.data,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', slotId)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({
-      success: true,
-      data: updatedSlot,
-      message: 'Availability slot updated successfully',
-    });
-  } catch (error) {
-    logger.error(`PUT /api/scheduling/availability/${req.params.slotId} failed`, error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to update availability slot';
-    res.status(400).json({ error: errorMessage });
   }
-});
+);
 
 /**
  * DELETE /api/scheduling/availability/:slotId
  * Delete (soft delete) an availability slot
  */
-router.delete('/availability/:slotId', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const { slotId } = req.params;
+router.delete(
+  '/availability/:slotId',
+  authMiddleware,
+  requireRole('CONSULTANT', 'ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const { slotId } = req.params;
 
-    const { supabase } = await import('../services/supabaseService.js');
+      const { supabase } = await import('../services/supabaseService.js');
 
-    // Verify ownership
-    const { data: slot, error: fetchError } = await supabase
-      .from('availability_slots')
-      .select('*')
-      .eq('id', slotId)
-      .eq('organization_id', organizationId)
-      .single();
+      // Verify ownership
+      const { data: slot, error: fetchError } = await supabase
+        .from('availability_slots')
+        .select('*')
+        .eq('id', slotId)
+        .eq('organization_id', organizationId)
+        .single();
 
-    if (fetchError || !slot) {
-      return res.status(404).json({ error: 'Availability slot not found' });
+      if (fetchError || !slot) {
+        return res.status(404).json({ error: 'Availability slot not found' });
+      }
+
+      const { error } = await supabase
+        .from('availability_slots')
+        .update({
+          deleted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', slotId);
+
+      if (error) {
+        throw error;
+      }
+
+      res.json({
+        success: true,
+        message: 'Availability slot deleted successfully',
+      });
+    } catch (error) {
+      logger.error(`DELETE /api/scheduling/availability/${req.params.slotId} failed`, error);
+      res.status(500).json({ error: 'Failed to delete availability slot' });
     }
-
-    const { error } = await supabase
-      .from('availability_slots')
-      .update({
-        deleted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', slotId);
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({
-      success: true,
-      message: 'Availability slot deleted successfully',
-    });
-  } catch (error) {
-    logger.error(`DELETE /api/scheduling/availability/${req.params.slotId} failed`, error);
-    res.status(500).json({ error: 'Failed to delete availability slot' });
   }
-});
+);
 
 // ============================================
 // SESSION BOOKING ROUTES
@@ -305,37 +347,46 @@ router.delete('/availability/:slotId', authMiddleware, requireRole('CONSULTANT',
  * GET /api/scheduling/availability/:consultantId/slots
  * Get available slots for a specific consultant (for beneficiary booking)
  */
-router.get('/availability/:consultantId/slots', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const { consultantId } = req.params;
+router.get(
+  '/availability/:consultantId/slots',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const { consultantId } = req.params;
 
-    // Validate query parameters
-    const queryParams = availabilityQuerySchema.safeParse(req.query);
-    if (!queryParams.success) {
-      return res.status(400).json({ error: 'Invalid query parameters', details: queryParams.error });
-    }
-
-    const slots = await SchedulingService.getAvailableSlotsForConsultant(
-      consultantId,
-      organizationId,
-      {
-        dayOfWeek: queryParams.data.day_of_week,
-        dateFrom: queryParams.data.date_from,
-        dateTo: queryParams.data.date_to,
+      // Validate query parameters
+      const queryParams = availabilityQuerySchema.safeParse(req.query);
+      if (!queryParams.success) {
+        return res
+          .status(400)
+          .json({ error: 'Invalid query parameters', details: queryParams.error });
       }
-    );
 
-    res.json({
-      success: true,
-      data: slots,
-      total: slots.length,
-    });
-  } catch (error) {
-    logger.error(`GET /api/scheduling/availability/${req.params.consultantId}/slots failed`, error);
-    res.status(500).json({ error: 'Failed to fetch available slots' });
+      const slots = await SchedulingService.getAvailableSlotsForConsultant(
+        consultantId,
+        organizationId,
+        {
+          dayOfWeek: queryParams.data.day_of_week,
+          dateFrom: queryParams.data.date_from,
+          dateTo: queryParams.data.date_to,
+        }
+      );
+
+      res.json({
+        success: true,
+        data: slots,
+        total: slots.length,
+      });
+    } catch (error) {
+      logger.error(
+        `GET /api/scheduling/availability/${req.params.consultantId}/slots failed`,
+        error
+      );
+      res.status(500).json({ error: 'Failed to fetch available slots' });
+    }
   }
-});
+);
 
 /**
  * POST /api/scheduling/bookings
@@ -371,7 +422,8 @@ router.post('/bookings', authMiddleware, async (req: Request, res: Response) => 
     });
   } catch (error) {
     logger.error('POST /api/scheduling/bookings failed', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to create session booking';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to create session booking';
     res.status(400).json({ error: errorMessage });
   }
 });
@@ -389,7 +441,9 @@ router.get('/bookings/:bilanId', authMiddleware, async (req: Request, res: Respo
     // Validate query parameters
     const queryParams = bookingQuerySchema.safeParse(req.query);
     if (!queryParams.success) {
-      return res.status(400).json({ error: 'Invalid query parameters', details: queryParams.error });
+      return res
+        .status(400)
+        .json({ error: 'Invalid query parameters', details: queryParams.error });
     }
 
     const bookings = await SchedulingService.getBeneficiaryBookings(beneficiaryId, organizationId, {
@@ -417,106 +471,138 @@ router.get('/bookings/:bilanId', authMiddleware, async (req: Request, res: Respo
  * GET /api/scheduling/bookings/beneficiary/:beneficiaryId
  * Get all bookings for a beneficiary
  */
-router.get('/beneficiary/:beneficiaryId/bookings', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const { beneficiaryId } = req.params;
+router.get(
+  '/beneficiary/:beneficiaryId/bookings',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const { beneficiaryId } = req.params;
 
-    // Validate query parameters
-    const queryParams = bookingQuerySchema.safeParse(req.query);
-    if (!queryParams.success) {
-      return res.status(400).json({ error: 'Invalid query parameters', details: queryParams.error });
+      // Validate query parameters
+      const queryParams = bookingQuerySchema.safeParse(req.query);
+      if (!queryParams.success) {
+        return res
+          .status(400)
+          .json({ error: 'Invalid query parameters', details: queryParams.error });
+      }
+
+      const bookings = await SchedulingService.getBeneficiaryBookings(
+        beneficiaryId,
+        organizationId,
+        {
+          status: queryParams.data.status,
+          dateFrom: queryParams.data.date_from,
+          dateTo: queryParams.data.date_to,
+        }
+      );
+
+      // Handle union type for response
+      const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
+      const total = Array.isArray(bookings)
+        ? bookings.length
+        : (bookings as any).count || bookingList.length;
+
+      res.json({
+        success: true,
+        data: bookingList,
+        total,
+      });
+    } catch (error) {
+      logger.error(
+        `GET /api/scheduling/beneficiary/${req.params.beneficiaryId}/bookings failed`,
+        error
+      );
+      res.status(500).json({ error: 'Failed to fetch beneficiary bookings' });
     }
-
-    const bookings = await SchedulingService.getBeneficiaryBookings(beneficiaryId, organizationId, {
-      status: queryParams.data.status,
-      dateFrom: queryParams.data.date_from,
-      dateTo: queryParams.data.date_to,
-    });
-
-    // Handle union type for response
-    const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
-    const total = Array.isArray(bookings) ? bookings.length : ((bookings as any).count || bookingList.length);
-
-    res.json({
-      success: true,
-      data: bookingList,
-      total,
-    });
-  } catch (error) {
-    logger.error(`GET /api/scheduling/beneficiary/${req.params.beneficiaryId}/bookings failed`, error);
-    res.status(500).json({ error: 'Failed to fetch beneficiary bookings' });
   }
-});
+);
 
 /**
  * GET /api/scheduling/consultant/:consultantId/bookings
  * Get all bookings for a consultant
  */
-router.get('/consultant/:consultantId/bookings', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const { consultantId } = req.params;
+router.get(
+  '/consultant/:consultantId/bookings',
+  authMiddleware,
+  requireRole('CONSULTANT', 'ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const { consultantId } = req.params;
 
-    // Validate query parameters
-    const queryParams = bookingQuerySchema.safeParse(req.query);
-    if (!queryParams.success) {
-      return res.status(400).json({ error: 'Invalid query parameters', details: queryParams.error });
+      // Validate query parameters
+      const queryParams = bookingQuerySchema.safeParse(req.query);
+      if (!queryParams.success) {
+        return res
+          .status(400)
+          .json({ error: 'Invalid query parameters', details: queryParams.error });
+      }
+
+      const bookings = await SchedulingService.getConsultantBookings(consultantId, organizationId, {
+        status: queryParams.data.status,
+        dateFrom: queryParams.data.date_from,
+        dateTo: queryParams.data.date_to,
+      });
+
+      // Handle union type for response
+      const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
+      const total = Array.isArray(bookings)
+        ? bookings.length
+        : (bookings as any).count || bookingList.length;
+
+      res.json({
+        success: true,
+        data: bookingList,
+        total,
+      });
+    } catch (error) {
+      logger.error(
+        `GET /api/scheduling/consultant/${req.params.consultantId}/bookings failed`,
+        error
+      );
+      res.status(500).json({ error: 'Failed to fetch consultant bookings' });
     }
-
-    const bookings = await SchedulingService.getConsultantBookings(consultantId, organizationId, {
-      status: queryParams.data.status,
-      dateFrom: queryParams.data.date_from,
-      dateTo: queryParams.data.date_to,
-    });
-
-    // Handle union type for response
-    const bookingList = Array.isArray(bookings) ? bookings : bookings.data;
-    const total = Array.isArray(bookings) ? bookings.length : ((bookings as any).count || bookingList.length);
-
-    res.json({
-      success: true,
-      data: bookingList,
-      total,
-    });
-  } catch (error) {
-    logger.error(`GET /api/scheduling/consultant/${req.params.consultantId}/bookings failed`, error);
-    res.status(500).json({ error: 'Failed to fetch consultant bookings' });
   }
-});
+);
 
 /**
  * PUT /api/scheduling/bookings/:bookingId/confirm
  * Confirm a booking (consultant action)
  */
-router.put('/bookings/:bookingId/confirm', authMiddleware, requireRole('CONSULTANT', 'ORG_ADMIN'), async (req: Request, res: Response) => {
-  try {
-    const consultantId = (req as any).user?.id;
-    const { bookingId } = req.params;
+router.put(
+  '/bookings/:bookingId/confirm',
+  authMiddleware,
+  requireRole('CONSULTANT', 'ORG_ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      const consultantId = (req as any).user?.id;
+      const { bookingId } = req.params;
 
-    if (!consultantId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      if (!consultantId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      // Validate request body
+      const validation = confirmBookingSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ error: 'Invalid request body', details: validation.error });
+      }
+
+      const booking = await SchedulingService.confirmBooking(bookingId, consultantId);
+
+      res.json({
+        success: true,
+        data: booking,
+        message: 'Booking confirmed successfully',
+      });
+    } catch (error) {
+      logger.error(`PUT /api/scheduling/bookings/${req.params.bookingId}/confirm failed`, error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to confirm booking';
+      res.status(400).json({ error: errorMessage });
     }
-
-    // Validate request body
-    const validation = confirmBookingSchema.safeParse(req.body);
-    if (!validation.success) {
-      return res.status(400).json({ error: 'Invalid request body', details: validation.error });
-    }
-
-    const booking = await SchedulingService.confirmBooking(bookingId, consultantId);
-
-    res.json({
-      success: true,
-      data: booking,
-      message: 'Booking confirmed successfully',
-    });
-  } catch (error) {
-    logger.error(`PUT /api/scheduling/bookings/${req.params.bookingId}/confirm failed`, error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to confirm booking';
-    res.status(400).json({ error: errorMessage });
   }
-});
+);
 
 /**
  * PUT /api/scheduling/bookings/:bookingId/complete
@@ -565,7 +651,10 @@ router.put('/bookings/:bookingId/cancel', authMiddleware, async (req: Request, r
       return res.status(400).json({ error: 'Invalid request body', details: validation.error });
     }
 
-    const booking = await SchedulingService.cancelBooking(bookingId, validation.data.cancellation_reason);
+    const booking = await SchedulingService.cancelBooking(
+      bookingId,
+      validation.data.cancellation_reason
+    );
 
     res.json({
       success: true,
@@ -583,29 +672,40 @@ router.put('/bookings/:bookingId/cancel', authMiddleware, async (req: Request, r
  * GET /api/scheduling/analytics/consultant/:consultantId
  * Get session analytics for a consultant
  */
-router.get('/analytics/consultant/:consultantId', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const organizationId = await getOrganizationId(req);
-    const { consultantId } = req.params;
+router.get(
+  '/analytics/consultant/:consultantId',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    try {
+      const organizationId = await getOrganizationId(req);
+      const { consultantId } = req.params;
 
-    // Parse date range from query
-    const dateFrom = (req.query.date_from as string) || undefined;
-    const dateTo = (req.query.date_to as string) || undefined;
+      // Parse date range from query
+      const dateFrom = (req.query.date_from as string) || undefined;
+      const dateTo = (req.query.date_to as string) || undefined;
 
-    const analytics = await SchedulingService.getConsultantAnalytics(consultantId, organizationId, {
-      dateFrom,
-      dateTo,
-    });
+      const analytics = await SchedulingService.getConsultantAnalytics(
+        consultantId,
+        organizationId,
+        {
+          dateFrom,
+          dateTo,
+        }
+      );
 
-    res.json({
-      success: true,
-      data: analytics,
-      total: analytics.length,
-    });
-  } catch (error) {
-    logger.error(`GET /api/scheduling/analytics/consultant/${req.params.consultantId} failed`, error);
-    res.status(500).json({ error: 'Failed to fetch analytics' });
+      res.json({
+        success: true,
+        data: analytics,
+        total: analytics.length,
+      });
+    } catch (error) {
+      logger.error(
+        `GET /api/scheduling/analytics/consultant/${req.params.consultantId} failed`,
+        error
+      );
+      res.status(500).json({ error: 'Failed to fetch analytics' });
+    }
   }
-});
+);
 
 export default router;
