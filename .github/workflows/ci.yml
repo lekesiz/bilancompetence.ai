@@ -40,10 +40,18 @@ jobs:
         run: npm install
 
       - name: Run unit tests
-        run: npm run test || true
+        run: cd apps/backend && npm test
 
       - name: Generate coverage
-        run: npm run test:coverage || true
+        run: cd apps/backend && npm test -- --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./apps/backend/coverage/lcov.info
+          flags: backend
+          name: backend-coverage
+        continue-on-error: true
 
   build:
     runs-on: ubuntu-latest
