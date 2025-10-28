@@ -1,4 +1,5 @@
 import './config/env.js';
+import { initSentry, Sentry } from './config/sentry.js';
 
 import express from 'express';
 import cors from 'cors';
@@ -29,7 +30,8 @@ import pennylaneRoutes from './routes/pennylane.js';
 import twoFactorRoutes from './routes/twoFactor.js';
 import chatEnhancedRoutes from './routes/chatEnhanced.js';
 import sessionsRoutes from './routes/sessions.js';
-import { apiLimiter, authLimiter } from './middleware/rateLimit.js';
+import healthRoutes from './routes/health.js';
+import { apiLimiter, authLimiter, publicLimiter, uploadLimiter } from './middleware/rateLimiter.js';
 import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
@@ -37,6 +39,9 @@ import RealtimeService from './services/realtimeService.js';
 import { logger } from './utils/logger.js';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swaggerConfig.js';
+
+// Initialize Sentry for error tracking
+initSentry();
 
 // Initialize Express app
 const app = express();
@@ -50,6 +55,9 @@ const realtime = new RealtimeService(server);
 app.set('trust proxy', true);
 
 // Middleware - Security & Logging
+// Sentry request handler must be the first middleware
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 app.use(helmet());
 // Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
 const corsOrigins = process.env.CORS_ORIGIN
@@ -142,6 +150,9 @@ app.get('/api/admin/monitoring/frequent-queries', (req, res) => {
   res.json(monitoringEndpoint.frequentQueries(limit));
 });
 
+// Health checks (no rate limiting)
+app.use('/', healthRoutes);
+
 // API Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -170,6 +181,9 @@ app.use('/api/pennylane', pennylaneRoutes);
 app.use('/api/2fa', twoFactorRoutes);
 app.use('/api/chat-enhanced', chatEnhancedRoutes);
 app.use('/api/sessions', sessionsRoutes);
+
+// Sentry error handler must be before other error handlers
+app.use(Sentry.Handlers.errorHandler());
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -1,0 +1,42 @@
+import * as Sentry from '@sentry/node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
+
+export const initSentry = () => {
+  const sentryDsn = process.env.SENTRY_DSN;
+
+  if (!sentryDsn) {
+    console.warn('⚠️ SENTRY_DSN not configured. Error tracking disabled.');
+    return;
+  }
+
+  Sentry.init({
+    dsn: sentryDsn,
+    environment: process.env.NODE_ENV || 'development',
+    integrations: [
+      // Enable HTTP calls tracing
+      new Sentry.Integrations.Http({ tracing: true }),
+      // Enable Express.js middleware tracing
+      new Sentry.Integrations.Express({ app: undefined }),
+      // Enable profiling
+      nodeProfilingIntegration(),
+    ],
+    // Performance Monitoring
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    // Profiling
+    profilesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    // Release tracking
+    release: process.env.npm_package_version,
+    // Before send hook for filtering
+    beforeSend(event, hint) {
+      // Don't send errors in test environment
+      if (process.env.NODE_ENV === 'test') {
+        return null;
+      }
+      return event;
+    },
+  });
+
+  console.log('✅ Sentry initialized for error tracking');
+};
+
+export { Sentry };
