@@ -10,7 +10,8 @@ export interface UserPayload {
   id: string;
   email: string;
   full_name: string;
-  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
+  role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ORGANIZATION_ADMIN' | 'ADMIN';
+  organization_id?: string;
 }
 
 export interface TokenPair {

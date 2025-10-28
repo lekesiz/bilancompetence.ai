@@ -144,6 +144,7 @@ router.post('/register', async (req: Request, res: Response) => {
       email: newUser.email,
       full_name: newUser.full_name,
       role: newUser.role,
+      organization_id: newUser.organization_id,
     });
 
     logger.info('User registered successfully', { userId: newUser.id, email: newUser.email });
@@ -288,6 +289,7 @@ router.post('/login', async (req: Request, res: Response) => {
       email: user.email,
       full_name: user.full_name,
       role: user.role,
+      organization_id: user.organization_id,
     });
 
     logger.info('User logged in successfully', { userId: user.id, email: user.email });
@@ -392,6 +394,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
       email: user.email,
       full_name: user.full_name,
       role: user.role,
+      organization_id: user.organization_id,
     });
 
     logger.info('Token refreshed successfully', { userId: user.id });
