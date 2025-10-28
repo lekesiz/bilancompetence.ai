@@ -495,6 +495,46 @@ readinessProbe:
 
 ---
 
+## 🌱 Demo Data Seeding ✅
+
+**Implementation:** Comprehensive demo data seeding script for testing and demonstration.
+
+**Features:**
+- **3 Demo User Accounts:**
+  - Admin: `admin@demo.bilancompetence.ai`
+  - Consultant: `consultant@demo.bilancompetence.ai`
+  - Client: `client@demo.bilancompetence.ai`
+- **Sample Data:**
+  - 2 assessments (in progress + completed)
+  - 4 competencies (soft skills + technical)
+  - 3 Qualiopi indicators
+  - 1 satisfaction survey
+- **Idempotent:** Safe to run multiple times
+- **Production Ready:** Uses secure password hashing
+
+**Files Added:**
+- `src/scripts/seed-demo-data.ts` - Seeding script
+- `DEMO_CREDENTIALS.md` - Account credentials
+- `SEED_DATA_INSTRUCTIONS.md` - Deployment guide
+
+**Usage:**
+```bash
+cd apps/backend
+npm run seed:demo
+```
+
+**Benefits:**
+- Easy testing and demonstration
+- Realistic sample data
+- Multiple user role testing
+- Quick onboarding for new team members
+
+**Documentation:**
+- See [DEMO_CREDENTIALS.md](DEMO_CREDENTIALS.md) for account details
+- See [SEED_DATA_INSTRUCTIONS.md](SEED_DATA_INSTRUCTIONS.md) for deployment guide
+
+---
+
 ## 🎯 Next Steps (Optional Enhancements)
 
 ### Short-term (1-2 weeks)
