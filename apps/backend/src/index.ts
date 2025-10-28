@@ -12,6 +12,7 @@ import passwordResetRoutes from './routes/passwordResetNeon.js';
 import emailVerificationRoutes from './routes/emailVerificationNeon.js';
 import usersRoutes from './routes/users.js';
 import assessmentsRoutes from './routes/assessments.js';
+import assessmentsDraftRoutes from './routes/assessmentsDraftNew.js';
 import notificationsRoutes from './routes/notifications.js';
 import filesRoutes from './routes/files.js';
 import analyticsRoutes from './routes/analytics.js';
@@ -160,6 +161,7 @@ app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/email-verification', emailVerificationRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/assessments', assessmentsRoutes);
+app.use('/api/assessments', assessmentsDraftRoutes); // New JSONB-based draft routes
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/files', filesRoutes);
 app.use('/api/analytics', analyticsRoutes);

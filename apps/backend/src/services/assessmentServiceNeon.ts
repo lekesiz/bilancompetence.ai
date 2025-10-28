@@ -142,13 +142,11 @@ export async function getAssessmentWithDetails(assessmentId: string): Promise<an
     const assessment = await getAssessment(assessmentId);
     if (!assessment) return null;
 
-    // Fetch related data with error handling for each
-    const [questions, answers, competencies, draft] = await Promise.all([
-      getAssessmentQuestions(assessmentId).catch(() => []),
-      getAssessmentAnswers(assessmentId).catch(() => []),
+    // Fetch related data with error handling for each (JSONB-based)
+    const [competencies, draft] = await Promise.all([
       query(
         null,
-        `SELECT * FROM assessment_competencies WHERE assessment_id = $1 ORDER BY created_at`,
+        `SELECT * FROM assessment_competencies WHERE assessment_id = $1 ORDER BY category, skill_name`,
         [assessmentId]
       ).catch(() => []),
       query(null, `SELECT * FROM assessment_drafts WHERE assessment_id = $1`, [assessmentId]).catch(
@@ -158,10 +156,9 @@ export async function getAssessmentWithDetails(assessmentId: string): Promise<an
 
     return {
       ...assessment,
-      questions: questions || [],
-      answers: answers || [],
       competencies: competencies || [],
       draft: draft && draft.length > 0 ? draft[0] : null,
+      draft_data: draft && draft.length > 0 ? draft[0].draft_data : {},
     };
   } catch (error) {
     logger.error('Failed to get assessment with details', { assessmentId, error });
