@@ -6,13 +6,35 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import express from 'express';
+
+// Mock auth middleware BEFORE importing router
+jest.mock('../../middleware/auth', () => ({
+  authMiddleware: (req: any, res: any, next: any) => {
+    req.user = {
+      id: 'test-user-123',
+      organization_id: 'test-org-123',
+    };
+    next();
+  },
+  requireRole: () => (req: any, res: any, next: any) => next(),
+}));
+
 import qualiopisRouter from '../qualiopi.js';
+import QualioptService from '../../services/qualioptService.js';
+import SatisfactionSurveyService from '../../services/satisfactionSurveyService.js';
+import DocumentArchiveService from '../../services/documentArchiveService.js';
+import ComplianceReportService from '../../services/complianceReportService.js';
 
 // Mock services
 jest.mock('../../services/qualioptService.js');
 jest.mock('../../services/satisfactionSurveyService.js');
 jest.mock('../../services/documentArchiveService.js');
 jest.mock('../../services/complianceReportService.js');
+
+const mockQualioptService = QualioptService as jest.MockedClass<typeof QualioptService>;
+const mockSatisfactionService = SatisfactionSurveyService as jest.MockedClass<typeof SatisfactionSurveyService>;
+const mockDocumentService = DocumentArchiveService as jest.MockedClass<typeof DocumentArchiveService>;
+const mockComplianceService = ComplianceReportService as jest.MockedClass<typeof ComplianceReportService>;
 
 // Test data
 const mockUser = {
@@ -61,6 +83,99 @@ beforeAll(() => {
   });
 
   app.use('/api/qualiopi', qualiopisRouter);
+});
+
+beforeEach(() => {
+  // Reset all mocks
+  jest.clearAllMocks();
+
+  // Setup QualioptService mocks
+  mockQualioptService.prototype.getIndicators = jest.fn().mockResolvedValue(mockIndicators);
+  mockQualioptService.prototype.getIndicatorDetails = jest.fn().mockResolvedValue(mockIndicators[0]);
+  mockQualioptService.prototype.getCoreIndicators = jest.fn().mockResolvedValue([mockIndicators[0]]);
+  mockQualioptService.prototype.getCompliancePercentage = jest.fn().mockResolvedValue(mockComplianceMetrics);
+  mockQualioptService.prototype.getAuditLog = jest.fn().mockResolvedValue([
+    {
+      id: '1',
+      action: 'UPDATE_INDICATOR',
+      indicator_id: 1,
+      user_name: 'Admin User',
+      timestamp: '2025-10-23T10:00:00Z',
+    },
+  ]);
+  
+  // Setup SatisfactionSurveyService mocks
+  mockSatisfactionService.prototype.getAnalytics = jest.fn().mockResolvedValue({
+    total_responses: 100,
+    total_sent: 120,
+    total_responded: 100,
+    nps_score: 45,
+    average_rating: 4.5,
+    questions_data: [
+      { question_id: 1, average_score: 4.5, response_count: 100 },
+    ],
+    consultant_performance: {
+      total_consultants: 5,
+      average_rating: 4.5,
+    },
+  });
+  
+  // Setup DocumentArchiveService mocks
+  mockDocumentService.prototype.getArchivedDocuments = jest.fn().mockResolvedValue([
+    {
+      id: 'doc-1',
+      document_type: 'PRELIMINARY',
+      file_name: 'test.pdf',
+      file_size: 1024,
+      created_at: '2025-10-23T10:00:00Z',
+    },
+  ]);
+  mockDocumentService.prototype.getDocumentDetails = jest.fn().mockResolvedValue({
+    document: {
+      id: 'doc-1',
+      document_type: 'PRELIMINARY',
+      file_name: 'test.pdf',
+      file_size: 1024,
+      created_at: '2025-10-23T10:00:00Z',
+    },
+    access_log: [
+      {
+        id: '1',
+        user_name: 'Admin User',
+        action: 'VIEW',
+        timestamp: '2025-10-23T10:00:00Z',
+      },
+    ],
+  });
+  mockDocumentService.prototype.getAccessLog = jest.fn().mockResolvedValue([
+    {
+      id: '1',
+      user_name: 'Admin User',
+      action: 'VIEW',
+      timestamp: '2025-10-23T10:00:00Z',
+    },
+  ]);
+  mockDocumentService.prototype.getArchiveStats = jest.fn().mockResolvedValue({
+    total_documents: 10,
+    total_size: 10240,
+    by_type: {
+      PRELIMINARY: 5,
+      INVESTIGATION: 3,
+      CONCLUSION: 2,
+    },
+  });
+  
+  // Setup ComplianceReportService mocks
+  const mockReport = {
+    indicators: mockIndicators,
+    metrics: mockComplianceMetrics,
+    generated_at: '2025-10-23T10:00:00Z',
+  };
+  
+  mockComplianceService.prototype.getComplianceMetrics = jest.fn().mockResolvedValue(mockComplianceMetrics);
+  mockComplianceService.prototype.generateReport = jest.fn().mockResolvedValue(mockReport);
+  mockComplianceService.prototype.exportAsJSON = jest.fn().mockReturnValue(JSON.stringify(mockReport));
+  mockComplianceService.prototype.exportAsCSV = jest.fn().mockReturnValue('indicator_id,name,status\n1,Test,COMPLIANT');
 });
 
 describe('Qualiopi Routes', () => {
@@ -412,7 +527,7 @@ describe('Qualiopi Routes', () => {
     it('should include evidence when requested', async () => {
       const response = await request(app)
         .get('/api/qualiopi/compliance-report')
-        .query({ format: 'json', includeEvidence: true });
+        .query({ format: 'json', includeEvidence: 'true' });
 
       expect(response.status).toBe(200);
     });

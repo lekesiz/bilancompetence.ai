@@ -27,14 +27,23 @@ jest.mock('../../services/franceTravailService', () => {
 
 jest.mock('../../services/authService');
 jest.mock('../../utils/logger');
+// Dynamic mock user that can be changed in tests
+const mockAuthState = {
+  user: {
+    id: 'test-user-123',
+    email: 'test@example.com',
+    full_name: 'Test User',
+    role: 'BENEFICIARY',
+  } as any,
+  enabled: true,
+};
+
 jest.mock('../../middleware/auth', () => ({
   authMiddleware: (req: any, res: any, next: any) => {
-    req.user = {
-      id: 'test-user-123',
-      email: 'test@example.com',
-      full_name: 'Test User',
-      role: 'BENEFICIARY',
-    };
+    if (!mockAuthState.enabled || !mockAuthState.user) {
+      return res.status(401).json({ status: 'error', message: 'Unauthorized' });
+    }
+    req.user = mockAuthState.user;
     next();
   },
   requireRole: () => (req: any, res: any, next: any) => next(),
@@ -60,6 +69,15 @@ beforeEach(() => {
 
   // Clear all mocks before each test
   jest.clearAllMocks();
+
+  // Reset auth state to default BENEFICIARY user
+  mockAuthState.enabled = true;
+  mockAuthState.user = {
+    id: 'test-user-123',
+    email: 'test@example.com',
+    full_name: 'Test User',
+    role: 'BENEFICIARY',
+  };
 
   // Reset mock implementations to defaults
   mockFranceTravailMethods.getUserCompetencies.mockResolvedValue([]);
@@ -399,21 +417,13 @@ describe('GET /api/recommendations/:userId/saved-jobs', () => {
   });
 
   it('should allow consultant to view beneficiary saved jobs', async () => {
-    // Mock auth middleware temporarily sets CONSULTANT role
-    const originalUser = { ...((app as any)._router?.stack?.find((layer: any) => layer.name === 'authMiddleware')?.handle || {}) };
-    
-    // Override req.user for this test
-    jest.spyOn(require('../../middleware/auth'), 'authMiddleware').mockImplementationOnce(
-      (req: any, res: any, next: any) => {
-        req.user = {
-          id: 'consultant-123',
-          email: 'consultant@example.com',
-          full_name: 'Consultant User',
-          role: 'CONSULTANT',
-        };
-        next();
-      }
-    );
+    // Set mock user to CONSULTANT role
+    mockAuthState.user = {
+      id: 'consultant-123',
+      email: 'consultant@example.com',
+      full_name: 'Consultant User',
+      role: 'CONSULTANT',
+    };
 
     (mockInstance.getUserSavedJobs as jest.Mock).mockResolvedValueOnce([]);
 
@@ -624,20 +634,22 @@ describe('GET /api/recommendations/rome-codes/search', () => {
 
 describe('Authentication & Authorization', () => {
   it('should require authentication for all endpoints', async () => {
-    // Create app without auth middleware
-    const noAuthApp = express();
-    noAuthApp.use(express.json());
-    noAuthApp.use('/api/recommendations', recommendationsRouter);
+    // Disable auth to simulate unauthenticated request
+    mockAuthState.enabled = false;
 
-    const response = await request(noAuthApp)
+    const response = await request(app)
       .post('/api/recommendations/jobs')
       .send({})
       .expect(401);
 
     expect(response.body.status).toBe('error');
+    expect(response.body.message).toBe('Unauthorized');
   });
 
   it('should reject requests without Bearer token', async () => {
+    // Disable auth to simulate invalid token
+    mockAuthState.enabled = false;
+
     const response = await request(app)
       .post('/api/recommendations/jobs')
       .set('Authorization', 'InvalidToken')
@@ -645,6 +657,7 @@ describe('Authentication & Authorization', () => {
       .expect(401);
 
     expect(response.body.status).toBe('error');
+    expect(response.body.message).toBe('Unauthorized');
   });
 });
 

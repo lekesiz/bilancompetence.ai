@@ -78,7 +78,7 @@ const documentQuerySchema = z.object({
  */
 const generateReportSchema = z.object({
   format: z.enum(['json', 'csv', 'pdf']).default('json').optional(),
-  includeEvidence: z.boolean().default(false).optional(),
+  includeEvidence: z.coerce.boolean().default(false).optional(),
   indicators: z.enum(['all', 'critical']).default('all').optional(),
 });
 
@@ -141,6 +141,32 @@ router.get('/indicators', authMiddleware, requireAdminRole, async (req: Request,
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to fetch indicators',
+    });
+  }
+});
+
+/**
+ * GET /api/admin/qualiopi/indicators/core
+ * Get only core indicators (1, 11, 22)
+ * NOTE: This must come BEFORE /indicators/:id to avoid route collision
+ */
+router.get('/indicators/core', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
+  try {
+    const orgId = getOrgId(req);
+    const qualioptService = new QualioptService(orgId);
+
+    const coreIndicators = await qualioptService.getCoreIndicators();
+
+    res.json({
+      success: true,
+      data: coreIndicators,
+      count: coreIndicators.length,
+    });
+  } catch (error: any) {
+    logger.error('Error fetching core indicators:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to fetch core indicators',
     });
   }
 });
@@ -278,31 +304,6 @@ router.post('/indicators/:id/evidence', authMiddleware, requireAdminRole, async 
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to add evidence',
-    });
-  }
-});
-
-/**
- * GET /api/admin/qualiopi/indicators/core
- * Get only core indicators (1, 11, 22)
- */
-router.get('/indicators/core', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-  try {
-    const orgId = getOrgId(req);
-    const qualioptService = new QualioptService(orgId);
-
-    const coreIndicators = await qualioptService.getCoreIndicators();
-
-    res.json({
-      success: true,
-      data: coreIndicators,
-      count: coreIndicators.length,
-    });
-  } catch (error: any) {
-    logger.error('Error fetching core indicators:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Failed to fetch core indicators',
     });
   }
 });
