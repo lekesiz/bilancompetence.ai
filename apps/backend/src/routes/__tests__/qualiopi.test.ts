@@ -182,9 +182,6 @@ beforeEach(() => {
     generated_at: '2025-10-23T10:00:00Z',
   };
 
-  mockComplianceService.prototype.getComplianceMetrics = jest
-    .fn()
-    .mockResolvedValue(mockComplianceMetrics);
   mockComplianceService.prototype.generateReport = jest.fn().mockResolvedValue(mockReport);
   mockComplianceService.prototype.exportAsJSON = jest
     .fn()

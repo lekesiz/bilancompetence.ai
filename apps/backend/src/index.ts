@@ -55,9 +55,6 @@ const realtime = new RealtimeService(server);
 app.set('trust proxy', true);
 
 // Middleware - Security & Logging
-// Sentry request handler must be the first middleware
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
 app.use(helmet());
 // Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
 const corsOrigins = process.env.CORS_ORIGIN
@@ -182,8 +179,7 @@ app.use('/api/2fa', twoFactorRoutes);
 app.use('/api/chat-enhanced', chatEnhancedRoutes);
 app.use('/api/sessions', sessionsRoutes);
 
-// Sentry error handler must be before other error handlers
-app.use(Sentry.Handlers.errorHandler());
+// Sentry automatically captures errors in v8
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

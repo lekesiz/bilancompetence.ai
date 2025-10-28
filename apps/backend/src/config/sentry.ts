@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import { httpIntegration, expressIntegration } from '@sentry/node';
 
 export const initSentry = () => {
   const sentryDsn = process.env.SENTRY_DSN;
@@ -14,9 +15,9 @@ export const initSentry = () => {
     environment: process.env.NODE_ENV || 'development',
     integrations: [
       // Enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
+      httpIntegration(),
       // Enable Express.js middleware tracing
-      new Sentry.Integrations.Express({ app: undefined }),
+      expressIntegration(),
       // Enable profiling
       nodeProfilingIntegration(),
     ],
