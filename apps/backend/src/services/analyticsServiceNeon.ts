@@ -37,10 +37,12 @@ export async function getUserActivityStats(userId: string) {
     );
     const inProgressAssessments = inProgressCountResult[0]?.count || 0;
 
-    // Get recommendations count
+    // Get recommendations count (via bilans)
     const recommendationCountResult = await query<{ count: number }>(
       null,
-      `SELECT COUNT(*)::int as count FROM recommendations WHERE user_id = $1`,
+      `SELECT COUNT(*)::int as count FROM recommendations r
+       INNER JOIN bilans b ON r.bilan_id = b.id
+       WHERE b.beneficiary_id = $1 AND b.deleted_at IS NULL`,
       [userId]
     );
     const recommendations = recommendationCountResult[0]?.count || 0;

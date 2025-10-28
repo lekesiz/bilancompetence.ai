@@ -138,27 +138,35 @@ export async function getAssessment(assessmentId: string): Promise<Assessment | 
  * Get assessment with full details (including questions, answers, competencies)
  */
 export async function getAssessmentWithDetails(assessmentId: string): Promise<any> {
-  const assessment = await getAssessment(assessmentId);
-  if (!assessment) return null;
+  try {
+    const assessment = await getAssessment(assessmentId);
+    if (!assessment) return null;
 
-  const [questions, answers, competencies, draft] = await Promise.all([
-    getAssessmentQuestions(assessmentId),
-    getAssessmentAnswers(assessmentId),
-    query(
-      null,
-      `SELECT * FROM assessment_competencies WHERE assessment_id = $1 ORDER BY created_at`,
-      [assessmentId]
-    ),
-    query(null, `SELECT * FROM assessment_drafts WHERE assessment_id = $1`, [assessmentId]),
-  ]);
+    // Fetch related data with error handling for each
+    const [questions, answers, competencies, draft] = await Promise.all([
+      getAssessmentQuestions(assessmentId).catch(() => []),
+      getAssessmentAnswers(assessmentId).catch(() => []),
+      query(
+        null,
+        `SELECT * FROM assessment_competencies WHERE assessment_id = $1 ORDER BY created_at`,
+        [assessmentId]
+      ).catch(() => []),
+      query(null, `SELECT * FROM assessment_drafts WHERE assessment_id = $1`, [assessmentId]).catch(
+        () => []
+      ),
+    ]);
 
-  return {
-    ...assessment,
-    questions,
-    answers,
-    competencies,
-    draft: draft.length > 0 ? draft[0] : null,
-  };
+    return {
+      ...assessment,
+      questions: questions || [],
+      answers: answers || [],
+      competencies: competencies || [],
+      draft: draft && draft.length > 0 ? draft[0] : null,
+    };
+  } catch (error) {
+    logger.error('Failed to get assessment with details', { assessmentId, error });
+    throw error;
+  }
 }
 
 /**
