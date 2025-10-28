@@ -212,32 +212,6 @@ export default function LoginPage() {
           </Link>
         </Card>
 
-        {/* Demo Info - Design System v3 */}
-        <Card variant="blue-light" className="mt-6 p-6">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">💡</span>
-            <div>
-              <p className="text-sm font-bold text-gray-900 dark:text-white mb-3">
-                Identifiants de démonstration :
-              </p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">Email :</span>
-                  <code className="px-3 py-1 bg-white dark:bg-gray-700 rounded-lg text-xs font-mono text-primary-600 dark:text-primary-400 border border-gray-200 dark:border-gray-600">
-                    demo@example.com
-                  </code>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">Mot de passe :</span>
-                  <code className="px-3 py-1 bg-white dark:bg-gray-700 rounded-lg text-xs font-mono text-primary-600 dark:text-primary-400 border border-gray-200 dark:border-gray-600">
-                    Demo@123456
-                  </code>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-
         {/* Back to Home */}
         <div className="text-center mt-6">
           <Link

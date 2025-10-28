@@ -117,6 +117,7 @@ BilanCompetence.AI is a modern SaaS platform that revolutionizes the skills asse
 - `npm run format`: Format code
 - `npm run test:load`: Run load test
 - `npm run test:stress`: Run stress test
+- `npm run seed:demo`: Seed demo data (requires DATABASE_URL)
 
 ### Frontend
 

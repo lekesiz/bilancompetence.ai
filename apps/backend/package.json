@@ -16,6 +16,7 @@
     "test:stress": "artillery run performance-tests/stress-test.yml",
     "test:perf": "npm run test:load && npm run test:stress",
     "migrate": "tsx src/scripts/run-migrations.ts",
+    "seed:demo": "tsx src/scripts/seed-demo-data.ts",
     "prepare": "husky"
   },
   "dependencies": {
