@@ -55,7 +55,7 @@ export function ClientCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              {client.name.charAt(0).toUpperCase()}
+              {client.name?.charAt(0)?.toUpperCase() || client.email?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">
               <h3 className={`font-semibold text-gray-800 dark:text-gray-100 truncate ${

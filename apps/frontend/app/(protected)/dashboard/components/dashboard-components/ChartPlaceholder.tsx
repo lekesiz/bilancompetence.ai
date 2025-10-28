@@ -64,7 +64,7 @@ export function ChartPlaceholder({
         <div className="text-blue-600 mb-3">{chartIcons[chartType]}</div>
         <p className="text-blue-800 font-medium mb-1">Chart Ready</p>
         <p className="text-blue-600 text-sm text-center">
-          {chartType.charAt(0).toUpperCase() + chartType.slice(1)} chart will be rendered here
+          {(chartType?.charAt(0)?.toUpperCase() || '') + (chartType?.slice(1) || 'Chart')} chart will be rendered here
         </p>
         <div className="mt-4 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
           {data.length} data points
