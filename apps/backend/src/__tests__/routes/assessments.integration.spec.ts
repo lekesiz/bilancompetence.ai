@@ -30,7 +30,7 @@ jest.mock('../../middleware/auth', () => ({
 }));
 
 // Mock services BEFORE importing routes
-jest.mock('../../services/assessmentService', () => ({
+jest.mock('../../services/assessmentServiceNeon', () => ({
   createAssessmentDraft: jest.fn().mockResolvedValue({
     id: 'assessment-123',
     beneficiary_id: 'test-user-123',
@@ -139,7 +139,7 @@ jest.mock('../../services/assessmentService', () => ({
   }),
 }));
 
-jest.mock('../../services/supabaseService', () => ({
+jest.mock('../../services/authFlowServiceNeon', () => ({
   createAuditLog: jest.fn().mockResolvedValue({ id: 'log-123' }),
 }));
 

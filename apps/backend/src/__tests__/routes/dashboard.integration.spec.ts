@@ -34,8 +34,8 @@ jest.mock('../../middleware/auth', () => ({
   },
 }));
 
-// Mock supabaseService functions
-jest.mock('../../services/supabaseService', () => ({
+// Mock userServiceNeon
+jest.mock('../../services/userServiceNeon', () => ({
   getUserById: jest.fn().mockImplementation((id: string) => {
     return Promise.resolve({
       id,
@@ -47,6 +47,10 @@ jest.mock('../../services/supabaseService', () => ({
       created_at: new Date().toISOString(),
     });
   }),
+}));
+
+// Mock dashboardServiceNeon functions
+jest.mock('../../services/dashboardServiceNeon', () => ({
   getBilansByBeneficiary: jest.fn().mockResolvedValue([
     { id: 'bilan-1', title: 'Assessment 1', status: 'IN_PROGRESS' },
     { id: 'bilan-2', title: 'Assessment 2', status: 'COMPLETED' },
