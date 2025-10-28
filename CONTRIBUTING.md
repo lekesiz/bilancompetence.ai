@@ -42,6 +42,86 @@ test: add auth unit tests
 
 ## 🧪 Testing
 
+We use **Jest** for unit and integration testing. All new features and bug fixes must be accompanied by tests.
+
+### Backend
+
+- **Run all tests:**
+
+  ```bash
+  npm test --workspace=@bilancompetence/backend
+  ```
+
+- **Run tests in watch mode:**
+
+  ```bash
+  npm run test:watch --workspace=@bilancompetence/backend
+  ```
+
+- **Generate coverage report:**
+
+  ```bash
+  npm test -- --coverage --workspace=@bilancompetence/backend
+  ```
+
+We aim for a high test coverage. Please make sure your changes do not decrease the coverage.
+
+### Frontend
+
+```bash
+npm test --workspace=@bilancompetence/frontend
+npm run test:coverage --workspace=@bilancompetence/frontend
+```
+
+## 🎨 Code Style
+
+We use **ESLint** and **Prettier** to enforce a consistent coding style. Before committing your changes, make sure to run the following commands:
+
+- **Format your code:**
+
+  ```bash
+  npm run format --workspace=@bilancompetence/backend
+  ```
+
+- **Lint your code:**
+
+  ```bash
+  npm run lint --workspace=@bilancompetence/backend
+  ```
+
+We also use **Husky** and **lint-staged** to automatically format and lint your code before each commit.
+
+## 📚 Documentation
+
+### API Documentation
+
+We use **Swagger** for API documentation. The documentation is automatically generated from JSDoc comments in the source code.
+
+- **View the API documentation:**
+
+  Run the development server and go to `http://localhost:3001/api-docs`.
+
+- **Update the API documentation:**
+
+  When adding or updating an endpoint, make sure to add or update the JSDoc comments.
+
+### Performance Testing
+
+We use **Artillery** for performance testing.
+
+- **Run load test:**
+
+  ```bash
+  npm run test:load --workspace=@bilancompetence/backend
+  ```
+
+- **Run stress test:**
+
+  ```bash
+  npm run test:stress --workspace=@bilancompetence/backend
+  ```
+
+
 ### Frontend
 ```bash
 npm test                    # Run tests
