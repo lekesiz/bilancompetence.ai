@@ -5,13 +5,22 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default [
   {
+    ignores: [
+      '**/__tests__/**',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+      'src/utils/errorHandler.ts',
+      'src/utils/logger.ts',
+    ],
+  },
+  {
     files: ['**/*.ts'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: 'module',
-        project: './tsconfig.json',
+        project: true,
       },
       globals: {
         console: 'readonly',
@@ -34,6 +43,8 @@ export default [
       ...prettierConfig.rules,
       'prettier/prettier': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-require-imports': 'warn',
+      '@typescript-eslint/no-namespace': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
