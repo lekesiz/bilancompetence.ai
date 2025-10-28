@@ -176,11 +176,17 @@ export async function getUserAssessments(
   let params: any[] = [limit, offset];
 
   if (role === 'BENEFICIARY') {
-    whereClause = 'WHERE beneficiary_id = $3';
+    whereClause = 'WHERE beneficiary_id = $3 AND deleted_at IS NULL';
     params.push(userId);
   } else if (role === 'CONSULTANT') {
-    whereClause = 'WHERE consultant_id = $3';
+    whereClause = 'WHERE consultant_id = $3 AND deleted_at IS NULL';
     params.push(userId);
+  } else if (role === 'ORGANIZATION_ADMIN' || role === 'ORG_ADMIN' || role === 'ADMIN') {
+    // Admins can see all assessments in their organization
+    whereClause = 'WHERE deleted_at IS NULL';
+  } else {
+    // Unknown role - return empty
+    whereClause = 'WHERE 1=0';
   }
 
   const assessments = await query<Assessment>(
