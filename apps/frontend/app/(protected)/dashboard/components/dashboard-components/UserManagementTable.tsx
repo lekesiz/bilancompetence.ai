@@ -128,8 +128,8 @@ export function UserManagementTable({
               </tr>
             ) : (
               paginatedUsers.map((user) => {
-                const role = roleConfig[user.role as keyof typeof roleConfig];
-                const status = statusConfig[user.status as keyof typeof statusConfig];
+                const role = roleConfig[user.role as keyof typeof roleConfig] || roleConfig.BENEFICIARY;
+                const status = statusConfig[user.status as keyof typeof statusConfig] || statusConfig.ACTIVE;
                 
                 return (
                   <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">

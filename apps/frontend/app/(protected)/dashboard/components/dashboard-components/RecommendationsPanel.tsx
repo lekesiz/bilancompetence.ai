@@ -60,7 +60,7 @@ export function RecommendationsPanel({ recommendations, userRole }: Recommendati
 
       <div className="space-y-4">
         {recommendations.map((rec) => {
-          const type = typeConfig[rec.type];
+          const type = typeConfig[rec.type] || typeConfig.JOB_MATCH;
           
           return (
             <div

@@ -51,7 +51,7 @@ export function AssessmentCard({
     });
   };
 
-  const status = statusConfig[assessment.status];
+  const status = statusConfig[assessment.status] || statusConfig.DRAFT;
   const isCompact = variant === 'compact';
 
   return (

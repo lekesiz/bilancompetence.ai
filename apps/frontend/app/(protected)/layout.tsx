@@ -60,19 +60,19 @@ export default function ProtectedLayout({
       active: pathname === '/dashboard'
     },
     { 
-      href: '/dashboard/beneficiaire/ai/job-recommendations', 
+      href: '/recommendations', 
       label: 'Recommandations', 
       icon: Briefcase,
       active: pathname.includes('/job-recommendations')
     },
     { 
-      href: '/dashboard/beneficiaire/saved-jobs', 
+      href: '/saved-jobs', 
       label: 'Emplois sauvegardés', 
       icon: BookmarkCheck,
       active: pathname.includes('/saved-jobs')
     },
     { 
-      href: '/dashboard/beneficiaire/profile', 
+      href: '/profile', 
       label: 'Profil', 
       icon: User,
       active: pathname.includes('/profile')

@@ -43,7 +43,7 @@ export function ClientCard({
     });
   };
 
-  const status = statusConfig[client.status];
+  const status = statusConfig[client.status] || statusConfig.ACTIVE;
   const isCompact = variant === 'compact';
 
   return (
