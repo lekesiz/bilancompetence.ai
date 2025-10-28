@@ -39,7 +39,7 @@
 ### 📊 Work Progress Tracking
 
 #### Phase 1: Stabilisation (Target: 60/100)
-- [ ] **Étape 1.1:** Investigation APIs Timeout (4h) - 🔴 TODO
+- [x] **Étape 1.1:** Investigation APIs Timeout (4h) - ✅ TERMINÉ
 - [ ] **Étape 1.2:** Optimisation Backend (6h) - 🔴 TODO
 - [ ] **Étape 1.3:** Données Demo Complètes (4h) - 🔴 TODO
 - [ ] **Étape 1.4:** Correction Assessment Details (3h) - 🔴 TODO
