@@ -1,0 +1,71 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    - duration: 30
+      arrivalRate: 10
+      name: 'Ramp up'
+    - duration: 60
+      arrivalRate: 50
+      name: 'High load'
+    - duration: 60
+      arrivalRate: 100
+      name: 'Stress load'
+    - duration: 60
+      arrivalRate: 200
+      name: 'Breaking point'
+    - duration: 30
+      arrivalRate: 10
+      name: 'Recovery'
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'Concurrent API Requests'
+    weight: 40
+    flow:
+      - get:
+          url: '/health'
+      - get:
+          url: '/api/dashboard/me'
+          headers:
+            Authorization: 'Bearer mock-token'
+      - get:
+          url: '/api/assessments'
+          headers:
+            Authorization: 'Bearer mock-token'
+
+  - name: 'Heavy Database Operations'
+    weight: 30
+    flow:
+      - post:
+          url: '/api/assessments'
+          headers:
+            Authorization: 'Bearer mock-token'
+          json:
+            title: 'Stress Test Assessment'
+            description: 'Testing database performance'
+            type: 'SKILLS'
+          expect:
+            - statusCode: [201, 400, 401, 500]
+
+  - name: 'File Upload Simulation'
+    weight: 15
+    flow:
+      - post:
+          url: '/api/users/upload-cv'
+          headers:
+            Authorization: 'Bearer mock-token'
+          expect:
+            - statusCode: [200, 400, 401, 500]
+
+  - name: 'Complex Queries'
+    weight: 15
+    flow:
+      - get:
+          url: '/api/analytics?startDate=2024-01-01&endDate=2024-12-31'
+          headers:
+            Authorization: 'Bearer mock-token'
+          expect:
+            - statusCode: [200, 401, 404, 500]
+

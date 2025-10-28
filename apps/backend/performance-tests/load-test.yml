@@ -1,0 +1,89 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      name: 'Warm up'
+    - duration: 120
+      arrivalRate: 10
+      name: 'Sustained load'
+    - duration: 60
+      arrivalRate: 20
+      name: 'Peak load'
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+
+scenarios:
+  - name: 'Health Check'
+    weight: 10
+    flow:
+      - get:
+          url: '/health'
+          expect:
+            - statusCode: 200
+
+  - name: 'API Documentation'
+    weight: 5
+    flow:
+      - get:
+          url: '/api-docs/'
+          expect:
+            - statusCode: 200
+
+  - name: 'Authentication Flow'
+    weight: 30
+    flow:
+      - post:
+          url: '/api/auth/register'
+          json:
+            email: '{{ $randomString() }}@test.com'
+            password: 'TestPassword123!'
+            full_name: 'Test User'
+            role: 'BENEFICIARY'
+          capture:
+            - json: '$.data.user.id'
+              as: 'userId'
+          expect:
+            - statusCode: [201, 400, 409]
+
+  - name: 'Dashboard Access'
+    weight: 20
+    flow:
+      - get:
+          url: '/api/dashboard/me'
+          headers:
+            Authorization: 'Bearer mock-token'
+          expect:
+            - statusCode: [200, 401]
+
+  - name: 'Assessment List'
+    weight: 15
+    flow:
+      - get:
+          url: '/api/assessments'
+          headers:
+            Authorization: 'Bearer mock-token'
+          expect:
+            - statusCode: [200, 401]
+
+  - name: 'User Profile'
+    weight: 10
+    flow:
+      - get:
+          url: '/api/users/me'
+          headers:
+            Authorization: 'Bearer mock-token'
+          expect:
+            - statusCode: [200, 401]
+
+  - name: 'Recommendations'
+    weight: 10
+    flow:
+      - get:
+          url: '/api/recommendations'
+          headers:
+            Authorization: 'Bearer mock-token'
+          expect:
+            - statusCode: [200, 401]
+
