@@ -32,7 +32,10 @@
 - **Organization ID:** org-shy-voice-89002201
 - **Project ID:** delicate-recipe-65517628
 - **REST API Endpoint:** https://ep-shy-waterfall-ahr8f8tp.apirest.c-3.us-east-1.aws.neon.tech/neondb/rest/v1
-- **Connection String:** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require`
+- **Connection String (PSQL):** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+  - ⚠️ **KRİTİK:** Bu connection string her zaman kullanılmalı - paralel bağlantılar oluşturulmamalı
+  - **Kullanım:** `psql 'postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'`
+- **Connection String (Pooler):** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require`
 - **API Token:** napi_dgroac4a9beezwn10uja4dexo5e40i345ge214f2c3dl8rvjsfrq98whbco1hkbl (`.neon-token.txt`)
 - **Type:** Serverless PostgreSQL
 - **Connection:** Connection pooling aktif
@@ -196,10 +199,13 @@ curl https://app.bilancompetence.ai
    - Her git push deployment tetikliyor
    - Feature branch kullanımı önerilir (isteğe bağlı)
 
-4. **Database:**
+4. **Database (NEON - KRİTİK):**
+   - ⚠️ **MEVCUT CONNECTION STRING KULLANILMALI - YENİ BAĞLANTILAR OLUŞTURULMAMALI!**
+   - **PSQL Connection String:** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
    - Neon erişim bilgileri proje içinde mevcut
    - Production database kullanılıyor
    - Backup strategy mevcut (automated daily)
+   - **ÖNEMLİ:** Bir sonraki session'da connection string hatırlanmalı, yeni bağlantılar oluşturulmamalı
 
 5. **Tokens:**
    - Vercel ve Railway token'ları proje içinde saklanıyor
