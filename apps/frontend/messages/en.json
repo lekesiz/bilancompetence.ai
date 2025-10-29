@@ -72,7 +72,24 @@
     "dashboard": "Dashboard",
     "profile": "Profile",
     "settings": "Settings",
-    "startAssessment": "Start my assessment"
+    "startAssessment": "Start my assessment",
+    "whatIsAssessment": "What is an assessment?",
+    "methodology": "Methodology",
+    "funding": "Funding",
+    "remoteAssessment": "Remote assessment",
+    "faq": "FAQ"
+  },
+  "footer": {
+    "brand": {
+      "title": "BilanCompetence.ai",
+      "description": "Your partner for professional development and skills enhancement."
+    },
+    "quickLinks": "Quick links",
+    "legal": "Legal notice",
+    "privacy": "Privacy policy",
+    "terms": "Terms and conditions",
+    "rights": "All rights reserved",
+    "currentYear": "2025"
   },
   "language": {
     "french": "Français",

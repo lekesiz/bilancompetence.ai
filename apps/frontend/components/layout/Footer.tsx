@@ -1,22 +1,30 @@
+'use client';
+
 import Link from 'next/link';
-
-const quickLinks = [
-  { href: '/', label: 'Accueil' },
-  { href: '/quest-ce-quun-bilan', label: "Qu'est-ce qu'un bilan ?" },
-  { href: '/methodologie', label: 'Méthodologie' },
-  { href: '/financement', label: 'Financement' },
-  { href: '/bilan-a-distance', label: 'Bilan à distance' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/contact', label: 'Contact' },
-];
-
-const legalLinks = [
-  { href: '/mentions-legales', label: 'Mentions légales' },
-  { href: '/politique-confidentialite', label: 'Politique de confidentialité' },
-  { href: '/conditions-generales', label: 'Conditions générales' },
-];
+import { useTranslations, useLocale } from 'next-intl';
+import { locales } from '@/i18n-config';
 
 export const Footer = () => {
+  const t = useTranslations();
+  const locale = useLocale();
+  const localePrefix = locale === 'fr' ? '' : `/${locale}`;
+  
+  const quickLinks = [
+    { href: `${localePrefix}/`, label: t('navigation.home') },
+    { href: `${localePrefix}/quest-ce-quun-bilan`, label: t('navigation.whatIsAssessment') },
+    { href: `${localePrefix}/methodologie`, label: t('navigation.methodology') },
+    { href: `${localePrefix}/financement`, label: t('navigation.funding') },
+    { href: `${localePrefix}/bilan-a-distance`, label: t('navigation.remoteAssessment') },
+    { href: `${localePrefix}/faq`, label: t('navigation.faq') },
+    { href: `${localePrefix}/contact`, label: t('navigation.contact') },
+  ];
+
+  const legalLinks = [
+    { href: `${localePrefix}/mentions-legales`, label: t('footer.legal') },
+    { href: `${localePrefix}/politique-confidentialite`, label: t('footer.privacy') },
+    { href: `${localePrefix}/conditions-generales`, label: t('footer.terms') },
+  ];
+
   return (
     <footer className="bg-gray-900 dark:bg-gray-950 text-gray-200 border-t border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -24,10 +32,10 @@ export const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <h3 className="text-xl font-bold font-heading text-white mb-4">
-              BilanCompetence.ai
+              {t('footer.brand.title')}
             </h3>
             <p className="text-gray-300 text-sm leading-relaxed mb-4">
-              Votre partenaire pour l'évolution professionnelle et le développement des compétences.
+              {t('footer.brand.description')}
             </p>
             <div className="flex space-x-4">
               {/* Social Media Icons - Optional */}
@@ -36,7 +44,7 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Liens rapides</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.href}>
@@ -53,7 +61,7 @@ export const Footer = () => {
 
           {/* Legal Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Informations légales</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.legal')}</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
                 <li key={link.href}>
@@ -70,7 +78,7 @@ export const Footer = () => {
 
           {/* Contact Section */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Contact</h4>
+            <h4 className="text-white font-semibold mb-4">{t('navigation.contact')}</h4>
             <address className="not-italic text-sm text-gray-300 space-y-3">
               <div className="flex items-start space-x-2">
                 <svg 
@@ -146,7 +154,7 @@ export const Footer = () => {
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 text-center md:text-left">
-              © {new Date().getFullYear()} BilanCompetence.ai - Tous droits réservés.
+              © {new Date().getFullYear()} {t('footer.brand.title')} - {t('footer.rights')}.
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 text-center md:text-right">
               Site réalisé par{' '}

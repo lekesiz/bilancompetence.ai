@@ -72,7 +72,24 @@
     "dashboard": "Tableau de bord",
     "profile": "Profil",
     "settings": "Paramètres",
-    "startAssessment": "Commencer mon bilan"
+    "startAssessment": "Commencer mon bilan",
+    "whatIsAssessment": "Qu'est-ce qu'un bilan ?",
+    "methodology": "Méthodologie",
+    "funding": "Financement",
+    "remoteAssessment": "Bilan à distance",
+    "faq": "FAQ"
+  },
+  "footer": {
+    "brand": {
+      "title": "BilanCompetence.ai",
+      "description": "Votre partenaire pour l'évolution professionnelle et le développement des compétences."
+    },
+    "quickLinks": "Liens rapides",
+    "legal": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales",
+    "rights": "Tous droits réservés",
+    "currentYear": "2025"
   },
   "language": {
     "french": "Français",
