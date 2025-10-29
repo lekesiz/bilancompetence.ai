@@ -171,21 +171,28 @@ curl https://app.bilancompetence.ai
 
 ## ⚠️ ÖNEMLİ UYARILAR
 
-1. **Production Testing:** 
+1. **VERCEL PROJE YAPISI:**
+   - ⚠️ **MEVCUT PROJE KULLANILIYOR - YENİ PROJE OLUŞTURMA!**
+   - Project ID: `prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO` (MEVCUT PROJE)
+   - Root Directory: `apps/frontend` (Vercel dashboard'da ayarlanmış olmalı)
+   - `.vercel/project.json` dosyası **DEĞİŞTİRİLMEMELİ**
+   - Vercel CLI ile proje oluşturma YAPILMAMALI - mevcut projeden devam ediliyor
+
+2. **Production Testing:** 
    - Testler production ortamında yapılıyor
    - Değişiklikler canlıyı etkiliyor
    - Dikkatli test yapılmalı
 
-2. **Auto Deploy:**
+3. **Auto Deploy:**
    - Her git push deployment tetikliyor
    - Feature branch kullanımı önerilir (isteğe bağlı)
 
-3. **Database:**
+4. **Database:**
    - Neon erişim bilgileri proje içinde mevcut
    - Production database kullanılıyor
    - Backup strategy mevcut (automated daily)
 
-4. **Tokens:**
+5. **Tokens:**
    - Vercel ve Railway token'ları proje içinde saklanıyor
    - `.gitignore`'a eklendi
    - Güvenlik: Production'da kullanım için dikkatli olunmalı
