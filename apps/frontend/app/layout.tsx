@@ -35,6 +35,9 @@ export const viewport: Viewport = {
   ],
 };
 
+// Force dynamic rendering - root layout serves dynamic content
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: Readonly<{

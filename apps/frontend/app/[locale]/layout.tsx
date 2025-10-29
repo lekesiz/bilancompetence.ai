@@ -39,11 +39,10 @@ export const viewport: Viewport = {
   ],
 };
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
-
-export const dynamicParams = false;
+// Dynamic routing - no static generation for locale routes
+// Client components cannot be prerendered
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
 export default async function LocaleLayout({
   children,
