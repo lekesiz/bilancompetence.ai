@@ -123,6 +123,109 @@
         "description": "Conseillers certifiés pour vous guider dans votre évolution professionnelle"
       }
     }
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Trouvez rapidement les réponses à vos questions sur le bilan de compétences",
+    "allCategories": "Tous",
+    "stillHaveQuestions": "Vous avez d'autres questions ?",
+    "teamHere": "Notre équipe est là pour vous répondre",
+    "contactUs": "Contactez-nous",
+    "categories": {
+      "generalites": "Généralités",
+      "deroulement": "Déroulement",
+      "financement": "Financement",
+      "resultats": "Résultats",
+      "pratique": "Pratique"
+    },
+    "questions": {
+      "generalites": [
+        {
+          "question": "Qu'est-ce qu'un bilan de compétences ?",
+          "answer": "Le bilan de compétences est une démarche d'accompagnement individuel qui permet d'analyser vos compétences professionnelles et personnelles, vos aptitudes et vos motivations. Il vous aide à définir un projet professionnel réaliste et motivant, ou à valider un projet de formation."
+        },
+        {
+          "question": "Combien de temps dure un bilan de compétences ?",
+          "answer": "Un bilan de compétences dure en moyenne 20 à 24 heures, réparties sur 2 à 3 mois. Cette durée permet un accompagnement approfondi tout en s'adaptant à votre rythme et vos disponibilités."
+        },
+        {
+          "question": "Le bilan de compétences est-il confidentiel ?",
+          "answer": "Oui, absolument ! Le bilan est strictement confidentiel. Les résultats vous appartiennent et ne peuvent être communiqués à un tiers (y compris votre employeur) sans votre accord écrit. Cette confidentialité est garantie par la loi."
+        },
+        {
+          "question": "Qui peut faire un bilan de compétences ?",
+          "answer": "Toute personne active peut réaliser un bilan de compétences : salariés du secteur privé, agents publics, demandeurs d'emploi, travailleurs indépendants. Il n'y a pas de condition d'âge ou d'ancienneté."
+        }
+      ],
+      "deroulement": [
+        {
+          "question": "Comment se déroule un bilan de compétences ?",
+          "answer": "Le bilan se déroule en 3 phases : 1) Phase préliminaire (4-6h) pour définir vos besoins et objectifs, 2) Phase d'investigation (12-16h) pour explorer vos compétences et pistes professionnelles, 3) Phase de conclusion (4-6h) pour élaborer votre projet et plan d'action."
+        },
+        {
+          "question": "Puis-je faire mon bilan à distance ?",
+          "answer": "Oui ! Nous proposons des bilans 100% à distance, en présentiel, ou en format mixte. Les bilans à distance se déroulent par visioconférence et sont tout aussi efficaces que les bilans en présentiel."
+        },
+        {
+          "question": "À quelle fréquence ont lieu les rendez-vous ?",
+          "answer": "Les rendez-vous sont généralement espacés de 1 à 2 semaines pour vous laisser le temps de réaliser les travaux personnels entre chaque séance. Le rythme est adapté à vos disponibilités et contraintes."
+        },
+        {
+          "question": "Quels tests vais-je passer ?",
+          "answer": "Vous passerez plusieurs tests psychométriques validés scientifiquement : test de personnalité MBTI, test d'intérêts professionnels RIASEC, inventaire de compétences, et test de valeurs professionnelles. Ces tests sont des outils d'aide à la réflexion."
+        }
+      ],
+      "financement": [
+        {
+          "question": "Combien coûte un bilan de compétences ?",
+          "answer": "Le coût d'un bilan de compétences varie entre 1 500€ et 3 000€ selon la durée et les modalités. Chez BilanCompetence.AI, nos tarifs sont transparents et nous vous accompagnons dans le montage de votre dossier de financement."
+        },
+        {
+          "question": "Puis-je utiliser mon CPF pour financer mon bilan ?",
+          "answer": "Oui ! Le bilan de compétences est éligible au CPF (Compte Personnel de Formation). Vous pouvez consulter vos droits sur moncompteformation.gouv.fr et vous inscrire directement en ligne. Aucune autorisation de votre employeur n'est nécessaire."
+        },
+        {
+          "question": "Que faire si mon CPF ne couvre pas tout le coût ?",
+          "answer": "Plusieurs solutions existent : abondement par Pôle Emploi si vous êtes demandeur d'emploi, financement complémentaire par votre OPCO, ou participation de votre employeur via le plan de développement des compétences. Nous vous aidons à trouver la meilleure solution."
+        },
+        {
+          "question": "Mon employeur sera-t-il informé si j'utilise mon CPF ?",
+          "answer": "Non, si vous réalisez votre bilan hors temps de travail et le financez via votre CPF, votre employeur n'en sera pas informé. Votre démarche reste strictement confidentielle."
+        }
+      ],
+      "resultats": [
+        {
+          "question": "Que vais-je obtenir à la fin du bilan ?",
+          "answer": "Vous recevrez un document de synthèse confidentiel récapitulant vos compétences, motivations, projet professionnel et plan d'action détaillé. Vous obtiendrez également une attestation de réalisation du bilan."
+        },
+        {
+          "question": "Le bilan garantit-il de trouver un emploi ?",
+          "answer": "Le bilan n'est pas un placement professionnel, mais un outil d'aide à la décision. Il vous permet de clarifier votre projet, d'identifier vos atouts et de construire un plan d'action concret. C'est ensuite à vous de mettre en œuvre ce plan."
+        },
+        {
+          "question": "Puis-je être accompagné après le bilan ?",
+          "answer": "Oui, nous proposons des prestations d'accompagnement post-bilan : aide à la recherche d'emploi, préparation aux entretiens, accompagnement à la création d'entreprise, etc. Ces prestations sont optionnelles et sur devis."
+        }
+      ],
+      "pratique": [
+        {
+          "question": "Puis-je faire mon bilan sur mon temps de travail ?",
+          "answer": "Oui, si votre employeur accepte. Vous pouvez demander un congé de bilan de compétences ou réaliser le bilan dans le cadre du plan de développement des compétences. Sinon, vous pouvez le faire hors temps de travail sans autorisation."
+        },
+        {
+          "question": "Combien de temps faut-il pour démarrer un bilan ?",
+          "answer": "Avec le CPF, vous pouvez démarrer très rapidement (sous 2 semaines après validation de votre dossier). Pour les autres financements, comptez 2 à 6 semaines selon l'organisme financeur."
+        },
+        {
+          "question": "Vos consultants sont-ils certifiés ?",
+          "answer": "Oui, tous nos consultants sont certifiés et expérimentés dans l'accompagnement professionnel. Notre organisme est certifié Qualiopi, gage de qualité reconnu par l'État."
+        },
+        {
+          "question": "Puis-je changer de consultant en cours de bilan ?",
+          "answer": "Si pour une raison quelconque le courant ne passe pas avec votre consultant, vous pouvez demander à en changer. Votre satisfaction et votre confort sont essentiels pour la réussite de votre bilan."
+        }
+      ]
+    }
   }
 }
 

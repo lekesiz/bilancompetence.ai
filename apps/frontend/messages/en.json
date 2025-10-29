@@ -123,6 +123,109 @@
         "description": "Certified advisors to guide you in your professional development"
       }
     }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Quickly find answers to your questions about skills assessment",
+    "allCategories": "All",
+    "stillHaveQuestions": "Still have questions?",
+    "teamHere": "Our team is here to help",
+    "contactUs": "Contact us",
+    "categories": {
+      "generalites": "General",
+      "deroulement": "Process",
+      "financement": "Funding",
+      "resultats": "Results",
+      "pratique": "Practical"
+    },
+    "questions": {
+      "generalites": [
+        {
+          "question": "What is a skills assessment?",
+          "answer": "A skills assessment is an individual support process that allows you to analyze your professional and personal skills, abilities, and motivations. It helps you define a realistic and motivating career project, or validate a training project."
+        },
+        {
+          "question": "How long does a skills assessment last?",
+          "answer": "A skills assessment typically lasts 20 to 24 hours, spread over 2 to 3 months. This duration allows for in-depth support while adapting to your pace and availability."
+        },
+        {
+          "question": "Is the skills assessment confidential?",
+          "answer": "Yes, absolutely! The assessment is strictly confidential. The results belong to you and cannot be shared with any third party (including your employer) without your written consent. This confidentiality is guaranteed by law."
+        },
+        {
+          "question": "Who can do a skills assessment?",
+          "answer": "Any active person can conduct a skills assessment: private sector employees, public agents, job seekers, self-employed workers. There are no age or seniority requirements."
+        }
+      ],
+      "deroulement": [
+        {
+          "question": "How does a skills assessment work?",
+          "answer": "The assessment takes place in 3 phases: 1) Preliminary phase (4-6h) to define your needs and objectives, 2) Investigation phase (12-16h) to explore your skills and career paths, 3) Conclusion phase (4-6h) to develop your project and action plan."
+        },
+        {
+          "question": "Can I do my assessment remotely?",
+          "answer": "Yes! We offer 100% remote assessments, in-person, or mixed format. Remote assessments are conducted via video conferencing and are just as effective as in-person assessments."
+        },
+        {
+          "question": "How often do appointments take place?",
+          "answer": "Appointments are generally spaced 1 to 2 weeks apart to give you time to complete personal work between each session. The pace is adapted to your availability and constraints."
+        },
+        {
+          "question": "What tests will I take?",
+          "answer": "You will take several scientifically validated psychometric tests: MBTI personality test, RIASEC professional interests test, skills inventory, and professional values test. These tests are reflection tools."
+        }
+      ],
+      "financement": [
+        {
+          "question": "How much does a skills assessment cost?",
+          "answer": "The cost of a skills assessment ranges between €1,500 and €3,000 depending on duration and terms. At BilanCompetence.AI, our rates are transparent and we help you prepare your funding application."
+        },
+        {
+          "question": "Can I use my CPF to fund my assessment?",
+          "answer": "Yes! The skills assessment is eligible for CPF (Personal Training Account). You can check your rights on moncompteformation.gouv.fr and register directly online. No employer authorization is required."
+        },
+        {
+          "question": "What if my CPF doesn't cover the full cost?",
+          "answer": "Several solutions exist: top-up by Pôle Emploi if you are a job seeker, supplementary funding by your OPCO, or employer participation through the skills development plan. We help you find the best solution."
+        },
+        {
+          "question": "Will my employer be informed if I use my CPF?",
+          "answer": "No, if you conduct your assessment outside work hours and finance it through your CPF, your employer will not be informed. Your process remains strictly confidential."
+        }
+      ],
+      "resultats": [
+        {
+          "question": "What will I receive at the end of the assessment?",
+          "answer": "You will receive a confidential summary document summarizing your skills, motivations, career project and detailed action plan. You will also receive a certificate of assessment completion."
+        },
+        {
+          "question": "Does the assessment guarantee finding a job?",
+          "answer": "The assessment is not a job placement service, but a decision-making tool. It helps you clarify your project, identify your strengths and build a concrete action plan. It is then up to you to implement this plan."
+        },
+        {
+          "question": "Can I be accompanied after the assessment?",
+          "answer": "Yes, we offer post-assessment support services: job search assistance, interview preparation, entrepreneurship support, etc. These services are optional and by quotation."
+        }
+      ],
+      "pratique": [
+        {
+          "question": "Can I do my assessment during work hours?",
+          "answer": "Yes, if your employer agrees. You can request a skills assessment leave or conduct the assessment as part of the skills development plan. Otherwise, you can do it outside work hours without authorization."
+        },
+        {
+          "question": "How long does it take to start an assessment?",
+          "answer": "With CPF, you can start very quickly (within 2 weeks after validation of your application). For other funding, allow 2 to 6 weeks depending on the funding organization."
+        },
+        {
+          "question": "Are your consultants certified?",
+          "answer": "Yes, all our consultants are certified and experienced in professional support. Our organization is Qualiopi certified, a quality guarantee recognized by the State."
+        },
+        {
+          "question": "Can I change consultants during the assessment?",
+          "answer": "If for any reason you don't get along with your consultant, you can request a change. Your satisfaction and comfort are essential for the success of your assessment."
+        }
+      ]
+    }
   }
 }
 
