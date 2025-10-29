@@ -10,6 +10,8 @@ import Link from 'next/link';
 import Button from '@/components/qualiopi/Button';
 import Card from '@/components/qualiopi/Card';
 
+export const dynamic = 'force-dynamic';
+
 const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
   password: z.string().min(8, 'Password must be at least 8 characters'),

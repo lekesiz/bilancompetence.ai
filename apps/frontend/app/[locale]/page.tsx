@@ -7,6 +7,8 @@ import StructuredData from '@/components/seo/StructuredData';
 import Button from '@/components/qualiopi/Button';
 import Card from '@/components/qualiopi/Card';
 
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   const t = useTranslations();
   

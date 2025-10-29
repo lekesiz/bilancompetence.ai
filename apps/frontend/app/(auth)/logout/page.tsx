@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
+export const dynamic = 'force-dynamic';
+
 export default function LogoutPage() {
   const router = useRouter();
   const { logout, isLoading } = useAuth();

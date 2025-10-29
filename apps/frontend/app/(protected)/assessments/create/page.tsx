@@ -1,5 +1,8 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { useRouter } from 'next/navigation';
 import { useAssessmentWizard } from '@/hooks/useAssessmentWizard';
 import { AssessmentWizard } from '@/components/assessment/AssessmentWizard';

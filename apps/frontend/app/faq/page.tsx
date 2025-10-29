@@ -4,6 +4,9 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 
+// Force dynamic rendering to avoid prerendering issues
+export const dynamic = 'force-dynamic';
+
 interface FAQItem {
   category: string;
   question: string;

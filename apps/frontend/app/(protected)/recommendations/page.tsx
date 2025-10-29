@@ -1,5 +1,8 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useJobRecommendations, RecommendationFilters, Job } from '@/hooks/useJobRecommendations';

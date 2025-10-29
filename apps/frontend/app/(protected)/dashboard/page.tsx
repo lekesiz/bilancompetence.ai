@@ -8,6 +8,8 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { DashboardErrorBoundary } from './components/DashboardErrorBoundary';
 import { DashboardSkeleton } from './components/DashboardSkeleton';
 
+export const dynamic = 'force-dynamic';
+
 // Error boundary fallback
 function DashboardError() {
   return (

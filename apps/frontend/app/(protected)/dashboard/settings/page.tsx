@@ -1,5 +1,8 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { motion } from 'framer-motion';
 import { Settings, User, Bell, Shield, Palette } from 'lucide-react';
 import UserPreferences from '@/components/settings/UserPreferences';
