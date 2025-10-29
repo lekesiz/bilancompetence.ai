@@ -27,10 +27,20 @@
 - **Railway Config:** `apps/backend/railway.json`
 
 ### Database - Neon PostgreSQL
-- **Erişim:** Proje içerisinde environment variables'da mevcut
+- **Organization ID:** org-shy-voice-89002201
+- **Project ID:** delicate-recipe-65517628
+- **REST API Endpoint:** https://ep-shy-waterfall-ahr8f8tp.apirest.c-3.us-east-1.aws.neon.tech/neondb/rest/v1
+- **Connection String:** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require`
+- **API Token:** napi_dgroac4a9beezwn10uja4dexo5e40i345ge214f2c3dl8rvjsfrq98whbco1hkbl (`.neon-token.txt`)
 - **Type:** Serverless PostgreSQL
 - **Connection:** Connection pooling aktif
 - **Backups:** Automated daily backups
+
+### Stack Auth (Neon Auth)
+- **Project ID:** 3915fe6f-2981-447f-af29-cc0f334e3b19
+- **JWKS URL:** https://api.stack-auth.com/api/v1/projects/3915fe6f-2981-447f-af29-cc0f334e3b19/.well-known/jwks.json
+- **Publishable Key:** pck_ca57765qg0dcm4dzv01m2fp9g2fch85zrvc5tb3hvkqn8
+- **Secret Key:** ssk_23mm4xxm2pdtczfky25h2f51v8dvtt2h7f5n3kgwpxmkg
 
 ---
 
@@ -129,6 +139,13 @@ curl https://app.bilancompetence.ai
 - **Token:** 6e8a9275-7fcf-4305-bf75-7213c0c028a7
 - **Dosya:** `.railway-token.txt`
 - **URL:** https://web-production-60dbd.up.railway.app
+
+### Neon
+- **API Token:** napi_dgroac4a9beezwn10uja4dexo5e40i345ge214f2c3dl8rvjsfrq98whbco1hkbl
+- **Dosya:** `.neon-token.txt` ve `.neon-config.txt`
+- **Organization ID:** org-shy-voice-89002201
+- **Project ID:** delicate-recipe-65517628
+- **Stack Auth Project ID:** 3915fe6f-2981-447f-af29-cc0f334e3b19
 
 ---
 
