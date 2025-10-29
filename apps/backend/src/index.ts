@@ -32,6 +32,7 @@ import twoFactorRoutes from './routes/twoFactor.js';
 import chatEnhancedRoutes from './routes/chatEnhanced.js';
 import sessionsRoutes from './routes/sessions.js';
 import healthRoutes from './routes/health.js';
+import consentRoutes from './routes/consent.js';
 import { apiLimiter, authLimiter, publicLimiter, uploadLimiter } from './middleware/rateLimiter.js';
 import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
@@ -180,6 +181,7 @@ app.use('/api/pennylane', pennylaneRoutes);
 app.use('/api/2fa', twoFactorRoutes);
 app.use('/api/chat-enhanced', chatEnhancedRoutes);
 app.use('/api/sessions', sessionsRoutes);
+app.use('/api/consent', consentRoutes);
 
 // Sentry automatically captures errors in v8
 

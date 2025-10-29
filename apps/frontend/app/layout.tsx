@@ -3,6 +3,7 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { ConsentBanner } from "@/components/consent";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { QueryProvider } from "@/contexts/QueryProvider";
 import { Analytics } from "@vercel/analytics/react";
@@ -46,6 +47,7 @@ export default function RootLayout({
             <Header />
             <main>{children}</main>
             <Footer />
+            <ConsentBanner />
             <Toaster position="top-right" richColors closeButton />
             <Analytics />
             <SpeedInsights />

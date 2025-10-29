@@ -1,0 +1,40 @@
+          at invokeCallback (/Users/mikail/Desktop/bilancompetence.ai/node_modules/raw-body/index.js:238:16)
+          at done (/Users/mikail/Desktop/bilancompetence.ai/node_modules/raw-body/index.js:227:7)
+          at IncomingMessage.onEnd (/Users/mikail/Desktop/bilancompetence.ai/node_modules/raw-body/index.js:287:7)
+          at IncomingMessage.emit (node:events:508:28)
+          at endReadableNT (node:internal/streams/readable:1701:12)
+          at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+      at app.logerror (../../node_modules/express/lib/application.js:647:43)
+
+PASS src/__tests__/validators/authValidator.spec.ts
+PASS src/__tests__/services/supabaseService.spec.ts
+PASS src/__tests__/routes/export.integration.test.ts
+FAIL src/__tests__/services/schedulingService.spec.ts
+  ● Test suite failed to run
+
+    Cannot find module 'vitest' from 'src/__tests__/services/schedulingService.spec.ts'
+
+      3 |  */
+      4 |
+    > 5 | import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+        | ^
+      6 | import SchedulingService from '../../services/schedulingService';
+      7 | import { v4 as uuidv4 } from 'uuid';
+      8 |
+
+      at Resolver._throwModNotFoundError (../../node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.<anonymous> (src/__tests__/services/schedulingService.spec.ts:5:1)
+
+Test Suites: 11 failed, 7 passed, 18 total
+Tests:       163 failed, 1 skipped, 266 passed, 430 total
+Snapshots:   0 total
+Time:        23.615 s, estimated 24 s
+Ran all test suites.
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path /Users/mikail/Desktop/bilancompetence.ai/apps/backend
+npm error workspace @bilancompetence/backend@0.0.1
+npm error location /Users/mikail/Desktop/bilancompetence.ai/apps/backend
+npm error command failed
+npm error command sh -c jest

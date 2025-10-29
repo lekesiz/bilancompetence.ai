@@ -1,0 +1,31 @@
+# Colonnes ajoutées avec succès dans Supabase
+Date: 2025-10-25
+
+## Résultats de la requête SQL
+
+### Table audit_logs (11 colonnes totales)
+- id (uuid)
+- user_id (uuid)
+- entity_type (character varying)
+- entity_id (uuid)
+- action (character varying)
+- old_values (jsonb)
+- new_values (jsonb)
+- ip_address (inet)
+- user_agent (text)
+- created_at (timestamp without time zone)
+- **changes (jsonb)** ✅ AJOUTÉE
+
+### Table sessions (colonnes visibles)
+- id (uuid)
+- bilan_id (uuid)
+- consultant_id (uuid)
+- **expires_at (timestamptz)** ✅ AJOUTÉE (probablement)
+
+## Statut
+✅ Les colonnes manquantes ont été ajoutées avec succès
+✅ La requête SQL a retourné 24 rows (toutes les colonnes des deux tables)
+
+## Prochaine étape
+Redémarrer le backend Railway pour qu'il détecte les nouvelles colonnes
+

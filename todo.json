@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "last_updated": "2025-10-27T12:00:00Z",
+  "items": [
+    {
+      "id": "BC-001",
+      "title": "Complete Etap 0: Discovery & Planning",
+      "role": "TechLead",
+      "description": "Create comprehensive code inventory, dependency graph, and initial task breakdown for all subsequent phases",
+      "labels": ["area/planning", "priority/P0", "phase/etap-0"],
+      "dependencies": [],
+      "acceptance_criteria": [
+        "Complete project structure documented",
+        "All services and routes catalogued",
+        "Dependency analysis completed",
+        "Initial risk assessment done",
+        "Task breakdown for Etap 1-7 created"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/plan-and-inventory.md",
+        "MANUS/TODO/todo.json"
+      ],
+      "estimated_hours": 4,
+      "status": "in_progress"
+    },
+    {
+      "id": "BC-002",
+      "title": "Etap 1: Build & Smoke Test - Local Environment",
+      "role": "DevOps",
+      "description": "Ensure project builds and runs locally with Docker, verify migrations, create .env.example, run basic smoke tests",
+      "labels": ["area/devops", "priority/P1", "phase/etap-1"],
+      "dependencies": ["BC-001"],
+      "acceptance_criteria": [
+        "Docker Compose successfully builds all services",
+        "Database migrations run without errors",
+        ".env.example is complete and documented",
+        "Backend health check returns 200",
+        "Frontend loads successfully",
+        "Basic smoke tests pass"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-1-build-smoke-test.md",
+        ".env.example",
+        "RUNBOOK.md"
+      ],
+      "estimated_hours": 6,
+      "status": "planned"
+    },
+    {
+      "id": "BC-003",
+      "title": "Etap 2: Code Health & Cleanup",
+      "role": "Backend",
+      "description": "Run linters, remove dead code, eliminate duplications, modularize services, clean up parallel/redundant structures",
+      "labels": ["area/backend", "area/frontend", "priority/P1", "phase/etap-2"],
+      "dependencies": ["BC-002"],
+      "acceptance_criteria": [
+        "ESLint/Prettier configured and passing",
+        "No dead code detected",
+        "Code duplication < 5%",
+        "All Supabase services migrated to Neon",
+        "Backup files removed",
+        "Consistent naming conventions"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-2-code-cleanup.md",
+        ".eslintrc.json",
+        ".prettierrc"
+      ],
+      "estimated_hours": 12,
+      "status": "planned"
+    },
+    {
+      "id": "BC-004",
+      "title": "Etap 3: Security & Compliance Audit",
+      "role": "Security",
+      "description": "Run SCA/SAST, scan for secrets/licenses, verify access controls, implement logging/masking, create RGPD data flow map",
+      "labels": ["area/security", "priority/P0", "phase/etap-3"],
+      "dependencies": ["BC-003"],
+      "acceptance_criteria": [
+        "No high/critical vulnerabilities",
+        "All secrets moved to env vars",
+        "License compliance verified",
+        "RGPD data flow documented",
+        "PII masking implemented",
+        "Security headers configured",
+        "Rate limiting implemented"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-3-security-audit.md",
+        "MANUS/CHECKS/security-checklist.md",
+        "MANUS/CHECKS/rgpd-compliance.md"
+      ],
+      "estimated_hours": 10,
+      "status": "planned"
+    },
+    {
+      "id": "BC-005",
+      "title": "Etap 4: Test Strategy & Automation",
+      "role": "QA",
+      "description": "Implement unit/integration/e2e tests, contract tests, load/performance tests, achieve ≥70% coverage",
+      "labels": ["area/qa", "priority/P1", "phase/etap-4"],
+      "dependencies": ["BC-003"],
+      "acceptance_criteria": [
+        "Unit test coverage ≥ 70%",
+        "Integration tests for all critical paths",
+        "E2E tests for main user flows",
+        "Contract tests for API endpoints",
+        "Performance benchmarks established",
+        "CI/CD runs all tests automatically"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-4-test-strategy.md",
+        "apps/backend/src/**/*.test.ts",
+        "apps/frontend/__tests__/**/*.test.tsx"
+      ],
+      "estimated_hours": 16,
+      "status": "planned"
+    },
+    {
+      "id": "BC-006",
+      "title": "Etap 5: Data/AI Integrations",
+      "role": "DataAI",
+      "description": "Implement ESCO/spaCy/OpenAI integrations with rate limiting, retry logic, explainable recommendations, France Travail/ROME validation",
+      "labels": ["area/ai", "priority/P2", "phase/etap-5"],
+      "dependencies": ["BC-004"],
+      "acceptance_criteria": [
+        "ESCO dataset integrated",
+        "spaCy NLP pipeline working",
+        "OpenAI API with rate limiting",
+        "Retry logic with exponential backoff",
+        "Explainable AI recommendations",
+        "France Travail/ROME validation",
+        "Cost monitoring implemented"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-5-ai-integrations.md",
+        "apps/backend/src/services/aiService.ts",
+        "apps/backend/src/services/escoService.ts"
+      ],
+      "estimated_hours": 20,
+      "status": "planned"
+    },
+    {
+      "id": "BC-007",
+      "title": "Etap 6: DevOps & Production Readiness",
+      "role": "DevOps",
+      "description": "Optimize Docker/Compose, implement prod-like config, backup/restore procedures, observability (logs/metrics/traces)",
+      "labels": ["area/devops", "priority/P1", "phase/etap-6"],
+      "dependencies": ["BC-005"],
+      "acceptance_criteria": [
+        "Multi-stage Docker builds optimized",
+        "Environment-specific configs (dev/stage/prod)",
+        "Automated backup/restore tested",
+        "Structured logging implemented",
+        "Metrics collection configured",
+        "Health checks on all services",
+        "Zero-downtime deployment strategy"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-6-devops-production.md",
+        "docker-compose.prod.yml",
+        "RUNBOOK.md"
+      ],
+      "estimated_hours": 12,
+      "status": "planned"
+    },
+    {
+      "id": "BC-008",
+      "title": "Etap 7: UX/i18n/Accessibility/SEO",
+      "role": "Frontend",
+      "description": "Implement TR/FR i18n, RGAA Level AA accessibility, optimize Lighthouse scores, basic SEO meta tags",
+      "labels": ["area/frontend", "priority/P2", "phase/etap-7"],
+      "dependencies": ["BC-005"],
+      "acceptance_criteria": [
+        "i18n for TR/FR complete",
+        "RGAA Level AA compliance",
+        "Lighthouse score > 90",
+        "SEO meta tags on all pages",
+        "Keyboard navigation working",
+        "Screen reader compatible",
+        "Mobile responsive verified"
+      ],
+      "artifacts": [
+        "MANUS/REPORTS/etap-7-ux-accessibility.md",
+        "MANUS/CHECKS/rgaa-checklist.md",
+        "apps/frontend/lib/i18n/"
+      ],
+      "estimated_hours": 14,
+      "status": "planned"
+    },
+    {
+      "id": "BC-009",
+      "title": "Final: Production Launch Delivery",
+      "role": "PM",
+      "description": "Create comprehensive delivery package with demo scenarios, installation guide, runbook, compliance docs, changelog, KPI metrics",
+      "labels": ["area/docs", "priority/P0", "phase/final"],
+      "dependencies": ["BC-004", "BC-006", "BC-007", "BC-008"],
+      "acceptance_criteria": [
+        "Demo scenario documented",
+        "Installation guide complete",
+        "Runbook with troubleshooting",
+        "All compliance docs ready",
+        "CHANGELOG up to date",
+        "KPI dashboard configured",
+        "Handoff meeting completed"
+      ],
+      "artifacts": [
+        "MANUS/FINAL/DELIVERY.md",
+        "RUNBOOK.md",
+        "CHANGELOG.md",
+        "MANUS/CHECKS/launch-checklist.md"
+      ],
+      "estimated_hours": 8,
+      "status": "planned"
+    }
+  ],
+  "summary": {
+    "total_items": 9,
+    "by_status": {
+      "planned": 8,
+      "in_progress": 1,
+      "review": 0,
+      "blocked": 0,
+      "done": 0
+    },
+    "total_estimated_hours": 102,
+    "critical_path": ["BC-001", "BC-002", "BC-003", "BC-004", "BC-005", "BC-006", "BC-007", "BC-009"]
+  }
+}
+
