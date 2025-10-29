@@ -13,6 +13,8 @@
 - **Branch:** `main` → production
 - **Framework:** Next.js 14
 - **Test URL:** https://app.bilancompetence.ai (production ortamında test yapılıyor)
+- **Vercel Token:** v5PAlpB1aGUijv8YHmmMSSTZ (`.vercel-token.txt`)
+- **Project ID:** prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO
 
 ### Backend - Railway
 - **URL:** https://web-production-60dbd.up.railway.app
@@ -20,6 +22,9 @@
 - **Branch:** `main` → production
 - **Framework:** Express.js + TypeScript
 - **Health Check:** `/health`
+- **Version Endpoint:** `/api/version`
+- **Railway Token:** 6e8a9275-7fcf-4305-bf75-7213c0c028a7 (`.railway-token.txt`)
+- **Railway Config:** `apps/backend/railway.json`
 
 ### Database - Neon PostgreSQL
 - **Erişim:** Proje içerisinde environment variables'da mevcut
@@ -42,13 +47,28 @@
 
 2. **Otomatik Deployment**
    - ✅ Vercel → Otomatik deploy başlar
-   - ✅ Railway → Otomatik deploy başar
+   - ✅ Railway → Otomatik deploy başlar (GitHub integration)
    - ⏱️ Genellikle 2-5 dakika içinde live olur
 
 3. **Test Süreci**
    - ✅ Production URL'de test: https://app.bilancompetence.ai
    - ✅ Browser testleri online yapılıyor
    - ✅ Son kullanıcı testleri production ortamında gerçekleştiriliyor
+
+### Manual Deploy Tetikleme
+
+#### Vercel
+```bash
+cd apps/frontend
+npx vercel@latest deploy --token v5PAlpB1aGUijv8YHmmMSSTZ --prod --yes
+```
+
+#### Railway
+```bash
+# Railway otomatik deploy GitHub webhook kullanıyor
+# Manuel deploy için Railway dashboard kullanılmalı
+# Veya: git commit --allow-empty -m "chore: Force Railway redeploy" && git push
+```
 
 ---
 
@@ -72,78 +92,43 @@
 1. **Local Development**
    - Backend: `localhost:5000` veya `localhost:3001`
    - Frontend: `localhost:3000`
-   - Database: Local veya Neon dev instance
+   - Database: Neon (development connection)
 
 2. **Production Testing**
-   - ✅ **Ana test ortamı: Production**
-   - URL: https://app.bilancompetence.ai
-   - Test tipi: Son kullanıcı browser testleri
-   - Test yapan: Project owner
-   - Not: Production ortamında test yapılması tercih ediliyor
+   - ✅ Backend: https://web-production-60dbd.up.railway.app
+   - ✅ Frontend: https://app.bilancompetence.ai
+   - ⚠️ Production database kullanılıyor - dikkatli test yapılmalı
 
-### Test Yaklaşımı
+### Test Endpoints
 
-**⚠️ ÖNEMLİ:** 
-- Final testler production ortamında yapılıyor
-- Git push sonrası otomatik deploy → Live test
-- Browser testleri https://app.bilancompetence.ai üzerinde gerçekleştiriliyor
+**Backend Health:**
+```bash
+curl https://web-production-60dbd.up.railway.app/health
+```
 
----
+**Backend Version:**
+```bash
+curl https://web-production-60dbd.up.railway.app/api/version
+```
 
-## 📊 MONITORING
-
-### Health Checks
-- Backend: https://web-production-60dbd.up.railway.app/health
-- Frontend: https://app.bilancompetence.ai (live check)
-
-### Logs
-- Railway: Backend logs
-- Vercel: Frontend logs
-- Neon: Query logs
+**Frontend:**
+```bash
+curl https://app.bilancompetence.ai
+```
 
 ---
 
-## 🔐 GÜVENLİK NOTLARI
+## 🔐 AUTHENTICATION & TOKENS
 
-1. **Environment Variables:**
-   - Neon erişim bilgileri proje içinde secure şekilde saklanıyor
-   - Railway ve Vercel environment variables UI'dan yönetiliyor
+### Vercel
+- **Token:** v5PAlpB1aGUijv8YHmmMSSTZ
+- **Dosya:** `.vercel-token.txt`
+- **Project ID:** prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO
 
-2. **Deployment Güvenliği:**
-   - Otomatik deploy aktif (git push → deploy)
-   - Main branch protection önerilir (henüz uygulanmadıysa)
-
----
-
-## 📝 ÖNEMLİ NOTLAR
-
-### Deployment Best Practices
-
-1. **Git Push Öncesi:**
-   - ✅ Local test yap
-   - ✅ Build kontrolü (`npm run build`)
-   - ✅ Type check (`npm run type-check`)
-
-2. **Git Push Sonrası:**
-   - ⏱️ 2-5 dakika bekle (deploy tamamlansın)
-   - ✅ Production URL'de test et
-   - ✅ Health checks kontrol et
-
-3. **Test Süreci:**
-   - ✅ Production ortamında browser testleri yap
-   - ✅ Tüm kritik flow'ları test et
-   - ✅ Mobile responsive test
-
----
-
-## 🔄 ROLLBACK STRATEJİSİ
-
-### Vercel Rollback
-- Vercel dashboard → Deployments → Previous deployment'a rollback
-
-### Railway Rollback
-- Railway dashboard → Deployments → Previous build'e rollback
-- Veya `git revert` + push
+### Railway
+- **Token:** 6e8a9275-7fcf-4305-bf75-7213c0c028a7
+- **Dosya:** `.railway-token.txt`
+- **URL:** https://web-production-60dbd.up.railway.app
 
 ---
 
@@ -183,9 +168,13 @@
    - Production database kullanılıyor
    - Backup strategy mevcut (automated daily)
 
+4. **Tokens:**
+   - Vercel ve Railway token'ları proje içinde saklanıyor
+   - `.gitignore`'a eklendi
+   - Güvenlik: Production'da kullanım için dikkatli olunmalı
+
 ---
 
 **Not:** Bu bilgiler tüm çalışma süreçlerinde referans alınacak.
 
 **Son Güncelleme:** 30 Ekim 2025
-
