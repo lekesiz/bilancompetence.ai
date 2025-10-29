@@ -1,0 +1,111 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "noData": "No data available"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create account"
+  },
+  "consent": {
+    "title": "Cookie Management and RGPD Consent",
+    "description": "We use cookies to improve your experience, analyze our traffic and personalize our content. By continuing to use our site, you accept our privacy policy.",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "savePreferences": "Save preferences",
+    "essential": {
+      "title": "Essential Cookies",
+      "description": "Necessary for the website to function (session, security). They cannot be disabled."
+    },
+    "analytics": {
+      "title": "Analytics Cookies",
+      "description": "Allow us to analyze site usage to improve our services (Google Analytics, etc.)."
+    },
+    "marketing": {
+      "title": "Marketing Cookies",
+      "description": "Used to send you personalized advertising and marketing communications."
+    },
+    "preferences": {
+      "title": "Preference Cookies",
+      "description": "Remember your choices (language, theme, settings) to improve your experience."
+    },
+    "thirdParty": {
+      "title": "Third-Party Cookies",
+      "description": "Used by integrated third-party services (videos, maps, social networks, etc.)."
+    },
+    "dataProcessing": {
+      "title": "Data Processing",
+      "description": "Necessary to provide our skills assessment services. You can continue without consenting, but some features will be limited."
+    },
+    "profiling": {
+      "title": "Profiling and Automated Decisions",
+      "description": "Use of AI for profile analysis and personalized recommendations."
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "startAssessment": "Start my assessment"
+  },
+  "language": {
+    "french": "Français",
+    "english": "English",
+    "switch": "Switch language"
+  },
+  "home": {
+    "hero": {
+      "title": "Give new life to your career",
+      "subtitle": "Personalized skills assessment with AI and expert guidance",
+      "cta": "Start my assessment",
+      "learnMore": "Learn more"
+    },
+    "stats": {
+      "users": "Users",
+      "bilans": "Assessments completed",
+      "satisfaction": "Satisfaction"
+    },
+    "features": {
+      "title": "Why choose BilanCompetence.AI?",
+      "ai": {
+        "title": "Artificial Intelligence",
+        "description": "In-depth analysis of your skills with advanced AI algorithms"
+      },
+      "personalized": {
+        "title": "100% Personalized",
+        "description": "Recommendations tailored to your profile and aspirations"
+      },
+      "expert": {
+        "title": "Expert Guidance",
+        "description": "Certified advisors to guide you in your professional development"
+      }
+    }
+  }
+}
+

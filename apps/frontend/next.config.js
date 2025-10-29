@@ -12,6 +12,9 @@ const getEnvVars = () => {
   return env;
 };
 
+const createNextIntlPlugin = require('next-intl/plugin');
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -40,4 +43,4 @@ const nextConfig = {
   poweredByHeader: false,
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

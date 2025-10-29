@@ -2,20 +2,28 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { usePathname, useRouter } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
-
-const navLinks = [
-  { href: '/', label: 'Accueil' },
-  { href: '/quest-ce-quun-bilan', label: "Qu'est-ce qu'un bilan ?" },
-  { href: '/methodologie', label: 'Méthodologie' },
-  { href: '/financement', label: 'Financement' },
-  { href: '/bilan-a-distance', label: 'Bilan à distance' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/contact', label: 'Contact' },
-];
+import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
 
 export const Header = () => {
+  const t = useTranslations('navigation');
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Navigation links with i18n support
+  const navLinks = [
+    { href: `/${locale === 'fr' ? '' : locale}`, label: t('home') },
+    { href: `/${locale === 'fr' ? '' : locale}/quest-ce-quun-bilan`, label: "Qu'est-ce qu'un bilan ?" },
+    { href: `/${locale === 'fr' ? '' : locale}/methodologie`, label: 'Méthodologie' },
+    { href: `/${locale === 'fr' ? '' : locale}/financement`, label: 'Financement' },
+    { href: `/${locale === 'fr' ? '' : locale}/bilan-a-distance`, label: 'Bilan à distance' },
+    { href: `/${locale === 'fr' ? '' : locale}/faq`, label: 'FAQ' },
+    { href: `/${locale === 'fr' ? '' : locale}/contact`, label: t('contact') },
+  ];
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
@@ -44,18 +52,20 @@ export const Header = () => {
             ))}
             
             <div className="ml-4 flex items-center space-x-3">
+              <LanguageSwitcher />
               <ThemeToggle />
               <Link
-                href="/login"
+                href={`/${locale === 'fr' ? '' : locale}/login`}
                 className="btn-primary btn-sm"
               >
-                Commencer mon bilan
+                {t('startAssessment')}
               </Link>
             </div>
           </nav>
 
           {/* Mobile menu button */}
           <div className="flex items-center space-x-3 lg:hidden">
+            <LanguageSwitcher />
             <ThemeToggle />
             <button
               type="button"
@@ -117,11 +127,11 @@ export const Header = () => {
               </Link>
             ))}
             <Link
-              href="/login"
+              href={`/${locale === 'fr' ? '' : locale}/login`}
               className="block w-full text-center btn-primary mt-4"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Commencer mon bilan
+              {t('startAssessment')}
             </Link>
           </div>
         </div>

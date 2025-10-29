@@ -1,0 +1,111 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "noData": "Aucune donnée disponible"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "register": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "rememberMe": "Se souvenir de moi",
+    "alreadyHaveAccount": "Vous avez déjà un compte?",
+    "noAccount": "Pas encore de compte?",
+    "createAccount": "Créer un compte"
+  },
+  "consent": {
+    "title": "Gestion des Cookies et Consentement RGPD",
+    "description": "Nous utilisons des cookies pour améliorer votre expérience, analyser notre trafic et personnaliser notre contenu. En continuant à utiliser notre site, vous acceptez notre politique de confidentialité.",
+    "acceptAll": "Tout accepter",
+    "rejectAll": "Refuser tout",
+    "customize": "Personnaliser",
+    "savePreferences": "Enregistrer les préférences",
+    "essential": {
+      "title": "Cookies Essentiels",
+      "description": "Nécessaires au fonctionnement du site (session, sécurité). Ils ne peuvent pas être désactivés."
+    },
+    "analytics": {
+      "title": "Cookies Analytiques",
+      "description": "Nous permettent d'analyser l'utilisation du site pour améliorer nos services (Google Analytics, etc.)."
+    },
+    "marketing": {
+      "title": "Cookies Marketing",
+      "description": "Utilisés pour vous envoyer des communications publicitaires et marketing personnalisées."
+    },
+    "preferences": {
+      "title": "Cookies de Préférences",
+      "description": "Mémorisent vos choix (langue, thème, paramètres) pour améliorer votre expérience."
+    },
+    "thirdParty": {
+      "title": "Cookies Tiers",
+      "description": "Utilisés par des services tiers intégrés (vidéos, cartes, réseaux sociaux, etc.)."
+    },
+    "dataProcessing": {
+      "title": "Traitement des Données",
+      "description": "Nécessaire pour fournir nos services de bilan de compétences. Vous pouvez continuer sans consentir, mais certaines fonctionnalités seront limitées."
+    },
+    "profiling": {
+      "title": "Profilage et Décisions Automatisées",
+      "description": "Utilisation de l'IA pour l'analyse de profil et les recommandations personnalisées."
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "about": "À propos",
+    "services": "Services",
+    "contact": "Contact",
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "startAssessment": "Commencer mon bilan"
+  },
+  "language": {
+    "french": "Français",
+    "english": "English",
+    "switch": "Changer de langue"
+  },
+  "home": {
+    "hero": {
+      "title": "Donnez un nouveau souffle à votre carrière",
+      "subtitle": "Bilan de compétences personnalisé avec IA et accompagnement expert",
+      "cta": "Commencer mon bilan",
+      "learnMore": "En savoir plus"
+    },
+    "stats": {
+      "users": "Utilisateurs",
+      "bilans": "Bilans réalisés",
+      "satisfaction": "Satisfaction"
+    },
+    "features": {
+      "title": "Pourquoi choisir BilanCompetence.AI ?",
+      "ai": {
+        "title": "Intelligence Artificielle",
+        "description": "Analyse approfondie de vos compétences avec des algorithmes IA avancés"
+      },
+      "personalized": {
+        "title": "100% Personnalisé",
+        "description": "Recommandations adaptées à votre profil et vos aspirations"
+      },
+      "expert": {
+        "title": "Accompagnement Expert",
+        "description": "Conseillers certifiés pour vous guider dans votre évolution professionnelle"
+      }
+    }
+  }
+}
+
