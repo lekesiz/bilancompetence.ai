@@ -8,13 +8,15 @@
 ## 🚀 DEPLOYMENT ALTYAPISI
 
 ### Frontend - Vercel
-- **URL:** https://app.bilancompetence.ai
+- **Production URL:** https://app.bilancompetence.ai
+- **Deployment URL:** bilancompetence-4nrntnr7n-lekesizs-projects.vercel.app
 - **Deployment:** Otomatik (git push sonrası)
 - **Branch:** `main` → production
 - **Framework:** Next.js 14
 - **Test URL:** https://app.bilancompetence.ai (production ortamında test yapılıyor)
 - **Vercel Token:** v5PAlpB1aGUijv8YHmmMSSTZ (`.vercel-token.txt`)
 - **Project ID:** prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO
+- **⚠️ ÖNEMLİ:** Mevcut proje kullanılıyor - yeni proje oluşturma YAPILMAMALI
 
 ### Backend - Railway
 - **URL:** https://web-production-60dbd.up.railway.app
@@ -39,6 +41,7 @@
 ### Stack Auth (Neon Auth)
 - **Project ID:** 3915fe6f-2981-447f-af29-cc0f334e3b19
 - **JWKS URL:** https://api.stack-auth.com/api/v1/projects/3915fe6f-2981-447f-af29-cc0f334e3b19/.well-known/jwks.json
+- **JWKS Endpoint:** https://api.stack-auth.com/api/v1/projects/3915fe6f-2981-447f-af29-cc0f334e3b19/.well-known/jwks.json
 - **Publishable Key:** pck_ca57765qg0dcm4dzv01m2fp9g2fch85zrvc5tb3hvkqn8
 - **Secret Key:** ssk_23mm4xxm2pdtczfky25h2f51v8dvtt2h7f5n3kgwpxmkg
 
@@ -160,8 +163,14 @@ curl https://app.bilancompetence.ai
 
 ## 📞 KAYNAKLAR
 
-- **Frontend:** https://app.bilancompetence.ai
-- **Backend API:** https://web-production-60dbd.up.railway.app
+### Production URLs
+- **Frontend (Production):** https://app.bilancompetence.ai
+- **Frontend (Deployment):** bilancompetence-4nrntnr7n-lekesizs-projects.vercel.app
+- **Backend API:** web-production-60dbd.up.railway.app
+- **Backend API (Full URL):** https://web-production-60dbd.up.railway.app
+- **Stack Auth JWKS:** https://api.stack-auth.com/api/v1/projects/3915fe6f-2981-447f-af29-cc0f334e3b19/.well-known/jwks.json
+
+### Platform Links
 - **GitHub:** https://github.com/lekesiz/bilancompetence.ai
 - **Vercel Dashboard:** Vercel UI
 - **Railway Dashboard:** Railway UI
