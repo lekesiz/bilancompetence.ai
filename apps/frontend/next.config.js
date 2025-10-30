@@ -20,6 +20,13 @@ const nextConfig = {
   swcMinify: true,
   pageExtensions: ['ts', 'tsx'],
   env: getEnvVars(),
+  async redirects() {
+    return [
+      { source: '/', destination: '/fr', permanent: false },
+      { source: '/en', destination: '/fr', permanent: false },
+      { source: '/en/:path*', destination: '/fr/:path*', permanent: false },
+    ];
+  },
   // Image Optimization - P2.1: CRITICAL PERFORMANCE IMPROVEMENT
   // Enabled next/image optimization for LCP improvement of 1-2 seconds
   images: {
