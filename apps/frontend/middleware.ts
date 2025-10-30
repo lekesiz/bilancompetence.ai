@@ -7,10 +7,28 @@ const intlMiddleware = createMiddleware({
   defaultLocale,
   // Always prefix locales to avoid /fr -> / redirect
   localePrefix: 'always',
+  // Ignore Accept-Language and cookies; we control locale explicitly
+  localeDetection: false,
 });
 
 export default function middleware(request: NextRequest) {
-  // Let next-intl handle root and all routes
+  const { pathname } = request.nextUrl;
+
+  // Force default locale for root or unexpected paths
+  if (pathname === '/' || pathname === '') {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${defaultLocale}`;
+    return NextResponse.redirect(url);
+  }
+
+  // Temporary harden default: if route resolves to /en root, send to /fr
+  if (pathname === '/en' || pathname.startsWith('/en?')) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${defaultLocale}`;
+    return NextResponse.redirect(url);
+  }
+
+  // Delegate remaining handling to next-intl
   return intlMiddleware(request);
 }
 
