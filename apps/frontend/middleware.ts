@@ -14,18 +14,18 @@ const intlMiddleware = createMiddleware({
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Force default locale for root or unexpected paths
+  // Force default locale for root
   if (pathname === '/' || pathname === '') {
     const url = request.nextUrl.clone();
     url.pathname = `/${defaultLocale}`;
-    return NextResponse.redirect(url);
+    return NextResponse.rewrite(url);
   }
 
-  // Temporary harden default: if route resolves to /en root, send to /fr
-  if (pathname === '/en' || pathname.startsWith('/en?')) {
+  // Harden: rewrite any /en path to equivalent /fr path
+  if (pathname === '/en' || pathname.startsWith('/en/')) {
     const url = request.nextUrl.clone();
-    url.pathname = `/${defaultLocale}`;
-    return NextResponse.redirect(url);
+    url.pathname = pathname.replace(/^\/en(\/|$)/, '/fr$1');
+    return NextResponse.rewrite(url);
   }
 
   // Delegate remaining handling to next-intl
