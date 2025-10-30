@@ -1,6 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n-config';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 const intlMiddleware = createMiddleware({
   locales,
@@ -9,18 +9,8 @@ const intlMiddleware = createMiddleware({
 });
 
 export default function middleware(request: NextRequest) {
-  // Handle root route explicitly for next-intl
-  const { pathname } = request.nextUrl;
-  
-  // If root route and not already a locale route, redirect to default locale
-  if (pathname === '/' || pathname === '') {
-    // Redirect to /[locale] route with default locale
-    const url = request.nextUrl.clone();
-    url.pathname = `/${defaultLocale}`;
-    return NextResponse.redirect(url);
-  }
-  
-  // Use next-intl middleware for all other routes
+  // Delegate all routing to next-intl. With localePrefix 'as-needed',
+  // default locale (fr) is served at '/'.
   return intlMiddleware(request);
 }
 
