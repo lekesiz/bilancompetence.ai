@@ -12,12 +12,12 @@ export default function middleware(request: NextRequest) {
   // Handle root route explicitly for next-intl
   const { pathname } = request.nextUrl;
   
-  // If root route and not already a locale route, rewrite to default locale
+  // If root route and not already a locale route, redirect to default locale
   if (pathname === '/' || pathname === '') {
-    // Rewrite to /[locale] route with default locale
+    // Redirect to /[locale] route with default locale
     const url = request.nextUrl.clone();
     url.pathname = `/${defaultLocale}`;
-    return NextResponse.rewrite(url);
+    return NextResponse.redirect(url);
   }
   
   // Use next-intl middleware for all other routes
