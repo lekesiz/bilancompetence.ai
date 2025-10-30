@@ -20,6 +20,12 @@ const nextConfig = {
   swcMinify: true,
   pageExtensions: ['ts', 'tsx'],
   env: getEnvVars(),
+  async rewrites() {
+    return [
+      // Ensure root renders default locale content
+      { source: '/', destination: '/fr' },
+    ];
+  },
   // Image Optimization - P2.1: CRITICAL PERFORMANCE IMPROVEMENT
   // Enabled next/image optimization for LCP improvement of 1-2 seconds
   images: {
