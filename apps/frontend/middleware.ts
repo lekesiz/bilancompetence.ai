@@ -1,16 +1,24 @@
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n-config';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed', // fr için prefix yok, diğerleri için var
+  // Always prefix locales to avoid /fr -> / redirect
+  localePrefix: 'always',
 });
 
 export default function middleware(request: NextRequest) {
-  // Delegate all routing to next-intl. With localePrefix 'as-needed',
-  // default locale (fr) is served at '/'.
+  const { pathname } = request.nextUrl;
+
+  // Redirect root to default locale explicitly
+  if (pathname === '/' || pathname === '') {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${defaultLocale}`;
+    return NextResponse.redirect(url);
+  }
+
   return intlMiddleware(request);
 }
 
@@ -20,6 +28,6 @@ export const config = {
   // - _next (Next.js internals)
   // - _vercel (Vercel internals)
   // - files with an extension (e.g. .ico)
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  matcher: ['/((?!api|_next|_vercel|healthz|.*\\..*).*)'],
 };
 
