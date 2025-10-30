@@ -10,15 +10,7 @@ const intlMiddleware = createMiddleware({
 });
 
 export default function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Redirect root to default locale explicitly
-  if (pathname === '/' || pathname === '') {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${defaultLocale}`;
-    return NextResponse.redirect(url);
-  }
-
+  // Let next-intl handle root and all routes
   return intlMiddleware(request);
 }
 
