@@ -117,8 +117,34 @@ const getOrgId = (req: Request): string | null => {
 // ============================================
 
 /**
- * GET /api/admin/qualiopi/indicators
- * Get all Qualiopi indicators with status
+ * @swagger
+ * /api/admin/qualiopi/indicators:
+ *   get:
+ *     summary: Get all Qualiopi indicators
+ *     description: Retrieve all 32 Qualiopi indicators with their compliance status
+ *     tags: [Qualiopi]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Indicators retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 count:
+ *                   type: integer
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/indicators', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
   try {
@@ -142,9 +168,34 @@ router.get('/indicators', authMiddleware, requireAdminRole, async (req: Request,
 });
 
 /**
- * GET /api/admin/qualiopi/indicators/core
- * Get only core indicators (1, 11, 22)
- * NOTE: This must come BEFORE /indicators/:id to avoid route collision
+ * @swagger
+ * /api/admin/qualiopi/indicators/core:
+ *   get:
+ *     summary: Get core Qualiopi indicators
+ *     description: Retrieve the 3 core indicators (1, 11, 22) - most critical for certification
+ *     tags: [Qualiopi]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Core indicators retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 count:
+ *                   type: integer
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get(
   '/indicators/core',
@@ -173,8 +224,32 @@ router.get(
 );
 
 /**
- * GET /api/admin/qualiopi/indicators/:id
- * Get single indicator with full details
+ * @swagger
+ * /api/admin/qualiopi/indicators/{id}:
+ *   get:
+ *     summary: Get indicator details
+ *     description: Get full details of a specific Qualiopi indicator including evidence files
+ *     tags: [Qualiopi]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 32
+ *         description: Indicator ID (1-32)
+ *     responses:
+ *       200:
+ *         description: Indicator details retrieved successfully
+ *       400:
+ *         description: Invalid indicator ID
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get(
   '/indicators/:id',
@@ -210,8 +285,45 @@ router.get(
 );
 
 /**
- * PUT /api/admin/qualiopi/indicators/:id
- * Update indicator status
+ * @swagger
+ * /api/admin/qualiopi/indicators/{id}:
+ *   put:
+ *     summary: Update indicator status
+ *     description: Update the compliance status of a Qualiopi indicator
+ *     tags: [Qualiopi]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Indicator ID (1-32)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [COMPLIANT, MISSING, UNDER_REVIEW]
+ *               notes:
+ *                 type: string
+ *                 maxLength: 1000
+ *     responses:
+ *       200:
+ *         description: Status updated successfully
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.put(
   '/indicators/:id',
@@ -287,11 +399,42 @@ router.post(
       }
 
       // Validate request body
-      const validationResult = addEvidenceSchema.safeParse(req.body);
-      if (!validationResult.success) {
-        return res.status(400).json({
-          success: false,
-          error: 'Invalid request body',
+/**
+ * @swagger
+ * /api/admin/qualiopi/compliance:
+ *   get:
+ *     summary: Get compliance metrics
+ *     description: Get overall Qualiopi compliance percentage and breakdown
+ *     tags: [Qualiopi]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Compliance metrics retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     percentage:
+ *                       type: number
+ *                     compliant:
+ *                       type: integer
+ *                     missing:
+ *                       type: integer
+ *                     underReview:
+ *                       type: integer
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
+ */
+router.get('/compliance', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
           details: validationResult.error.flatten(),
         });
       }

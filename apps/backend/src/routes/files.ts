@@ -13,8 +13,40 @@ import {
 const router = Router();
 
 /**
- * POST /api/files/upload
- * Upload a file
+ * @swagger
+ * /api/files/upload:
+ *   post:
+ *     summary: Upload file
+ *     description: Upload a file to storage (requires multipart/form-data in production)
+ *     tags: [Files]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fileName
+ *               - fileType
+ *             properties:
+ *               fileName:
+ *                 type: string
+ *               fileType:
+ *                 type: string
+ *               bucket:
+ *                 type: string
+ *                 default: files
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *       400:
+ *         description: Missing required fields
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/upload', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -95,8 +127,28 @@ router.post('/avatar', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/files
- * Get user files
+ * @swagger
+ * /api/files:
+ *   get:
+ *     summary: Get user files
+ *     description: Retrieve all files for the authenticated user
+ *     tags: [Files]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 100
+ *         description: Maximum number of files to return
+ *     responses:
+ *       200:
+ *         description: Files retrieved successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {

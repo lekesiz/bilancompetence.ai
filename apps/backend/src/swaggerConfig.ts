@@ -249,6 +249,42 @@ const options: swaggerJsdoc.Options = {
         name: 'Analytics',
         description: 'Platform analytics and reporting',
       },
+      {
+        name: 'Qualiopi',
+        description: 'Qualiopi compliance management and reporting',
+      },
+      {
+        name: 'Sessions',
+        description: 'User session management and device tracking',
+      },
+      {
+        name: 'Wedof',
+        description: 'Wedof CPF integration for training registration',
+      },
+      {
+        name: 'Chat',
+        description: 'Real-time messaging between users and consultants',
+      },
+      {
+        name: 'Documents',
+        description: 'PDF document generation (synthèse, attestation, etc.)',
+      },
+      {
+        name: 'Pennylane',
+        description: 'Pennylane accounting integration',
+      },
+      {
+        name: 'Files',
+        description: 'File upload and management',
+      },
+      {
+        name: 'Parcours',
+        description: 'Assessment parcours tracking (phases: préliminaire, investigation, conclusion)',
+      },
+      {
+        name: 'Tests',
+        description: 'Psychometric tests (MBTI, RIASEC, competences, valeurs)',
+      },
     ],
   },
   // Path to the API docs

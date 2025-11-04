@@ -9,8 +9,45 @@ import {
 const router = Router();
 
 /**
- * GET /api/parcours/:assessmentId
- * Get parcours status for an assessment
+ * @swagger
+ * /api/parcours/{assessmentId}:
+ *   get:
+ *     summary: Get parcours status
+ *     description: Get the current phase and progress status for a skills assessment parcours
+ *     tags: [Parcours]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Assessment ID
+ *     responses:
+ *       200:
+ *         description: Parcours status retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 assessment_id:
+ *                   type: string
+ *                 current_phase:
+ *                   type: string
+ *                   enum: [preliminaire, investigation, conclusion, completed]
+ *                 phases:
+ *                   type: object
+ *                 overall_progress:
+ *                   type: integer
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         description: Assessment not found
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/:assessmentId', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -37,8 +74,37 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
 });
 
 /**
- * POST /api/parcours/:assessmentId/preliminaire/complete
- * Mark phase préliminaire as completed
+ * @swagger
+ * /api/parcours/{assessmentId}/preliminaire/complete:
+ *   post:
+ *     summary: Complete preliminary phase
+ *     description: Mark the preliminary phase of the assessment as completed
+ *     tags: [Parcours]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Phase completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 next_phase:
+ *                   type: string
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post(
   '/:assessmentId/preliminaire/complete',

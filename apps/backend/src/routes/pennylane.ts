@@ -8,8 +8,23 @@ const router = Router();
 // ============================================
 
 /**
- * POST /api/pennylane/invoices
- * Create customer invoice
+ * @swagger
+ * /api/pennylane/invoices:
+ *   post:
+ *     summary: Create customer invoice
+ *     description: Create a new customer invoice in Pennylane accounting system
+ *     tags: [Pennylane]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Invoice created successfully
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/invoices', async (req: Request, res: Response) => {
   try {
@@ -21,8 +36,24 @@ router.post('/invoices', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/pennylane/invoices/:id
- * Get customer invoice by ID
+ * @swagger
+ * /api/pennylane/invoices/{id}:
+ *   get:
+ *     summary: Get customer invoice
+ *     description: Retrieve a customer invoice by ID from Pennylane
+ *     tags: [Pennylane]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Invoice ID
+ *     responses:
+ *       200:
+ *         description: Invoice retrieved successfully
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/invoices/:id', async (req: Request, res: Response) => {
   try {

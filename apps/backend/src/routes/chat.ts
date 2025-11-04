@@ -15,8 +15,37 @@ import {
 const router = Router();
 
 /**
- * POST /api/chat/conversations
- * Create a new conversation
+ * @swagger
+ * /api/chat/conversations:
+ *   post:
+ *     summary: Create new conversation
+ *     description: Create a new chat conversation between two users
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - participantId
+ *             properties:
+ *               participantId:
+ *                 type: string
+ *                 format: uuid
+ *               title:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Conversation created successfully
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/conversations', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -53,8 +82,37 @@ router.post('/conversations', authMiddleware, async (req: Request, res: Response
 });
 
 /**
- * GET /api/chat/conversations
- * Get user conversations
+ * @swagger
+ * /api/chat/conversations:
+ *   get:
+ *     summary: Get user conversations
+ *     description: Retrieve all conversations for the authenticated user
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *         description: Maximum number of conversations to return
+ *     responses:
+ *       200:
+ *         description: Conversations retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/conversations', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -124,8 +182,41 @@ router.get(
 );
 
 /**
- * POST /api/chat/conversations/:conversationId/messages
- * Send message (stored in DB)
+ * @swagger
+ * /api/chat/conversations/{conversationId}/messages:
+ *   post:
+ *     summary: Send message
+ *     description: Send a new message in a conversation
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: conversationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Message sent successfully
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post(
   '/conversations/:conversationId/messages',
@@ -167,8 +258,33 @@ router.post(
 );
 
 /**
- * GET /api/chat/conversations/:conversationId/messages
- * Get conversation messages
+ * @swagger
+ * /api/chat/conversations/{conversationId}/messages:
+ *   get:
+ *     summary: Get conversation messages
+ *     description: Retrieve all messages in a conversation
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: conversationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 100
+ *     responses:
+ *       200:
+ *         description: Messages retrieved successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get(
   '/conversations/:conversationId/messages',

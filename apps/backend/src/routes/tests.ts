@@ -10,8 +10,23 @@ import {
 const router = Router();
 
 /**
- * GET /api/tests/mbti/questions
- * Get all MBTI questions
+ * @swagger
+ * /api/tests/mbti/questions:
+ *   get:
+ *     summary: Get MBTI questions
+ *     description: Retrieve all MBTI personality test questions
+ *     tags: [Tests]
+ *     responses:
+ *       200:
+ *         description: Questions retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/mbti/questions', async (req: Request, res: Response) => {
   try {
@@ -24,8 +39,23 @@ router.get('/mbti/questions', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/tests/riasec/questions
- * Get all RIASEC questions
+ * @swagger
+ * /api/tests/riasec/questions:
+ *   get:
+ *     summary: Get RIASEC questions
+ *     description: Retrieve all RIASEC vocational interest test questions
+ *     tags: [Tests]
+ *     responses:
+ *       200:
+ *         description: Questions retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/riasec/questions', async (req: Request, res: Response) => {
   try {
@@ -57,8 +87,54 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
 });
 
 /**
- * POST /api/tests/:assessmentId/mbti
- * Submit MBTI test results
+ * @swagger
+ * /api/tests/{assessmentId}/mbti:
+ *   post:
+ *     summary: Submit MBTI test results
+ *     description: Submit MBTI personality test answers and get personality type
+ *     tags: [Tests]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - answers
+ *             properties:
+ *               answers:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *     responses:
+ *       200:
+ *         description: Test results calculated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 test:
+ *                   type: object
+ *                 mbti_type:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *       400:
+ *         description: Invalid answers format
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/:assessmentId/mbti', authenticateToken, async (req: Request, res: Response) => {
   try {

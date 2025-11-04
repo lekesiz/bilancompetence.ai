@@ -5,8 +5,45 @@ import * as sessionManagement from '../middleware/sessionManagement.js';
 const router = Router();
 
 /**
- * GET /api/sessions
- * Récupère toutes les sessions actives de l'utilisateur
+ * @swagger
+ * /api/sessions:
+ *   get:
+ *     summary: Get user active sessions
+ *     description: Retrieve all active sessions for the authenticated user
+ *     tags: [Sessions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Sessions retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sessions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       device_info:
+ *                         type: string
+ *                       ip_address:
+ *                         type: string
+ *                       last_activity:
+ *                         type: string
+ *                         format: date-time
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       is_current:
+ *                         type: boolean
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -36,8 +73,37 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 });
 
 /**
- * DELETE /api/sessions/:sessionId
- * Révoque une session spécifique
+ * @swagger
+ * /api/sessions/{sessionId}:
+ *   delete:
+ *     summary: Revoke a specific session
+ *     description: Revoke a specific session by ID (logout from specific device)
+ *     tags: [Sessions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: sessionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Session ID to revoke
+ *     responses:
+ *       200:
+ *         description: Session revoked successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         description: Session not found
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.delete('/:sessionId', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -66,8 +132,28 @@ router.delete('/:sessionId', authenticateToken, async (req: Request, res: Respon
 });
 
 /**
- * DELETE /api/sessions/all
- * Révoque toutes les sessions sauf la session actuelle
+ * @swagger
+ * /api/sessions/all/except-current:
+ *   delete:
+ *     summary: Revoke all sessions except current
+ *     description: Logout from all devices except the current one
+ *     tags: [Sessions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All other sessions revoked successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.delete('/all/except-current', authenticateToken, async (req: Request, res: Response) => {
   try {

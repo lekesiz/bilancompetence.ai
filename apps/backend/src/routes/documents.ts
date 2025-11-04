@@ -18,8 +18,48 @@ if (!fs.existsSync(DOCUMENTS_DIR)) {
 }
 
 /**
- * POST /api/documents/synthese
- * Generate Synthèse de Bilan PDF
+ * @swagger
+ * /api/documents/synthese:
+ *   post:
+ *     summary: Generate Synthèse de Bilan PDF
+ *     description: Generate a comprehensive PDF summary document for a skills assessment
+ *     tags: [Documents]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user
+ *               - assessment
+ *             properties:
+ *               user:
+ *                 type: object
+ *               assessment:
+ *                 type: object
+ *               testResults:
+ *                 type: object
+ *               actionPlan:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: PDF generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 filename:
+ *                   type: string
+ *                 downloadUrl:
+ *                   type: string
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/synthese', async (req: Request, res: Response) => {
   try {
@@ -44,8 +84,36 @@ router.post('/synthese', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/documents/attestation
- * Generate Attestation de Réalisation PDF
+ * @swagger
+ * /api/documents/attestation:
+ *   post:
+ *     summary: Generate Attestation de Réalisation PDF
+ *     description: Generate an official completion certificate for a skills assessment
+ *     tags: [Documents]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user
+ *               - assessment
+ *               - consultant
+ *             properties:
+ *               user:
+ *                 type: object
+ *               assessment:
+ *                 type: object
+ *               consultant:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Certificate generated successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/attestation', async (req: Request, res: Response) => {
   try {

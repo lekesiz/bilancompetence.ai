@@ -8,8 +8,33 @@ const router = Router();
 // ============================================
 
 /**
- * GET /api/wedof/folders/:reference
- * Get registration folder by reference number (N° dossier)
+ * @swagger
+ * /api/wedof/folders/{reference}:
+ *   get:
+ *     summary: Get registration folder by reference
+ *     description: Retrieve a Wedof registration folder by its reference number (N° dossier)
+ *     tags: [Wedof]
+ *     parameters:
+ *       - in: path
+ *         name: reference
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Folder reference number
+ *     responses:
+ *       200:
+ *         description: Folder retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/folders/:reference', async (req: Request, res: Response) => {
   try {
@@ -22,8 +47,33 @@ router.get('/folders/:reference', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/wedof/folders
- * List all registration folders
+ * @swagger
+ * /api/wedof/folders:
+ *   get:
+ *     summary: List registration folders
+ *     description: Get a list of all registration folders with optional filtering
+ *     tags: [Wedof]
+ *     parameters:
+ *       - in: query
+ *         name: state
+ *         schema:
+ *           type: string
+ *         description: Filter by folder state
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Maximum number of results
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *         description: Pagination offset
+ *     responses:
+ *       200:
+ *         description: Folders retrieved successfully
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/folders', async (req: Request, res: Response) => {
   try {
@@ -40,8 +90,23 @@ router.get('/folders', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/wedof/folders
- * Create registration folder
+ * @swagger
+ * /api/wedof/folders:
+ *   post:
+ *     summary: Create registration folder
+ *     description: Create a new Wedof registration folder
+ *     tags: [Wedof]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Folder created successfully
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post('/folders', async (req: Request, res: Response) => {
   try {
@@ -139,8 +204,31 @@ router.get('/attendees/:id', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/wedof/attendees
- * List attendees
+ * @swagger
+ * /api/wedof/attendees:
+ *   get:
+ *     summary: List attendees
+ *     description: Get a list of Wedof attendees with optional filtering
+ *     tags: [Wedof]
+ *     parameters:
+ *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *         description: Filter by email
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Attendees retrieved successfully
+ *       500:
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get('/attendees', async (req: Request, res: Response) => {
   try {
