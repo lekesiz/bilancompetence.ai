@@ -47,8 +47,57 @@ const updateProfileSchema = z.object({
 });
 
 /**
- * GET /api/users/me
- * Get current user profile
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       format: uuid
+ *                     email:
+ *                       type: string
+ *                       format: email
+ *                     full_name:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       enum: [BENEFICIAIRE, CONSULTANT, ADMIN, ORG_ADMIN]
+ *                     organization_id:
+ *                       type: string
+ *                       format: uuid
+ *                     cv_url:
+ *                       type: string
+ *                       nullable: true
+ *                     cv_uploaded_at:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -127,8 +176,45 @@ router.get('/profile', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * PUT /api/users/profile
- * Update user profile
+ * @swagger
+ * /api/users/profile:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               full_name:
+ *                 type: string
+ *                 minLength: 2
+ *                 maxLength: 255
+ *               phone:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *                 maxLength: 1000
+ *               specialization:
+ *                 type: string
+ *               avatar_url:
+ *                 type: string
+ *                 format: uri
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Profile not found
+ *       500:
+ *         description: Server error
  */
 router.put('/profile', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -176,8 +262,54 @@ router.put('/profile', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/users/upload-cv
- * Upload CV file
+ * @swagger
+ * /api/users/upload-cv:
+ *   post:
+ *     summary: Upload CV file
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cv
+ *             properties:
+ *               cv:
+ *                 type: string
+ *                 format: binary
+ *                 description: CV file (PDF or DOCX, max 5MB)
+ *     responses:
+ *       200:
+ *         description: CV uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: CV uploaded successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     cv_url:
+ *                       type: string
+ *                     cv_uploaded_at:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: No file provided or invalid file type
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
  */
 router.post(
   '/upload-cv',

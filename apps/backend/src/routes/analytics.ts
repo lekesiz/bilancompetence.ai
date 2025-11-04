@@ -18,8 +18,54 @@ import {
 const router = Router();
 
 /**
- * GET /api/analytics/user-activity
- * Get user activity statistics
+ * @swagger
+ * /api/analytics/user-activity:
+ *   get:
+ *     summary: Get user activity statistics
+ *     description: Retrieve current user's activity statistics including assessments, progress, and engagement metrics
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User activity statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalAssessments:
+ *                       type: integer
+ *                       example: 10
+ *                     completedAssessments:
+ *                       type: integer
+ *                       example: 7
+ *                     inProgressAssessments:
+ *                       type: integer
+ *                       example: 2
+ *                     averageScore:
+ *                       type: number
+ *                       example: 85.5
+ *                     completionRate:
+ *                       type: number
+ *                       example: 70
+ *                     totalTimeSpent:
+ *                       type: integer
+ *                       description: Total time spent in minutes
+ *                       example: 480
+ *                     lastActivity:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
 router.get('/user-activity', authMiddleware, async (req: Request, res: Response) => {
   try {

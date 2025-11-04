@@ -144,8 +144,77 @@ const getOrganizationId = async (req: Request): Promise<string> => {
 // ============================================
 
 /**
- * GET /api/scheduling/availability
- * List all availability slots for consultant or organization
+ * @swagger
+ * /api/scheduling/availability:
+ *   get:
+ *     summary: Get consultant availability slots
+ *     description: Retrieve available time slots for scheduling appointments with consultants
+ *     tags: [Scheduling]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: consultant_id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Filter by consultant ID
+ *       - in: query
+ *         name: date_from
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date for availability search (YYYY-MM-DD)
+ *       - in: query
+ *         name: date_to
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date for availability search (YYYY-MM-DD)
+ *       - in: query
+ *         name: day_of_week
+ *         schema:
+ *           type: integer
+ *           minimum: 0
+ *           maximum: 6
+ *         description: Filter by day of week (0=Monday, 6=Sunday)
+ *     responses:
+ *       200:
+ *         description: List of available time slots
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         format: uuid
+ *                       consultant_id:
+ *                         type: string
+ *                         format: uuid
+ *                       start_time:
+ *                         type: string
+ *                         example: "09:00"
+ *                       end_time:
+ *                         type: string
+ *                         example: "11:00"
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                       is_booked:
+ *                         type: boolean
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
 router.get('/availability', authMiddleware, async (req: Request, res: Response) => {
   try {

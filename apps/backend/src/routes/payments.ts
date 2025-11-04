@@ -1,11 +1,76 @@
-import { Router, Request, Response } from 'express';
-import { stripeService } from '../services/stripeService.js';
+import express, { Request, Response } from 'express';
+import { authMiddleware } from '../middleware/auth.js';
+import stripeService from '../services/stripeService.js';
+import {
+  handlePaymentSuccess,
+  handlePaymentFailure,
+  handleSubscriptionCreated,
+  handleSubscriptionUpdated,
+  handleSubscriptionDeleted,
+  handleInvoicePaid,
+  handleInvoicePaymentFailed,
+} from '../services/webhookHandlers.js';
 
 const router = Router();
 
 /**
- * POST /api/payments/create-payment-intent
- * Create a payment intent for one-time payments
+ * @swagger
+ * /api/payments/create-payment-intent:
+ *   post:
+ *     summary: Create a payment intent
+ *     description: Create a Stripe payment intent for one-time payments
+ *     tags: [Payments]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - email
+ *               - name
+ *               - userId
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 description: Payment amount in EUR
+ *                 example: 99.99
+ *               currency:
+ *                 type: string
+ *                 default: eur
+ *                 example: eur
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               userId:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       200:
+ *         description: Payment intent created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientSecret:
+ *                   type: string
+ *                   description: Client secret for Stripe payment
+ *                 paymentIntentId:
+ *                   type: string
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
  */
 router.post('/create-payment-intent', async (req: Request, res: Response) => {
   try {
@@ -252,38 +317,31 @@ router.post('/webhook', async (req: Request, res: Response) => {
     // Handle different event types
     switch (event.type) {
       case 'payment_intent.succeeded':
-        console.log('Payment succeeded:', event.data.object);
-        // TODO: Update database, send confirmation email
+        await handlePaymentSuccess(event.data.object);
         break;
 
       case 'payment_intent.payment_failed':
-        console.log('Payment failed:', event.data.object);
-        // TODO: Notify user, update database
+        await handlePaymentFailure(event.data.object);
         break;
 
       case 'customer.subscription.created':
-        console.log('Subscription created:', event.data.object);
-        // TODO: Update database, activate subscription
+        await handleSubscriptionCreated(event.data.object);
         break;
 
       case 'customer.subscription.updated':
-        console.log('Subscription updated:', event.data.object);
-        // TODO: Update database
+        await handleSubscriptionUpdated(event.data.object);
         break;
 
       case 'customer.subscription.deleted':
-        console.log('Subscription deleted:', event.data.object);
-        // TODO: Deactivate subscription, update database
+        await handleSubscriptionDeleted(event.data.object);
         break;
 
       case 'invoice.paid':
-        console.log('Invoice paid:', event.data.object);
-        // TODO: Send receipt, update database
+        await handleInvoicePaid(event.data.object);
         break;
 
       case 'invoice.payment_failed':
-        console.log('Invoice payment failed:', event.data.object);
-        // TODO: Notify user, retry payment
+        await handleInvoicePaymentFailed(event.data.object);
         break;
 
       default:

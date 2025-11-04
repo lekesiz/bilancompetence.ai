@@ -46,13 +46,81 @@ const romeCodeSearchSchema = z.object({
 // ============================================
 
 /**
- * POST /api/recommendations/jobs
- * Get job recommendations based on user competencies
- *
- * @requires Bearer token (authentication)
- * @param {string} req.user.id - User ID from JWT
- * @param {Object} req.body - Request body with filters
- * @returns {Object} Array of recommended jobs with scores
+ * @swagger
+ * /api/recommendations/jobs:
+ *   post:
+ *     summary: Get job recommendations based on user competencies
+ *     description: Retrieves personalized job recommendations from France Travail API based on user's skills and preferences
+ *     tags: [Recommendations]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               competencyIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uuid
+ *                 description: Array of competency IDs to filter jobs
+ *               minSalary:
+ *                 type: number
+ *                 description: Minimum salary filter
+ *               maxSalary:
+ *                 type: number
+ *                 description: Maximum salary filter
+ *               location:
+ *                 type: string
+ *                 description: Location filter (city, region, etc.)
+ *               contractTypes:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Contract types (CDI, CDD, etc.)
+ *               limit:
+ *                 type: number
+ *                 default: 10
+ *                 description: Maximum number of recommendations
+ *     responses:
+ *       200:
+ *         description: Job recommendations retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *                       company:
+ *                         type: string
+ *                       location:
+ *                         type: string
+ *                       salary:
+ *                         type: string
+ *                       contractType:
+ *                         type: string
+ *                       matchScore:
+ *                         type: number
+ *       400:
+ *         description: Invalid request parameters
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
  */
 router.post('/jobs', authMiddleware, async (req: Request, res: Response) => {
   try {
