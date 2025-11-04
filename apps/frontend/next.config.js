@@ -14,8 +14,13 @@ const getEnvVars = () => {
 
 const createNextIntlPlugin = require('next-intl/plugin');
 const withNextIntl = createNextIntlPlugin('./i18n.ts');
+const { withSentryConfig } = require('@sentry/nextjs');
 
 const nextConfig = {
+  // Enable instrumentation for Sentry
+  experimental: {
+    instrumentationHook: true,
+  },
   reactStrictMode: true,
   swcMinify: true,
   pageExtensions: ['ts', 'tsx'],
@@ -50,4 +55,37 @@ const nextConfig = {
   poweredByHeader: false,
 };
 
-module.exports = withNextIntl(nextConfig);
+// Sentry configuration options
+const sentryWebpackPluginOptions = {
+  // Enable silent mode to reduce console noise
+  silent: true,
+
+  // Organization and project for Sentry
+  org: process.env.SENTRY_ORG || 'bilancompetence',
+  project: process.env.SENTRY_PROJECT || 'frontend',
+
+  // Only upload source maps in production
+  widenClientFileUpload: true,
+
+  // Automatically annotate React components for better stack traces
+  reactComponentAnnotation: {
+    enabled: true,
+  },
+
+  // Disable source maps upload in development
+  disableServerWebpackPlugin: process.env.NODE_ENV !== 'production',
+  disableClientWebpackPlugin: process.env.NODE_ENV !== 'production',
+
+  // Hide source maps from generated client bundles
+  hideSourceMaps: true,
+
+  // Automatically tree-shake Sentry logger statements
+  disableLogger: true,
+};
+
+// Wrap with Sentry if DSN is provided
+const finalConfig = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(withNextIntl(nextConfig), sentryWebpackPluginOptions)
+  : withNextIntl(nextConfig);
+
+module.exports = finalConfig;

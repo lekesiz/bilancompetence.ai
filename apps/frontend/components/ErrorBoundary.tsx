@@ -53,15 +53,23 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       this.props.onError(error, errorInfo);
     }
 
-    // Send to Sentry or other error tracking service
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
-      (window as any).Sentry.captureException(error, {
-        contexts: {
-          react: {
-            componentStack: errorInfo.componentStack,
-          },
-        },
-      });
+    // Send to Sentry error tracking service
+    // Import Sentry dynamically to avoid issues with SSR
+    if (typeof window !== 'undefined') {
+      import('../sentry.client.config')
+        .then((module) => {
+          if (module.default && module.captureComponentError) {
+            module.captureComponentError(error, {
+              componentName: 'ErrorBoundary',
+              props: {
+                errorInfo: errorInfo.componentStack,
+              },
+            });
+          }
+        })
+        .catch((err) => {
+          console.warn('Failed to send error to Sentry:', err);
+        });
     }
   }
 

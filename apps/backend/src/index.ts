@@ -56,6 +56,10 @@ const realtime = new RealtimeService(server);
 // Trust proxy - Required for Railway deployment
 app.set('trust proxy', true);
 
+// Sentry request handler - MUST be the first middleware
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
+
 // Middleware - Security & Logging
 app.use(helmet());
 // Parse CORS_ORIGIN from environment variable (comma-separated string) or use default
@@ -183,11 +187,39 @@ app.use('/api/chat-enhanced', chatEnhancedRoutes);
 app.use('/api/sessions', sessionsRoutes);
 app.use('/api/consent', consentRoutes);
 
-// Sentry automatically captures errors in v8
+// Sentry error handler - MUST be before other error handlers
+app.use(Sentry.Handlers.errorHandler({
+  shouldHandleError(error) {
+    // Capture all errors with status code >= 500
+    if (error.status && error.status >= 500) {
+      return true;
+    }
+    // Also capture specific error types
+    if (error.name === 'UnauthorizedError' || error.name === 'ValidationError') {
+      return true;
+    }
+    return false;
+  },
+}));
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   logger.error('Error:', err);
+
+  // Log to Sentry if it's a critical error
+  if (err.status >= 500 || !err.status) {
+    Sentry.captureException(err, {
+      tags: {
+        path: req.path,
+        method: req.method,
+      },
+      user: req.user ? {
+        id: req.user.id,
+        email: req.user.email,
+      } : undefined,
+    });
+  }
+
   res.status(err.status || 500).json({
     status: 'error',
     message: err.message || 'Internal server error',
