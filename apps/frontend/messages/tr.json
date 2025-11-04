@@ -1,0 +1,133 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "submit": "Gönder",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "noData": "Veri bulunamadı"
+  },
+  "auth": {
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "register": "Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifremi unuttum?",
+    "rememberMe": "Beni hatırla",
+    "alreadyHaveAccount": "Zaten bir hesabınız var mı?",
+    "noAccount": "Hesabınız yok mu?",
+    "createAccount": "Hesap oluştur"
+  },
+  "consent": {
+    "title": "Çerez Yönetimi ve KVKK Onayı",
+    "description": "Deneyiminizi iyileştirmek, trafiğimizi analiz etmek ve içeriğimizi kişiselleştirmek için çerezler kullanıyoruz. Sitemizi kullanmaya devam ederek gizlilik politikamızı kabul etmiş olursunuz.",
+    "acceptAll": "Tümünü kabul et",
+    "rejectAll": "Tümünü reddet",
+    "customize": "Özelleştir",
+    "savePreferences": "Tercihleri kaydet",
+    "essential": {
+      "title": "Zorunlu Çerezler",
+      "description": "Web sitesinin çalışması için gereklidir (oturum, güvenlik). Devre dışı bırakılamazlar."
+    },
+    "analytics": {
+      "title": "Analitik Çerezler",
+      "description": "Hizmetlerimizi geliştirmek için site kullanımını analiz etmemizi sağlar (Google Analytics, vb.)."
+    },
+    "marketing": {
+      "title": "Pazarlama Çerezleri",
+      "description": "Kişiselleştirilmiş reklamlar ve pazarlama iletişimleri göndermek için kullanılır."
+    },
+    "preferences": {
+      "title": "Tercih Çerezleri",
+      "description": "Deneyiminizi iyileştirmek için seçimlerinizi hatırlar (dil, tema, ayarlar)."
+    },
+    "thirdParty": {
+      "title": "Üçüncü Taraf Çerezleri",
+      "description": "Entegre üçüncü taraf hizmetler tarafından kullanılır (videolar, haritalar, sosyal ağlar, vb.)."
+    },
+    "dataProcessing": {
+      "title": "Veri İşleme",
+      "description": "Yetenek değerlendirme hizmetlerimizi sunmak için gereklidir. Onay vermeden devam edebilirsiniz, ancak bazı özellikler sınırlı olacaktır."
+    },
+    "profiling": {
+      "title": "Profilleme ve Otomatik Kararlar",
+      "description": "Profil analizi ve kişiselleştirilmiş öneriler için AI kullanımı."
+    }
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "about": "Hakkımızda",
+    "services": "Hizmetler",
+    "contact": "İletişim",
+    "dashboard": "Panel",
+    "profile": "Profil",
+    "settings": "Ayarlar",
+    "startAssessment": "Değerlendirmemi başlat",
+    "whatIsAssessment": "Değerlendirme nedir?",
+    "methodology": "Metodoloji",
+    "funding": "Finansman",
+    "remoteAssessment": "Uzaktan değerlendirme",
+    "faq": "S.S.S"
+  },
+  "assessment": {
+    "title": "Yetenek Değerlendirmesi",
+    "description": "Profesyonel projenizi keşfedin ve geliştirin",
+    "start": "Değerlendirmeyi başlat",
+    "continue": "Devam et",
+    "complete": "Tamamla",
+    "status": {
+      "notStarted": "Başlamadı",
+      "inProgress": "Devam ediyor",
+      "completed": "Tamamlandı"
+    },
+    "steps": {
+      "preliminary": "Ön Görüşme",
+      "investigation": "Araştırma",
+      "conclusion": "Sonuç"
+    }
+  },
+  "dashboard": {
+    "welcome": "Hoş geldiniz",
+    "myAssessments": "Değerlendirmelerim",
+    "recentActivity": "Son Aktiviteler",
+    "statistics": "İstatistikler",
+    "notifications": "Bildirimler"
+  },
+  "errors": {
+    "generic": "Bir hata oluştu. Lütfen tekrar deneyin.",
+    "network": "Ağ hatası. İnternet bağlantınızı kontrol edin.",
+    "unauthorized": "Bu işlem için yetkiniz yok.",
+    "notFound": "Sayfa bulunamadı.",
+    "validation": "Lütfen formu doğru şekilde doldurun."
+  },
+  "validation": {
+    "required": "Bu alan zorunludur",
+    "emailInvalid": "Geçersiz e-posta formatı",
+    "passwordMin": "Şifre en az {min} karakter olmalıdır",
+    "passwordMatch": "Şifreler eşleşmiyor"
+  },
+  "recommendations": {
+    "title": "Meslek Önerileri",
+    "matchScore": "Eşleşme Skoru",
+    "viewDetails": "Detayları Gör",
+    "noRecommendations": "Henüz öneri yok"
+  },
+  "scheduling": {
+    "title": "Randevular",
+    "book": "Randevu Al",
+    "upcoming": "Yaklaşan Randevular",
+    "history": "Geçmiş",
+    "cancel": "İptal Et",
+    "reschedule": "Yeniden Planla"
+  }
+}
