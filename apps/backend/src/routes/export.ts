@@ -17,11 +17,34 @@ import {
   generateConsultantClientReport,
 } from '../services/pdfServiceNeon.js';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Export
+ *   description: Data export endpoints (CSV and PDF)
+ */
+
 const router = Router();
 
 /**
- * GET /api/export/assessments
- * Export user assessments to CSV
+ * @swagger
+ * /api/export/assessments:
+ *   get:
+ *     summary: Export assessments to CSV
+ *     description: Export all user assessments as CSV file
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file generated successfully
+ *         content:
+ *           text/csv:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/assessments', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -48,8 +71,24 @@ router.get('/assessments', authMiddleware, async (req: Request, res: Response) =
 });
 
 /**
- * GET /api/export/recommendations
- * Export user recommendations to CSV
+ * @swagger
+ * /api/export/recommendations:
+ *   get:
+ *     summary: Export recommendations to CSV
+ *     description: Export all user job recommendations as CSV file
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file generated successfully
+ *         content:
+ *           text/csv:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/recommendations', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -196,9 +235,45 @@ router.get('/analytics', authMiddleware, async (req: Request, res: Response) => 
 });
 
 /**
- * POST /api/export/assessment/:assessmentId/pdf
- * Export assessment as PDF report
- * Query params: type='preliminary'|'investigation'|'conclusion'
+ * @swagger
+ * /api/export/assessment/{assessmentId}/pdf:
+ *   post:
+ *     summary: Generate assessment PDF report
+ *     description: Generate and download professional PDF report for an assessment
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Assessment ID
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [preliminary, investigation, conclusion]
+ *           default: preliminary
+ *         description: Type of report to generate
+ *     responses:
+ *       200:
+ *         description: PDF generated successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.post(
   '/assessment/:assessmentId/pdf',
@@ -302,8 +377,26 @@ router.post(
 );
 
 /**
- * POST /api/export/assessments/summary/pdf
- * Export all user assessments as PDF summary
+ * @swagger
+ * /api/export/assessments/summary/pdf:
+ *   post:
+ *     summary: Generate assessments summary PDF
+ *     description: Generate a comprehensive PDF summary of all user assessments
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: PDF summary generated successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         description: No assessments found for this user
  */
 router.post('/assessments/summary/pdf', authMiddleware, async (req: Request, res: Response) => {
   try {
