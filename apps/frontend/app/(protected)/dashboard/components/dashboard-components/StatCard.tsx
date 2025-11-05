@@ -22,7 +22,7 @@ const variantStyles = {
     border: 'border-gray-200',
     icon: 'text-blue-600',
     value: 'text-gray-800 dark:text-gray-100',
-    title: 'text-gray-500 dark:text-gray-400 dark:text-gray-500',
+    title: 'text-gray-600 dark:text-gray-300', // ✅ PHASE 4: Better contrast (was text-gray-500)
   },
   success: {
     bg: 'bg-green-50',
@@ -70,15 +70,27 @@ export function StatCard({
   const styles = variantStyles[variant];
   const displayIcon = icon || getDefaultIcon(title);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       className={`${styles.bg} ${styles.border} border rounded-xl p-6 transition-all duration-300 ${
         onClick ? 'cursor-pointer hover:shadow-lg hover:scale-105' : 'hover:shadow-md'
       } ${className}`}
       onClick={onClick}
+      role={onClick ? 'button' : 'article'}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? handleKeyDown : undefined}
+      aria-label={onClick ? `${title}: ${value}${description ? `, ${description}` : ''}` : undefined}
+      aria-busy={loading}
     >
       {loading ? (
-        <div className="space-y-4">
+        <div className="space-y-4" aria-label="Chargement des statistiques">
           <div className="flex items-center justify-between">
             <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse"></div>
             <div className="w-6 h-6 bg-gray-200 rounded animate-pulse"></div>
@@ -90,7 +102,7 @@ export function StatCard({
         <>
           <div className="flex items-center justify-between mb-3">
             <h3 className={`${styles.title} text-sm font-medium`}>{title}</h3>
-            <div className={`${styles.icon} p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm`}>
+            <div className={`${styles.icon} p-2 rounded-lg bg-white dark:bg-gray-800 shadow-sm`} aria-hidden="true">
               {displayIcon}
             </div>
           </div>
@@ -103,19 +115,20 @@ export function StatCard({
                   className={`flex items-center text-sm font-semibold ${
                     trend.isPositive ? 'text-success-600' : 'text-red-600'
                   }`}
+                  aria-label={`Tendance: ${trend.isPositive ? 'hausse' : 'baisse'} de ${Math.abs(trend.value)} pourcent`}
                 >
                   {trend.isPositive ? (
-                    <TrendingUp className="w-4 h-4 mr-1" />
+                    <TrendingUp className="w-4 h-4 mr-1" aria-hidden="true" />
                   ) : (
-                    <TrendingDown className="w-4 h-4 mr-1" />
+                    <TrendingDown className="w-4 h-4 mr-1" aria-hidden="true" />
                   )}
-                  <span>{Math.abs(trend.value)}%</span>
+                  <span aria-hidden="true">{Math.abs(trend.value)}%</span>
                 </div>
               )}
             </div>
-            
+
             {description && (
-              <p className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-xs">{description}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-xs">{description}</p>
             )}
           </div>
         </>

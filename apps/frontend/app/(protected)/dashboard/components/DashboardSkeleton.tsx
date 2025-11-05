@@ -4,12 +4,15 @@ interface DashboardSkeletonProps {
 
 export function DashboardSkeleton({ variant = 'beneficiary' }: DashboardSkeletonProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" role="status" aria-live="polite" aria-label="Chargement du tableau de bord">
       {/* Welcome Section Skeleton */}
-      <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl p-8 animate-pulse">
+      <div className="bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl p-8 animate-pulse" aria-hidden="true">
         <div className="h-8 bg-gray-300 rounded w-1/3 mb-2"></div>
         <div className="h-5 bg-gray-300 rounded w-1/2"></div>
       </div>
+
+      {/* Screen reader text */}
+      <span className="sr-only">Chargement du contenu du tableau de bord, veuillez patienter...</span>
 
       {/* Stats Grid Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

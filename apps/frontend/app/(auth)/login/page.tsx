@@ -68,14 +68,19 @@ export default function LoginPage() {
         <Card variant="default" className="p-8">
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl">
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl"
+            >
               <div className="flex items-start gap-3">
-                <span className="text-2xl">⚠️</span>
+                <span className="text-2xl" aria-hidden="true">⚠️</span>
                 <div className="flex-1">
                   <p className="text-red-800 dark:text-red-200 text-sm font-medium">{error}</p>
                   <button
                     onClick={clearError}
                     className="text-red-600 dark:text-red-400 text-xs mt-2 hover:text-red-700 dark:hover:text-red-300 font-semibold"
+                    aria-label="Fermer le message d'erreur"
                   >
                     Fermer
                   </button>
@@ -88,19 +93,22 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                 Adresse email
               </label>
               <input
                 {...register('email')}
+                id="email"
                 type="email"
                 placeholder="vous@exemple.com"
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p className="text-red-600 dark:text-red-400 text-sm mt-2 flex items-center gap-1">
-                  <span>⚠️</span>
+                <p id="email-error" role="alert" className="text-red-600 dark:text-red-400 text-sm mt-2 flex items-center gap-1">
+                  <span aria-hidden="true">⚠️</span>
                   {errors.email.message}
                 </p>
               )}
@@ -109,7 +117,7 @@ export default function LoginPage() {
             {/* Password Field */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
                   Mot de passe
                 </label>
                 <Link
@@ -122,15 +130,19 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   {...register('password')}
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••••••"
                   className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
                   disabled={isLoading}
+                  aria-invalid={!!errors.password}
+                  aria-describedby={errors.password ? 'password-error' : undefined}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,8 +157,8 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-600 dark:text-red-400 text-sm mt-2 flex items-center gap-1">
-                  <span>⚠️</span>
+                <p id="password-error" role="alert" className="text-red-600 dark:text-red-400 text-sm mt-2 flex items-center gap-1">
+                  <span aria-hidden="true">⚠️</span>
                   {errors.password.message}
                 </p>
               )}
