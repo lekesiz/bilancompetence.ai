@@ -11,7 +11,7 @@ if (!DATABASE_URL) {
 export const pool = new Pool({
   connectionString: DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: true, // ✅ SECURITY FIX: Enable SSL certificate validation
   },
   max: 20, // Maximum de connexions dans le pool
   idleTimeoutMillis: 30000,

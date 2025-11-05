@@ -2,9 +2,15 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_EXPIRES_IN = '7d';
-const REFRESH_EXPIRES_IN = '30d';
+// ✅ SECURITY FIX: Validate JWT_SECRET is set (no fallback)
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('❌ CRITICAL: JWT_SECRET environment variable is required');
+}
+
+// ✅ SECURITY FIX: Reduced access token expiration from 7d to 15min
+const JWT_EXPIRES_IN = '15m'; // Access token: 15 minutes
+const REFRESH_EXPIRES_IN = '7d'; // Refresh token: 7 days
 
 export interface UserPayload {
   id: string;

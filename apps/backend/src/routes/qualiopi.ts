@@ -398,7 +398,42 @@ router.post(
         });
       }
 
-      // Validate request body
+      // Validate request body (using basic validation for now)
+      if (!req.body.fileName || !req.body.fileUrl) {
+        return res.status(400).json({
+          success: false,
+          error: 'fileName and fileUrl are required',
+        });
+      }
+
+      const { fileName, fileUrl, fileSize, fileType, description } = req.body;
+      const qualioptService = new QualioptService(orgId);
+
+      const evidence = await qualioptService.addEvidence(
+        indicatorId,
+        fileName,
+        fileUrl,
+        fileSize || 0,
+        fileType || 'application/pdf',
+        description || '',
+        userId
+      );
+
+      res.status(201).json({
+        success: true,
+        data: evidence,
+        message: `Evidence added to indicator ${indicatorId}`,
+      });
+    } catch (error: any) {
+      logger.error('Error adding evidence:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to add evidence',
+      });
+    }
+  }
+);
+
 /**
  * @swagger
  * /api/admin/qualiopi/compliance:
@@ -435,43 +470,7 @@ router.post(
  *         $ref: '#/components/responses/ServerError'
  */
 router.get('/compliance', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
-          details: validationResult.error.flatten(),
-        });
-      }
-
-      const { fileName, fileUrl, fileSize, fileType, description } = validationResult.data;
-      const qualioptService = new QualioptService(orgId);
-
-      const evidence = await qualioptService.addEvidence(
-        indicatorId,
-        fileName,
-        fileUrl,
-        fileSize,
-        fileType,
-        description || '',
-        userId
-      );
-
-      res.status(201).json({
-        success: true,
-        data: evidence,
-        message: `Evidence added to indicator ${indicatorId}`,
-      });
-    } catch (error: any) {
-      logger.error('Error adding evidence:', error);
-      res.status(500).json({
-        success: false,
-        error: error.message || 'Failed to add evidence',
-      });
-    }
-  }
-);
-
-/**
- * GET /api/admin/qualiopi/compliance
- * Get compliance percentage and metrics
- */
-router.get('/compliance', authMiddleware, requireAdminRole, async (req: Request, res: Response) => {
+  // ✅ TYPESCRIPT FIX: Fixed malformed route handler
   try {
     const orgId = getOrgId(req);
     const qualioptService = new QualioptService(orgId);

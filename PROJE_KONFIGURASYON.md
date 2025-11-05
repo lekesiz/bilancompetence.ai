@@ -15,7 +15,7 @@
 - **Framework:** Next.js 14
 - **Test URL:** https://app.bilancompetence.ai (production ortamında test yapılıyor)
 - **Vercel Token:** v5PAlpB1aGUijv8YHmmMSSTZ (`.vercel-token.txt`)
-- **Project ID:** prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO
+- **Project ID:** [PROJECT_ID_REDACTED]
 - **⚠️ ÖNEMLİ:** Mevcut proje kullanılıyor - yeni proje oluşturma YAPILMAMALI
 
 ### Backend - Railway
@@ -32,10 +32,10 @@
 - **Organization ID:** org-shy-voice-89002201
 - **Project ID:** delicate-recipe-65517628
 - **REST API Endpoint:** https://ep-shy-waterfall-ahr8f8tp.apirest.c-3.us-east-1.aws.neon.tech/neondb/rest/v1
-- **Connection String (PSQL):** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+- **Connection String (PSQL):** `postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
   - ⚠️ **KRİTİK:** Bu connection string her zaman kullanılmalı - paralel bağlantılar oluşturulmamalı
-  - **Kullanım:** `psql 'postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'`
-- **Connection String (Pooler):** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require`
+  - **Kullanım:** `psql 'postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'`
+- **Connection String (Pooler):** `postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require`
 - **API Token:** napi_dgroac4a9beezwn10uja4dexo5e40i345ge214f2c3dl8rvjsfrq98whbco1hkbl (`.neon-token.txt`)
 - **Type:** Serverless PostgreSQL
 - **Connection:** Connection pooling aktif
@@ -139,7 +139,7 @@ curl https://app.bilancompetence.ai
 ### Vercel
 - **Token:** v5PAlpB1aGUijv8YHmmMSSTZ
 - **Dosya:** `.vercel-token.txt`
-- **Project ID:** prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO
+- **Project ID:** [PROJECT_ID_REDACTED]
 
 ### Railway
 - **Token:** 6e8a9275-7fcf-4305-bf75-7213c0c028a7
@@ -185,7 +185,7 @@ curl https://app.bilancompetence.ai
 
 1. **VERCEL PROJE YAPISI:**
    - ⚠️ **MEVCUT PROJE KULLANILIYOR - YENİ PROJE OLUŞTURMA!**
-   - Project ID: `prj_oiAgQ2cG1RmfOBrGpKNw0wcHR8XO` (MEVCUT PROJE)
+   - Project ID: `[PROJECT_ID_REDACTED]` (MEVCUT PROJE)
    - Root Directory: `apps/frontend` (Vercel dashboard'da ayarlanmış olmalı)
    - `.vercel/project.json` dosyası **DEĞİŞTİRİLMEMELİ**
    - Vercel CLI ile proje oluşturma YAPILMAMALI - mevcut projeden devam ediliyor
@@ -201,7 +201,7 @@ curl https://app.bilancompetence.ai
 
 4. **Database (NEON - KRİTİK):**
    - ⚠️ **MEVCUT CONNECTION STRING KULLANILMALI - YENİ BAĞLANTILAR OLUŞTURULMAMALI!**
-   - **PSQL Connection String:** `postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+   - **PSQL Connection String:** `postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
    - Neon erişim bilgileri proje içinde mevcut
    - Production database kullanılıyor
    - Backup strategy mevcut (automated daily)

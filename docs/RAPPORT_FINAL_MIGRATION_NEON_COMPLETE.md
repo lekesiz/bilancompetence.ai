@@ -26,7 +26,7 @@ La migration de BilanCompetence.AI vers **Neon PostgreSQL** a été **complété
 
 **Connexion :**
 ```
-postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
+postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
 ```
 
 ### 2. ✅ Migration du Schéma (23 migrations SQL)
@@ -167,8 +167,8 @@ Le backend utilise **Supabase Storage** pour stocker les CVs, mais nous avons mi
 
 **Variables à configurer sur Railway :**
 ```env
-DATABASE_URL=postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
-DIRECT_URL=postgresql://neondb_owner:npg_SWnEQIOXU83Y@ep-shy-waterfall-ahr8f8tp.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
+DIRECT_URL=postgresql://neondb_owner:[NEON_PASSWORD_REDACTED]@ep-shy-waterfall-ahr8f8tp.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
 ```
 
 ---
