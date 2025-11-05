@@ -26,7 +26,7 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-200 border-t border-gray-800">
+    <footer role="contentinfo" className="bg-gray-900 dark:bg-gray-950 text-gray-200 border-t border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section */}
@@ -43,7 +43,7 @@ export const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label="Liens rapides">
             <h4 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
@@ -57,10 +57,10 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Legal Links */}
-          <div>
+          <nav aria-label="Liens légaux">
             <h4 className="text-white font-semibold mb-4">{t('footer.legal')}</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
@@ -74,18 +74,19 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact Section */}
           <div>
             <h4 className="text-white font-semibold mb-4">{t('navigation.contact')}</h4>
             <address className="not-italic text-sm text-gray-300 space-y-3">
               <div className="flex items-start space-x-2">
-                <svg 
-                  className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path 
                     strokeLinecap="round" 
@@ -104,44 +105,48 @@ export const Footer = () => {
               </div>
               
               <div className="flex items-center space-x-2">
-                <svg 
-                  className="w-5 h-5 text-primary-400 flex-shrink-0" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-5 h-5 text-primary-400 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                   />
                 </svg>
-                <a 
-                  href="tel:0367310201" 
+                <a
+                  href="tel:0367310201"
                   className="hover:text-primary-400 transition-colors duration-200"
+                  aria-label="Téléphone: 03 67 31 02 01"
                 >
                   03 67 31 02 01
                 </a>
               </div>
               
               <div className="flex items-center space-x-2">
-                <svg 
-                  className="w-5 h-5 text-primary-400 flex-shrink-0" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-5 h-5 text-primary-400 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                <a 
-                  href="mailto:contact@netzinformatique.fr" 
+                <a
+                  href="mailto:contact@netzinformatique.fr"
                   className="hover:text-primary-400 transition-colors duration-200"
+                  aria-label="Email: contact@netzinformatique.fr"
                 >
                   contact@netzinformatique.fr
                 </a>

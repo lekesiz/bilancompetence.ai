@@ -26,21 +26,22 @@ export const Header = () => {
   ];
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
+    <header role="banner" className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-2xl font-bold text-primary-600 dark:text-primary-400 font-heading hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-200"
+              aria-label="BilanCompetence.ai - Retour à l'accueil"
             >
               BilanCompetence.ai
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav aria-label="Navigation principale" className="hidden lg:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -71,9 +72,11 @@ export const Header = () => {
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 transition-colors duration-200"
-              aria-expanded="false"
+              aria-expanded={mobileMenuOpen}
+              aria-label="Menu principal"
+              aria-controls="mobile-menu"
             >
-              <span className="sr-only">Open main menu</span>
+              <span className="sr-only">{mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}</span>
               {!mobileMenuOpen ? (
                 <svg
                   className="block h-6 w-6"
@@ -114,7 +117,11 @@ export const Header = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200 dark:border-gray-700 animate-fade-in-down">
+        <nav
+          id="mobile-menu"
+          aria-label="Navigation mobile"
+          className="lg:hidden border-t border-gray-200 dark:border-gray-700 animate-fade-in-down"
+        >
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <Link
@@ -134,7 +141,7 @@ export const Header = () => {
               {t('startAssessment')}
             </Link>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

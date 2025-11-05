@@ -36,7 +36,10 @@ export default async function LocaleLayout({
       <QueryProvider>
         <ThemeProvider>
           <Header />
-          <main>{children}</main>
+          {/* ✅ PHASE 3: Main content landmark with ID for skip link */}
+          <main id="main-content" className="min-h-screen">
+            {children}
+          </main>
           <Footer />
           <ConsentBanner />
           <Toaster position="top-right" richColors closeButton />
