@@ -716,6 +716,46 @@ select:focus-visible {
   @apply outline-none ring-2 ring-primary-500 ring-offset-2;
 }
 
+/* ================================================
+   PHASE 5: Enhanced Focus & Interaction States
+   ================================================ */
+
+/* Enhanced focus for buttons and links */
+button:focus-visible,
+a:focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+}
+
+/* Skip link enhanced visibility */
+.skip-link:focus {
+  @apply not-sr-only fixed top-4 left-4 z-50 px-6 py-3 bg-primary-600 text-white rounded-lg shadow-2xl text-lg font-semibold;
+}
+
+/* Disabled state accessibility */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Interactive element hover state */
+button:not(:disabled):hover,
+a:hover {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Form field focus enhancement */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  @apply ring-2 ring-primary-500 border-primary-500;
+}
+
 /* Print Styles */
 @media print {
   .no-print {

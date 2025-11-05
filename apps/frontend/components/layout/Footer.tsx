@@ -158,10 +158,10 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 text-center md:text-left">
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-center md:text-left">
               © {new Date().getFullYear()} {t('footer.brand.title')} - {t('footer.rights')}.
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500 text-center md:text-right">
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-center md:text-right">
               Site réalisé par{' '}
               <span className="text-primary-400 font-medium">Formation Haguenau</span>
             </p>

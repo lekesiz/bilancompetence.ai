@@ -135,7 +135,7 @@ export default function ProtectedLayout({
               <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                 {user.email}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
+              <p className="text-xs text-gray-600 dark:text-gray-300 capitalize">
                 {user.role?.toLowerCase().replace('_', ' ') || 'User'}
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function ProtectedLayout({
                     }
                   `}
                 >
-                  <Icon className={`w-5 h-5 ${item.active ? 'text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400'}`} />
+                  <Icon className={`w-5 h-5 ${item.active ? 'text-white' : 'text-gray-600 dark:text-gray-300 group-hover:text-primary-600 dark:group-hover:text-primary-400'}`} />
                   <span>{item.label}</span>
                 </Link>
               );
