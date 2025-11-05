@@ -1,0 +1,151 @@
+name: Deployment Verification
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to verify'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+  # Auto-trigger after successful deployment (Railway/Vercel webhooks)
+  repository_dispatch:
+    types: [deployment-success]
+
+env:
+  FRONTEND_URL: https://bilancompetence-lekesizs-projects.vercel.app
+  BACKEND_URL: https://web-production-60dbd.up.railway.app
+
+jobs:
+  verify-deployment:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Make verification script executable
+        run: chmod +x ./scripts/verify-deployment.sh
+
+      - name: Run deployment verification
+        id: verify
+        run: |
+          echo "## 🚀 Deployment Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: ${{ github.event.inputs.environment || 'production' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Frontend**: $FRONTEND_URL" >> $GITHUB_STEP_SUMMARY
+          echo "**Backend**: $BACKEND_URL" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Run verification script
+          if ./scripts/verify-deployment.sh; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "### ✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "### ❌ Some checks failed" >> $GITHUB_STEP_SUMMARY
+          fi
+        continue-on-error: true
+
+      - name: Test critical endpoints
+        run: |
+          echo "## 🔍 Critical Endpoint Tests" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Health check
+          echo "### Health Check" >> $GITHUB_STEP_SUMMARY
+          if curl -sf $BACKEND_URL/health > /dev/null; then
+            echo "✅ Backend health check passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Backend health check failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Detailed health
+          echo "### Detailed Health" >> $GITHUB_STEP_SUMMARY
+          HEALTH_RESPONSE=$(curl -s $BACKEND_URL/health/detailed)
+          DB_STATUS=$(echo $HEALTH_RESPONSE | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+          if [ "$DB_STATUS" = "ok" ]; then
+            echo "✅ Backend detailed health passed" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Database connected" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Backend detailed health failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Frontend
+          echo "### Frontend" >> $GITHUB_STEP_SUMMARY
+          if curl -sf $FRONTEND_URL > /dev/null; then
+            echo "✅ Frontend is accessible" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Frontend is not accessible" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Security headers check
+        run: |
+          echo "## 🔒 Security Headers" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          HEADERS=$(curl -sI $BACKEND_URL/health)
+
+          if echo "$HEADERS" | grep -qi "x-content-type-options"; then
+            echo "✅ X-Content-Type-Options present" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ X-Content-Type-Options missing" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if echo "$HEADERS" | grep -qi "x-frame-options"; then
+            echo "✅ X-Frame-Options present" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ X-Frame-Options missing" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Performance check
+        run: |
+          echo "## ⚡ Performance Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Measure backend response time
+          RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}' $BACKEND_URL/health)
+          echo "- Backend health endpoint: ${RESPONSE_TIME}s" >> $GITHUB_STEP_SUMMARY
+
+          # Check if under 1 second
+          if (( $(echo "$RESPONSE_TIME < 1.0" | bc -l) )); then
+            echo "✅ Response time acceptable (<1s)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Response time slow (>1s)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Create verification report
+        if: always()
+        run: |
+          echo "## 📊 Verification Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.verify.outputs.status }}" = "success" ]; then
+            echo "### ✅ Deployment Verified Successfully" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All critical systems are operational:" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Frontend accessible" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Backend API healthy" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Database connected" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Security headers configured" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Performance within limits" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ⚠️ Deployment Verification Issues" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Some checks did not pass. Review the logs above." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Verified at**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: steps.verify.outputs.status == 'failure'
+        run: |
+          echo "::warning::Deployment verification failed. Please check the logs."
