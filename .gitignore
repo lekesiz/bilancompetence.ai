@@ -107,3 +107,24 @@ DEPLOYMENT_*.md
 *.disabled
 
 _local_temp/
+
+# ============================================
+# SECURITY: Platform Tokens & Secrets (ADDED 2025-11-05)
+# ============================================
+# Platform tokens (NEVER commit these)
+.railway-token.txt
+.vercel-token.txt
+.neon-token.txt
+.neon-config.txt
+*-token.txt
+*.secret
+*.key
+
+# API Keys
+*_api_key.txt
+*_secret_key.txt
+
+# Database backups
+*.sql.backup
+dump.sql
+backup.sql
