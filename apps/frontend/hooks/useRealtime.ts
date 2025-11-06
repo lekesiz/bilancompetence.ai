@@ -57,23 +57,21 @@ export const useRealtime = () => {
     });
 
     socket.on('connect', () => {
-      console.log('✅ Connected to real-time server');
+      // Connection established
       setIsConnected(true);
     });
 
     socket.on('connected', (data) => {
-      console.log('🔌 Socket connected:', data);
+      // Socket handshake complete
     });
 
     // Handle incoming notifications
     socket.on('notification', (notification: Notification) => {
-      console.log('📬 Received notification:', notification);
       setNotifications((prev) => [...prev, { ...notification, id: `notif-${Date.now()}` }]);
     });
 
     // Handle incoming messages
     socket.on('message', (message: Message) => {
-      console.log('💬 Received message:', message);
       // Dispatch to message handler (parent component)
       window.dispatchEvent(
         new CustomEvent('realtime:message', {
@@ -84,7 +82,6 @@ export const useRealtime = () => {
 
     // Handle typing indicators
     socket.on('user_typing', (typing: TypingIndicator) => {
-      console.log('✍️ User typing:', typing);
       setTypingUsers((prev) => {
         const updated = new Map(prev);
         const key = `${typing.userId}-${typing.conversationId}`;
@@ -98,7 +95,6 @@ export const useRealtime = () => {
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ Disconnected from real-time server');
       setIsConnected(false);
     });
 
