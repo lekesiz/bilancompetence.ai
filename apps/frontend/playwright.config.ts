@@ -34,8 +34,8 @@ export default defineConfig({
   
   /* Shared settings for all the projects below. */
   use: {
-    /* Base URL - utilise Vercel en production, localhost en dev */
-    baseURL: process.env.BASE_URL || 'https://bilancompetence.vercel.app',
+    /* Base URL - utilise localhost par défaut, peut être overridé via BASE_URL env var */
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
     
     /* Collect trace when retrying the failed test. */
     trace: 'on-first-retry',
