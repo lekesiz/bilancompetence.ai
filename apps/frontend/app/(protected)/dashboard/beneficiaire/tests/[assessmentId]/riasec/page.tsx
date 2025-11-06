@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface RIASECQuestion {
   id: number;
@@ -126,17 +127,24 @@ export default function RIASECTestPage() {
     }
 
     setLoading(true);
-    
+
     try {
       const result = calculateRIASEC();
-      const token = localStorage.getItem('accessToken');
-      
+
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tests/${assessmentId}/riasec`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
         body: JSON.stringify({
           answers,
           result
