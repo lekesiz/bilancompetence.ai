@@ -100,8 +100,12 @@ _archive/
 SPRINT*.md
 CODE_*.md
 CRITICAL_*.md
-DEPLOYMENT_*.md
 202510*.md
+
+# Important documentation (exceptions to above patterns)
+!DEPLOYMENT_GUIDE.md
+!TEST_SCENARIOS.md
+!SECURITY_FIXES.md
 
 # Disabled configs
 *.disabled
