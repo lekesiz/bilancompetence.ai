@@ -22,22 +22,21 @@ export function useAuth(): UseAuthReturn {
   // Initialize auth state from API
   useEffect(() => {
     const verifyAuth = async () => {
-      if (api.isAuthenticated()) {
-        try {
-          const response = await api.verifyToken();
-          if (response.status === 'success' && response.data?.user) {
-            setUser(response.data.user);
-            setIsAuthenticated(true);
-          } else {
-            setIsAuthenticated(false);
-          }
-        } catch (err) {
-          console.error('Auth verification failed:', err);
+      try {
+        const response = await api.verifyToken();
+        if (response.status === 'success' && response.data?.user) {
+          setUser(response.data.user);
+          setIsAuthenticated(true);
+        } else {
           setIsAuthenticated(false);
         }
+      } catch (err) {
+        console.error('Auth verification failed:', err);
+        setIsAuthenticated(false);
+      } finally {
+        // Always set loading to false after verification attempt
+        setIsLoading(false);
       }
-      // Always set loading to false after verification attempt
-      setIsLoading(false);
     };
 
     verifyAuth();
