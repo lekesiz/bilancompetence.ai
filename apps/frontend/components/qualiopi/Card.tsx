@@ -4,6 +4,8 @@
  * Features: Rounded corners, soft shadows, gradient variants
  */
 
+import React from 'react';
+
 interface CardProps {
   title?: string;
   subtitle?: string;
