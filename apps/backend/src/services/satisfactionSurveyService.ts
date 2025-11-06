@@ -9,8 +9,7 @@
  * - Analytics and reporting
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types.js';
+import { pool } from '../config/neon.js';
 import crypto from 'crypto';
 import {
   logAndThrow,
@@ -135,15 +134,11 @@ const SURVEY_QUESTIONS: SurveyQuestion[] = [
   },
 ];
 
+// HYBRID ARCHITECTURE: DB queries use Neon, Storage uses Supabase
 export class SatisfactionSurveyService {
-  private supabase: ReturnType<typeof createClient<Database>>;
   private organizationId: string;
 
   constructor(organizationId: string) {
-    this.supabase = createClient<Database>(
-      process.env.SUPABASE_URL || '',
-      process.env.SUPABASE_KEY || ''
-    );
     this.organizationId = organizationId;
   }
 

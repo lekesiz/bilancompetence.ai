@@ -8,8 +8,7 @@
  * - Indicator 22: Document Archive
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types.js';
+import { pool } from '../config/neon.js';
 
 interface IndicatorStatus {
   indicator_id: number;
@@ -39,8 +38,8 @@ interface EvidenceMetadata {
   created_at: string;
 }
 
+// HYBRID ARCHITECTURE: DB queries use Neon, Storage uses Supabase
 export class QualioptService {
-  private supabase: ReturnType<typeof createClient<Database>>;
   private organizationId: string | null;
 
   constructor(organizationId: string | null) {

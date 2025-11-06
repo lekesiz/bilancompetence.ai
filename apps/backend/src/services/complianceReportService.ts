@@ -9,8 +9,7 @@
  * - Executive summary generation
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../types/database.types.js';
+import { pool } from '../config/neon.js';
 import QualioptService from './qualioptService.js';
 import SatisfactionSurveyService from './satisfactionSurveyService.js';
 import DocumentArchiveService from './documentArchiveService.js';
@@ -74,17 +73,12 @@ interface AuditReadinessAssessment {
 }
 
 export class ComplianceReportService {
-  private supabase: ReturnType<typeof createClient<Database>>;
   private organizationId: string;
   private qualioptService: QualioptService;
   private surveyService: SatisfactionSurveyService;
   private archiveService: DocumentArchiveService;
 
   constructor(organizationId: string) {
-    this.supabase = createClient<Database>(
-      process.env.SUPABASE_URL || '',
-      process.env.SUPABASE_KEY || ''
-    );
     this.organizationId = organizationId;
     this.qualioptService = new QualioptService(organizationId);
     this.surveyService = new SatisfactionSurveyService(organizationId);
@@ -97,19 +91,16 @@ export class ComplianceReportService {
   async generateReport(includeEvidence = false): Promise<ComplianceReport> {
     try {
       // Get organization name
-      const { data: org, error: orgError } = await this.supabase
-        .from('organizations')
-        .select('name')
-        .eq('id', this.organizationId)
-        .single();
+      const orgResult = await pool.query(
+        'SELECT name FROM organizations WHERE id = $1',
+        [this.organizationId]
+      );
 
-      if (orgError) {
-        throw new DatabaseError('Failed to fetch organization', orgError);
-      }
-
-      if (!org) {
+      if (orgResult.rows.length === 0) {
         throw new NotFoundError('Organization not found');
       }
+
+      const org = orgResult.rows[0];
 
       // Get compliance metrics
       const complianceMetrics = await this.qualioptService.getCompliancePercentage();
@@ -387,19 +378,18 @@ export class ComplianceReportService {
     try {
       validateRequired({ report }, ['report']);
 
-      const { error } = await this.supabase.from('qualiopi_reports').insert({
-        organization_id: this.organizationId,
-        report_data: report,
-        compliance_percentage: report.overall_compliance_percentage,
-        audit_ready: report.audit_readiness,
-        generated_at: new Date().toISOString(),
-      });
+      await pool.query(
+        `INSERT INTO qualiopi_reports (organization_id, report_data, compliance_percentage, audit_ready, generated_at)
+         VALUES ($1, $2, $3, $4, NOW())`,
+        [
+          this.organizationId,
+          JSON.stringify(report),
+          report.overall_compliance_percentage,
+          report.audit_readiness,
+        ]
+      );
 
-      if (error) {
-        logger.warn('Note: qualiopi_reports table may not exist yet', { error: error.message });
-      } else {
-        logger.info('Report stored successfully', { reportId: report.report_id });
-      }
+      logger.info('Report stored successfully', { reportId: report.report_id });
     } catch (error) {
       // Don't throw - this is a non-critical operation
       logger.error('Error storing report (non-critical)', { error });
