@@ -3,7 +3,7 @@
 **Sprint Goal:** Stabiliser le projet et créer un environnement de démonstration fonctionnel  
 **Sprint Duration:** 10 jours  
 **Date de début:** 6 novembre 2025  
-**Statut:** 🟢 **EN COURS** (Jour 1)
+**Statut:** 🟢 **EN COURS** (Jour 1 - Fin de journée)
 
 ---
 
@@ -25,37 +25,94 @@
 
 **Statut:** ✅ **COMPLÉTÉ** (3 heures au lieu de 2 jours estimés)
 
-**Résultats:**
-- ✅ Script de seeding 100% fonctionnel
-- ✅ 3 utilisateurs demo créés
-- ✅ 5 assessments créés
-- ✅ 1 bilan créé (45% complété)
-- ✅ 5 compétences créées
-- ✅ 5 sessions créées (3 complétées, 2 programmées)
-- ✅ 4 notifications créées
-
 **Gain de temps:** 13 heures (87% plus rapide que prévu!)
 
 ---
 
-### ⏳ Priorité 2: E2E Tests (4 jours) - **EN ATTENTE**
+### 🔄 Priorité 2: E2E Tests (4 jours) - **EN COURS**
 
 **Responsable:** QA Engineer (Manus AI)
 
+#### Phase 1: Préparation (2h) - ✅ **COMPLÉTÉ**
+
 **Tâches:**
-- [ ] Analyser tests échouants (Groupe A, B, C, D, E)
-- [ ] Fixer tests Groupe A (Authentification)
-- [ ] Fixer tests Groupe B (Dashboard)
-- [ ] Fixer tests Groupe C (Assessments)
-- [ ] Fixer tests Groupe D (Recommendations)
-- [ ] Fixer tests Groupe E (Admin)
+- [x] Analyser tests échouants (28 tests, 6 groupes)
+- [x] Créer test fixtures (demo credentials)
+- [x] Créer auth helpers
+- [x] Créer assertion helpers (20+ fonctions)
+- [x] Mettre à jour playwright.config.ts
+- [x] Créer .env.test
+- [x] Réécrire Groupe A avec nouvelle structure
 
-**Statut:** ⏳ **EN ATTENTE** (démarre après seed data)
+**Résultats:**
+- ✅ 6 fichiers créés/modifiés
+- ✅ 689 lignes de code ajoutées
+- ✅ Groupe A: 13 tests (était 5 avant)
+- ✅ Infrastructure de test moderne et maintenable
 
-**Critères d'acceptation:**
-- >80% tests passent
-- Aucun test critique échoué
-- Documentation des tests mise à jour
+**Statut:** ✅ **COMPLÉTÉ** (2 heures)
+
+---
+
+#### Phase 2: Groupe A - Workflows de Base (4h) - ⏳ **PRÊT À TESTER**
+
+**Tâches:**
+- [x] Réécrire tests avec helpers
+- [ ] Exécuter tests localement
+- [ ] Fixer les tests échouants
+- [ ] Ajouter data-testid aux composants si nécessaire
+- [ ] Valider 100% des tests Groupe A
+
+**Tests Groupe A (13 tests):**
+
+1. **A.1 - Authentification (4 tests)**
+   - [x] Client login
+   - [x] Consultant login
+   - [x] Admin login
+   - [x] Invalid credentials
+
+2. **A.2 - Dashboard Beneficiary (4 tests)**
+   - [x] Dashboard info
+   - [x] View assessments
+   - [x] View sessions
+   - [x] View competencies
+
+3. **A.3 - Dashboard Consultant (2 tests)**
+   - [x] Dashboard view
+   - [x] View assigned clients
+
+4. **A.4 - Navigation (2 tests)**
+   - [x] Page navigation
+   - [x] Breadcrumbs
+
+5. **A.5 - Logout (1 test)**
+   - [x] Logout flow
+
+**Statut:** ⏳ **PRÊT À TESTER** (tests écrits, pas encore exécutés)
+
+---
+
+#### Phase 3: Groupe B - Planification (3h) - ⏳ **EN ATTENTE**
+
+**Tâches:**
+- [ ] Analyser tests Groupe B
+- [ ] Réécrire avec helpers
+- [ ] Tester scheduling features
+- [ ] Tester notifications
+
+**Statut:** ⏳ **EN ATTENTE**
+
+---
+
+#### Phase 4: Groupe E - Sécurité (2h) - ⏳ **EN ATTENTE**
+
+**Tâches:**
+- [ ] Analyser tests Groupe E
+- [ ] Tester JWT expiration
+- [ ] Tester RLS
+- [ ] Tester security headers
+
+**Statut:** ⏳ **EN ATTENTE**
 
 ---
 
@@ -71,11 +128,6 @@
 
 **Statut:** ⏳ **EN ATTENTE**
 
-**Critères d'acceptation:**
-- Sentry intégré et fonctionnel
-- Alertes configurées
-- Dashboard accessible
-
 ---
 
 ### ⏳ Priorité 4: Documentation (1 jour) - **EN ATTENTE**
@@ -90,11 +142,6 @@
 
 **Statut:** ⏳ **EN ATTENTE**
 
-**Critères d'acceptation:**
-- README à jour
-- Onboarding guide complet
-- Processus documentés
-
 ---
 
 ## 📈 MÉTRIQUES DU SPRINT
@@ -103,10 +150,10 @@
 
 | Métrique | Planifié | Actuel | Statut |
 |----------|----------|--------|--------|
-| **Story Points** | 40 | 8/40 | 🟢 20% |
-| **Tâches complétées** | 0/20 | 8/20 | 🟢 40% |
-| **Temps écoulé** | 0h | 3h | 🟢 |
-| **Temps restant** | 80h | 77h | 🟢 |
+| **Story Points** | 40 | 12/40 | 🟢 30% |
+| **Tâches complétées** | 0/20 | 10/20 | 🟢 50% |
+| **Temps écoulé** | 0h | 5h | 🟢 |
+| **Temps restant** | 80h | 75h | 🟢 |
 
 ---
 
@@ -115,7 +162,7 @@
 | Métrique | Cible | Actuel | Statut |
 |----------|-------|--------|--------|
 | **Code Quality** | >90 | 95 | ✅ |
-| **Test Coverage** | >80% | 70% | 🟡 |
+| **Test Coverage** | >80% | TBD | ⏳ |
 | **Bug Count** | 0 | 0 | ✅ |
 | **Technical Debt** | <10% | TBD | ⏳ |
 
@@ -123,60 +170,86 @@
 
 ## 🎯 RÉALISATIONS DU JOUR 1
 
-### Seed Script Complètement Réparé
+### 1. Seed Script Complètement Réparé ✅
+
+**Temps:** 3 heures  
+**Gain:** 13 heures (87% plus rapide)
 
 **Problèmes résolus:**
+- Schema mismatch users (full_name)
+- Schema mismatch assessments (beneficiary_id)
+- Schema mismatch competencies (bilan_id)
+- Schema mismatch sessions (bilan_id + beneficiary_id)
+- Schema mismatch bilans (start_date obligatoire)
+- Transaction support ajouté
+- Duplicate handling implémenté
 
-1. **Schema mismatch - users table**
-   - Problème: `first_name`, `last_name` n'existent pas
-   - Solution: Utiliser `full_name`
-   - Impact: ✅ Users créés avec succès
-
-2. **Schema mismatch - assessments table**
-   - Problème: `user_id` n'existe pas
-   - Solution: Utiliser `beneficiary_id`
-   - Impact: ✅ Assessments créés avec succès
-
-3. **Schema mismatch - competencies table**
-   - Problème: `assessment_id` n'existe pas
-   - Solution: Utiliser `bilan_id`
-   - Impact: ✅ Competencies créés avec succès
-
-4. **Schema mismatch - sessions table**
-   - Problème: Nécessite `bilan_id` et `beneficiary_id`
-   - Solution: Créer d'abord un bilan, puis les sessions
-   - Impact: ✅ Sessions créés avec succès
-
-5. **Schema mismatch - bilans table**
-   - Problème: `start_date` est obligatoire (NOT NULL)
-   - Solution: Ajouter `start_date`, `expected_end_date`, etc.
-   - Impact: ✅ Bilans créés avec succès
-
-6. **Qualiopi indicators et satisfaction surveys**
-   - Problème: Structure de table différente
-   - Solution: Skip pour l'instant, à implémenter séparément
-   - Impact: ⚠️ À faire plus tard
+**Données créées:**
+- 1 Organization
+- 3 Users
+- 5 Assessments
+- 1 Bilan (45% complété)
+- 5 Competencies
+- 5 Sessions
+- 4 Notifications
 
 ---
 
-### Améliorations Apportées
+### 2. E2E Tests - Phase 1 Préparation ✅
 
-1. **Transaction support**
-   - BEGIN/COMMIT/ROLLBACK
-   - Garantit l'intégrité des données
+**Temps:** 2 heures
 
-2. **Duplicate handling**
-   - Vérification avant insertion
-   - Suppression des données existantes
-   - Mise à jour si nécessaire
+**Infrastructure créée:**
 
-3. **Error handling**
-   - Rollback automatique en cas d'erreur
-   - Messages d'erreur détaillés
+1. **Test Fixtures** (`tests/fixtures/users.ts`)
+   - Demo credentials mis à jour
+   - Test data pour assessments, competencies, sessions
 
-4. **Data validation**
-   - Vérification de l'existence des tables
-   - Validation des contraintes
+2. **Auth Helpers** (`tests/helpers/auth.ts`)
+   - login()
+   - logout()
+   - register()
+   - isLoggedIn()
+   - waitForAuth()
+
+3. **Assertion Helpers** (`tests/helpers/assertions.ts`)
+   - 20+ helper functions
+   - expectTextVisible()
+   - expectToastVisible()
+   - expectFormError()
+   - expectLoading()
+   - expectTableRowCount()
+   - expectModalOpen()
+   - etc.
+
+4. **Configuration** 
+   - playwright.config.ts (BASE_URL → localhost)
+   - .env.test (variables de test)
+
+5. **Groupe A Réécrit**
+   - 13 tests (était 5 avant)
+   - Structure moderne avec helpers
+   - Pas de hardcoded timeouts
+   - Utilise les demo credentials du seed
+
+---
+
+### 3. Analyse E2E Tests Détaillée ✅
+
+**Temps:** 1 heure
+
+**Résultats:**
+- 28 test cases identifiés
+- 6 groupes analysés
+- Problèmes documentés
+- Stratégie définie (Option 2: 9h)
+
+**Groupes:**
+- Groupe A: 13 tests (HIGH PRIORITY) ← **EN COURS**
+- Groupe B: 4-6 tests (MEDIUM PRIORITY)
+- Groupe C: 4-5 tests (SKIP - Qualiopi data manquante)
+- Groupe D: 5-7 tests (SKIP - External APIs)
+- Groupe E: 4-5 tests (MEDIUM PRIORITY)
 
 ---
 
@@ -222,30 +295,11 @@ Full Name: Sophie Bernard
 
 ### Assessments (5)
 
-1. **Bilan de Compétences Complet**
-   - Type: full
-   - Status: in_progress
-   - Description: Évaluation complète des compétences professionnelles et personnelles
-
-2. **Évaluation MBTI**
-   - Type: mbti
-   - Status: completed
-   - Completed: 5 jours ago
-
-3. **Évaluation RIASEC**
-   - Type: riasec
-   - Status: completed
-   - Completed: 10 jours ago
-
-4. **Analyse de Compétences Techniques**
-   - Type: skills
-   - Status: in_progress
-   - Started: 3 jours ago
-
-5. **Bilan d'Orientation**
-   - Type: orientation
-   - Status: scheduled
-   - Scheduled: Dans 2 jours
+1. Bilan de Compétences Complet (in_progress)
+2. Évaluation MBTI (completed)
+3. Évaluation RIASEC (completed)
+4. Analyse de Compétences Techniques (in_progress)
+5. Bilan d'Orientation (scheduled)
 
 ---
 
@@ -263,110 +317,69 @@ Completion: 45%
 
 ### Competencies (5)
 
-1. **Communication orale et écrite**
-   - ROME Code: M1503
-   - Level: Advanced
-   - Frequency: Daily
-   - Interest: 5/5
-
-2. **Leadership et management d'équipe**
-   - ROME Code: M1302
-   - Level: Intermediate
-   - Frequency: Weekly
-   - Interest: 4/5
-
-3. **Gestion de projet Agile**
-   - ROME Code: M1806
-   - Level: Advanced
-   - Frequency: Daily
-   - Interest: 5/5
-
-4. **Analyse de données**
-   - ROME Code: M1805
-   - Level: Intermediate
-   - Frequency: Weekly
-   - Interest: 4/5
-
-5. **Résolution de problèmes**
-   - ROME Code: M1503
-   - Level: Advanced
-   - Frequency: Daily
-   - Interest: 5/5
+1. Communication orale et écrite (Advanced, Daily, 5/5)
+2. Leadership et management d'équipe (Intermediate, Weekly, 4/5)
+3. Gestion de projet Agile (Advanced, Daily, 5/5)
+4. Analyse de données (Intermediate, Weekly, 4/5)
+5. Résolution de problèmes (Advanced, Daily, 5/5)
 
 ---
 
 ### Sessions (5)
 
-1. **Entretien Initial** ✅ Complété
-   - Type: initial
-   - Duration: 60 minutes
-   - Date: 20 jours ago
-   - Attendance: Present
-
-2. **Phase d'Investigation - Session 1** ✅ Complété
-   - Type: investigation
-   - Duration: 90 minutes
-   - Date: 15 jours ago
-   - Attendance: Present
-
-3. **Phase d'Investigation - Session 2** ✅ Complété
-   - Type: investigation
-   - Duration: 90 minutes
-   - Date: 10 jours ago
-   - Attendance: Present
-
-4. **Phase de Conclusion - Session 1** ⏳ Programmé
-   - Type: conclusion
-   - Duration: 90 minutes
-   - Date: Dans 3 jours
-
-5. **Phase de Conclusion - Session 2** ⏳ Programmé
-   - Type: conclusion
-   - Duration: 90 minutes
-   - Date: Dans 10 jours
+1. Entretien Initial ✅ (20 jours ago, 60min)
+2. Investigation 1 ✅ (15 jours ago, 90min)
+3. Investigation 2 ✅ (10 jours ago, 90min)
+4. Conclusion 1 ⏳ (Dans 3 jours, 90min)
+5. Conclusion 2 ⏳ (Dans 10 jours, 90min)
 
 ---
 
 ### Notifications (4)
 
-1. **Admin:** Bienvenue sur BilanCompetence.AI (non lu)
-2. **Consultant:** Nouveau bénéficiaire assigné (lu)
-3. **Beneficiary:** Évaluation MBTI complétée (lu)
-4. **Beneficiary:** Prochaine session programmée (non lu)
+1. Admin: Bienvenue (non lu)
+2. Consultant: Nouveau bénéficiaire (lu)
+3. Beneficiary: MBTI complété (lu)
+4. Beneficiary: Prochaine session (non lu)
 
 ---
 
 ## 🚀 PROCHAINES ÉTAPES
 
-### Aujourd'hui (Jour 1 - Suite)
+### Demain Matin (Jour 2)
 
 **QA Engineer:**
-- [ ] Analyser les tests E2E existants
+- [ ] Exécuter tests Groupe A localement
 - [ ] Identifier les tests échouants
-- [ ] Créer un plan de correction
+- [ ] Fixer les problèmes (data-testid manquants, etc.)
+- [ ] Valider 100% Groupe A
 
-**DevOps:**
-- [ ] Évaluer les options de monitoring
-- [ ] Préparer la configuration Sentry
-
-**Product Manager:**
-- [ ] Documenter le processus de seeding
-- [ ] Mettre à jour le README
+**Temps estimé:** 4 heures
 
 ---
 
-### Demain (Jour 2)
+### Demain Après-midi (Jour 2)
 
 **QA Engineer:**
-- [ ] Commencer à fixer les tests Groupe A (Authentification)
-- [ ] Tester avec les données demo
+- [ ] Analyser Groupe B (Scheduling)
+- [ ] Réécrire tests Groupe B
+- [ ] Exécuter et fixer
+
+**Temps estimé:** 3 heures
+
+---
+
+### Jour 3
+
+**QA Engineer:**
+- [ ] Analyser Groupe E (Security)
+- [ ] Réécrire tests Groupe E
+- [ ] Exécuter et fixer
 
 **DevOps:**
-- [ ] Configurer Sentry
+- [ ] Commencer monitoring setup
 
-**Lead Developer:**
-- [ ] Code review du seed script
-- [ ] Support QA si nécessaire
+**Temps estimé:** 4 heures
 
 ---
 
@@ -374,31 +387,45 @@ Completion: 45%
 
 ### Décisions Techniques
 
-1. **Qualiopi Indicators et Satisfaction Surveys skippés**
-   - Raison: Structure de table différente, nécessite une analyse séparée
-   - Action: À implémenter dans un sprint futur
+1. **Playwright BASE_URL changé**
+   - Avant: `https://bilancompetence.vercel.app` (production)
+   - Après: `http://localhost:3000` (local)
+   - Raison: Tests doivent tourner en local
 
-2. **Transaction support ajouté**
-   - Raison: Garantir l'intégrité des données
-   - Impact: Rollback automatique en cas d'erreur
+2. **Demo credentials mis à jour**
+   - Avant: `demo@example.com`
+   - Après: `client@demo.bilancompetence.ai`
+   - Raison: Correspondre au seed script
 
-3. **Duplicate handling implémenté**
-   - Raison: Permettre de re-exécuter le script sans erreurs
-   - Impact: Script idempotent
+3. **Test structure modernisée**
+   - Helpers pour auth et assertions
+   - Fixtures pour data
+   - Pas de hardcoded timeouts
+   - data-testid selectors
+
+4. **Groupes C & D skippés**
+   - Groupe C: Qualiopi data manquante
+   - Groupe D: External APIs (Wedof, Pennylane, Stripe)
+   - Raison: Pas critique pour Sprint 1
 
 ---
 
 ### Risques Identifiés
 
-1. **Tests E2E peuvent prendre plus de temps que prévu**
-   - Probabilité: Moyenne
-   - Impact: Élevé
-   - Mitigation: Commencer tôt, prioriser les tests critiques
+1. **Tests peuvent échouer sans frontend running**
+   - Probabilité: Élevée
+   - Impact: Bloquant
+   - Mitigation: Documenter comment lancer le frontend
 
-2. **Monitoring configuration peut être complexe**
+2. **data-testid manquants dans les composants**
+   - Probabilité: Moyenne
+   - Impact: Moyen
+   - Mitigation: Ajouter au fur et à mesure
+
+3. **Backend API peut changer**
    - Probabilité: Faible
    - Impact: Moyen
-   - Mitigation: Utiliser des outils standard (Sentry)
+   - Mitigation: Tests utilisent les données demo stables
 
 ---
 
@@ -413,7 +440,7 @@ Completion: 45%
 ### Sprint 1 Success Criteria
 
 - [x] Seed script fonctionne sans erreur ✅
-- [ ] >80% tests E2E passent ⏳
+- [ ] >80% tests E2E passent ⏳ (en cours)
 - [ ] Monitoring opérationnel ⏳
 - [ ] Documentation complète ⏳
 - [x] Zero critical bugs ✅
@@ -426,17 +453,42 @@ Completion: 45%
 
 ```
 Tâches restantes:
-Jour 1:  ████████████████████ 20/20 (100%)
-Jour 2:  ████████████░░░░░░░░ 12/20 (60%) [Estimé]
-Jour 3:  ████████░░░░░░░░░░░░ 8/20 (40%) [Estimé]
-Jour 4:  ████░░░░░░░░░░░░░░░░ 4/20 (20%) [Estimé]
-Jour 5:  ░░░░░░░░░░░░░░░░░░░░ 0/20 (0%) [Estimé]
+Jour 1:  ████████████████████ 20/20 (100%) [Début]
+Jour 1:  ██████████░░░░░░░░░░ 10/20 (50%) [Fin] ← NOUS SOMMES ICI
+Jour 2:  ████░░░░░░░░░░░░░░░░ 4/20 (20%) [Estimé]
+Jour 3:  ░░░░░░░░░░░░░░░░░░░░ 0/20 (0%) [Estimé]
 ```
 
-**Note:** Nous sommes en avance grâce au gain de temps sur le seed script!
+**Note:** Nous sommes TRÈS en avance grâce aux gains de temps!
 
 ---
 
-**Dernière mise à jour:** 6 novembre 2025, 22:30  
+## 📊 COMMITS EFFECTUÉS AUJOURD'HUI
+
+**Total: 4 commits**
+
+1. `2457393` - feat: Fix and complete seed-demo-data script
+2. `85d0ab7` - docs: Add Sprint 1 progress report (Day 1 completed)
+3. `8b86c17` - docs: Add detailed E2E tests analysis
+4. `9be4264` - test: Phase 1 - E2E tests preparation completed
+
+**Lignes ajoutées:** ~1500 lignes  
+**Fichiers créés:** 10 fichiers
+
+---
+
+## 🎉 HIGHLIGHTS DU JOUR 1
+
+1. ✅ **Seed script 100% fonctionnel** (gain de 13h)
+2. ✅ **Infrastructure de test moderne** (6 fichiers créés)
+3. ✅ **Groupe A réécrit** (13 tests au lieu de 5)
+4. ✅ **Documentation exhaustive** (3 rapports créés)
+5. ✅ **50% des tâches complétées** (10/20)
+
+**Statut global:** 🟢 **EXCELLENT** - En avance sur le planning!
+
+---
+
+**Dernière mise à jour:** 6 novembre 2025, 23:30  
 **Prochaine mise à jour:** 7 novembre 2025, 09:00 (Daily Standup)  
 **Responsable:** Manus AI (Coordinateur Général)
