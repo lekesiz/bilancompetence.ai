@@ -20,6 +20,7 @@ import {
 } from '../services/userServiceNeon.js';
 import { sendWelcomeEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
+import { setAuthCookies, clearAuthCookies } from '../utils/cookieHelper.js';
 
 const router = Router();
 
@@ -147,6 +148,9 @@ router.post('/register', async (req: Request, res: Response) => {
       organization_id: newUser.organization_id,
     });
 
+    // 🔒 SECURITY: Set HttpOnly cookies for secure token storage
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
     logger.info('User registered successfully', { userId: newUser.id, email: newUser.email });
 
     return res.status(201).json({
@@ -159,7 +163,7 @@ router.post('/register', async (req: Request, res: Response) => {
           full_name: newUser.full_name,
           role: newUser.role,
         },
-        ...tokens,
+        ...tokens, // Also return in body for backward compatibility
       },
     });
   } catch (error: any) {
@@ -292,6 +296,9 @@ router.post('/login', async (req: Request, res: Response) => {
       organization_id: user.organization_id,
     });
 
+    // 🔒 SECURITY: Set HttpOnly cookies for secure token storage
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
     logger.info('User logged in successfully', { userId: user.id, email: user.email });
 
     return res.status(200).json({
@@ -306,7 +313,7 @@ router.post('/login', async (req: Request, res: Response) => {
           cv_url: user.cv_url,
           cv_uploaded_at: user.cv_uploaded_at,
         },
-        ...tokens,
+        ...tokens, // Also return in body for backward compatibility
       },
     });
   } catch (error: any) {
@@ -429,11 +436,11 @@ router.post('/refresh', async (req: Request, res: Response) => {
  */
 router.post('/logout', async (req: Request, res: Response) => {
   try {
-    // In a stateless JWT system, logout is handled client-side
-    // The client should delete the tokens from storage
+    // 🔒 SECURITY: Clear HttpOnly cookies
+    clearAuthCookies(res);
 
+    // In a stateless JWT system, logout is handled by clearing cookies
     // If you want to implement token blacklisting, you can add it here
-    // For now, we just return success
 
     logger.info('User logged out');
 

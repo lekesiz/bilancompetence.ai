@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import http from 'http';
 import authRoutes from './routes/auth.js';
 import dashboardRoutes from './routes/dashboardNeon.js';
@@ -99,6 +100,7 @@ app.use(
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // 🔒 SECURITY: Cookie parsing for HttpOnly auth cookies
 
 // Rate limiting
 app.use('/api/', apiLimiter);

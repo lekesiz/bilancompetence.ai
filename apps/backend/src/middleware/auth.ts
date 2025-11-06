@@ -15,19 +15,28 @@ declare global {
 
 /**
  * Authentication middleware - verify JWT token with Zod validation
+ * 🔒 SECURITY: Supports both HttpOnly cookies (primary) and Authorization header (fallback)
  */
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
-    const authHeader = req.headers.authorization;
+    // Priority 1: Check HttpOnly cookie (more secure against XSS)
+    let token = req.cookies?.accessToken;
 
-    if (!authHeader?.startsWith('Bearer ')) {
+    // Priority 2: Check Authorization header (fallback for API clients)
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.slice(7);
+      }
+    }
+
+    if (!token) {
       return res.status(401).json({
         status: 'error',
-        message: 'Missing or invalid authorization header',
+        message: 'Missing authentication token',
       });
     }
 
-    const token = authHeader.slice(7);
     const decoded = verifyToken(token);
 
     if (!decoded) {
