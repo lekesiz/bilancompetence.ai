@@ -39,6 +39,7 @@ import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
 import { validateCsrfMiddleware } from './utils/csrfHelper.js';
+import { authMiddleware, requireRole } from './middleware/auth.js';
 import RealtimeService from './services/realtimeService.js';
 import { logger } from './utils/logger.js';
 import swaggerUi from 'swagger-ui-express';
@@ -152,16 +153,16 @@ app.get('/api/version', (req, res) => {
 
 // Performance monitoring endpoint (admin only) - ✅ SECURITY FIX: Added authentication
 const monitoringEndpoint = createMonitoringEndpoint();
-app.get('/api/admin/monitoring/stats', authMiddleware, roleMiddleware(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/stats', authMiddleware, requireRole(['ADMIN']), (req, res) => {
   res.json(monitoringEndpoint.stats());
 });
 
-app.get('/api/admin/monitoring/slow-queries', authMiddleware, roleMiddleware(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/slow-queries', authMiddleware, requireRole(['ADMIN']), (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.slowQueries(limit));
 });
 
-app.get('/api/admin/monitoring/frequent-queries', authMiddleware, roleMiddleware(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/frequent-queries', authMiddleware, requireRole(['ADMIN']), (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.frequentQueries(limit));
 });

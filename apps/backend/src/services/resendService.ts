@@ -1,6 +1,14 @@
 import { Resend } from 'resend';
+import { logger } from '../utils/logger.js';
 
-const resend = new Resend(process.env.RESEND_API_KEY || 're_j299ogpf_EEAKZAoLJArch69r5tXmjVPs');
+// 🔒 SECURITY: Fail-fast if RESEND_API_KEY is not set
+const apiKey = process.env.RESEND_API_KEY;
+if (!apiKey) {
+  logger.error('CRITICAL: RESEND_API_KEY environment variable is required');
+  throw new Error('RESEND_API_KEY environment variable is required for email service');
+}
+
+const resend = new Resend(apiKey);
 
 export interface EmailData {
   to: string;

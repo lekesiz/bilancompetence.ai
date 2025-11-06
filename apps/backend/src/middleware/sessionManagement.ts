@@ -1,6 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
+import { logger } from '../utils/logger.js';
+
+// 🔒 SECURITY: Validate JWT_SECRET at startup
+const JWT_SECRET = (() => {
+  if (!process.env.JWT_SECRET) {
+    logger.error('CRITICAL: JWT_SECRET environment variable is required');
+    throw new Error('JWT_SECRET environment variable is required for session management');
+  }
+  return process.env.JWT_SECRET;
+})();
 
 // Make Supabase optional - only initialize if credentials are provided
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -87,7 +97,7 @@ export async function createSession(
 export async function validateSession(token: string, req: Request): Promise<SessionData | null> {
   try {
     // Décoder le token pour obtenir l'userId
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const decoded: any = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
 
     // Récupérer la session
