@@ -29,7 +29,6 @@ interface TypingIndicator {
 
 export const useRealtime = () => {
   const { user } = useAuth();
-  const token = api.getAccessToken();
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
@@ -38,17 +37,18 @@ export const useRealtime = () => {
 
   // Initialize Socket.io connection
   useEffect(() => {
-    if (!user || !token) {
+    if (!user) {
       return;
     }
 
     const serverUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
+    // 🔒 SECURITY: Socket.IO with HttpOnly cookie authentication
     const socket = io(serverUrl, {
       auth: {
-        token,
         userId: user.id,
       },
+      withCredentials: true, // Send HttpOnly cookies automatically
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -107,7 +107,7 @@ export const useRealtime = () => {
     return () => {
       socket.close();
     };
-  }, [user, token]);
+  }, [user]);
 
   // Send notification acknowledgement
   const acknowledgeNotification = useCallback((notificationId: string) => {
