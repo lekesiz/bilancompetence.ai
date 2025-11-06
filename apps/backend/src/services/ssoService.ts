@@ -1,13 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+import { pool } from '../config/neon.js';
 import axios from 'axios';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_KEY || ''
-);
 
 /**
  * Service de gestion SSO (Single Sign-On)
+ * Migrated to Neon PostgreSQL
  * Supporte Google OAuth et Microsoft OAuth
  */
 
@@ -84,61 +80,44 @@ export async function authenticateWithGoogle(code: string): Promise<SSOAuthResul
     }
 
     // Vérifier si l'utilisateur existe déjà
-    const { data: existingUser, error: fetchError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', googleUser.email)
-      .single();
+    const existingUserResult = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [googleUser.email]
+    );
 
     let user;
     let isNewUser = false;
 
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      throw new Error(`Erreur lors de la recherche de l'utilisateur: ${fetchError.message}`);
-    }
-
-    if (existingUser) {
+    if (existingUserResult.rows.length > 0) {
       // Utilisateur existant - mettre à jour les infos SSO
-      const { data: updatedUser, error: updateError } = await supabase
-        .from('users')
-        .update({
-          google_id: googleUser.id,
-          avatar_url: googleUser.picture,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existingUser.id)
-        .select()
-        .single();
+      const updatedUserResult = await pool.query(
+        `UPDATE users
+         SET google_id = $1, avatar_url = $2, updated_at = NOW()
+         WHERE id = $3
+         RETURNING *`,
+        [googleUser.id, googleUser.picture, existingUserResult.rows[0].id]
+      );
 
-      if (updateError) {
-        throw new Error(`Erreur lors de la mise à jour de l'utilisateur: ${updateError.message}`);
-      }
-
-      user = updatedUser;
+      user = updatedUserResult.rows[0];
     } else {
       // Nouvel utilisateur - créer le compte
-      const { data: newUser, error: createError } = await supabase
-        .from('users')
-        .insert({
-          email: googleUser.email,
-          full_name: googleUser.name,
-          first_name: googleUser.given_name,
-          last_name: googleUser.family_name,
-          google_id: googleUser.id,
-          avatar_url: googleUser.picture,
-          email_verified: true,
-          role: 'BENEFICIARY',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+      const newUserResult = await pool.query(
+        `INSERT INTO users (email, full_name, first_name, last_name, google_id, avatar_url, email_verified, role, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+         RETURNING *`,
+        [
+          googleUser.email,
+          googleUser.name,
+          googleUser.given_name,
+          googleUser.family_name,
+          googleUser.id,
+          googleUser.picture,
+          true,
+          'BENEFICIARY',
+        ]
+      );
 
-      if (createError) {
-        throw new Error(`Erreur lors de la création de l'utilisateur: ${createError.message}`);
-      }
-
-      user = newUser;
+      user = newUserResult.rows[0];
       isNewUser = true;
     }
 
@@ -216,60 +195,46 @@ export async function authenticateWithMicrosoft(code: string): Promise<SSOAuthRe
     // Récupérer les informations utilisateur
     const msUser = await getMicrosoftUserInfo(accessToken);
 
+    const email = msUser.mail || msUser.userPrincipalName;
+
     // Vérifier si l'utilisateur existe déjà
-    const { data: existingUser, error: fetchError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', msUser.mail || msUser.userPrincipalName)
-      .single();
+    const existingUserResult = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
+    );
 
     let user;
     let isNewUser = false;
 
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      throw new Error(`Erreur lors de la recherche de l'utilisateur: ${fetchError.message}`);
-    }
-
-    if (existingUser) {
+    if (existingUserResult.rows.length > 0) {
       // Utilisateur existant
-      const { data: updatedUser, error: updateError } = await supabase
-        .from('users')
-        .update({
-          microsoft_id: msUser.id,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existingUser.id)
-        .select()
-        .single();
+      const updatedUserResult = await pool.query(
+        `UPDATE users
+         SET microsoft_id = $1, updated_at = NOW()
+         WHERE id = $2
+         RETURNING *`,
+        [msUser.id, existingUserResult.rows[0].id]
+      );
 
-      if (updateError) {
-        throw new Error(`Erreur lors de la mise à jour de l'utilisateur: ${updateError.message}`);
-      }
-
-      user = updatedUser;
+      user = updatedUserResult.rows[0];
     } else {
       // Nouvel utilisateur
-      const { data: newUser, error: createError } = await supabase
-        .from('users')
-        .insert({
-          email: msUser.mail || msUser.userPrincipalName,
-          full_name: msUser.displayName,
-          first_name: msUser.givenName,
-          last_name: msUser.surname,
-          microsoft_id: msUser.id,
-          email_verified: true,
-          role: 'BENEFICIARY',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
+      const newUserResult = await pool.query(
+        `INSERT INTO users (email, full_name, first_name, last_name, microsoft_id, email_verified, role, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+         RETURNING *`,
+        [
+          email,
+          msUser.displayName,
+          msUser.givenName,
+          msUser.surname,
+          msUser.id,
+          true,
+          'BENEFICIARY',
+        ]
+      );
 
-      if (createError) {
-        throw new Error(`Erreur lors de la création de l'utilisateur: ${createError.message}`);
-      }
-
-      user = newUser;
+      user = newUserResult.rows[0];
       isNewUser = true;
     }
 
@@ -315,19 +280,14 @@ export async function revokeSSOAccess(
   provider: 'google' | 'microsoft'
 ): Promise<void> {
   try {
-    const updateData = provider === 'google' ? { google_id: null } : { microsoft_id: null };
+    const field = provider === 'google' ? 'google_id' : 'microsoft_id';
 
-    const { error } = await supabase
-      .from('users')
-      .update({
-        ...updateData,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
-
-    if (error) {
-      throw new Error(`Erreur lors de la révocation de l'accès SSO: ${error.message}`);
-    }
+    await pool.query(
+      `UPDATE users
+       SET ${field} = NULL, updated_at = NOW()
+       WHERE id = $1`,
+      [userId]
+    );
   } catch (error: any) {
     console.error('Erreur revokeSSOAccess:', error);
     throw error;

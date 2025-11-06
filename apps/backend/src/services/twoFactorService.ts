@@ -1,13 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+import { pool } from '../config/neon.js';
 import * as crypto from 'crypto';
-
-// Make Supabase optional - only initialize if credentials are provided
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 /**
  * Service de gestion de l'authentification à deux facteurs (2FA)
+ * Migrated to Neon PostgreSQL
  * Supporte TOTP (Time-based One-Time Password) via Google Authenticator, Authy, etc.
  */
 
@@ -26,25 +22,21 @@ interface TwoFactorVerification {
  * Génère un secret TOTP pour un utilisateur
  */
 export async function generateTwoFactorSecret(userId: string): Promise<TwoFactorSecret> {
-  if (!supabase) {
-    throw new Error(
-      'Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.'
-    );
-  }
   try {
     // Générer un secret aléatoire (base32)
     const secret = generateBase32Secret();
 
     // Récupérer les informations utilisateur
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('email, full_name')
-      .eq('id', userId)
-      .single();
+    const userResult = await pool.query(
+      'SELECT email, full_name FROM users WHERE id = $1',
+      [userId]
+    );
 
-    if (userError || !user) {
+    if (userResult.rows.length === 0) {
       throw new Error('Utilisateur non trouvé');
     }
+
+    const user = userResult.rows[0];
 
     // Générer le QR code URL (compatible Google Authenticator)
     const appName = 'BilanCompetence.AI';
@@ -57,18 +49,13 @@ export async function generateTwoFactorSecret(userId: string): Promise<TwoFactor
     const hashedBackupCodes = backupCodes.map((code) => hashBackupCode(code));
 
     // Stocker le secret (non encore activé)
-    const { error: insertError } = await supabase.from('user_two_factor').upsert({
-      user_id: userId,
-      secret: secret,
-      is_enabled: false,
-      backup_codes: hashedBackupCodes,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
-
-    if (insertError) {
-      throw new Error(`Erreur lors de la sauvegarde du secret 2FA: ${insertError.message}`);
-    }
+    await pool.query(
+      `INSERT INTO user_two_factor (user_id, secret, is_enabled, backup_codes, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, NOW(), NOW())
+       ON CONFLICT (user_id)
+       DO UPDATE SET secret = $2, is_enabled = $3, backup_codes = $4, updated_at = NOW()`,
+      [userId, secret, false, JSON.stringify(hashedBackupCodes)]
+    );
 
     return {
       secret,
@@ -88,22 +75,18 @@ export async function enableTwoFactor(
   userId: string,
   token: string
 ): Promise<TwoFactorVerification> {
-  if (!supabase) {
-    throw new Error(
-      'Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.'
-    );
-  }
   try {
     // Récupérer le secret
-    const { data: twoFactorData, error: fetchError } = await supabase
-      .from('user_two_factor')
-      .select('secret, is_enabled')
-      .eq('user_id', userId)
-      .single();
+    const result = await pool.query(
+      'SELECT secret, is_enabled FROM user_two_factor WHERE user_id = $1',
+      [userId]
+    );
 
-    if (fetchError || !twoFactorData) {
+    if (result.rows.length === 0) {
       return { isValid: false, message: '2FA non configuré pour cet utilisateur' };
     }
+
+    const twoFactorData = result.rows[0];
 
     if (twoFactorData.is_enabled) {
       return { isValid: false, message: '2FA déjà activé' };
@@ -117,17 +100,10 @@ export async function enableTwoFactor(
     }
 
     // Activer le 2FA
-    const { error: updateError } = await supabase
-      .from('user_two_factor')
-      .update({
-        is_enabled: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('user_id', userId);
-
-    if (updateError) {
-      throw new Error(`Erreur lors de l'activation du 2FA: ${updateError.message}`);
-    }
+    await pool.query(
+      'UPDATE user_two_factor SET is_enabled = $1, updated_at = NOW() WHERE user_id = $2',
+      [true, userId]
+    );
 
     return { isValid: true, message: '2FA activé avec succès' };
   } catch (error) {
@@ -143,22 +119,18 @@ export async function verifyTwoFactorToken(
   userId: string,
   token: string
 ): Promise<TwoFactorVerification> {
-  if (!supabase) {
-    throw new Error(
-      'Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.'
-    );
-  }
   try {
     // Récupérer le secret et les backup codes
-    const { data: twoFactorData, error: fetchError } = await supabase
-      .from('user_two_factor')
-      .select('secret, is_enabled, backup_codes')
-      .eq('user_id', userId)
-      .single();
+    const result = await pool.query(
+      'SELECT secret, is_enabled, backup_codes FROM user_two_factor WHERE user_id = $1',
+      [userId]
+    );
 
-    if (fetchError || !twoFactorData) {
+    if (result.rows.length === 0) {
       return { isValid: false, message: '2FA non configuré' };
     }
+
+    const twoFactorData = result.rows[0];
 
     if (!twoFactorData.is_enabled) {
       return { isValid: false, message: '2FA non activé' };
@@ -172,7 +144,9 @@ export async function verifyTwoFactorToken(
     }
 
     // Si TOTP invalide, vérifier les backup codes
-    const backupCodes = twoFactorData.backup_codes || [];
+    const backupCodes = typeof twoFactorData.backup_codes === 'string'
+      ? JSON.parse(twoFactorData.backup_codes)
+      : twoFactorData.backup_codes || [];
     const hashedToken = hashBackupCode(token);
 
     const backupCodeIndex = backupCodes.findIndex((code: string) => code === hashedToken);
@@ -181,13 +155,10 @@ export async function verifyTwoFactorToken(
       // Supprimer le backup code utilisé
       backupCodes.splice(backupCodeIndex, 1);
 
-      await supabase
-        .from('user_two_factor')
-        .update({
-          backup_codes: backupCodes,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', userId);
+      await pool.query(
+        'UPDATE user_two_factor SET backup_codes = $1, updated_at = NOW() WHERE user_id = $2',
+        [JSON.stringify(backupCodes), userId]
+      );
 
       return { isValid: true, message: 'Code de secours valide (code consommé)' };
     }
@@ -203,17 +174,8 @@ export async function verifyTwoFactorToken(
  * Désactive le 2FA pour un utilisateur
  */
 export async function disableTwoFactor(userId: string): Promise<void> {
-  if (!supabase) {
-    throw new Error(
-      'Supabase is not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.'
-    );
-  }
   try {
-    const { error } = await supabase.from('user_two_factor').delete().eq('user_id', userId);
-
-    if (error) {
-      throw new Error(`Erreur lors de la désactivation du 2FA: ${error.message}`);
-    }
+    await pool.query('DELETE FROM user_two_factor WHERE user_id = $1', [userId]);
   } catch (error) {
     console.error('Erreur disableTwoFactor:', error);
     throw error;
@@ -224,21 +186,17 @@ export async function disableTwoFactor(userId: string): Promise<void> {
  * Vérifie si le 2FA est activé pour un utilisateur
  */
 export async function isTwoFactorEnabled(userId: string): Promise<boolean> {
-  if (!supabase) {
-    return false; // If Supabase is not configured, 2FA is not enabled
-  }
   try {
-    const { data, error } = await supabase
-      .from('user_two_factor')
-      .select('is_enabled')
-      .eq('user_id', userId)
-      .single();
+    const result = await pool.query(
+      'SELECT is_enabled FROM user_two_factor WHERE user_id = $1',
+      [userId]
+    );
 
-    if (error || !data) {
+    if (result.rows.length === 0) {
       return false;
     }
 
-    return data.is_enabled || false;
+    return result.rows[0].is_enabled || false;
   } catch (error) {
     console.error('Erreur isTwoFactorEnabled:', error);
     return false;
