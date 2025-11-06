@@ -5,7 +5,8 @@
 [![Production](https://img.shields.io/badge/Production-LIVE-success)](https://app.bilancompetence.ai)
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-black)](https://vercel.com)
 [![Backend](https://img.shields.io/badge/Backend-Railway-purple)](https://railway.app)
-[![Database](https://img.shields.io/badge/Database-Neon-blue)](https://neon.tech)
+[![Database](https://img.shields.io/badge/Database-Neon%20PostgreSQL-blue)](https://neon.tech)
+[![Storage](https://img.shields.io/badge/Storage-Supabase-green)](https://supabase.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![Test Coverage](https://img.shields.io/badge/Coverage-70%25-green)](🎯%20FINAL_PROJECT_STATUS_95_100.md)
@@ -18,7 +19,8 @@
 
 **Overall Score:** 95/100 ⭐⭐⭐⭐⭐ (🟢 Production Ready)
 **Status:** � PRODUCTION READY - EXCELLENT QUALITY
-**Last Updated:** November 4, 2025
+**Last Updated:** November 6, 2025
+**Architecture:** Hybrid (Neon DB + Supabase Storage) - See [HYBRID_ARCHITECTURE.md](HYBRID_ARCHITECTURE.md)
 **Detailed Report:** [🎯 FINAL_PROJECT_STATUS_95_100.md](🎯%20FINAL_PROJECT_STATUS_95_100.md)
 
 ### 🎯 Major Achievements (November 2025):
