@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from './useAuth';
+import { getHeadersWithCsrf } from '@/lib/csrfHelper';
 
 /**
  * Type definitions for job recommendations
@@ -114,16 +115,16 @@ export function useJobRecommendations() {
 
   /**
    * Get request headers
-   * 🔒 SECURITY: Auth handled via HttpOnly cookies
+   * 🔒 SECURITY: Auth handled via HttpOnly cookies, CSRF token included
    */
   const getHeaders = useCallback(() => {
     if (!user) {
       throw new Error('User not authenticated');
     }
 
-    return {
+    return getHeadersWithCsrf({
       'Content-Type': 'application/json',
-    };
+    });
   }, [user]);
 
   /**

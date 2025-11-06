@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { getCsrfToken } from './csrfHelper';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -34,6 +35,22 @@ class BilanAPI {
       },
       withCredentials: true, // 🔒 SECURITY: Enable HttpOnly cookie support
     });
+
+    // 🔒 SECURITY: Request interceptor to add CSRF token
+    this.api.interceptors.request.use(
+      (config) => {
+        // Add CSRF token for mutating requests
+        const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+        if (config.method && mutatingMethods.includes(config.method.toUpperCase())) {
+          const csrfToken = getCsrfToken();
+          if (csrfToken) {
+            config.headers['x-csrf-token'] = csrfToken;
+          }
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
     // Response interceptor to handle 401 errors
     this.api.interceptors.response.use(

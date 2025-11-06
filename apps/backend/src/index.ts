@@ -38,6 +38,7 @@ import { apiLimiter, authLimiter, publicLimiter, uploadLimiter } from './middlew
 import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
+import { validateCsrfMiddleware } from './utils/csrfHelper.js';
 import RealtimeService from './services/realtimeService.js';
 import { logger } from './utils/logger.js';
 import swaggerUi from 'swagger-ui-express';
@@ -113,6 +114,20 @@ app.use('/api/', etagMiddleware);
 
 // Query monitoring for performance tracking
 app.use('/api/', queryMonitoringMiddleware);
+
+// 🔒 SECURITY: CSRF protection for state-changing operations
+// Exclude /api/auth endpoints (CSRF token is generated during login/register)
+app.use('/api/', (req, res, next) => {
+  // Skip CSRF validation for auth endpoints
+  if (req.path.startsWith('/auth/')) {
+    return next();
+  }
+  // Skip CSRF validation for health/version endpoints
+  if (req.path === '/version') {
+    return next();
+  }
+  validateCsrfMiddleware(req, res, next);
+});
 
 // Input sanitization (protection XSS et SQL Injection)
 app.use('/api/', sanitizeInput());

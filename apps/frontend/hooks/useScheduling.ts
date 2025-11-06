@@ -18,6 +18,7 @@ import SchedulingAPI, {
 } from '@/lib/schedulingAPI';
 import axios from 'axios';
 import { useState, useCallback } from 'react';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 // Initialize API client with axios
 const apiClient = axios.create({
@@ -27,6 +28,21 @@ const apiClient = axios.create({
   },
   withCredentials: true, // 🔒 SECURITY: Enable HttpOnly cookie support
 });
+
+// 🔒 SECURITY: Add CSRF token to mutating requests
+apiClient.interceptors.request.use(
+  (config) => {
+    const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+    if (config.method && mutatingMethods.includes(config.method.toUpperCase())) {
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        config.headers['x-csrf-token'] = csrfToken;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 const schedulingAPI = new SchedulingAPI(apiClient);
 

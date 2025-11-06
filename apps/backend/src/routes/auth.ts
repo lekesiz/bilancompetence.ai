@@ -21,6 +21,7 @@ import {
 import { sendWelcomeEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
 import { setAuthCookies, clearAuthCookies } from '../utils/cookieHelper.js';
+import { generateCsrfToken, setCsrfToken, clearCsrfToken } from '../utils/csrfHelper.js';
 
 const router = Router();
 
@@ -150,6 +151,10 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // 🔒 SECURITY: Set HttpOnly cookies for secure token storage
     setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
+    // 🔒 SECURITY: Generate and set CSRF token
+    const csrfToken = generateCsrfToken();
+    setCsrfToken(res, csrfToken);
 
     logger.info('User registered successfully', { userId: newUser.id, email: newUser.email });
 
@@ -299,6 +304,10 @@ router.post('/login', async (req: Request, res: Response) => {
     // 🔒 SECURITY: Set HttpOnly cookies for secure token storage
     setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
 
+    // 🔒 SECURITY: Generate and set CSRF token
+    const csrfToken = generateCsrfToken();
+    setCsrfToken(res, csrfToken);
+
     logger.info('User logged in successfully', { userId: user.id, email: user.email });
 
     return res.status(200).json({
@@ -418,6 +427,10 @@ router.post('/refresh', async (req: Request, res: Response) => {
     // 🔒 SECURITY: Set new HttpOnly cookies
     setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
 
+    // 🔒 SECURITY: Generate new CSRF token on refresh
+    const csrfToken = generateCsrfToken();
+    setCsrfToken(res, csrfToken);
+
     logger.info('Token refreshed successfully', { userId: user.id });
 
     return res.status(200).json({
@@ -450,8 +463,9 @@ router.post('/refresh', async (req: Request, res: Response) => {
  */
 router.post('/logout', async (req: Request, res: Response) => {
   try {
-    // 🔒 SECURITY: Clear HttpOnly cookies
+    // 🔒 SECURITY: Clear HttpOnly cookies and CSRF token
     clearAuthCookies(res);
+    clearCsrfToken(res);
 
     // In a stateless JWT system, logout is handled by clearing cookies
     // If you want to implement token blacklisting, you can add it here

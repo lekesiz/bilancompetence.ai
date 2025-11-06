@@ -5,11 +5,14 @@
  * Features:
  * - Full TypeScript support
  * - 🔒 SECURITY: HttpOnly cookie-based authentication
+ * - 🔒 SECURITY: CSRF token protection
  * - Request/response interceptors
  * - Error handling
  * - Timeout support
  * - Built-in retry logic
  */
+
+import { getCsrfToken } from './csrfHelper';
 
 export interface ApiRequestInit extends RequestInit {
   timeout?: number;
@@ -45,9 +48,21 @@ class ApiClient {
   /**
    * Prepare request headers
    * 🔒 SECURITY: Auth is handled via HttpOnly cookies
+   * 🔒 SECURITY: CSRF token added for mutating requests
    */
-  private getHeaders(): Record<string, string> {
-    return { ...this.defaultHeaders };
+  private getHeaders(method?: string): Record<string, string> {
+    const headers = { ...this.defaultHeaders };
+
+    // Add CSRF token for mutating requests
+    const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+    if (method && mutatingMethods.includes(method.toUpperCase())) {
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+    }
+
+    return headers;
   }
 
   /**
@@ -85,7 +100,7 @@ class ApiClient {
 
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        const headers = this.getHeaders();
+        const headers = this.getHeaders(method);
         const config: RequestInit = {
           ...init,
           method,
