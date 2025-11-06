@@ -48,8 +48,6 @@ export default function ReportsPage() {
 
   // Generate report
   const generateReport = useCallback(async () => {
-    if (!api.isAuthenticated()) return;
-
     try {
       setIsGenerating(true);
       setError(null);
@@ -76,19 +74,17 @@ export default function ReportsPage() {
 
   // Export report
   const exportReport = async () => {
-    if (!api.isAuthenticated() || !report) return;
+    if (!report) return;
 
     try {
       const params = new URLSearchParams();
       params.append('format', exportFormat);
       if (includeEvidence) params.append('includeEvidence', 'true');
 
-      // For file download, we need to use fetch with token manually
-      const token = api.getAccessToken();
-      const response = await fetch(`/api/admin/qualiopi/compliance-report?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      // 🔒 SECURITY: Use fetch with credentials to send HttpOnly cookies
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiBaseUrl}/api/admin/qualiopi/compliance-report?${params}`, {
+        credentials: 'include', // Send HttpOnly cookies
       });
 
       if (!response.ok) {

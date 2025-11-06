@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, CheckCircle, XCircle } from 'lucide-react';
 
 interface PasswordFormProps {

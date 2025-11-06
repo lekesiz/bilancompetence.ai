@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { TrendingUp, TrendingDown, Users, FileText, CheckCircle, Clock } from 'lucide-react';
 
 interface StatCardProps {

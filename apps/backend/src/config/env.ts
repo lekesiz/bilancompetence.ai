@@ -12,18 +12,48 @@ dotenv.config({ path: path.join(rootDir, '.env') });
 dotenv.config({ path: path.join(backendDir, '.env') });
 
 // ✅ PHASE 2: Environment Variable Validation
+// 🔒 SECURITY: Comprehensive validation added after security audit
 const requiredEnvVars = [
-  'DATABASE_URL',
-  'JWT_SECRET',
-  'FRONTEND_URL',
+  // Core Infrastructure
+  'DATABASE_URL',           // Primary Neon database connection
+  'JWT_SECRET',            // Session token signing (CRITICAL - must be strong)
+  'FRONTEND_URL',          // CORS and redirect configuration
+
+  // Email Service (CRITICAL - required for auth flows)
+  'RESEND_API_KEY',        // Email delivery service
+  'EMAIL_FROM',            // Sender email address
 ];
 
 const recommendedEnvVars = [
-  'GEMINI_API_KEY',
-  'SUPABASE_URL',
-  'SUPABASE_SERVICE_KEY',
-  'STRIPE_SECRET_KEY',
-  'SENDGRID_API_KEY',
+  // AI Services
+  'GEMINI_API_KEY',        // Google Gemini AI for recommendations
+  'GOOGLE_API_KEY',        // Google services integration
+
+  // Storage (Supabase Storage still used for file uploads)
+  'SUPABASE_URL',          // Supabase project URL
+  'SUPABASE_SERVICE_KEY',  // Admin access for Storage operations
+
+  // Payment Processing
+  'STRIPE_SECRET_KEY',     // Payment gateway
+  'STRIPE_WEBHOOK_SECRET', // Webhook signature verification
+
+  // Third-party Integrations
+  'WEDOF_API_KEY',         // Wedof LMS integration
+  'PENNYLANE_API_KEY',     // Accounting software integration
+
+  // SSO/OAuth
+  'GOOGLE_CLIENT_ID',      // Google OAuth
+  'GOOGLE_CLIENT_SECRET',
+  'MICROSOFT_CLIENT_ID',   // Microsoft OAuth
+  'MICROSOFT_CLIENT_SECRET',
+  'MICROSOFT_TENANT_ID',
+
+  // France Travail API
+  'FRANCE_TRAVAIL_CLIENT_ID',
+  'FRANCE_TRAVAIL_CLIENT_SECRET',
+
+  // Monitoring
+  'SENTRY_DSN',            // Error tracking and monitoring
 ];
 
 // Check required variables

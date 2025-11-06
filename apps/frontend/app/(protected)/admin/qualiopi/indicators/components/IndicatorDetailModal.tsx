@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toastError, toastSuccess } from '@/components/ui/Toast';
 import { Indicator } from '../types';
 import { api } from '@/lib/api';

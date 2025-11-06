@@ -3,7 +3,7 @@
  * Display helpful text on hover
  */
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface TooltipProps {
   content: string;

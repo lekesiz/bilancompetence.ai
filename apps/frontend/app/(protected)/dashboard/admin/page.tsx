@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface DashboardStats {
   total_users: number;
@@ -47,18 +48,16 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
+      const analyticsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics`, {
+        credentials: 'include', // Send HttpOnly cookies automatically
+      });
+
+      // Backend returns 401 if not authenticated
+      if (analyticsRes.status === 401) {
         router.push('/login');
         return;
       }
-
-      // Load analytics data
-      const analyticsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/analytics`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
 
       if (analyticsRes.ok) {
         const analyticsData = await analyticsRes.json();

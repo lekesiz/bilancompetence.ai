@@ -1,10 +1,11 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/qualiopi';
 import { AvatarUpload, ProfileForm, PasswordForm } from '@/components/profile';
 import { User, Settings, Shield, Camera, Mail, Phone, FileText, Calendar, ShieldCheck, Upload, File, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface UserProfile {
   id: string;
@@ -40,9 +41,7 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
+          credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
         });
 
         if (response.ok) {
@@ -90,12 +89,20 @@ export default function ProfilePage() {
 
   const handleProfileUpdate = async (data: { full_name: string; phone: string; bio: string }) => {
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
         body: JSON.stringify(data),
       });
 
@@ -116,12 +123,20 @@ export default function ProfilePage() {
 
   const handlePasswordChange = async (data: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/change-password`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
         body: JSON.stringify({
           current_password: data.currentPassword,
           new_password: data.newPassword,
@@ -178,11 +193,17 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append('cv', cvFile);
 
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {};
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/upload-cv`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
         body: formData,
       });
 
@@ -211,11 +232,17 @@ export default function ProfilePage() {
     if (!confirm('Are you sure you want to delete your CV?')) return;
 
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {};
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/delete-cv`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
       });
 
       if (response.ok) {

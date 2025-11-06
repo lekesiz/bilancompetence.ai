@@ -10,7 +10,7 @@
  * - List rendering optimization
  */
 
-import { memo, useMemo, useCallback, useRef, useEffect, useState } from 'react';
+import React, { memo, useMemo, useCallback, useRef, useEffect, useState } from 'react';
 
 /**
  * Deep compare for memo() custom comparison

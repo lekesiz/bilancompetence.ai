@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { User, Mail, Phone, FileText, Save, X, Edit3 } from 'lucide-react';
 
 interface ProfileFormProps {

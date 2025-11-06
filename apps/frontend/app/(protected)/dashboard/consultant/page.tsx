@@ -38,17 +38,16 @@ export default function ConsultantDashboard() {
 
   const loadBilans = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
+        credentials: 'include', // Send HttpOnly cookies automatically
+      });
+
+      // Backend returns 401 if not authenticated
+      if (res.status === 401) {
         router.push('/login');
         return;
       }
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
 
       if (!res.ok) throw new Error('Failed to load bilans');
       

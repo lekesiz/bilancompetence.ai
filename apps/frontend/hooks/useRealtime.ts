@@ -29,7 +29,6 @@ interface TypingIndicator {
 
 export const useRealtime = () => {
   const { user } = useAuth();
-  const token = api.getAccessToken();
   const [isConnected, setIsConnected] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
@@ -38,17 +37,18 @@ export const useRealtime = () => {
 
   // Initialize Socket.io connection
   useEffect(() => {
-    if (!user || !token) {
+    if (!user) {
       return;
     }
 
     const serverUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
+    // 🔒 SECURITY: Socket.IO with HttpOnly cookie authentication
     const socket = io(serverUrl, {
       auth: {
-        token,
         userId: user.id,
       },
+      withCredentials: true, // Send HttpOnly cookies automatically
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -57,23 +57,21 @@ export const useRealtime = () => {
     });
 
     socket.on('connect', () => {
-      console.log('✅ Connected to real-time server');
+      // Connection established
       setIsConnected(true);
     });
 
     socket.on('connected', (data) => {
-      console.log('🔌 Socket connected:', data);
+      // Socket handshake complete
     });
 
     // Handle incoming notifications
     socket.on('notification', (notification: Notification) => {
-      console.log('📬 Received notification:', notification);
       setNotifications((prev) => [...prev, { ...notification, id: `notif-${Date.now()}` }]);
     });
 
     // Handle incoming messages
     socket.on('message', (message: Message) => {
-      console.log('💬 Received message:', message);
       // Dispatch to message handler (parent component)
       window.dispatchEvent(
         new CustomEvent('realtime:message', {
@@ -84,7 +82,6 @@ export const useRealtime = () => {
 
     // Handle typing indicators
     socket.on('user_typing', (typing: TypingIndicator) => {
-      console.log('✍️ User typing:', typing);
       setTypingUsers((prev) => {
         const updated = new Map(prev);
         const key = `${typing.userId}-${typing.conversationId}`;
@@ -98,7 +95,6 @@ export const useRealtime = () => {
     });
 
     socket.on('disconnect', () => {
-      console.log('❌ Disconnected from real-time server');
       setIsConnected(false);
     });
 
@@ -111,7 +107,7 @@ export const useRealtime = () => {
     return () => {
       socket.close();
     };
-  }, [user, token]);
+  }, [user]);
 
   // Send notification acknowledgement
   const acknowledgeNotification = useCallback((notificationId: string) => {

@@ -3,6 +3,8 @@
  * Reusable badge/tag component with multiple variants
  */
 
+import React from 'react';
+
 interface BadgeProps {
   children: React.ReactNode;
   variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'gray';

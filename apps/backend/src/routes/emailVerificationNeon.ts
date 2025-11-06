@@ -86,12 +86,12 @@ router.post(
         }
       }
 
-      if (!emailSent) {
-        console.log('📧 Email verification token:', verificationToken);
-        console.log(
-          '📧 Verification URL:',
-          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`
-        );
+      // 🔒 SECURITY: Only log tokens in development
+      if (!emailSent && process.env.NODE_ENV !== 'production') {
+        logger.warn('⚠️  DEV MODE: Email service unavailable. Verification token:', {
+          token: verificationToken,
+          verificationUrl: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`
+        });
       }
 
       // Log action

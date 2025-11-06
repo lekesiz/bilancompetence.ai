@@ -97,12 +97,12 @@ router.post('/request', passwordResetLimiter, async (req: Request, res: Response
       }
     }
 
-    if (!emailSent) {
-      console.log('🔑 Password reset token:', resetToken);
-      console.log(
-        '🔑 Reset URL:',
-        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
-      );
+    // 🔒 SECURITY: Only log tokens in development
+    if (!emailSent && process.env.NODE_ENV !== 'production') {
+      logger.warn('⚠️  DEV MODE: Email service unavailable. Password reset token:',  {
+        token: resetToken,
+        resetUrl: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
+      });
     }
 
     // Log action

@@ -4,7 +4,7 @@
  * Features: Gradients, shadows, rounded corners
  */
 
-import { ButtonHTMLAttributes } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'primary-gradient' | 'success-gradient' | 'secondary' | 'outline' | 'outline-secondary' | 'ghost' | 'danger' | 'success';

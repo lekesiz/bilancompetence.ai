@@ -49,8 +49,6 @@ export default function QualiopsIndicatorsPage() {
 
   // Fetch indicators and metrics
   const fetchData = useCallback(async () => {
-    if (!api.isAuthenticated()) return;
-
     try {
       setIsLoadingData(true);
       setError(null);
@@ -79,7 +77,7 @@ export default function QualiopsIndicatorsPage() {
 
   // Initial data load
   useEffect(() => {
-    if (api.isAuthenticated() && user) {
+    if (user) {
       fetchData();
     }
   }, [user, fetchData]);

@@ -53,8 +53,6 @@ export default function ArchivePage() {
 
   // Fetch documents and stats
   const fetchData = useCallback(async () => {
-    if (!api.isAuthenticated()) return;
-
     try {
       setIsLoadingData(true);
       setError(null);
@@ -83,8 +81,6 @@ export default function ArchivePage() {
 
   // Fetch access log for document
   const fetchAccessLog = useCallback(async (docId: string) => {
-    if (!api.isAuthenticated()) return;
-
     try {
       const response = await api.get(`/api/admin/qualiopi/documents/${docId}/access-log`);
       if (response.data.status === 'success') {
@@ -96,7 +92,7 @@ export default function ArchivePage() {
   }, []);
 
   useEffect(() => {
-    if (api.isAuthenticated() && user) {
+    if (user) {
       fetchData();
     }
   }, [user, fetchData]);

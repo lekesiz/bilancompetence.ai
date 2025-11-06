@@ -2,7 +2,7 @@
 /// <reference types="react-dom" />
 /// <reference types="node" />
 
-import * as React from 'react';
+import React from 'react';
 
 // Re-export React with all its types
 declare global {
@@ -10,25 +10,23 @@ declare global {
     interface IntrinsicElements {
       [elemName: string]: any;
     }
-    interface Element extends React.ReactElement<any, any> { }
-    interface ElementClass extends React.Component<any> {
-      render(): React.ReactNode;
+    interface Element extends import('react').ReactElement<any, any> { }
+    interface ElementClass extends import('react').Component<any> {
+      render(): import('react').ReactNode;
     }
     interface ElementAttributesProperty { props: {}; }
     interface ElementChildrenAttribute { children: {}; }
   }
-  
-  const React: typeof import('react');
-  
+
   namespace NodeJS {
     interface ProcessEnv {
       [key: string]: string | undefined;
     }
-    
+
     interface Process {
       env: ProcessEnv;
     }
   }
-  
+
   var process: NodeJS.Process;
 }

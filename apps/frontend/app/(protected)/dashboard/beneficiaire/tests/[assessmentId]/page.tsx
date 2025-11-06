@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface Test {
   id: string;
@@ -27,17 +28,16 @@ export default function TestsPage() {
 
   const loadTests = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tests/${assessmentId}`, {
+        credentials: 'include', // Send HttpOnly cookies automatically
+      });
+
+      // Backend returns 401 if not authenticated
+      if (res.status === 401) {
         router.push('/login');
         return;
       }
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tests/${assessmentId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
 
       if (res.ok) {
         const data = await res.json();
