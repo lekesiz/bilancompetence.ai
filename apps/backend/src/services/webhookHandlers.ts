@@ -1,6 +1,12 @@
-import { supabase } from '../config/supabase.js';
+import { pool } from '../config/neon.js';
 import { logger } from '../utils/logger.js';
 import { sendEmail } from './emailService.js';
+
+/**
+ * Webhook Handlers Service
+ * Migrated to Neon PostgreSQL
+ * Handles Stripe webhook events
+ */
 
 /**
  * Handle successful payment
@@ -10,28 +16,22 @@ export async function handlePaymentSuccess(paymentIntent: any): Promise<void> {
     const { id, amount, customer, metadata } = paymentIntent;
 
     // Update payment record in database
-    const { error: updateError } = await supabase
-      .from('payments')
-      .update({
-        status: 'succeeded',
-        stripe_payment_intent_id: id,
-        paid_at: new Date().toISOString(),
-      })
-      .eq('stripe_payment_intent_id', id);
-
-    if (updateError) {
-      logger.error('Error updating payment status:', updateError);
-      throw updateError;
-    }
+    await pool.query(
+      `UPDATE payments
+       SET status = $1, stripe_payment_intent_id = $2, paid_at = NOW()
+       WHERE stripe_payment_intent_id = $3`,
+      ['succeeded', id, id]
+    );
 
     // Get user details
     const userId = metadata?.user_id;
     if (userId) {
-      const { data: user } = await supabase
-        .from('users')
-        .select('email, first_name, last_name')
-        .eq('id', userId)
-        .single();
+      const result = await pool.query(
+        'SELECT email, first_name, last_name FROM users WHERE id = $1',
+        [userId]
+      );
+
+      const user = result.rows[0];
 
       if (user && user.email) {
         // Send confirmation email
@@ -64,27 +64,22 @@ export async function handlePaymentFailure(paymentIntent: any): Promise<void> {
     const { id, last_payment_error, metadata } = paymentIntent;
 
     // Update payment record
-    const { error: updateError } = await supabase
-      .from('payments')
-      .update({
-        status: 'failed',
-        error_message: last_payment_error?.message || 'Payment failed',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('stripe_payment_intent_id', id);
-
-    if (updateError) {
-      logger.error('Error updating payment failure:', updateError);
-    }
+    await pool.query(
+      `UPDATE payments
+       SET status = $1, error_message = $2, updated_at = NOW()
+       WHERE stripe_payment_intent_id = $3`,
+      ['failed', last_payment_error?.message || 'Payment failed', id]
+    );
 
     // Notify user
     const userId = metadata?.user_id;
     if (userId) {
-      const { data: user } = await supabase
-        .from('users')
-        .select('email, first_name')
-        .eq('id', userId)
-        .single();
+      const result = await pool.query(
+        'SELECT email, first_name FROM users WHERE id = $1',
+        [userId]
+      );
+
+      const user = result.rows[0];
 
       if (user && user.email) {
         await sendEmail({
@@ -115,26 +110,24 @@ export async function handleSubscriptionCreated(subscription: any): Promise<void
     const { id, customer, status, metadata, current_period_end } = subscription;
 
     // Create subscription record
-    const { error: insertError } = await supabase.from('subscriptions').insert({
-      stripe_subscription_id: id,
-      stripe_customer_id: customer,
-      user_id: metadata?.user_id,
-      status: status,
-      current_period_end: new Date(current_period_end * 1000).toISOString(),
-      created_at: new Date().toISOString(),
-    });
-
-    if (insertError) {
-      logger.error('Error creating subscription:', insertError);
-      throw insertError;
-    }
+    await pool.query(
+      `INSERT INTO subscriptions (stripe_subscription_id, stripe_customer_id, user_id, status, current_period_end, created_at)
+       VALUES ($1, $2, $3, $4, $5, NOW())`,
+      [
+        id,
+        customer,
+        metadata?.user_id,
+        status,
+        new Date(current_period_end * 1000).toISOString(),
+      ]
+    );
 
     // Update user's subscription status
     if (metadata?.user_id) {
-      await supabase
-        .from('users')
-        .update({ subscription_status: 'active' })
-        .eq('id', metadata.user_id);
+      await pool.query(
+        'UPDATE users SET subscription_status = $1 WHERE id = $2',
+        ['active', metadata.user_id]
+      );
     }
 
     logger.info('Subscription created:', { subscriptionId: id });
@@ -151,20 +144,12 @@ export async function handleSubscriptionUpdated(subscription: any): Promise<void
   try {
     const { id, status, current_period_end, cancel_at_period_end } = subscription;
 
-    const { error: updateError } = await supabase
-      .from('subscriptions')
-      .update({
-        status: status,
-        current_period_end: new Date(current_period_end * 1000).toISOString(),
-        cancel_at_period_end: cancel_at_period_end,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('stripe_subscription_id', id);
-
-    if (updateError) {
-      logger.error('Error updating subscription:', updateError);
-      throw updateError;
-    }
+    await pool.query(
+      `UPDATE subscriptions
+       SET status = $1, current_period_end = $2, cancel_at_period_end = $3, updated_at = NOW()
+       WHERE stripe_subscription_id = $4`,
+      [status, new Date(current_period_end * 1000).toISOString(), cancel_at_period_end, id]
+    );
 
     logger.info('Subscription updated:', { subscriptionId: id });
   } catch (error) {
@@ -181,24 +166,19 @@ export async function handleSubscriptionDeleted(subscription: any): Promise<void
     const { id, metadata } = subscription;
 
     // Update subscription status
-    const { error: updateError } = await supabase
-      .from('subscriptions')
-      .update({
-        status: 'canceled',
-        canceled_at: new Date().toISOString(),
-      })
-      .eq('stripe_subscription_id', id);
-
-    if (updateError) {
-      logger.error('Error deleting subscription:', updateError);
-    }
+    await pool.query(
+      `UPDATE subscriptions
+       SET status = $1, canceled_at = NOW()
+       WHERE stripe_subscription_id = $2`,
+      ['canceled', id]
+    );
 
     // Update user's subscription status
     if (metadata?.user_id) {
-      await supabase
-        .from('users')
-        .update({ subscription_status: 'inactive' })
-        .eq('id', metadata.user_id);
+      await pool.query(
+        'UPDATE users SET subscription_status = $1 WHERE id = $2',
+        ['inactive', metadata.user_id]
+      );
     }
 
     logger.info('Subscription deleted:', { subscriptionId: id });
@@ -215,27 +195,21 @@ export async function handleInvoicePaid(invoice: any): Promise<void> {
     const { id, customer, amount_paid, subscription, metadata } = invoice;
 
     // Record invoice payment
-    const { error: insertError } = await supabase.from('invoices').insert({
-      stripe_invoice_id: id,
-      stripe_customer_id: customer,
-      stripe_subscription_id: subscription,
-      amount: amount_paid,
-      status: 'paid',
-      paid_at: new Date().toISOString(),
-    });
-
-    if (insertError) {
-      logger.error('Error recording invoice:', insertError);
-    }
+    await pool.query(
+      `INSERT INTO invoices (stripe_invoice_id, stripe_customer_id, stripe_subscription_id, amount, status, paid_at)
+       VALUES ($1, $2, $3, $4, $5, NOW())`,
+      [id, customer, subscription, amount_paid, 'paid']
+    );
 
     // Send receipt
     const userId = metadata?.user_id;
     if (userId) {
-      const { data: user } = await supabase
-        .from('users')
-        .select('email, first_name')
-        .eq('id', userId)
-        .single();
+      const result = await pool.query(
+        'SELECT email, first_name FROM users WHERE id = $1',
+        [userId]
+      );
+
+      const user = result.rows[0];
 
       if (user && user.email) {
         await sendEmail({
@@ -268,11 +242,12 @@ export async function handleInvoicePaymentFailed(invoice: any): Promise<void> {
     // Notify user
     const userId = metadata?.user_id;
     if (userId) {
-      const { data: user } = await supabase
-        .from('users')
-        .select('email, first_name')
-        .eq('id', userId)
-        .single();
+      const result = await pool.query(
+        'SELECT email, first_name FROM users WHERE id = $1',
+        [userId]
+      );
+
+      const user = result.rows[0];
 
       if (user && user.email) {
         await sendEmail({

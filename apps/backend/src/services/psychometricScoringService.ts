@@ -3,7 +3,7 @@
  * Handles scoring logic for MBTI and RIASEC personality/vocational tests
  */
 
-import { supabase } from '../config/supabase.js';
+import { pool } from '../config/neon.js';
 
 // ============================================================================
 // MBTI SCORING
@@ -35,12 +35,14 @@ interface MBTIResult {
  */
 export async function calculateMBTI(responses: MBTIResponse[]): Promise<MBTIResult> {
   // Fetch all MBTI questions with metadata
-  const { data: questions, error } = await supabase
-    .from('assessment_questions')
-    .select('id, metadata')
-    .eq('section', 'mbti_personality');
+  const result = await pool.query(
+    `SELECT id, metadata FROM assessment_questions WHERE section = $1`,
+    ['mbti_personality']
+  );
 
-  if (error || !questions) {
+  const questions = result.rows;
+
+  if (!questions || questions.length === 0) {
     throw new Error('Failed to fetch MBTI questions');
   }
 
@@ -180,12 +182,14 @@ interface RIASECResult {
  */
 export async function calculateRIASEC(responses: RIASECResponse[]): Promise<RIASECResult> {
   // Fetch all RIASEC questions with metadata
-  const { data: questions, error } = await supabase
-    .from('assessment_questions')
-    .select('id, metadata')
-    .eq('section', 'riasec_interests');
+  const result = await pool.query(
+    `SELECT id, metadata FROM assessment_questions WHERE section = $1`,
+    ['riasec_interests']
+  );
 
-  if (error || !questions) {
+  const questions = result.rows;
+
+  if (!questions || questions.length === 0) {
     throw new Error('Failed to fetch RIASEC questions');
   }
 
