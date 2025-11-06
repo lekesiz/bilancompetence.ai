@@ -3,7 +3,7 @@
  * Reusable table with sorting, pagination, and filtering capabilities
  */
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface Column {
   key: string;

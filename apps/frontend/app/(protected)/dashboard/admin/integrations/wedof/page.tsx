@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCsrfToken } from '@/lib/csrfHelper';
 

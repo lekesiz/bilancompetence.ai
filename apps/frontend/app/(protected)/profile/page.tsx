@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/qualiopi';
 import { AvatarUpload, ProfileForm, PasswordForm } from '@/components/profile';
 import { User, Settings, Shield, Camera, Mail, Phone, FileText, Calendar, ShieldCheck, Upload, File, CheckCircle, XCircle, Loader2 } from 'lucide-react';

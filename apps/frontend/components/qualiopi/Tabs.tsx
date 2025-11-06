@@ -3,7 +3,7 @@
  * Tabbed interface for organizing content
  */
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 interface Tab {
   id: string;

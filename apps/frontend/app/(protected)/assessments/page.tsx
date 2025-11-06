@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 
 import { useAuth } from '@/hooks/useAuth';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface Assessment {
