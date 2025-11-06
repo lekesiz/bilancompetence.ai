@@ -71,16 +71,38 @@ export async function getBilansByConsultant(consultantId: string): Promise<Bilan
  */
 export async function getClientsByConsultant(
   consultantId: string
-): Promise<Array<{ id: string; full_name: string; email: string }>> {
-  return query<{ id: string; full_name: string; email: string }>(
+): Promise<Array<{ id: string; name: string; email: string; status: string; contact: string; lastAssessmentDate?: string }>> {
+  const results = await query<{
+    id: string;
+    full_name: string;
+    email: string;
+    created_at: Date;
+    last_assessment_date?: Date
+  }>(
     consultantId,
-    `SELECT DISTINCT u.id, u.full_name, u.email 
+    `SELECT DISTINCT
+      u.id,
+      u.full_name,
+      u.email,
+      u.created_at,
+      MAX(b.updated_at) as last_assessment_date
      FROM users u
      INNER JOIN bilans b ON b.beneficiary_id = u.id
      WHERE b.consultant_id = $1
+     GROUP BY u.id, u.full_name, u.email, u.created_at
      ORDER BY u.full_name`,
     [consultantId]
   );
+
+  // Transform to match frontend expectations
+  return results.map(user => ({
+    id: user.id,
+    name: user.full_name,
+    email: user.email,
+    status: 'ACTIVE' as const,
+    contact: user.email, // Use email as contact for now
+    lastAssessmentDate: user.last_assessment_date?.toISOString(),
+  }));
 }
 
 /**
@@ -118,6 +140,53 @@ export async function getOrganizationStats(organizationId: string): Promise<Dash
     activeBilans,
     averageSatisfaction,
   };
+}
+
+/**
+ * Get organization info by ID
+ */
+export async function getOrganizationInfo(organizationId: string): Promise<{ name: string; plan: string }> {
+  const org = await queryOne<{ name: string; subscription_tier?: string }>(
+    null,
+    'SELECT name, subscription_tier FROM organizations WHERE id = $1',
+    [organizationId]
+  );
+
+  return {
+    name: org?.name || 'Organization',
+    plan: org?.subscription_tier || 'Premium',
+  };
+}
+
+/**
+ * Get all users in organization for admin dashboard
+ */
+export async function getUsersByOrganization(
+  organizationId: string
+): Promise<Array<{ id: string; name: string; email: string; role: string; status: string; createdAt: string }>> {
+  const users = await query<{
+    id: string;
+    full_name: string;
+    email: string;
+    role: string;
+    created_at: Date;
+  }>(
+    null,
+    `SELECT id, full_name, email, role, created_at
+     FROM users
+     WHERE organization_id = $1
+     ORDER BY created_at DESC`,
+    [organizationId]
+  );
+
+  return users.map(user => ({
+    id: user.id,
+    name: user.full_name,
+    email: user.email,
+    role: user.role,
+    status: 'ACTIVE',
+    createdAt: user.created_at.toISOString(),
+  }));
 }
 
 /**
