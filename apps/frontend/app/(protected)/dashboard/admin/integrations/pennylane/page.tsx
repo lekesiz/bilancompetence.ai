@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface Invoice {
   id: string;
@@ -66,10 +67,9 @@ export default function PennylaneIntegrationPage() {
     setLoading(true);
     setError(null);
     try {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/invoices`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       if (!response.ok) {
@@ -89,10 +89,9 @@ export default function PennylaneIntegrationPage() {
     setLoading(true);
     setError(null);
     try {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/customers`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       if (!response.ok) {
@@ -114,12 +113,20 @@ export default function PennylaneIntegrationPage() {
     setError(null);
 
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/invoices`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
         body: JSON.stringify({
           ...invoiceForm,
           amount: parseFloat(invoiceForm.amount),
@@ -146,12 +153,20 @@ export default function PennylaneIntegrationPage() {
     setError(null);
 
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/customers`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
         body: JSON.stringify(customerForm),
       });
 
@@ -182,11 +197,18 @@ export default function PennylaneIntegrationPage() {
     setError(null);
 
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {};
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pennylane/sync`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       if (!response.ok) {
