@@ -1,4 +1,4 @@
-import { supabase } from './supabaseService.js';
+import { pool } from '../config/neon.js';
 import {
   logAndThrow,
   validateRequired,
@@ -10,6 +10,7 @@ import { logger } from '../utils/logger.js';
 
 /**
  * Notification Service
+ * Migrated to Neon PostgreSQL
  * Standardized error handling for all notification operations
  */
 
@@ -45,25 +46,17 @@ export async function createNotification(
       );
     }
 
-    const { data: notification, error } = await supabase
-      .from('notifications')
-      .insert({
-        user_id: userId,
-        type,
-        title,
-        message,
-        data,
-        read: false,
-      })
-      .select()
-      .single();
+    const result = await pool.query(
+      `INSERT INTO notifications (user_id, type, title, message, data, read)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [userId, type, title, message, data ? JSON.stringify(data) : null, false]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to create notification', error);
-    }
+    const notification = result.rows[0];
 
     logger.info('Notification created successfully', { userId, type });
-    return notification as unknown as Notification;
+    return notification as Notification;
   } catch (error) {
     logAndThrow('Failed to create notification', error);
   }
@@ -76,19 +69,16 @@ export async function getUserNotifications(userId: string, limit: number = 50): 
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(limit);
+    const result = await pool.query(
+      `SELECT * FROM notifications
+       WHERE user_id = $1
+       ORDER BY created_at DESC
+       LIMIT $2`,
+      [userId, limit]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to fetch user notifications', error);
-    }
-
-    logger.info('User notifications retrieved successfully', { userId, count: data?.length || 0 });
-    return data || [];
+    logger.info('User notifications retrieved successfully', { userId, count: result.rows.length });
+    return result.rows;
   } catch (error) {
     logAndThrow('Failed to get user notifications', error);
   }
@@ -101,18 +91,16 @@ export async function getUnreadCount(userId: string) {
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data, error, count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('read', false);
+    const result = await pool.query(
+      `SELECT COUNT(*) as count FROM notifications
+       WHERE user_id = $1 AND read = false`,
+      [userId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to fetch unread count', error);
-    }
+    const count = parseInt(result.rows[0].count, 10);
 
-    logger.info('Unread count retrieved', { userId, count: count || 0 });
-    return count || 0;
+    logger.info('Unread count retrieved', { userId, count });
+    return count;
   } catch (error) {
     logAndThrow('Failed to get unread count', error);
   }
@@ -125,22 +113,22 @@ export async function markAsRead(notificationId: string) {
   try {
     validateRequired({ notificationId }, ['notificationId']);
 
-    const { data, error } = await supabase
-      .from('notifications')
-      .update({
-        read: true,
-        read_at: new Date().toISOString(),
-      })
-      .eq('id', notificationId)
-      .select()
-      .single();
+    const result = await pool.query(
+      `UPDATE notifications
+       SET read = true, read_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [notificationId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to mark notification as read', error);
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Notification');
     }
 
+    const notification = result.rows[0];
+
     logger.info('Notification marked as read', { notificationId });
-    return data as unknown as Notification;
+    return notification as Notification;
   } catch (error) {
     logAndThrow('Failed to mark notification as read', error);
   }
@@ -153,18 +141,12 @@ export async function markAllAsRead(userId: string) {
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { error } = await supabase
-      .from('notifications')
-      .update({
-        read: true,
-        read_at: new Date().toISOString(),
-      })
-      .eq('user_id', userId)
-      .eq('read', false);
-
-    if (error) {
-      throw new DatabaseError('Failed to mark all notifications as read', error);
-    }
+    await pool.query(
+      `UPDATE notifications
+       SET read = true, read_at = NOW()
+       WHERE user_id = $1 AND read = false`,
+      [userId]
+    );
 
     logger.info('All notifications marked as read', { userId });
     return true;
@@ -180,10 +162,13 @@ export async function deleteNotification(notificationId: string) {
   try {
     validateRequired({ notificationId }, ['notificationId']);
 
-    const { error } = await supabase.from('notifications').delete().eq('id', notificationId);
+    const result = await pool.query(
+      'DELETE FROM notifications WHERE id = $1 RETURNING id',
+      [notificationId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to delete notification', error);
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Notification');
     }
 
     logger.info('Notification deleted successfully', { notificationId });
@@ -258,58 +243,58 @@ export async function notifyAssessmentCompleted(beneficiaryId: string, consultan
 /**
  * Send recommendation notification
  */
-export async function notifyRecommendationCreated(userId: string, title: string) {
+export async function notifyNewRecommendation(userId: string, recommendationTitle: string) {
   try {
-    validateRequired({ userId, title }, ['userId', 'title']);
+    validateRequired({ userId, recommendationTitle }, ['userId', 'recommendationTitle']);
 
     await createNotification(
       userId,
       'recommendation',
       'New Recommendation',
-      `A new recommendation has been created: ${title}`,
+      `You have a new recommendation: ${recommendationTitle}`,
       { type: 'new_recommendation' }
     );
 
-    logger.info('Recommendation notification sent', { userId });
+    logger.info('New recommendation notification sent', { userId });
   } catch (error) {
-    logAndThrow('Failed to send recommendation notification', error);
+    logAndThrow('Failed to send new recommendation notification', error);
   }
 }
 
 /**
  * Send message notification
  */
-export async function notifyNewMessage(
-  recipientId: string,
-  senderName: string,
-  messagePreview: string
-) {
+export async function notifyNewMessage(userId: string, senderName: string) {
   try {
-    validateRequired({ recipientId, senderName, messagePreview }, [
-      'recipientId',
-      'senderName',
-      'messagePreview',
-    ]);
+    validateRequired({ userId, senderName }, ['userId', 'senderName']);
 
-    await createNotification(recipientId, 'message', `Message from ${senderName}`, messagePreview, {
-      type: 'new_message',
-      sender_name: senderName,
-    });
+    await createNotification(
+      userId,
+      'message',
+      'New Message',
+      `You have a new message from ${senderName}`,
+      { type: 'new_message' }
+    );
 
-    logger.info('Message notification sent', { recipientId, senderName });
+    logger.info('New message notification sent', { userId });
   } catch (error) {
-    logAndThrow('Failed to send message notification', error);
+    logAndThrow('Failed to send new message notification', error);
   }
 }
 
 /**
  * Send system notification
  */
-export async function notifySystem(userId: string, title: string, message: string) {
+export async function sendSystemNotification(
+  userId: string,
+  title: string,
+  message: string,
+  data?: any
+) {
   try {
     validateRequired({ userId, title, message }, ['userId', 'title', 'message']);
 
-    await createNotification(userId, 'system', title, message, { type: 'system' });
+    await createNotification(userId, 'system', title, message, data);
 
     logger.info('System notification sent', { userId });
   } catch (error) {
@@ -322,7 +307,7 @@ export async function notifySystem(userId: string, title: string, message: strin
  */
 export async function broadcastNotification(
   userIds: string[],
-  type: string,
+  type: 'assessment' | 'recommendation' | 'message' | 'system',
   title: string,
   message: string,
   data?: any
@@ -334,25 +319,36 @@ export async function broadcastNotification(
       throw new ValidationError('userIds must be a non-empty array');
     }
 
-    const notifications = userIds.map((userId) => ({
-      user_id: userId,
-      type,
-      title,
-      message,
-      data,
-      read: false,
-    }));
+    const promises = userIds.map((userId) => createNotification(userId, type, title, message, data));
+    await Promise.all(promises);
 
-    const { error } = await supabase.from('notifications').insert(notifications);
-
-    if (error) {
-      throw new DatabaseError('Failed to broadcast notifications', error);
-    }
-
-    logger.info('Notifications broadcasted successfully', { recipientCount: userIds.length, type });
-    return true;
+    logger.info('Broadcast notification sent', { count: userIds.length, type });
   } catch (error) {
-    logAndThrow('Failed to broadcast notifications', error);
+    logAndThrow('Failed to broadcast notification', error);
+  }
+}
+
+/**
+ * Delete old read notifications
+ */
+export async function deleteOldReadNotifications(daysOld: number = 30) {
+  try {
+    validateRequired({ daysOld }, ['daysOld']);
+
+    const result = await pool.query(
+      `DELETE FROM notifications
+       WHERE read = true
+       AND read_at < NOW() - INTERVAL '1 day' * $1
+       RETURNING id`,
+      [daysOld]
+    );
+
+    const deletedCount = result.rows.length;
+
+    logger.info('Old read notifications deleted', { deletedCount, daysOld });
+    return deletedCount;
+  } catch (error) {
+    logAndThrow('Failed to delete old read notifications', error);
   }
 }
 
@@ -365,8 +361,9 @@ export default {
   deleteNotification,
   notifyAssessmentStarted,
   notifyAssessmentCompleted,
-  notifyRecommendationCreated,
+  notifyNewRecommendation,
   notifyNewMessage,
-  notifySystem,
+  sendSystemNotification,
   broadcastNotification,
+  deleteOldReadNotifications,
 };

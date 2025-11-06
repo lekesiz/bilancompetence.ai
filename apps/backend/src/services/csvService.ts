@@ -1,5 +1,5 @@
 import { Parser } from 'json2csv';
-import { supabase } from './supabaseService.js';
+import { pool } from '../config/neon.js';
 import {
   logAndThrow,
   validateRequired,
@@ -10,6 +10,7 @@ import { logger } from '../utils/logger.js';
 
 /**
  * CSV Export/Import Service
+ * Migrated to Neon PostgreSQL
  * Standardized error handling for all CSV operations
  */
 
@@ -20,14 +21,12 @@ export async function exportAssessmentsToCSV(userId: string): Promise<string> {
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data: assessments, error } = await supabase
-      .from('bilans')
-      .select('*')
-      .eq('beneficiary_id', userId);
+    const result = await pool.query(
+      'SELECT * FROM bilans WHERE beneficiary_id = $1',
+      [userId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to fetch assessments', error);
-    }
+    const assessments = result.rows;
 
     if (!assessments || assessments.length === 0) {
       logger.info('No assessments to export', { userId });
@@ -62,14 +61,12 @@ export async function exportRecommendationsToCSV(userId: string): Promise<string
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data: recommendations, error } = await supabase
-      .from('recommendations')
-      .select('*')
-      .eq('user_id', userId);
+    const result = await pool.query(
+      'SELECT * FROM recommendations WHERE user_id = $1',
+      [userId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to fetch recommendations', error);
-    }
+    const recommendations = result.rows;
 
     if (!recommendations || recommendations.length === 0) {
       logger.info('No recommendations to export', { userId });
@@ -102,15 +99,12 @@ export async function exportUserDataToCSV(userId: string): Promise<string> {
   try {
     validateRequired({ userId }, ['userId']);
 
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    const result = await pool.query(
+      'SELECT * FROM users WHERE id = $1',
+      [userId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to fetch user data', error);
-    }
+    const user = result.rows[0];
 
     if (!user) {
       throw new NotFoundError('User');
@@ -134,14 +128,12 @@ export async function exportOrganizationUsersToCSV(organizationId: string): Prom
   try {
     validateRequired({ organizationId }, ['organizationId']);
 
-    const { data: users, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('organization_id', organizationId);
+    const result = await pool.query(
+      'SELECT * FROM users WHERE organization_id = $1',
+      [organizationId]
+    );
 
-    if (error) {
-      throw new DatabaseError('Failed to fetch organization users', error);
-    }
+    const users = result.rows;
 
     if (!users || users.length === 0) {
       logger.info('No users to export for organization', { organizationId });
@@ -167,38 +159,30 @@ export async function exportAssessmentResultsToCSV(assessmentId: string): Promis
     validateRequired({ assessmentId }, ['assessmentId']);
 
     // Get assessment
-    const { data: assessment, error: assessmentError } = await supabase
-      .from('bilans')
-      .select('*')
-      .eq('id', assessmentId)
-      .single();
+    const assessmentResult = await pool.query(
+      'SELECT * FROM bilans WHERE id = $1',
+      [assessmentId]
+    );
 
-    if (assessmentError) {
-      throw new DatabaseError('Failed to fetch assessment', assessmentError);
-    }
+    const assessment = assessmentResult.rows[0];
 
     if (!assessment) {
       throw new NotFoundError('Assessment');
     }
 
     // Get questions and answers
-    const { data: questions, error: questionsError } = await supabase
-      .from('assessment_questions')
-      .select('*')
-      .eq('bilan_id', assessmentId);
+    const questionsResult = await pool.query(
+      'SELECT * FROM assessment_questions WHERE bilan_id = $1',
+      [assessmentId]
+    );
 
-    if (questionsError) {
-      throw new DatabaseError('Failed to fetch assessment questions', questionsError);
-    }
+    const answersResult = await pool.query(
+      'SELECT * FROM assessment_answers WHERE bilan_id = $1',
+      [assessmentId]
+    );
 
-    const { data: answers, error: answersError } = await supabase
-      .from('assessment_answers')
-      .select('*')
-      .eq('bilan_id', assessmentId);
-
-    if (answersError) {
-      throw new DatabaseError('Failed to fetch assessment answers', answersError);
-    }
+    const questions = questionsResult.rows;
+    const answers = answersResult.rows;
 
     if (!questions || questions.length === 0) {
       logger.info('No questions found for assessment', { assessmentId });
@@ -207,8 +191,7 @@ export async function exportAssessmentResultsToCSV(assessmentId: string): Promis
 
     // Create result rows
     const results = questions.map((q: any) => {
-      const typedAnswers = (answers as any[]) || [];
-      const answer = typedAnswers.find((a: any) => a.question_id === q.id);
+      const answer = answers.find((a: any) => a.question_id === q.id);
       return {
         question_id: q.id,
         question: q.question,
