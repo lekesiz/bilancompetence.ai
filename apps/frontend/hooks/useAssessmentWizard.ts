@@ -56,9 +56,10 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
 
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Get access token
-  const getAuthHeader = () => ({
-    'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('accessToken') : ''}`,
+  // Get headers (auth via cookies)
+  // 🔒 SECURITY: Auth handled via HttpOnly cookies
+  const getHeaders = () => ({
+    'Content-Type': 'application/json',
   });
 
   /**
@@ -71,10 +72,8 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
       try {
         const response = await fetch(`${API_URL}/api/assessments`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...getAuthHeader(),
-          },
+          headers: getHeaders(),
+          credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
           body: JSON.stringify({ title, assessment_type: assessmentType }),
         });
 
@@ -116,7 +115,8 @@ export function useAssessmentWizard(): UseAssessmentWizardReturn {
 
     try {
       const response = await fetch(`${API_URL}/api/assessments/${assessmentId}`, {
-        headers: getAuthHeader(),
+        headers: getHeaders(),
+        credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
       });
 
       if (!response.ok) {

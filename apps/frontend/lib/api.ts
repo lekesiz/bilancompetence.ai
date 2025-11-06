@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import { getCsrfToken } from './csrfHelper';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -25,8 +26,6 @@ interface User {
 
 class BilanAPI {
   private api: AxiosInstance;
-  private accessToken: string | null = null;
-  private refreshToken: string | null = null;
 
   constructor() {
     this.api = axios.create({
@@ -34,83 +33,58 @@ class BilanAPI {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true, // 🔒 SECURITY: Enable HttpOnly cookie support
     });
 
-    // Request interceptor to add auth header
-    this.api.interceptors.request.use((config) => {
-      if (this.accessToken) {
-        config.headers.Authorization = `Bearer ${this.accessToken}`;
-      }
-      return config;
-    });
+    // 🔒 SECURITY: Request interceptor to add CSRF token
+    this.api.interceptors.request.use(
+      (config) => {
+        // Add CSRF token for mutating requests
+        const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+        if (config.method && mutatingMethods.includes(config.method.toUpperCase())) {
+          const csrfToken = getCsrfToken();
+          if (csrfToken) {
+            config.headers['x-csrf-token'] = csrfToken;
+          }
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-    // Response interceptor to handle token refresh
+    // Response interceptor to handle 401 errors
     this.api.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config;
 
+        // If 401 and not a retry, try to refresh token
         if (error.response?.status === 401 && originalRequest && !originalRequest.headers['X-Retry']) {
           originalRequest.headers['X-Retry'] = 'true';
 
-          if (this.refreshToken) {
-            try {
-              const response = await this.refreshAccessToken();
-              this.setTokens(response.accessToken, response.refreshToken);
-              return this.api(originalRequest);
-            } catch (err) {
-              this.clearTokens();
-              throw err;
+          try {
+            // Attempt token refresh (backend will use refresh token from cookie)
+            await this.api.post('/api/auth/refresh');
+            // Retry the original request
+            return this.api(originalRequest);
+          } catch (err) {
+            // Refresh failed, redirect to login
+            if (typeof window !== 'undefined') {
+              window.location.href = '/login';
             }
+            throw err;
           }
         }
 
         return Promise.reject(error);
       }
     );
-
-    // Load tokens from localStorage
-    this.loadTokens();
   }
 
-  /**
-   * Load tokens from localStorage
-   */
-  private loadTokens(): void {
-    if (typeof window !== 'undefined') {
-      this.accessToken = localStorage.getItem('accessToken');
-      this.refreshToken = localStorage.getItem('refreshToken');
-    }
-  }
-
-  /**
-   * Save tokens to localStorage
-   */
-  private setTokens(accessToken: string, refreshToken: string): void {
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-    }
-  }
-
-  /**
-   * Clear tokens from memory and localStorage
-   */
-  private clearTokens(): void {
-    this.accessToken = null;
-    this.refreshToken = null;
-
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-    }
-  }
 
   /**
    * Register a new user
+   * 🔒 SECURITY: Tokens are now stored in HttpOnly cookies by the backend
    */
   async register(
     email: string,
@@ -126,14 +100,7 @@ class BilanAPI {
         role,
       });
 
-      // Save tokens if registration successful
-      if (response.data.status === 'success' && response.data.data?.accessToken) {
-        this.setTokens(
-          response.data.data.accessToken,
-          response.data.data.refreshToken
-        );
-      }
-
+      // Cookies are automatically set by the backend
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -145,6 +112,7 @@ class BilanAPI {
 
   /**
    * Login user
+   * 🔒 SECURITY: Tokens are now stored in HttpOnly cookies by the backend
    */
   async login(
     email: string,
@@ -156,13 +124,7 @@ class BilanAPI {
         password,
       });
 
-      if (response.data.status === 'success' && response.data.data?.accessToken) {
-        this.setTokens(
-          response.data.data.accessToken,
-          response.data.data.refreshToken
-        );
-      }
-
+      // Cookies are automatically set by the backend
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -174,13 +136,11 @@ class BilanAPI {
 
   /**
    * Logout user
+   * 🔒 SECURITY: Backend will clear HttpOnly cookies
    */
   async logout(): Promise<void> {
-    try {
-      await this.api.post('/api/auth/logout');
-    } finally {
-      this.clearTokens();
-    }
+    await this.api.post('/api/auth/logout');
+    // Cookies are automatically cleared by the backend
   }
 
   /**
@@ -199,37 +159,16 @@ class BilanAPI {
   }
 
   /**
-   * Refresh access token
-   */
-  private async refreshAccessToken(): Promise<AuthTokens> {
-    try {
-      const response = await this.api.post('/api/auth/refresh', {
-        refreshToken: this.refreshToken,
-      });
-
-      if (response.data.status === 'success') {
-        return response.data.data.tokens;
-      }
-
-      throw new Error('Token refresh failed');
-    } catch (error) {
-      this.clearTokens();
-      throw error;
-    }
-  }
-
-  /**
-   * Get current access token
-   */
-  getAccessToken(): string | null {
-    return this.accessToken;
-  }
-
-  /**
    * Check if user is authenticated
+   * 🔒 SECURITY: Verifies with backend using HttpOnly cookies
    */
-  isAuthenticated(): boolean {
-    return this.accessToken !== null;
+  async isAuthenticated(): Promise<boolean> {
+    try {
+      const response = await this.verifyToken();
+      return response.status === 'success';
+    } catch {
+      return false;
+    }
   }
 
   /**

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/qualiopi';
 import { X, Settings, CheckCircle, XCircle } from 'lucide-react';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 export interface ConsentPreferences {
   essential: boolean;
@@ -81,13 +82,6 @@ export default function ConsentBanner({ onConsentChange }: ConsentBannerProps) {
   // Send consent to backend API
   const sendConsentToBackend = async (prefs: ConsentPreferences) => {
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-
-      if (!token) {
-        // User not logged in, just save locally
-        return;
-      }
-
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
       const consents = Object.entries(prefs)
@@ -99,12 +93,20 @@ export default function ConsentBanner({ onConsentChange }: ConsentBannerProps) {
           legal_basis: getLegalBasis(consent_type),
         }));
 
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${API_URL}/api/consent/multiple`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
+        credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
         body: JSON.stringify({
           consents,
           consent_version: CONSENT_VERSION,

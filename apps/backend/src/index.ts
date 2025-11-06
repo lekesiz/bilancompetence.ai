@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 import http from 'http';
 import authRoutes from './routes/auth.js';
 import dashboardRoutes from './routes/dashboardNeon.js';
@@ -37,6 +38,8 @@ import { apiLimiter, authLimiter, publicLimiter, uploadLimiter } from './middlew
 import { sanitizeInput } from './middleware/sanitization.js';
 import { cacheHeadersMiddleware, etagMiddleware } from './middleware/cacheHeaders.js';
 import { queryMonitoringMiddleware, createMonitoringEndpoint } from './utils/queryMonitoring.js';
+import { validateCsrfMiddleware } from './utils/csrfHelper.js';
+import { authMiddleware, requireRole } from './middleware/auth.js';
 import RealtimeService from './services/realtimeService.js';
 import { logger } from './utils/logger.js';
 import swaggerUi from 'swagger-ui-express';
@@ -99,6 +102,7 @@ app.use(
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // 🔒 SECURITY: Cookie parsing for HttpOnly auth cookies
 
 // Rate limiting
 app.use('/api/', apiLimiter);
@@ -111,6 +115,20 @@ app.use('/api/', etagMiddleware);
 
 // Query monitoring for performance tracking
 app.use('/api/', queryMonitoringMiddleware);
+
+// 🔒 SECURITY: CSRF protection for state-changing operations
+// Exclude /api/auth endpoints (CSRF token is generated during login/register)
+app.use('/api/', (req, res, next) => {
+  // Skip CSRF validation for auth endpoints
+  if (req.path.startsWith('/auth/')) {
+    return next();
+  }
+  // Skip CSRF validation for health/version endpoints
+  if (req.path === '/version') {
+    return next();
+  }
+  validateCsrfMiddleware(req, res, next);
+});
 
 // Input sanitization (protection XSS et SQL Injection)
 app.use('/api/', sanitizeInput());
@@ -135,16 +153,16 @@ app.get('/api/version', (req, res) => {
 
 // Performance monitoring endpoint (admin only) - ✅ SECURITY FIX: Added authentication
 const monitoringEndpoint = createMonitoringEndpoint();
-app.get('/api/admin/monitoring/stats', authMiddleware, roleMiddleware(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/stats', authMiddleware, requireRole(['ADMIN']), (req, res) => {
   res.json(monitoringEndpoint.stats());
 });
 
-app.get('/api/admin/monitoring/slow-queries', authMiddleware, roleMiddleware(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/slow-queries', authMiddleware, requireRole(['ADMIN']), (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.slowQueries(limit));
 });
 
-app.get('/api/admin/monitoring/frequent-queries', authMiddleware, roleMiddleware(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/frequent-queries', authMiddleware, requireRole(['ADMIN']), (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.frequentQueries(limit));
 });

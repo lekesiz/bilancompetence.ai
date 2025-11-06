@@ -4,12 +4,15 @@
  *
  * Features:
  * - Full TypeScript support
- * - Automatic auth token injection
+ * - 🔒 SECURITY: HttpOnly cookie-based authentication
+ * - 🔒 SECURITY: CSRF token protection
  * - Request/response interceptors
  * - Error handling
  * - Timeout support
  * - Built-in retry logic
  */
+
+import { getCsrfToken } from './csrfHelper';
 
 export interface ApiRequestInit extends RequestInit {
   timeout?: number;
@@ -35,14 +38,6 @@ class ApiClient {
   }
 
   /**
-   * Get auth token from localStorage
-   */
-  private getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('accessToken') || null;
-  }
-
-  /**
    * Build full URL
    */
   private buildUrl(endpoint: string): string {
@@ -51,14 +46,20 @@ class ApiClient {
   }
 
   /**
-   * Prepare request headers with auth
+   * Prepare request headers
+   * 🔒 SECURITY: Auth is handled via HttpOnly cookies
+   * 🔒 SECURITY: CSRF token added for mutating requests
    */
-  private getHeaders(): Record<string, string> {
+  private getHeaders(method?: string): Record<string, string> {
     const headers = { ...this.defaultHeaders };
-    const token = this.getAuthToken();
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    // Add CSRF token for mutating requests
+    const mutatingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+    if (method && mutatingMethods.includes(method.toUpperCase())) {
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
     }
 
     return headers;
@@ -99,10 +100,11 @@ class ApiClient {
 
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
-        const headers = this.getHeaders();
+        const headers = this.getHeaders(method);
         const config: RequestInit = {
           ...init,
           method,
+          credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
           headers: {
             ...headers,
             ...(init?.headers as Record<string, string>),
@@ -128,10 +130,8 @@ class ApiClient {
           }
 
           if (response.status === 401) {
-            // Clear auth token on 401
+            // Redirect to login on 401 (cookies are already cleared by backend)
             if (typeof window !== 'undefined') {
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
               window.location.href = '/login';
             }
           }
@@ -222,6 +222,7 @@ class ApiClient {
 
   /**
    * Upload file
+   * 🔒 SECURITY: Auth handled via HttpOnly cookies
    */
   async upload<T = any>(
     endpoint: string,
@@ -231,21 +232,12 @@ class ApiClient {
     const formData = new FormData();
     formData.append('file', file);
 
-    const headers = this.getHeaders();
-    const token = this.getAuthToken();
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // Remove Content-Type for FormData
-    delete headers['Content-Type'];
-
     const response = await fetch(this.buildUrl(endpoint), {
       ...init,
       method: 'POST',
-      headers,
+      credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
       body: formData,
+      // Note: Don't set Content-Type header - browser will set it with boundary
     });
 
     if (!response.ok) {

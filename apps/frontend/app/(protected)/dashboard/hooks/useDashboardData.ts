@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { getCsrfToken } from '@/lib/csrfHelper';
 import {
   BeneficiaryDashboardData,
   ConsultantDashboardData,
@@ -48,13 +49,21 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add CSRF token for non-GET requests (this is GET, but including for consistency)
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        credentials: 'include',
+        headers,
+        credentials: 'include', // 🔒 SECURITY: Send HttpOnly cookies automatically
       });
 
       if (!response.ok) {

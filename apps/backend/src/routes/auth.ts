@@ -20,6 +20,8 @@ import {
 } from '../services/userServiceNeon.js';
 import { sendWelcomeEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
+import { setAuthCookies, clearAuthCookies } from '../utils/cookieHelper.js';
+import { generateCsrfToken, setCsrfToken, clearCsrfToken } from '../utils/csrfHelper.js';
 
 const router = Router();
 
@@ -147,6 +149,13 @@ router.post('/register', async (req: Request, res: Response) => {
       organization_id: newUser.organization_id,
     });
 
+    // 🔒 SECURITY: Set HttpOnly cookies for secure token storage
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
+    // 🔒 SECURITY: Generate and set CSRF token
+    const csrfToken = generateCsrfToken();
+    setCsrfToken(res, csrfToken);
+
     logger.info('User registered successfully', { userId: newUser.id, email: newUser.email });
 
     return res.status(201).json({
@@ -159,7 +168,7 @@ router.post('/register', async (req: Request, res: Response) => {
           full_name: newUser.full_name,
           role: newUser.role,
         },
-        ...tokens,
+        ...tokens, // Also return in body for backward compatibility
       },
     });
   } catch (error: any) {
@@ -292,6 +301,13 @@ router.post('/login', async (req: Request, res: Response) => {
       organization_id: user.organization_id,
     });
 
+    // 🔒 SECURITY: Set HttpOnly cookies for secure token storage
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
+    // 🔒 SECURITY: Generate and set CSRF token
+    const csrfToken = generateCsrfToken();
+    setCsrfToken(res, csrfToken);
+
     logger.info('User logged in successfully', { userId: user.id, email: user.email });
 
     return res.status(200).json({
@@ -306,7 +322,7 @@ router.post('/login', async (req: Request, res: Response) => {
           cv_url: user.cv_url,
           cv_uploaded_at: user.cv_uploaded_at,
         },
-        ...tokens,
+        ...tokens, // Also return in body for backward compatibility
       },
     });
   } catch (error: any) {
@@ -358,17 +374,28 @@ router.post('/login', async (req: Request, res: Response) => {
  */
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
-    // Validate request
-    const validation = validateRefreshRequest(req.body);
-    if (!validation.valid) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Validation failed',
-        errors: validation.errors,
-      });
+    // 🔒 SECURITY: Get refresh token from cookie (priority) or body (backward compatibility)
+    let refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      // Fallback to body for backward compatibility
+      const validation = validateRefreshRequest(req.body);
+      if (!validation.valid) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Validation failed',
+          errors: validation.errors,
+        });
+      }
+      refreshToken = validation.data!.refreshToken;
     }
 
-    const { refreshToken } = validation.data!;
+    if (!refreshToken) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Refresh token is required',
+      });
+    }
 
     // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
@@ -397,12 +424,19 @@ router.post('/refresh', async (req: Request, res: Response) => {
       organization_id: user.organization_id,
     });
 
+    // 🔒 SECURITY: Set new HttpOnly cookies
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
+    // 🔒 SECURITY: Generate new CSRF token on refresh
+    const csrfToken = generateCsrfToken();
+    setCsrfToken(res, csrfToken);
+
     logger.info('Token refreshed successfully', { userId: user.id });
 
     return res.status(200).json({
       status: 'success',
       message: 'Token refreshed successfully',
-      data: tokens,
+      data: tokens, // Also return in body for backward compatibility
     });
   } catch (error: any) {
     logger.error('Refresh token error:', error);
@@ -429,11 +463,12 @@ router.post('/refresh', async (req: Request, res: Response) => {
  */
 router.post('/logout', async (req: Request, res: Response) => {
   try {
-    // In a stateless JWT system, logout is handled client-side
-    // The client should delete the tokens from storage
+    // 🔒 SECURITY: Clear HttpOnly cookies and CSRF token
+    clearAuthCookies(res);
+    clearCsrfToken(res);
 
+    // In a stateless JWT system, logout is handled by clearing cookies
     // If you want to implement token blacklisting, you can add it here
-    // For now, we just return success
 
     logger.info('User logged out');
 

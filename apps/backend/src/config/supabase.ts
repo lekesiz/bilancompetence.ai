@@ -1,28 +1,27 @@
+/**
+ * Supabase Configuration
+ *
+ * ⚠️ LEGACY: Only used for Supabase Storage (file uploads)
+ * - All database operations use Neon PostgreSQL
+ * - TODO: Migrate file storage to S3 or alternative
+ */
+
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '../utils/logger.js';
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://pesteyhjdfmyrkvpofud.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || '';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseKey) {
-  console.warn('⚠️  SUPABASE_ANON_KEY not configured. Database operations will fail.');
+if (!supabaseUrl || !supabaseKey) {
+  logger.warn('Supabase credentials not configured - file storage will not work');
+  logger.warn('Database operations use Neon PostgreSQL and are not affected');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: false,
-  },
-});
-
-// Service role client for admin operations
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-export const supabaseAdmin = supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
-  : supabase;
-
-export default supabase;
+/**
+ * Supabase client - ONLY for Storage
+ * Database operations should use Neon services (userServiceNeon, etc.)
+ */
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseKey || 'placeholder-key'
+);
