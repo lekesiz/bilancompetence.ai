@@ -4,7 +4,7 @@
  *
  * Features:
  * - Full TypeScript support
- * - Automatic auth token injection
+ * - 🔒 SECURITY: HttpOnly cookie-based authentication
  * - Request/response interceptors
  * - Error handling
  * - Timeout support
@@ -35,14 +35,6 @@ class ApiClient {
   }
 
   /**
-   * Get auth token from localStorage
-   */
-  private getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('accessToken') || null;
-  }
-
-  /**
    * Build full URL
    */
   private buildUrl(endpoint: string): string {
@@ -51,17 +43,11 @@ class ApiClient {
   }
 
   /**
-   * Prepare request headers with auth
+   * Prepare request headers
+   * 🔒 SECURITY: Auth is handled via HttpOnly cookies
    */
   private getHeaders(): Record<string, string> {
-    const headers = { ...this.defaultHeaders };
-    const token = this.getAuthToken();
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    return headers;
+    return { ...this.defaultHeaders };
   }
 
   /**
@@ -103,6 +89,7 @@ class ApiClient {
         const config: RequestInit = {
           ...init,
           method,
+          credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
           headers: {
             ...headers,
             ...(init?.headers as Record<string, string>),
@@ -128,10 +115,8 @@ class ApiClient {
           }
 
           if (response.status === 401) {
-            // Clear auth token on 401
+            // Redirect to login on 401 (cookies are already cleared by backend)
             if (typeof window !== 'undefined') {
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
               window.location.href = '/login';
             }
           }
@@ -222,6 +207,7 @@ class ApiClient {
 
   /**
    * Upload file
+   * 🔒 SECURITY: Auth handled via HttpOnly cookies
    */
   async upload<T = any>(
     endpoint: string,
@@ -231,21 +217,12 @@ class ApiClient {
     const formData = new FormData();
     formData.append('file', file);
 
-    const headers = this.getHeaders();
-    const token = this.getAuthToken();
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // Remove Content-Type for FormData
-    delete headers['Content-Type'];
-
     const response = await fetch(this.buildUrl(endpoint), {
       ...init,
       method: 'POST',
-      headers,
+      credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
       body: formData,
+      // Note: Don't set Content-Type header - browser will set it with boundary
     });
 
     if (!response.ok) {

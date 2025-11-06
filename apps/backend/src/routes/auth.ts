@@ -365,17 +365,28 @@ router.post('/login', async (req: Request, res: Response) => {
  */
 router.post('/refresh', async (req: Request, res: Response) => {
   try {
-    // Validate request
-    const validation = validateRefreshRequest(req.body);
-    if (!validation.valid) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Validation failed',
-        errors: validation.errors,
-      });
+    // 🔒 SECURITY: Get refresh token from cookie (priority) or body (backward compatibility)
+    let refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      // Fallback to body for backward compatibility
+      const validation = validateRefreshRequest(req.body);
+      if (!validation.valid) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Validation failed',
+          errors: validation.errors,
+        });
+      }
+      refreshToken = validation.data!.refreshToken;
     }
 
-    const { refreshToken } = validation.data!;
+    if (!refreshToken) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Refresh token is required',
+      });
+    }
 
     // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
@@ -404,12 +415,15 @@ router.post('/refresh', async (req: Request, res: Response) => {
       organization_id: user.organization_id,
     });
 
+    // 🔒 SECURITY: Set new HttpOnly cookies
+    setAuthCookies(res, tokens.accessToken, tokens.refreshToken);
+
     logger.info('Token refreshed successfully', { userId: user.id });
 
     return res.status(200).json({
       status: 'success',
       message: 'Token refreshed successfully',
-      data: tokens,
+      data: tokens, // Also return in body for backward compatibility
     });
   } catch (error: any) {
     logger.error('Refresh token error:', error);
