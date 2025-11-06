@@ -2,22 +2,22 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
+import nextDynamic from 'next/dynamic';
 import { DashboardErrorBoundary } from './components/DashboardErrorBoundary';
 import { DashboardSkeleton } from './components/DashboardSkeleton';
 
 // ✅ PHASE 4: Performance - Dynamic imports for heavy dashboard components
-const BeneficiaryDashboard = dynamic(() => import('./components/BeneficiaryDashboard').then(mod => ({ default: mod.BeneficiaryDashboard })), {
+const BeneficiaryDashboard = nextDynamic(() => import('./components/BeneficiaryDashboard').then(mod => ({ default: mod.BeneficiaryDashboard })), {
   loading: () => <DashboardSkeleton />,
   ssr: false
 });
 
-const ConsultantDashboard = dynamic(() => import('./components/ConsultantDashboard').then(mod => ({ default: mod.ConsultantDashboard })), {
+const ConsultantDashboard = nextDynamic(() => import('./components/ConsultantDashboard').then(mod => ({ default: mod.ConsultantDashboard })), {
   loading: () => <DashboardSkeleton />,
   ssr: false
 });
 
-const AdminDashboard = dynamic(() => import('./components/AdminDashboard').then(mod => ({ default: mod.AdminDashboard })), {
+const AdminDashboard = nextDynamic(() => import('./components/AdminDashboard').then(mod => ({ default: mod.AdminDashboard })), {
   loading: () => <DashboardSkeleton />,
   ssr: false
 });
