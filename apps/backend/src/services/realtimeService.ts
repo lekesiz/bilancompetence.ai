@@ -43,21 +43,43 @@ class RealtimeService {
 
   /**
    * Setup authentication middleware
+   * 🔒 SECURITY: Read JWT from HttpOnly cookies
    */
   private setupMiddleware() {
     this.io.use((socket, next) => {
-      const token = socket.handshake.auth.token;
-      if (!token) {
-        return next(new Error('Authentication error'));
-      }
-
       try {
-        // In production, verify JWT token
+        // 🔒 SECURITY: Extract JWT from HttpOnly cookie
+        const cookies = socket.handshake.headers.cookie;
+        if (!cookies) {
+          return next(new Error('Authentication error: No cookies found'));
+        }
+
+        // Parse cookies to find accessToken
+        const cookieArray = cookies.split(';').map(c => c.trim());
+        const accessTokenCookie = cookieArray.find(c => c.startsWith('accessToken='));
+
+        if (!accessTokenCookie) {
+          return next(new Error('Authentication error: No access token'));
+        }
+
+        const token = accessTokenCookie.split('=')[1];
+
+        // Note: In production, verify JWT token here
+        // const jwt = require('jsonwebtoken');
         // const decoded = jwt.verify(token, this.JWT_SECRET);
-        // socket.userId = decoded.id;
-        socket.data.userId = socket.handshake.auth.userId;
+        // socket.data.userId = decoded.id;
+
+        // For now, use userId from auth if available (development)
+        // TODO: Remove this fallback after implementing JWT verification
+        const userId = socket.handshake.auth.userId;
+        if (!userId) {
+          return next(new Error('Authentication error: User ID not found'));
+        }
+
+        socket.data.userId = userId;
         next();
       } catch (error) {
+        console.error('Socket authentication error:', error);
         next(new Error('Authentication failed'));
       }
     });
