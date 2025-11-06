@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:auth": "tsx src/scripts/test-auth-flow.ts",
     "test:load": "artillery run performance-tests/load-test.yml",
     "test:stress": "artillery run performance-tests/stress-test.yml",
     "test:perf": "npm run test:load && npm run test:stress",
