@@ -41,8 +41,86 @@ const GEMINI_API_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
 /**
- * POST /api/ai/analyze-cv
- * Analyze CV and extract competences from uploaded file
+ * @swagger
+ * /api/ai/analyze-cv:
+ *   post:
+ *     summary: Analyze CV and extract competences
+ *     description: Upload a CV file (PDF or Word) and get AI-powered analysis of skills, experience, education, and soft skills
+ *     tags: [AI Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - cv
+ *             properties:
+ *               cv:
+ *                 type: string
+ *                 format: binary
+ *                 description: CV file (PDF or Word document, max 5MB)
+ *               assessment_id:
+ *                 type: string
+ *                 format: uuid
+ *                 description: Optional assessment ID to save analysis to
+ *     responses:
+ *       200:
+ *         description: CV successfully analyzed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 analysis:
+ *                   type: object
+ *                   properties:
+ *                     competences:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     experiences:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           poste:
+ *                             type: string
+ *                           entreprise:
+ *                             type: string
+ *                           duree:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                     formations:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           diplome:
+ *                             type: string
+ *                           etablissement:
+ *                             type: string
+ *                           annee:
+ *                             type: string
+ *                     langues:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     soft_skills:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         description: Failed to analyze CV
+ *       501:
+ *         description: PDF analysis temporarily unavailable
  */
 router.post(
   '/analyze-cv',
@@ -123,8 +201,81 @@ ${cv_text}`;
 );
 
 /**
- * POST /api/ai/job-recommendations
- * Get AI-powered job recommendations
+ * @swagger
+ * /api/ai/job-recommendations:
+ *   post:
+ *     summary: Get AI-powered job recommendations
+ *     description: Receive personalized job recommendations based on skills, interests, and values
+ *     tags: [AI Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - competences
+ *             properties:
+ *               assessment_id:
+ *                 type: string
+ *                 format: uuid
+ *               competences:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: User's competences/skills
+ *               interests:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: User's professional interests
+ *               values:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: User's professional values
+ *     responses:
+ *       200:
+ *         description: Job recommendations generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 recommendations:
+ *                   type: object
+ *                   properties:
+ *                     metiers:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           titre:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           match_score:
+ *                             type: number
+ *                           competences_requises:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                           competences_manquantes:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                           salaire_moyen:
+ *                             type: string
+ *                           perspectives:
+ *                             type: string
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         description: Failed to get recommendations
  */
 router.post('/job-recommendations', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -170,8 +321,81 @@ Pour chaque métier, fournis au format JSON:
 });
 
 /**
- * POST /api/ai/analyze-personality
- * Analyze personality based on test results
+ * @swagger
+ * /api/ai/analyze-personality:
+ *   post:
+ *     summary: Analyze personality based on test results
+ *     description: Get AI-powered personality analysis from MBTI and RIASEC test scores
+ *     tags: [AI Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mbti_type:
+ *                 type: string
+ *                 description: MBTI personality type (e.g., INTJ, ENFP)
+ *                 example: INTJ
+ *               riasec_scores:
+ *                 type: object
+ *                 description: RIASEC test scores
+ *                 properties:
+ *                   R:
+ *                     type: number
+ *                   I:
+ *                     type: number
+ *                   A:
+ *                     type: number
+ *                   S:
+ *                     type: number
+ *                   E:
+ *                     type: number
+ *                   C:
+ *                     type: number
+ *               assessment_id:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       200:
+ *         description: Personality analysis generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 analysis:
+ *                   type: object
+ *                   properties:
+ *                     traits_dominants:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     forces:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     axes_developpement:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     environnement_ideal:
+ *                       type: string
+ *                     style_travail:
+ *                       type: string
+ *                     recommandations:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         description: Failed to analyze personality
  */
 router.post('/analyze-personality', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -211,8 +435,97 @@ Fournis une analyse au format JSON:
 });
 
 /**
- * POST /api/ai/generate-action-plan
- * Generate personalized action plan
+ * @swagger
+ * /api/ai/generate-action-plan:
+ *   post:
+ *     summary: Generate personalized action plan
+ *     description: Create a detailed action plan to achieve a target job/career with steps, training, and milestones
+ *     tags: [AI Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - target_job
+ *             properties:
+ *               target_job:
+ *                 type: string
+ *                 description: Target job or career
+ *                 example: Data Scientist
+ *               current_competences:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Current competences/skills
+ *               gap_analysis:
+ *                 type: string
+ *                 description: Identified skill gaps
+ *               assessment_id:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       200:
+ *         description: Action plan generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 action_plan:
+ *                   type: object
+ *                   properties:
+ *                     objectif_principal:
+ *                       type: string
+ *                     duree_estimee:
+ *                       type: string
+ *                     etapes:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           numero:
+ *                             type: number
+ *                           titre:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           duree:
+ *                             type: string
+ *                           actions:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                           ressources:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                     formations_recommandees:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           titre:
+ *                             type: string
+ *                           organisme:
+ *                             type: string
+ *                           duree:
+ *                             type: string
+ *                           cout_estime:
+ *                             type: string
+ *                     jalons:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         description: Failed to generate action plan
  */
 router.post('/generate-action-plan', authenticateToken, async (req: Request, res: Response) => {
   try {

@@ -20,8 +20,23 @@ import {
 const router = Router();
 
 /**
- * GET /api/export/assessments
- * Export user assessments to CSV
+ * @swagger
+ * /api/export/assessments:
+ *   get:
+ *     summary: Export assessments to CSV
+ *     description: Download user's assessments as CSV file
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *         content:
+ *           text/csv:
+ *             schema:
+ *               type: string
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/assessments', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -48,8 +63,19 @@ router.get('/assessments', authMiddleware, async (req: Request, res: Response) =
 });
 
 /**
- * GET /api/export/recommendations
- * Export user recommendations to CSV
+ * @swagger
+ * /api/export/recommendations:
+ *   get:
+ *     summary: Export recommendations to CSV
+ *     description: Download user's job recommendations as CSV
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/recommendations', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -76,8 +102,19 @@ router.get('/recommendations', authMiddleware, async (req: Request, res: Respons
 });
 
 /**
- * GET /api/export/user-data
- * Export user data to CSV
+ * @swagger
+ * /api/export/user-data:
+ *   get:
+ *     summary: Export user data to CSV
+ *     description: Download complete user profile data as CSV (GDPR compliance)
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/user-data', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -104,8 +141,21 @@ router.get('/user-data', authMiddleware, async (req: Request, res: Response) => 
 });
 
 /**
- * GET /api/export/organization-users
- * Export organization users to CSV (admin only)
+ * @swagger
+ * /api/export/organization-users:
+ *   get:
+ *     summary: Export organization users to CSV
+ *     description: Download all organization users as CSV (ORG_ADMIN only)
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/organization-users',
@@ -140,8 +190,26 @@ router.get(
 );
 
 /**
- * GET /api/export/assessment/:assessmentId/results
- * Export assessment results to CSV
+ * @swagger
+ * /api/export/assessment/{assessmentId}/results:
+ *   get:
+ *     summary: Export assessment results to CSV
+ *     description: Download specific assessment results as CSV
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get(
   '/assessment/:assessmentId/results',
@@ -167,8 +235,19 @@ router.get(
 );
 
 /**
- * GET /api/export/analytics
- * Export analytics summary to CSV
+ * @swagger
+ * /api/export/analytics:
+ *   get:
+ *     summary: Export analytics to CSV
+ *     description: Download user activity analytics as CSV
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/analytics', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -196,9 +275,39 @@ router.get('/analytics', authMiddleware, async (req: Request, res: Response) => 
 });
 
 /**
- * POST /api/export/assessment/:assessmentId/pdf
- * Export assessment as PDF report
- * Query params: type='preliminary'|'investigation'|'conclusion'
+ * @swagger
+ * /api/export/assessment/{assessmentId}/pdf:
+ *   post:
+ *     summary: Generate assessment PDF report
+ *     description: Generate and download assessment PDF (preliminary/investigation/conclusion)
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assessmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [preliminary, investigation, conclusion]
+ *           default: preliminary
+ *     responses:
+ *       200:
+ *         description: PDF file download
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Invalid report type
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post(
   '/assessment/:assessmentId/pdf',
@@ -302,8 +411,24 @@ router.post(
 );
 
 /**
- * POST /api/export/assessments/summary/pdf
- * Export all user assessments as PDF summary
+ * @swagger
+ * /api/export/assessments/summary/pdf:
+ *   post:
+ *     summary: Generate assessments summary PDF
+ *     description: Generate and download PDF summary of all user assessments
+ *     tags: [Export]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: PDF file download
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post('/assessments/summary/pdf', authMiddleware, async (req: Request, res: Response) => {
   try {

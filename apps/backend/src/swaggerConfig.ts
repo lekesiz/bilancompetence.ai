@@ -285,6 +285,34 @@ const options: swaggerJsdoc.Options = {
         name: 'Tests',
         description: 'Psychometric tests (MBTI, RIASEC, competences, valeurs)',
       },
+      {
+        name: 'AI Analysis',
+        description: 'AI-powered CV analysis, job recommendations, personality analysis, and action plans',
+      },
+      {
+        name: 'Two-Factor Authentication',
+        description: '2FA setup, enable, verify, and disable endpoints',
+      },
+      {
+        name: 'Email Verification',
+        description: 'Email verification send, verify, and status endpoints',
+      },
+      {
+        name: 'Password Reset',
+        description: 'Password reset request, confirm, and token validation',
+      },
+      {
+        name: 'Dashboard',
+        description: 'Role-based dashboards for beneficiaries, consultants, and admins',
+      },
+      {
+        name: 'Export',
+        description: 'CSV and PDF export endpoints for data download',
+      },
+      {
+        name: 'Notifications',
+        description: 'User notification management and unread count',
+      },
     ],
   },
   // Path to the API docs

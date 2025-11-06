@@ -5,8 +5,19 @@ import * as chatService from '../services/chatService.js';
 const router = Router();
 
 /**
- * GET /api/chat/conversations
- * Récupère toutes les conversations de l'utilisateur
+ * @swagger
+ * /api/chat/conversations:
+ *   get:
+ *     summary: Get user conversations
+ *     description: Retrieve all conversations for authenticated user
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of conversations
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/conversations', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -28,8 +39,33 @@ router.get('/conversations', authenticateToken, async (req: Request, res: Respon
 });
 
 /**
- * POST /api/chat/conversations
- * Crée ou récupère une conversation avec un autre utilisateur
+ * @swagger
+ * /api/chat/conversations:
+ *   post:
+ *     summary: Create or get conversation
+ *     description: Create new conversation or retrieve existing one with another user
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - recipientId
+ *             properties:
+ *               recipientId:
+ *                 type: string
+ *                 format: uuid
+ *     responses:
+ *       200:
+ *         description: Conversation created or retrieved
+ *       400:
+ *         description: Missing recipientId
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post('/conversations', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -56,8 +92,36 @@ router.post('/conversations', authenticateToken, async (req: Request, res: Respo
 });
 
 /**
- * GET /api/chat/conversations/:conversationId/messages
- * Récupère les messages d'une conversation
+ * @swagger
+ * /api/chat/conversations/{conversationId}/messages:
+ *   get:
+ *     summary: Get conversation messages
+ *     description: Retrieve messages from a specific conversation with pagination
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: conversationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *     responses:
+ *       200:
+ *         description: List of messages
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get(
   '/conversations/:conversationId/messages',
@@ -86,8 +150,46 @@ router.get(
 );
 
 /**
- * POST /api/chat/messages
- * Envoie un message
+ * @swagger
+ * /api/chat/messages:
+ *   post:
+ *     summary: Send a message
+ *     description: Send a new message in a conversation
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - conversationId
+ *               - recipientId
+ *               - message
+ *             properties:
+ *               conversationId:
+ *                 type: string
+ *                 format: uuid
+ *               recipientId:
+ *                 type: string
+ *                 format: uuid
+ *               message:
+ *                 type: string
+ *               messageType:
+ *                 type: string
+ *                 default: text
+ *               fileUrl:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       201:
+ *         description: Message sent successfully
+ *       400:
+ *         description: Missing required fields
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post('/messages', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -120,8 +222,26 @@ router.post('/messages', authenticateToken, async (req: Request, res: Response) 
 });
 
 /**
- * PUT /api/chat/messages/:messageId/read
- * Marque un message comme lu
+ * @swagger
+ * /api/chat/messages/{messageId}/read:
+ *   put:
+ *     summary: Mark message as read
+ *     description: Mark a specific message as read
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Message marked as read
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put('/messages/:messageId/read', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -142,8 +262,26 @@ router.put('/messages/:messageId/read', authenticateToken, async (req: Request, 
 });
 
 /**
- * PUT /api/chat/conversations/:conversationId/read
- * Marque tous les messages d'une conversation comme lus
+ * @swagger
+ * /api/chat/conversations/{conversationId}/read:
+ *   put:
+ *     summary: Mark conversation as read
+ *     description: Mark all messages in a conversation as read
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: conversationId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Conversation marked as read
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put(
   '/conversations/:conversationId/read',
@@ -170,8 +308,19 @@ router.put(
 );
 
 /**
- * GET /api/chat/unread-count
- * Récupère le nombre de messages non lus
+ * @swagger
+ * /api/chat/unread-count:
+ *   get:
+ *     summary: Get unread messages count
+ *     description: Get total count of unread messages for user
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Unread count retrieved
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/unread-count', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -191,8 +340,26 @@ router.get('/unread-count', authenticateToken, async (req: Request, res: Respons
 });
 
 /**
- * DELETE /api/chat/messages/:messageId
- * Supprime un message
+ * @swagger
+ * /api/chat/messages/{messageId}:
+ *   delete:
+ *     summary: Delete a message
+ *     description: Delete a specific message
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Message deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete('/messages/:messageId', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -213,8 +380,28 @@ router.delete('/messages/:messageId', authenticateToken, async (req: Request, re
 });
 
 /**
- * GET /api/chat/search
- * Recherche dans les messages
+ * @swagger
+ * /api/chat/search:
+ *   get:
+ *     summary: Search messages
+ *     description: Search through user's messages
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Search query
+ *     responses:
+ *       200:
+ *         description: Search results
+ *       400:
+ *         description: Missing search query
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/search', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -239,8 +426,40 @@ router.get('/search', authenticateToken, async (req: Request, res: Response) => 
 });
 
 /**
- * POST /api/chat/upload
- * Upload un fichier pour le chat
+ * @swagger
+ * /api/chat/upload:
+ *   post:
+ *     summary: Upload file for chat
+ *     description: Upload a file to be shared in chat conversation
+ *     tags: [Chat]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - conversationId
+ *               - file
+ *               - fileName
+ *             properties:
+ *               conversationId:
+ *                 type: string
+ *                 format: uuid
+ *               file:
+ *                 type: string
+ *                 description: Base64 encoded file
+ *               fileName:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *       400:
+ *         description: Missing required fields
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post('/upload', authenticateToken, async (req: Request, res: Response) => {
   try {
