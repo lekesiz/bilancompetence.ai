@@ -25,17 +25,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-});
-
-// Add request interceptor for auth token
-apiClient.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
-  return config;
+  withCredentials: true, // 🔒 SECURITY: Enable HttpOnly cookie support
 });
 
 const schedulingAPI = new SchedulingAPI(apiClient);

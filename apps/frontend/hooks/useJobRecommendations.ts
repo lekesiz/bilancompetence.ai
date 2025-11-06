@@ -113,21 +113,15 @@ export function useJobRecommendations() {
   const [pageInfo, setPageInfo] = useState({ limit: 10, offset: 0, total: 0 });
 
   /**
-   * Get authorization header with JWT token
+   * Get request headers
+   * 🔒 SECURITY: Auth handled via HttpOnly cookies
    */
-  const getAuthHeader = useCallback(async () => {
+  const getHeaders = useCallback(() => {
     if (!user) {
       throw new Error('User not authenticated');
     }
 
-    // Get token from localStorage or auth context
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-
     return {
-      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
   }, [user]);
@@ -146,12 +140,13 @@ export function useJobRecommendations() {
         setLoading(true);
         setError(null);
 
-        const headers = await getAuthHeader();
+        const headers = getHeaders();
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/recommendations/jobs`,
           {
             method: 'POST',
             headers,
+            credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
             body: JSON.stringify({
               limit: filters.limit || 10,
               ...filters,
@@ -199,13 +194,14 @@ export function useJobRecommendations() {
 
       try {
         setError(null);
-        const headers = await getAuthHeader();
+        const headers = getHeaders();
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/recommendations/${jobId}/save`,
           {
             method: 'POST',
             headers,
+            credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
             body: JSON.stringify({ notes, status }),
           }
         );
@@ -248,13 +244,14 @@ export function useJobRecommendations() {
         setError(null);
 
         const targetUserId = userId || user.id;
-        const headers = await getAuthHeader();
+        const headers = getHeaders();
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/recommendations/${targetUserId}/saved-jobs?limit=${limit}&offset=${offset}`,
           {
             method: 'GET',
             headers,
+            credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
           }
         );
 
@@ -298,13 +295,14 @@ export function useJobRecommendations() {
 
       try {
         setError(null);
-        const headers = await getAuthHeader();
+        const headers = getHeaders();
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/recommendations/rome-codes/${code}`,
           {
             method: 'GET',
             headers,
+            credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
           }
         );
 
@@ -341,13 +339,14 @@ export function useJobRecommendations() {
 
       try {
         setError(null);
-        const headers = await getAuthHeader();
+        const headers = getHeaders();
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/recommendations/rome-codes/search?query=${encodeURIComponent(query)}&limit=${limit}`,
           {
             method: 'GET',
             headers,
+            credentials: 'include', // 🔒 SECURITY: Include HttpOnly cookies
           }
         );
 
