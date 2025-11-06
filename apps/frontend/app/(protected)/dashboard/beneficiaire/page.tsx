@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface ParcoursPhase {
   status: 'locked' | 'in_progress' | 'completed';
@@ -33,32 +34,38 @@ export default function BeneficiaireDashboard() {
 
   const loadParcours = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
+      const assessmentsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
+        credentials: 'include', // Send HttpOnly cookies automatically
+      });
+
+      // Backend returns 401 if not authenticated
+      if (assessmentsRes.status === 401) {
         router.push('/login');
         return;
       }
 
-      // Get user's active assessment
-      const assessmentsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
       if (!assessmentsRes.ok) throw new Error('Failed to load assessments');
-      
+
       const assessmentsData = await assessmentsRes.json();
       const activeAssessment = assessmentsData.assessments?.[0];
 
       if (!activeAssessment) {
         // No assessment yet, create one
+        // 🔒 SECURITY: HttpOnly cookies + CSRF token for POST
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+        };
+
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+          headers['x-csrf-token'] = csrfToken;
+        }
+
         const createRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
+          headers,
+          credentials: 'include',
           body: JSON.stringify({
             title: 'Mon Bilan de Compétences',
             status: 'in_progress'
@@ -68,12 +75,12 @@ export default function BeneficiaireDashboard() {
         if (!createRes.ok) throw new Error('Failed to create assessment');
         const newAssessment = await createRes.json();
         setAssessmentId(newAssessment.assessment.id);
-        
+
         // Load parcours for new assessment
-        await loadParcoursData(newAssessment.assessment.id, token);
+        await loadParcoursData(newAssessment.assessment.id);
       } else {
         setAssessmentId(activeAssessment.id);
-        await loadParcoursData(activeAssessment.id, token);
+        await loadParcoursData(activeAssessment.id);
       }
 
     } catch (error) {
@@ -83,12 +90,11 @@ export default function BeneficiaireDashboard() {
     }
   };
 
-  const loadParcoursData = async (id: string, token: string) => {
+  const loadParcoursData = async (id: string) => {
     try {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/parcours/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       if (res.ok) {
