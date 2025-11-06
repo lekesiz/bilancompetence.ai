@@ -18,8 +18,23 @@ import { emailVerificationLimiter } from '../middleware/rateLimit.js';
 const router = Router();
 
 /**
- * POST /api/email-verification/send
- * Send verification email
+ * @swagger
+ * /api/email-verification/send:
+ *   post:
+ *     summary: Send email verification
+ *     description: Send verification email to user (rate limited)
+ *     tags: [Email Verification]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Verification email sent
+ *       400:
+ *         description: Email already verified
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.post(
   '/send',
@@ -80,8 +95,31 @@ router.post(
 );
 
 /**
- * POST /api/email-verification/verify
- * Verify email with token
+ * @swagger
+ * /api/email-verification/verify:
+ *   post:
+ *     summary: Verify email with token
+ *     description: Verify user email address using verification token
+ *     tags: [Email Verification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Email verification token
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *       400:
+ *         description: Invalid or expired token
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.post('/verify', async (req: Request, res: Response) => {
   try {
@@ -151,8 +189,40 @@ router.post('/verify', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/email-verification/status
- * Check email verification status
+ * @swagger
+ * /api/email-verification/status:
+ *   get:
+ *     summary: Check email verification status
+ *     description: Get current email verification status for authenticated user
+ *     tags: [Email Verification]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Verification status retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                     verified:
+ *                       type: boolean
+ *                     verified_at:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get('/status', authMiddleware, async (req: Request, res: Response) => {
   try {

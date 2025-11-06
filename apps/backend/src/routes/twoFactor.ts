@@ -5,8 +5,36 @@ import * as twoFactorService from '../services/twoFactorService.js';
 const router = Router();
 
 /**
- * POST /api/2fa/setup
- * Génère un secret 2FA et un QR code pour l'utilisateur
+ * @swagger
+ * /api/2fa/setup:
+ *   post:
+ *     summary: Generate 2FA secret and QR code
+ *     description: Generate 2FA secret, QR code, and backup codes for user authentication
+ *     tags: [Two-Factor Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: 2FA secret generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 secret:
+ *                   type: string
+ *                 qrCode:
+ *                   type: string
+ *                 backupCodes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         description: Failed to generate 2FA secret
  */
 router.post('/setup', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -31,8 +59,33 @@ router.post('/setup', authenticateToken, async (req: Request, res: Response) => 
 });
 
 /**
- * POST /api/2fa/enable
- * Active le 2FA après vérification du premier code
+ * @swagger
+ * /api/2fa/enable:
+ *   post:
+ *     summary: Enable 2FA
+ *     description: Enable two-factor authentication after verifying first token
+ *     tags: [Two-Factor Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: 6-digit 2FA token
+ *     responses:
+ *       200:
+ *         description: 2FA enabled successfully
+ *       400:
+ *         description: Invalid token
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post('/enable', authenticateToken, async (req: Request, res: Response) => {
   try {
@@ -61,8 +114,35 @@ router.post('/enable', authenticateToken, async (req: Request, res: Response) =>
 });
 
 /**
- * POST /api/2fa/verify
- * Vérifie un code 2FA lors de la connexion
+ * @swagger
+ * /api/2fa/verify:
+ *   post:
+ *     summary: Verify 2FA token
+ *     description: Verify 2FA token during login process
+ *     tags: [Two-Factor Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - token
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 format: uuid
+ *               token:
+ *                 type: string
+ *                 description: 6-digit 2FA token
+ *     responses:
+ *       200:
+ *         description: Token verified successfully
+ *       400:
+ *         description: Invalid token
+ *       500:
+ *         description: Verification failed
  */
 router.post('/verify', async (req: Request, res: Response) => {
   try {
@@ -86,8 +166,33 @@ router.post('/verify', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/2fa/disable
- * Désactive le 2FA pour l'utilisateur
+ * @swagger
+ * /api/2fa/disable:
+ *   post:
+ *     summary: Disable 2FA
+ *     description: Disable two-factor authentication (requires password confirmation)
+ *     tags: [Two-Factor Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: 2FA disabled successfully
+ *       400:
+ *         description: Invalid password
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.post('/disable', authenticateToken, async (req: Request, res: Response) => {
   try {

@@ -31,8 +31,29 @@ const resetPasswordSchema = z.object({
 });
 
 /**
- * POST /api/password-reset/request
- * Request password reset
+ * @swagger
+ * /api/password-reset/request:
+ *   post:
+ *     summary: Request password reset
+ *     description: Request password reset email (rate limited for security)
+ *     tags: [Password Reset]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Password reset email sent (if account exists)
+ *       400:
+ *         description: Invalid email format
  */
 router.post('/request', passwordResetLimiter, async (req: Request, res: Response) => {
   try {
@@ -84,8 +105,36 @@ router.post('/request', passwordResetLimiter, async (req: Request, res: Response
 });
 
 /**
- * POST /api/password-reset/confirm
- * Confirm password reset with token
+ * @swagger
+ * /api/password-reset/confirm:
+ *   post:
+ *     summary: Confirm password reset
+ *     description: Reset password using token (min 12 chars, uppercase, lowercase, digit, special char)
+ *     tags: [Password Reset]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 minLength: 20
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 12
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Invalid token or password requirements not met
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.post('/confirm', async (req: Request, res: Response) => {
   try {
@@ -157,8 +206,28 @@ router.post('/confirm', async (req: Request, res: Response) => {
 });
 
 /**
- * POST /api/password-reset/validate-token
- * Validate password reset token
+ * @swagger
+ * /api/password-reset/validate-token:
+ *   post:
+ *     summary: Validate password reset token
+ *     description: Check if password reset token is valid and not expired
+ *     tags: [Password Reset]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token is valid
+ *       400:
+ *         description: Invalid or expired token
  */
 router.post('/validate-token', async (req: Request, res: Response) => {
   try {

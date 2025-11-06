@@ -11,8 +11,26 @@ import {
 const router = Router();
 
 /**
- * GET /api/notifications
- * Get user notifications
+ * @swagger
+ * /api/notifications:
+ *   get:
+ *     summary: Get user notifications
+ *     description: Retrieve user's notifications with optional limit
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *         description: Maximum number of notifications to return
+ *     responses:
+ *       200:
+ *         description: Notifications retrieved successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -40,8 +58,19 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/notifications/unread/count
- * Get unread count
+ * @swagger
+ * /api/notifications/unread/count:
+ *   get:
+ *     summary: Get unread notifications count
+ *     description: Get the count of unread notifications for the authenticated user
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Count retrieved successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get('/unread/count', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -68,8 +97,26 @@ router.get('/unread/count', authMiddleware, async (req: Request, res: Response) 
 });
 
 /**
- * PUT /api/notifications/:id/read
- * Mark notification as read
+ * @swagger
+ * /api/notifications/{id}/read:
+ *   put:
+ *     summary: Mark notification as read
+ *     description: Mark a specific notification as read
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Notification marked as read
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put('/:id/read', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -92,8 +139,19 @@ router.put('/:id/read', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * PUT /api/notifications/read-all
- * Mark all notifications as read
+ * @swagger
+ * /api/notifications/read-all:
+ *   put:
+ *     summary: Mark all notifications as read
+ *     description: Mark all user notifications as read
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All notifications marked as read
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.put('/read-all', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -120,8 +178,26 @@ router.put('/read-all', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * DELETE /api/notifications/:id
- * Delete notification
+ * @swagger
+ * /api/notifications/{id}:
+ *   delete:
+ *     summary: Delete notification
+ *     description: Permanently delete a notification
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Notification deleted successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   try {

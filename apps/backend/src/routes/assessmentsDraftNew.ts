@@ -41,8 +41,50 @@ const saveDraftSchema = z.object({
 // ============================================================================
 
 /**
- * GET /api/assessments/:id/draft
- * Get draft data for an assessment
+ * @swagger
+ * /api/assessments/{id}/draft:
+ *   get:
+ *     summary: Get assessment draft data
+ *     description: Retrieve JSONB draft data for an assessment (supports 5-step wizard)
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Assessment ID
+ *     responses:
+ *       200:
+ *         description: Draft data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     draft_data:
+ *                       type: object
+ *                     current_step_number:
+ *                       type: number
+ *                     last_saved_at:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get('/:id/draft', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -102,9 +144,49 @@ router.get('/:id/draft', authMiddleware, async (req: Request, res: Response) => 
 });
 
 /**
- * PUT /api/assessments/:id/draft/step
- * Update a specific step in the draft
- * Body: { step_number: 1-5, step_data: {...} }
+ * @swagger
+ * /api/assessments/{id}/draft/step:
+ *   put:
+ *     summary: Update a specific step in the draft
+ *     description: Update step 1-5 in the assessment wizard
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - step_number
+ *               - step_data
+ *             properties:
+ *               step_number:
+ *                 type: number
+ *                 minimum: 1
+ *                 maximum: 5
+ *               step_data:
+ *                 type: object
+ *                 additionalProperties: true
+ *     responses:
+ *       200:
+ *         description: Step updated successfully
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.put('/:id/draft/step', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -191,9 +273,44 @@ router.put('/:id/draft/step', authMiddleware, async (req: Request, res: Response
 });
 
 /**
- * PUT /api/assessments/:id/draft
- * Save complete draft data (replaces entire draft_data)
- * Body: { draft_data: {...} }
+ * @swagger
+ * /api/assessments/{id}/draft:
+ *   put:
+ *     summary: Save complete draft data
+ *     description: Replace entire draft_data JSONB object
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - draft_data
+ *             properties:
+ *               draft_data:
+ *                 type: object
+ *                 additionalProperties: true
+ *     responses:
+ *       200:
+ *         description: Draft saved successfully
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.put('/:id/draft', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -280,8 +397,30 @@ router.put('/:id/draft', authMiddleware, async (req: Request, res: Response) => 
 });
 
 /**
- * GET /api/assessments/:id/draft/stats
- * Get draft completion statistics
+ * @swagger
+ * /api/assessments/{id}/draft/stats:
+ *   get:
+ *     summary: Get draft completion statistics
+ *     description: Retrieve completion percentage and progress for each step
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Statistics retrieved successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get('/:id/draft/stats', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -334,8 +473,30 @@ router.get('/:id/draft/stats', authMiddleware, async (req: Request, res: Respons
 });
 
 /**
- * GET /api/assessments/:id/competencies
- * Get extracted competencies for an assessment
+ * @swagger
+ * /api/assessments/{id}/competencies:
+ *   get:
+ *     summary: Get extracted competencies
+ *     description: Retrieve structured competencies extracted from draft step 3
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Competencies retrieved successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get('/:id/competencies', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -384,8 +545,45 @@ router.get('/:id/competencies', authMiddleware, async (req: Request, res: Respon
 });
 
 /**
- * POST /api/assessments/:id/competencies/extract
- * Manually trigger competency extraction from draft data
+ * @swagger
+ * /api/assessments/{id}/competencies/extract:
+ *   post:
+ *     summary: Extract competencies from draft
+ *     description: Manually trigger extraction of competencies from draft step 3 data to structured table
+ *     tags: [Assessments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Competencies extracted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     extracted_count:
+ *                       type: number
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.post('/:id/competencies/extract', authMiddleware, async (req: Request, res: Response) => {
   try {

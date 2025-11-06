@@ -15,8 +15,25 @@ import { BilanStatus } from '../types/enums.js';
 const router = Router();
 
 /**
- * GET /api/dashboard/me
- * Get current user profile
+ * @swagger
+ * /api/dashboard/me:
+ *   get:
+ *     summary: Get current user profile
+ *     description: Retrieve authenticated user's profile information
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   try {
@@ -57,13 +74,21 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/dashboard/beneficiary
- * Beneficiary dashboard (assessments, recommendations)
- *
- * Returns:
- * - bilans: All career assessments for the beneficiary
- * - recommendations: AI recommendations based on assessments
- * - stats: Count of completed/pending bilans
+ * @swagger
+ * /api/dashboard/beneficiary:
+ *   get:
+ *     summary: Get beneficiary dashboard
+ *     description: Retrieve beneficiary's assessments, recommendations, and stats
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Beneficiary dashboard data
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/beneficiary',
@@ -121,13 +146,21 @@ router.get(
 );
 
 /**
- * GET /api/dashboard/consultant
- * Consultant dashboard (manage assessments, clients)
- *
- * Returns:
- * - bilans: All bilans assigned to this consultant
- * - clients: Unique beneficiaries working with this consultant
- * - stats: Count of active/completed assessments
+ * @swagger
+ * /api/dashboard/consultant:
+ *   get:
+ *     summary: Get consultant dashboard
+ *     description: Retrieve consultant's assessments, clients, and stats
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Consultant dashboard data
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
  */
 router.get(
   '/consultant',
@@ -188,12 +221,23 @@ router.get(
 );
 
 /**
- * GET /api/dashboard/admin
- * Admin dashboard (organization management, analytics)
- *
- * Returns:
- * - stats: Organization-wide statistics
- * - recentActivity: Last 20 activities in organization
+ * @swagger
+ * /api/dashboard/admin:
+ *   get:
+ *     summary: Get admin dashboard
+ *     description: Retrieve organization-wide stats and recent activity (ORG_ADMIN only)
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin dashboard data
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       403:
+ *         $ref: '#/components/responses/ForbiddenError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get(
   '/admin',
@@ -241,19 +285,21 @@ router.get(
 );
 
 /**
- * GET /api/dashboard/stats
- * Get user-specific statistics (joined date, last active, etc.)
- *
- * Returns:
- * - userRole: User's role in the system
- * - joinedAt: User account creation date
- * - lastActive: User's last login
- * - email: User's email address
- */
-/**
- * GET /api/dashboard
- * Get dashboard data based on user role
- * Automatically redirects to the appropriate role-specific dashboard
+ * @swagger
+ * /api/dashboard:
+ *   get:
+ *     summary: Get role-based dashboard
+ *     description: Automatically return dashboard data based on user role (BENEFICIARY, CONSULTANT, ORG_ADMIN)
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data for user's role
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
  */
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
