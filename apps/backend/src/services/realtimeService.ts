@@ -21,7 +21,12 @@ interface UserConnection {
 class RealtimeService {
   private io: Server;
   private userConnections: Map<string, UserConnection[]> = new Map();
-  private readonly JWT_SECRET = process.env.JWT_SECRET || 'secret';
+  private readonly JWT_SECRET = (() => {
+    if (!process.env.JWT_SECRET) {
+      throw new Error('CRITICAL: JWT_SECRET environment variable is required for realtime service');
+    }
+    return process.env.JWT_SECRET;
+  })();
 
   constructor(httpServer: HTTPServer) {
     this.io = new Server(httpServer, {

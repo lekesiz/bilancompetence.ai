@@ -8,6 +8,8 @@ import {
   getClientsByConsultant,
   getAllBilans,
   getOrganizationStats,
+  getOrganizationInfo,
+  getUsersByOrganization,
   getRecentActivityByOrganization,
 } from '../services/dashboardServiceNeon.js';
 
@@ -180,27 +182,30 @@ router.get(
 
       // Calculate stats
       const completedBilans = bilans.filter((b) => b.status === 'COMPLETED').length;
-      const activeBilans = bilans.filter(
+      const inProgressBilans = bilans.filter(
         (b) =>
-          b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION'
+          b.status === 'PRELIMINARY' || b.status === 'INVESTIGATION' || b.status === 'CONCLUSION' || b.status === 'IN_PROGRESS'
       ).length;
 
       const totalSatisfaction = bilans.reduce((sum, b) => sum + (b.satisfaction_score || 0), 0);
       const averageSatisfaction =
         bilans.length > 0 ? Math.round((totalSatisfaction / bilans.length) * 10) / 10 : 0;
 
+      // Transform stats to match frontend expectations
+      const stats = {
+        activeClients: clients.length,
+        inProgressAssessments: inProgressBilans,
+        completedAssessments: completedBilans,
+        averageSatisfaction,
+      };
+
       return res.status(200).json({
         status: 'success',
         data: {
-          bilans,
           clients,
-          stats: {
-            totalBilans: bilans.length,
-            activeBilans,
-            completedBilans,
-            totalClients: clients.length,
-            averageSatisfaction,
-          },
+          assessments: bilans, // Frontend expects 'assessments' not 'bilans'
+          recommendations: [], // Placeholder for now
+          stats,
         },
       });
     } catch (error) {
@@ -262,16 +267,43 @@ router.get(
         });
       }
 
+      // Get organization info
+      const organization = await getOrganizationInfo(user.organization_id);
+
       // Get organization stats
-      const stats = await getOrganizationStats(user.organization_id);
+      const rawStats = await getOrganizationStats(user.organization_id);
+
+      // Get all users in organization
+      const users = await getUsersByOrganization(user.organization_id);
 
       // Get recent activity
       const recentActivity = await getRecentActivityByOrganization(user.organization_id, 20);
 
+      // Transform stats to match frontend expectations
+      const stats = {
+        totalUsers: users.length,
+        activeUsers: users.filter(u => u.status === 'ACTIVE').length,
+        totalAssessments: rawStats.totalBilans,
+        completedAssessments: rawStats.completedBilans,
+        averageSatisfaction: rawStats.averageSatisfaction,
+      };
+
+      // Prepare analytics data (placeholder for now)
+      const analytics = {
+        chartData: {
+          completionTrend: [],
+          statusDistribution: [],
+          roleDistribution: [],
+        },
+      };
+
       return res.status(200).json({
         status: 'success',
         data: {
+          organization,
+          users,
           stats,
+          analytics,
           recentActivity,
         },
       });
