@@ -10,7 +10,7 @@
  */
 
 import { logger } from '../utils/logger.js';
-import { supabase } from './supabaseService.js';
+import { pool } from '../config/neon.js';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -940,13 +940,19 @@ class FranceTravailService {
    */
   private async cacheRomeCode(code: string, details: RomeCodeDetails): Promise<void> {
     try {
-      await supabase.from('rome_code_cache').insert({
-        code,
-        libelle: details.libelle,
-        definition: details.definition,
-        formations: details.formations,
-        competences: details.competences,
-      });
+      await pool.query(
+        `INSERT INTO rome_code_cache (code, libelle, definition, formations, competences)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (code) DO UPDATE
+         SET libelle = $2, definition = $3, formations = $4, competences = $5, updated_at = NOW()`,
+        [
+          code,
+          details.libelle,
+          details.definition,
+          JSON.stringify(details.formations),
+          JSON.stringify(details.competences),
+        ]
+      );
     } catch (error) {
       logger.warn('Error caching ROME code', error);
     }
@@ -961,22 +967,23 @@ class FranceTravailService {
    */
   private async getUserCompetencies(userId: string): Promise<CompetencyProfile[]> {
     try {
-      const { data: assessment, error } = await supabase
-        .from('assessments')
-        .select('competencies')
-        .eq('beneficiary_id', userId)
-        .eq('status', 'COMPLETED')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      const result = await pool.query(
+        `SELECT competencies FROM assessments
+         WHERE beneficiary_id = $1 AND status = $2
+         ORDER BY created_at DESC
+         LIMIT 1`,
+        [userId, 'COMPLETED']
+      );
 
-      if (error || !assessment) {
+      if (result.rows.length === 0) {
         logger.warn(`No completed assessment found for user ${userId}`);
         return [];
       }
 
+      const assessment = result.rows[0];
+
       // Parse competencies from assessment
-      const competencies = (assessment as any).competencies || [];
+      const competencies = assessment.competencies || [];
       return competencies.map((comp: any) => ({
         name: comp.name || comp,
         level: comp.level || 'intermediate',
@@ -1000,22 +1007,21 @@ class FranceTravailService {
     matchedCompetencies: string[]
   ): Promise<string> {
     try {
-      const { data, error } = await supabase
-        .from('job_recommendations')
-        .insert({
-          user_id: userId,
-          assessment_id: assessmentId,
-          job_id: jobId,
-          france_travail_job_data: jobData,
-          match_score: matchScore,
-          matched_competencies: matchedCompetencies,
-        })
-        .select('id')
-        .single();
+      const result = await pool.query(
+        `INSERT INTO job_recommendations (user_id, assessment_id, job_id, france_travail_job_data, match_score, matched_competencies)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING id`,
+        [
+          userId,
+          assessmentId,
+          jobId,
+          JSON.stringify(jobData),
+          matchScore,
+          JSON.stringify(matchedCompetencies),
+        ]
+      );
 
-      if (error) throw error;
-
-      return (data as any).id;
+      return result.rows[0].id;
     } catch (error) {
       logger.error('Error saving job recommendation', { userId, jobId, error });
       throw error;
@@ -1032,20 +1038,14 @@ class FranceTravailService {
     notes?: string
   ): Promise<string> {
     try {
-      const { data, error } = await supabase
-        .from('saved_jobs')
-        .insert({
-          user_id: userId,
-          france_travail_job_id: jobId,
-          job_data: jobData,
-          notes,
-        })
-        .select('id')
-        .single();
+      const result = await pool.query(
+        `INSERT INTO saved_jobs (user_id, france_travail_job_id, job_data, notes)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id`,
+        [userId, jobId, JSON.stringify(jobData), notes]
+      );
 
-      if (error) throw error;
-
-      return (data as any).id;
+      return result.rows[0].id;
     } catch (error) {
       logger.error('Error saving job to user list', { userId, jobId, error });
       throw error;
@@ -1058,16 +1058,15 @@ class FranceTravailService {
   async getUserSavedJobs(userId: string, limit: number = 10, page: number = 1): Promise<any[]> {
     try {
       const offset = (page - 1) * limit;
-      const { data, error } = await supabase
-        .from('saved_jobs')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1);
+      const result = await pool.query(
+        `SELECT * FROM saved_jobs
+         WHERE user_id = $1
+         ORDER BY created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [userId, limit, offset]
+      );
 
-      if (error) throw error;
-
-      return data || [];
+      return result.rows;
     } catch (error) {
       logger.error('Error getting user saved jobs', { userId, error });
       throw error;
