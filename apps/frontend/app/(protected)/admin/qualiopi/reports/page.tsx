@@ -48,8 +48,6 @@ export default function ReportsPage() {
 
   // Generate report
   const generateReport = useCallback(async () => {
-    if (!api.isAuthenticated()) return;
-
     try {
       setIsGenerating(true);
       setError(null);
@@ -76,7 +74,7 @@ export default function ReportsPage() {
 
   // Export report
   const exportReport = async () => {
-    if (!api.isAuthenticated() || !report) return;
+    if (!report) return;
 
     try {
       const params = new URLSearchParams();

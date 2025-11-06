@@ -36,8 +36,6 @@ export default function SurveysPage() {
 
   // Fetch analytics
   const fetchAnalytics = useCallback(async () => {
-    if (!api.isAuthenticated()) return;
-
     try {
       setIsLoadingData(true);
       setError(null);
@@ -57,7 +55,7 @@ export default function SurveysPage() {
   }, []);
 
   useEffect(() => {
-    if (api.isAuthenticated() && user) {
+    if (user) {
       fetchAnalytics();
     }
   }, [user, fetchAnalytics]);
