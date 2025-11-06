@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect } from 'react';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface Assessment {
   id: string;
@@ -32,10 +33,9 @@ export default function AssessmentsPage() {
 
   const fetchAssessments = async () => {
     try {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       if (response.ok) {
@@ -53,12 +53,20 @@ export default function AssessmentsPage() {
     e.preventDefault();
 
     try {
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/assessments`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
         body: JSON.stringify(formData),
       });
 

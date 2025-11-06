@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { getCsrfToken } from '@/lib/csrfHelper';
 
 interface Assessment {
   id: string;
@@ -47,10 +48,9 @@ export default function AssessmentPage() {
 
   const fetchAssessment = async () => {
     try {
+      // 🔒 SECURITY: HttpOnly cookies (GET request doesn't need CSRF token)
       const response = await fetch(`${API_URL}/api/assessments/${assessmentId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       if (!response.ok) {
@@ -86,10 +86,14 @@ export default function AssessmentPage() {
       setPdfDownloading(true);
       setPdfError(null);
 
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        setPdfError('Authentication required. Please log in again.');
-        return;
+      // 🔒 SECURITY: HttpOnly cookies + CSRF token
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers['x-csrf-token'] = csrfToken;
       }
 
       // Build API endpoint with report type
@@ -97,10 +101,8 @@ export default function AssessmentPage() {
 
       const response = await fetch(apiEndpoint, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers,
+        credentials: 'include', // Send HttpOnly cookies automatically
       });
 
       // Handle error responses
