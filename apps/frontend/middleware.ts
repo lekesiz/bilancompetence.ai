@@ -1,9 +1,10 @@
 import createMiddleware from 'next-intl/middleware';
-import { locales } from './i18n-config';
+import { locales, defaultLocale } from './i18n-config';
 import { NextRequest, NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware({
   locales,
+  defaultLocale,
   // Temporarily disable automatic locale handling via middleware
   localeDetection: false,
 });
