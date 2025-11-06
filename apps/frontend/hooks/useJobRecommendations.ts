@@ -180,7 +180,7 @@ export function useJobRecommendations() {
         setLoading(false);
       }
     },
-    [user, getAuthHeader]
+    [user, getHeaders]
   );
 
   /**
@@ -227,7 +227,7 @@ export function useJobRecommendations() {
         return null;
       }
     },
-    [user, getAuthHeader]
+    [user, getHeaders]
   );
 
   /**
@@ -281,7 +281,7 @@ export function useJobRecommendations() {
         setLoading(false);
       }
     },
-    [user, getAuthHeader]
+    [user, getHeaders]
   );
 
   /**
@@ -325,7 +325,7 @@ export function useJobRecommendations() {
         return null;
       }
     },
-    [user, getAuthHeader]
+    [user, getHeaders]
   );
 
   /**
@@ -369,7 +369,7 @@ export function useJobRecommendations() {
         return [];
       }
     },
-    [user, getAuthHeader]
+    [user, getHeaders]
   );
 
   /**
