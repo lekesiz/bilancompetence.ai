@@ -8,8 +8,9 @@ import RegisterForm from './components/RegisterForm';
 import Link from 'next/link';
 import Card from '@/components/qualiopi/Card';
 
-// ✅ Sprint 1.3 FIX: Removed force-dynamic to allow static generation
-// This was causing prerender errors during Vercel build
+// ✅ Sprint 1.3 FIX: Re-added force-dynamic - necessary for pages using i18n
+// useTranslations() requires runtime context and cannot be prerendered
+export const dynamic = 'force-dynamic';
 
 export default function RegisterPage() {
   const router = useRouter();
