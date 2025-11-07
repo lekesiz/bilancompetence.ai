@@ -74,6 +74,11 @@ export async function createSession(
       created_at: new Date().toISOString(),
     };
 
+    if (!supabase) {
+      logger.warn('Supabase not configured, skipping session storage');
+      return sessionData;
+    }
+
     const { data: session, error } = await supabase
       .from('user_sessions')
       .insert(sessionData)
@@ -99,6 +104,11 @@ export async function validateSession(token: string, req: Request): Promise<Sess
     // Décoder le token pour obtenir l'userId
     const decoded: any = jwt.verify(token, JWT_SECRET);
     const userId = decoded.userId;
+
+    if (!supabase) {
+      logger.warn('Supabase not configured, skipping session validation');
+      return null;
+    }
 
     // Récupérer la session
     const { data: session, error } = await supabase
@@ -153,6 +163,8 @@ export async function validateSession(token: string, req: Request): Promise<Sess
  */
 async function updateSessionActivity(sessionId: string): Promise<void> {
   try {
+    if (!supabase) return;
+    
     await supabase
       .from('user_sessions')
       .update({
@@ -169,6 +181,8 @@ async function updateSessionActivity(sessionId: string): Promise<void> {
  */
 export async function revokeSession(sessionId: string): Promise<void> {
   try {
+    if (!supabase) return;
+    
     await supabase
       .from('user_sessions')
       .update({
@@ -212,6 +226,8 @@ export async function revokeAllUserSessions(
  */
 async function cleanupOldSessions(userId: string): Promise<void> {
   try {
+    if (!supabase) return;
+    
     // Compter les sessions actives
     const { count } = await supabase
       .from('user_sessions')
@@ -244,6 +260,11 @@ async function cleanupOldSessions(userId: string): Promise<void> {
  */
 export async function getUserActiveSessions(userId: string): Promise<SessionData[]> {
   try {
+    if (!supabase) {
+      logger.warn('Supabase not configured, returning empty sessions');
+      return [];
+    }
+    
     const { data: sessions, error } = await supabase
       .from('user_sessions')
       .select('*')
@@ -322,6 +343,8 @@ function extractIpAddress(req: Request): string {
  */
 export async function cleanupExpiredSessions(): Promise<void> {
   try {
+    if (!supabase) return;
+    
     await supabase
       .from('user_sessions')
       .update({ is_active: false })

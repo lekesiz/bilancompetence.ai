@@ -3,8 +3,8 @@ import { authenticateToken } from '../middleware/auth.js';
 import * as chatService from '../services/chatServiceNeon.js';
 
 // Temporary stubs for functions not yet in chatServiceNeon
-const getOrCreateConversation = async (user1Id: string, user2Id: string) => chatService.createConversation(user1Id, user2Id, 'DIRECT');
-const getConversationMessages = async (conversationId: string, userId: string) => chatService.getMessages(conversationId, userId);
+const getOrCreateConversation = async (user1Id: string, user2Id: string) => chatService.createConversation(user1Id, user2Id);
+const getConversationMessages = async (conversationId: string, userId: string, limit?: number) => chatService.getMessages(conversationId, userId, limit);
 const sendMessage = async (conversationId: string, senderId: string, content: string) => chatService.createMessage(conversationId, senderId, content);
 const getUnreadMessagesCount = async (userId: string) => ({ count: 0 }); // TODO: Implement
 const searchMessages = async (userId: string, query: string) => ({ results: [] }); // TODO: Implement  
