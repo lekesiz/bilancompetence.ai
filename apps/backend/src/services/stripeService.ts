@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 const stripeApiKey = process.env.STRIPE_SECRET_KEY;
 const stripe = stripeApiKey
   ? new Stripe(stripeApiKey, {
-      apiVersion: '2025-09-30.clover',
+      apiVersion: '2025-10-29.clover',
     })
   : null;
 

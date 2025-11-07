@@ -12,6 +12,7 @@
 
 import { pool } from '../config/neon.js';
 import crypto from 'crypto';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 interface ArchivedDocument {
   id: string;
@@ -59,8 +60,19 @@ const DOCUMENT_TYPES = [
 // HYBRID ARCHITECTURE: DB queries use Neon, Storage uses Supabase
 export class DocumentArchiveService {
   private organizationId: string;
+  private supabase: SupabaseClient;
 
   constructor(organizationId: string) {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error(
+        'Supabase configuration is missing. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.'
+      );
+    }
+
+    this.supabase = createClient(supabaseUrl, supabaseKey);
     this.organizationId = organizationId;
   }
 

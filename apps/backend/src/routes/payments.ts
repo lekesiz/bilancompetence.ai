@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
-import stripeService from '../services/stripeService.js';
+import { stripeService } from '../services/stripeService.js';
 import {
   handlePaymentSuccess,
   handlePaymentFailure,
@@ -11,7 +11,7 @@ import {
   handleInvoicePaymentFailed,
 } from '../services/webhookHandlers.js';
 
-const router = Router();
+const router = express.Router();
 
 /**
  * @swagger
@@ -257,7 +257,7 @@ router.get('/prices', async (req: Request, res: Response) => {
     const prices = await stripeService.listPrices();
 
     res.json({
-      prices: prices.map((price) => ({
+      prices: prices.map((price: any) => ({
         id: price.id,
         productId: price.product,
         amount: price.unit_amount,
@@ -284,7 +284,7 @@ router.get('/invoices/:customerId', async (req: Request, res: Response) => {
     const invoices = await stripeService.listCustomerInvoices(customerId, limit);
 
     res.json({
-      invoices: invoices.map((invoice) => ({
+      invoices: invoices.map((invoice: any) => ({
         id: invoice.id,
         amount: invoice.amount_paid,
         currency: invoice.currency,

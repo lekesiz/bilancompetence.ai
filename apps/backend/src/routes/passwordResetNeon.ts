@@ -11,6 +11,7 @@ import {
 } from '../services/authFlowServiceNeon.js';
 import { generateToken, sendPasswordResetEmail } from '../services/emailService.js';
 import { passwordResetLimiter } from '../middleware/rateLimit.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 

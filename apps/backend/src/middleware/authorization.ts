@@ -26,8 +26,11 @@ interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
-    role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ADMIN';
+    full_name: string;
+    role: 'BENEFICIARY' | 'CONSULTANT' | 'ORG_ADMIN' | 'ORGANIZATION_ADMIN' | 'ADMIN';
     organization_id?: string;
+    iat?: number;
+    exp?: number;
   };
 }
 

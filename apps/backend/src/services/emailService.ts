@@ -278,6 +278,31 @@ export async function sendConfirmationEmail(
   }
 }
 
+/**
+ * Generic send email function
+ */
+export async function sendEmail(options: {
+  to: string;
+  subject: string;
+  html: string;
+}): Promise<void> {
+  try {
+    const emailFrom = process.env.EMAIL_FROM || 'noreply@bilancompetence.ai';
+    
+    await transporter.sendMail({
+      from: emailFrom,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+    });
+    
+    logger.info(`Email sent successfully to ${options.to}`);
+  } catch (error) {
+    logger.error('Failed to send email:', error);
+    throw error;
+  }
+}
+
 export default {
   generateToken,
   sendEmailVerificationEmail,
@@ -285,4 +310,5 @@ export default {
   sendWelcomeEmail,
   sendAccountConfirmationEmail,
   sendConfirmationEmail,
+  sendEmail,
 };

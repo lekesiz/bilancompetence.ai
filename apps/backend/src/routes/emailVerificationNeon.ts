@@ -14,6 +14,7 @@ import {
   sendAccountConfirmationEmail,
 } from '../services/emailService.js';
 import { emailVerificationLimiter } from '../middleware/rateLimit.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
