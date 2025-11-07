@@ -117,7 +117,7 @@ export function BeneficiaryDashboard() {
               )}
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Terminés
+              {t('completedAssessments')}
             </p>
             {loading ? (
               <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -127,7 +127,7 @@ export function BeneficiaryDashboard() {
               </p>
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              Avec succès
+              {t('completedSuccessfully')}
             </p>
           </Card>
 
@@ -140,7 +140,7 @@ export function BeneficiaryDashboard() {
               </div>
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              En cours
+              {t('inProgressAssessments')}
             </p>
             {loading ? (
               <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -150,7 +150,7 @@ export function BeneficiaryDashboard() {
               </p>
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              À compléter
+              {t('toComplete')}
             </p>
           </Card>
 
@@ -167,7 +167,7 @@ export function BeneficiaryDashboard() {
                 </span>
               </div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                Satisfaction
+                {t('satisfaction')}
               </p>
               {loading ? (
                 <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -177,7 +177,7 @@ export function BeneficiaryDashboard() {
                 </p>
               )}
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Score moyen
+                {t('averageScore')}
               </p>
             </Card>
           )}
@@ -187,13 +187,13 @@ export function BeneficiaryDashboard() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartPlaceholder
-          title="Progression des bilans"
+          title={t('assessmentProgress')}
           chartType="line"
           data={assessments.length > 0 ? assessments : []}
           loading={loading}
         />
         <ChartPlaceholder
-          title="Domaines de compétences"
+          title={t('skillAreas')}
           chartType="pie"
           data={recommendations.length > 0 ? recommendations : []}
           loading={loading}
@@ -206,7 +206,7 @@ export function BeneficiaryDashboard() {
           <div className="flex items-center gap-3">
             <Award className="w-8 h-8 text-secondary-600" />
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Vos bilans
+              {t('yourAssessments')}
             </h2>
           </div>
           {assessments.length === 0 && !loading && (
@@ -216,7 +216,7 @@ export function BeneficiaryDashboard() {
               onClick={() => window.location.href = '/assessments/create'}
             >
               <Plus className="w-5 h-5" />
-              Démarrer un bilan
+              {t('startAssessment')}
             </Button>
           )}
         </div>
@@ -233,10 +233,10 @@ export function BeneficiaryDashboard() {
               <Award className="w-10 h-10 text-primary-600 dark:text-primary-400" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-              Aucun bilan pour le moment
+              {t('noAssessmentsTitle')}
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto text-lg">
-              Commencez votre premier bilan pour obtenir des recommandations personnalisées et des insights sur votre développement professionnel
+              {t('noAssessmentsDescription')}
             </p>
             <Button
               variant="primary-gradient"
@@ -244,7 +244,7 @@ export function BeneficiaryDashboard() {
               onClick={() => window.location.href = '/assessments/create'}
             >
               <Plus className="w-5 h-5" />
-              Créer votre premier bilan
+              {t('createFirstAssessment')}
             </Button>
           </Card>
         ) : (
@@ -274,7 +274,7 @@ export function BeneficiaryDashboard() {
           <div className="flex items-center gap-3 mb-6">
             <TrendingUp className="w-8 h-8 text-success-600" />
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              Recommandations IA
+              {t('aiRecommendations')}
             </h2>
           </div>
           <RecommendationsPanel
@@ -293,10 +293,10 @@ export function BeneficiaryDashboard() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Obtenez des recommandations personnalisées
+                {t('getPersonalizedRecommendations')}
               </h3>
               <p className="text-gray-700 dark:text-gray-300">
-                Complétez un bilan pour recevoir des suggestions d'emplois, de formations et d'amélioration de compétences adaptées à vos objectifs professionnels.
+                {t('completeAssessmentForRecommendations')}
               </p>
             </div>
           </div>
@@ -311,18 +311,18 @@ export function BeneficiaryDashboard() {
           </div>
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Besoin d'aide ?
+              {t('needHelp')}
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Visitez notre{' '}
+              {t('visitOur')}{' '}
               <Link href="/help" className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold underline">
-                centre d'aide
+                {t('helpCenter')}
               </Link>
-              {' '}ou{' '}
+              {' '}{t('or')}{' '}
               <Link href="/contact" className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold underline">
-                contactez le support
+                {t('contactSupport')}
               </Link>
-              {' '}pour toute assistance concernant vos bilans.
+              {' '}{t('forAssistance')}
             </p>
           </div>
         </div>
