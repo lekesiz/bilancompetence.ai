@@ -73,6 +73,42 @@
     "passwordNeedsSpecial": "Şifre bir özel karakter içermelidir",
     "fullNameTooShort": "Ad en az 2 karakter olmalıdır"
   },
+  "consent": {
+    "title": "Çerez Yönetimi ve KVKK Onayı",
+    "description": "Deneyiminizi iyileştirmek, trafiğimizi analiz etmek ve içeriğimizi kişiselleştirmek için çerezler kullanıyoruz. Sitemizi kullanmaya devam ederek gizlilik politikamızı kabul etmiş olursunuz.",
+    "acceptAll": "Tümünü kabul et",
+    "rejectAll": "Tümünü reddet",
+    "customize": "Özelleştir",
+    "savePreferences": "Tercihleri kaydet",
+    "essential": {
+      "title": "Zorunlu Çerezler",
+      "description": "Web sitesinin çalışması için gereklidir (oturum, güvenlik). Devre dışı bırakılamazlar."
+    },
+    "analytics": {
+      "title": "Analitik Çerezler",
+      "description": "Hizmetlerimizi iyileştirmek için site kullanımını analiz etmemize olanak sağlar (Google Analytics, vb.)."
+    },
+    "marketing": {
+      "title": "Pazarlama Çerezleri",
+      "description": "Size kişiselleştirilmiş reklamlar ve pazarlama iletişimleri göndermek için kullanılır."
+    },
+    "preferences": {
+      "title": "Tercih Çerezleri",
+      "description": "Deneyiminizi iyileştirmek için seçimlerinizi hatırlar (dil, tema, ayarlar)."
+    },
+    "thirdParty": {
+      "title": "Üçüncü Taraf Çerezleri",
+      "description": "Entegre üçüncü taraf hizmetler (videolar, haritalar, sosyal ağlar, vb.) tarafından kullanılır."
+    },
+    "dataProcessing": {
+      "title": "Veri İşleme",
+      "description": "Yetenek değerlendirme hizmetlerimizi sağlamak için gereklidir. Onay vermeden devam edebilirsiniz, ancak bazı özellikler sınırlı olacaktır."
+    },
+    "profiling": {
+      "title": "Profilleme ve Otomatik Kararlar",
+      "description": "Profil analizi ve kişiselleştirilmiş öneriler için yapay zeka kullanımı."
+    }
+  },
   "navigation": {
     "home": "Ana Sayfa",
     "about": "Hakkımızda",
@@ -105,6 +141,34 @@
     "english": "English",
     "turkish": "Türkçe",
     "switch": "Dili değiştir"
+  },
+  "home": {
+    "hero": {
+      "title": "Kariyerinize yeni bir soluk verin",
+      "subtitle": "Yapay zeka ve uzman rehberliğiyle kişiselleştirilmiş yetkinlik değerlendirmesi",
+      "cta": "Değerlendirmeme başla",
+      "learnMore": "Daha fazla bilgi"
+    },
+    "stats": {
+      "users": "Kullanıcı",
+      "bilans": "Tamamlanan değerlendirme",
+      "satisfaction": "Memnuniyet"
+    },
+    "features": {
+      "title": "Neden BilanCompetence.AI?",
+      "ai": {
+        "title": "Yapay Zeka",
+        "description": "Gelişmiş yapay zeka algoritmaları ile yeteneklerinizin derinlemesine analizi"
+      },
+      "personalized": {
+        "title": "%100 Kişiselleştirilmiş",
+        "description": "Profilinize ve hedeflerinize özel öneriler"
+      },
+      "expert": {
+        "title": "Uzman Rehberliği",
+        "description": "Profesyonel gelişiminizde size rehberlik edecek sertifikalı danışmanlar"
+      }
+    }
   },
   "dashboard": {
     "welcome": "Hoş geldiniz",
