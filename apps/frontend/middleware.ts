@@ -1,36 +1,18 @@
 import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale, type Locale } from './i18n-config';
-import { NextRequest, NextResponse } from 'next/server';
+import { locales, defaultLocale } from './i18n-config';
 
 // ✅ Sprint 1.2: Re-enable i18n middleware for locale routing
 // ✅ Sprint 1.3: Enhanced with language preference persistence
-const intlMiddleware = createMiddleware({
+// ✅ Sprint 1.3 FIX: Changed localePrefix to 'as-needed' to avoid infinite redirects
+//    - 'as-needed' only adds locale prefix for non-default locales (en, tr)
+//    - Default locale (fr) has no prefix in URL
+//    - This matches the existing URL structure and prevents redirect loops
+export default createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'always', // Always show locale in URL (/fr/*, /en/*, /tr/*)
-  localeDetection: true, // Auto-detect user's preferred language
+  localePrefix: 'as-needed', // Only show locale in URL for non-default locales
+  localeDetection: true, // Auto-detect user's preferred language from browser/cookie
 });
-
-// Middleware wrapper to handle language preference from cookie
-export default function middleware(request: NextRequest) {
-  const cookieLocale = request.cookies.get('preferred-locale')?.value;
-  const pathname = request.nextUrl.pathname;
-
-  // If user has a saved language preference and is on root path, redirect to preferred locale
-  if (cookieLocale && locales.includes(cookieLocale as Locale)) {
-    // Check if user is on root path without locale
-    if (pathname === '/' || pathname === '') {
-      const preferredLocale = cookieLocale as Locale;
-      if (preferredLocale !== defaultLocale) {
-        const redirectUrl = new URL(`/${preferredLocale}`, request.url);
-        return NextResponse.redirect(redirectUrl);
-      }
-    }
-  }
-
-  // Otherwise, use default next-intl middleware behavior
-  return intlMiddleware(request);
-}
 
 export const config = {
   // Match all routes except:

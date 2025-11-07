@@ -44,11 +44,12 @@ const nextConfig = {
   swcMinify: true,
   pageExtensions: ['ts', 'tsx'],
   env: getEnvVars(),
+  // ✅ Sprint 1.3 FIX: Removed conflicting redirects
+  // next-intl middleware now handles all locale routing automatically
+  // Old redirects were causing infinite redirect loops with localePrefix: 'always'
   async redirects() {
     return [
-      { source: '/', destination: '/fr', permanent: false },
-      { source: '/en', destination: '/fr', permanent: false },
-      { source: '/en/:path*', destination: '/fr/:path*', permanent: false },
+      // No manual redirects needed - next-intl handles locale routing
     ];
   },
   // Image Optimization - P2.1: CRITICAL PERFORMANCE IMPROVEMENT
