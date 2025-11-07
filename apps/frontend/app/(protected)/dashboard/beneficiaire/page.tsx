@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getCsrfToken } from '@/lib/csrfHelper';
+import { useTranslations } from 'next-intl';
 
 interface ParcoursPhase {
   status: 'locked' | 'in_progress' | 'completed';
@@ -24,6 +25,8 @@ interface ParcoursData {
 
 export default function BeneficiaireDashboard() {
   const router = useRouter();
+  const t = useTranslations('dashboard.beneficiary');
+  const tCommon = useTranslations('common');
   const [parcours, setParcours] = useState<ParcoursData | null>(null);
   const [loading, setLoading] = useState(true);
   const [assessmentId, setAssessmentId] = useState<string>('');
@@ -111,7 +114,7 @@ export default function BeneficiaireDashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-textSecondary">Chargement de votre parcours...</p>
+          <p className="text-textSecondary">{t('loadingJourney')}</p>
         </div>
       </div>
     );
@@ -123,10 +126,10 @@ export default function BeneficiaireDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-textPrimary mb-2">
-            Mon Bilan de Compétences
+            {t('pageTitle')}
           </h1>
           <p className="text-textSecondary">
-            Suivez votre progression à travers les 3 phases du bilan
+            {t('pageSubtitle')}
           </p>
         </div>
 
@@ -135,7 +138,7 @@ export default function BeneficiaireDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold text-textPrimary">
-                Progression Globale
+                {t('overallProgress')}
               </h2>
               <span className="text-3xl font-bold text-primary">
                 {parcours.overall_progress}%
@@ -154,58 +157,61 @@ export default function BeneficiaireDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Phase Préliminaire */}
           <PhaseCard
-            title="Phase Préliminaire"
-            description="Analyse de votre parcours et définition de vos objectifs"
+            title={t('phasePreliminaryTitle')}
+            description={t('phasePreliminaryDesc')}
             phase={parcours?.phases.preliminaire}
             phaseNumber={1}
             assessmentId={assessmentId}
             link="/dashboard/beneficiaire/parcours/preliminaire"
+            t={t}
           />
 
           {/* Phase Investigation */}
           <PhaseCard
-            title="Phase d'Investigation"
-            description="Exploration approfondie de vos compétences et aspirations"
+            title={t('phaseInvestigationTitle')}
+            description={t('phaseInvestigationDesc')}
             phase={parcours?.phases.investigation}
             phaseNumber={2}
             assessmentId={assessmentId}
             link="/dashboard/beneficiaire/parcours/investigation"
+            t={t}
           />
 
           {/* Phase Conclusion */}
           <PhaseCard
-            title="Phase de Conclusion"
-            description="Synthèse et élaboration de votre projet professionnel"
+            title={t('phaseConclusionTitle')}
+            description={t('phaseConclusionDesc')}
             phase={parcours?.phases.conclusion}
             phaseNumber={3}
             assessmentId={assessmentId}
             link="/dashboard/beneficiaire/parcours/conclusion"
+            t={t}
           />
         </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <ActionCard
-            title="Tests Psychométriques"
-            description="MBTI, RIASEC, Compétences"
+            title={t('psychometricTests')}
+            description={t('psychometricTestsDesc')}
             icon="📊"
             link={`/dashboard/beneficiaire/tests/${assessmentId}`}
           />
           <ActionCard
-            title="Mes Compétences"
-            description="Visualiser et gérer vos compétences"
+            title={t('mySkills')}
+            description={t('mySkillsDesc')}
             icon="💼"
             link="/dashboard/beneficiaire/competences"
           />
           <ActionCard
-            title="Pistes Métiers"
-            description="Découvrir les métiers qui vous correspondent"
+            title={t('careerPaths')}
+            description={t('careerPathsDesc')}
             icon="🎯"
             link="/dashboard/beneficiaire/pistes-metiers"
           />
           <ActionCard
-            title="Mon Plan d'Action"
-            description="Votre feuille de route personnalisée"
+            title={t('myActionPlan')}
+            description={t('myActionPlanDesc')}
             icon="📋"
             link="/dashboard/beneficiaire/plan-action"
           />
@@ -215,20 +221,22 @@ export default function BeneficiaireDashboard() {
   );
 }
 
-function PhaseCard({ 
-  title, 
-  description, 
-  phase, 
-  phaseNumber, 
+function PhaseCard({
+  title,
+  description,
+  phase,
+  phaseNumber,
   assessmentId,
-  link 
-}: { 
-  title: string; 
-  description: string; 
-  phase?: ParcoursPhase; 
+  link,
+  t
+}: {
+  title: string;
+  description: string;
+  phase?: ParcoursPhase;
   phaseNumber: number;
   assessmentId: string;
   link: string;
+  t: any;
 }) {
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -241,10 +249,10 @@ function PhaseCard({
 
   const getStatusText = (status?: string) => {
     switch (status) {
-      case 'completed': return 'Complétée';
-      case 'in_progress': return 'En cours';
-      case 'locked': return 'Verrouillée';
-      default: return 'Non commencée';
+      case 'completed': return t('statusCompleted');
+      case 'in_progress': return t('statusInProgress');
+      case 'locked': return t('statusLocked');
+      default: return t('statusNotStarted');
     }
   };
 
@@ -272,25 +280,25 @@ function PhaseCard({
               style={{ width: `${phase.progress}%` }}
             ></div>
           </div>
-          <p className="text-sm text-textSecondary mb-4">{phase.progress}% complété</p>
+          <p className="text-sm text-textSecondary mb-4">{phase.progress}% {t('progressCompleted')}</p>
         </>
       )}
-      
+
       {!isLocked && assessmentId && (
-        <Link 
+        <Link
           href={link}
           className="block w-full text-center bg-primary text-white py-2 rounded-lg hover:bg-primary/90 transition-colors"
         >
-          {phase?.status === 'completed' ? 'Revoir' : 'Continuer'}
+          {phase?.status === 'completed' ? t('review') : t('continue')}
         </Link>
       )}
-      
+
       {isLocked && (
-        <button 
+        <button
           disabled
           className="block w-full text-center bg-gray-300 text-gray-600 dark:text-gray-300 py-2 rounded-lg cursor-not-allowed"
         >
-          🔒 Verrouillée
+          🔒 {t('locked')}
         </button>
       )}
     </div>
