@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { logger } from '../utils/logger.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 // 🔒 SECURITY: Fail-fast if RESEND_API_KEY is not set
 const apiKey = process.env.RESEND_API_KEY;
@@ -33,7 +34,7 @@ export class ResendService {
       });
 
       return { id: result.data?.id || '' };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Resend email error:', error);
       throw new Error(`Failed to send email: ${error.message}`);
     }

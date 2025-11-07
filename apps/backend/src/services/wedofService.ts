@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 interface WedofConfig {
   apiKey: string;
@@ -53,7 +54,7 @@ class WedofService {
         params: { reference },
       });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -65,7 +66,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/registration_folders/${id}`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -81,7 +82,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/registration_folders`, { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -97,7 +98,7 @@ class WedofService {
     try {
       const response = await this.client.post(`/registration_folders`, data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -112,7 +113,7 @@ class WedofService {
     try {
       const response = await this.client.patch(`/registration_folders/${id}`, data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -126,7 +127,7 @@ class WedofService {
         start_date: startDate,
       });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -140,7 +141,7 @@ class WedofService {
         end_date: endDate,
       });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -152,7 +153,7 @@ class WedofService {
     try {
       const response = await this.client.post(`/registration_folders/${folderId}/service_done`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -168,7 +169,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/attendees/${id}`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -184,7 +185,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/attendees`, { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -201,7 +202,7 @@ class WedofService {
     try {
       const response = await this.client.post(`/attendees`, data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -217,7 +218,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/training_actions`, { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -229,7 +230,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/sessions`, { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -245,7 +246,7 @@ class WedofService {
     try {
       const response = await this.client.post(`/webhooks`, data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -257,7 +258,7 @@ class WedofService {
     try {
       const response = await this.client.get(`/webhooks`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -268,7 +269,7 @@ class WedofService {
   async deleteWebhook(id: string): Promise<void> {
     try {
       await this.client.delete(`/webhooks/${id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Wedof API Error: ${error.response?.data?.message || error.message}`);
     }
   }

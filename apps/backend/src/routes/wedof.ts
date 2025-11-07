@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import wedofService from '../services/wedofService.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -41,7 +42,7 @@ router.get('/folders/:reference', async (req: Request, res: Response) => {
     const { reference } = req.params;
     const folder = await wedofService.getRegistrationFolderByReference(reference);
     res.json({ success: true, data: folder });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -84,7 +85,7 @@ router.get('/folders', async (req: Request, res: Response) => {
       offset: offset ? parseInt(offset as string) : undefined,
     });
     res.json({ success: true, data: folders });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -112,7 +113,7 @@ router.post('/folders', async (req: Request, res: Response) => {
   try {
     const folder = await wedofService.createRegistrationFolder(req.body);
     res.json({ success: true, data: folder });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -126,7 +127,7 @@ router.patch('/folders/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const folder = await wedofService.updateRegistrationFolder(id, req.body);
     res.json({ success: true, data: folder });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -146,7 +147,7 @@ router.post('/folders/:id/entree-formation', async (req: Request, res: Response)
 
     const result = await wedofService.declareEntreeFormation(id, start_date);
     res.json({ success: true, data: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -166,7 +167,7 @@ router.post('/folders/:id/sortie-formation', async (req: Request, res: Response)
 
     const result = await wedofService.declareSortieFormation(id, end_date);
     res.json({ success: true, data: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -180,7 +181,7 @@ router.post('/folders/:id/service-fait', async (req: Request, res: Response) => 
     const { id } = req.params;
     const result = await wedofService.declareServiceFait(id);
     res.json({ success: true, data: result });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -198,7 +199,7 @@ router.get('/attendees/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const attendee = await wedofService.getAttendee(id);
     res.json({ success: true, data: attendee });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -239,7 +240,7 @@ router.get('/attendees', async (req: Request, res: Response) => {
       offset: offset ? parseInt(offset as string) : undefined,
     });
     res.json({ success: true, data: attendees });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -252,7 +253,7 @@ router.post('/attendees', async (req: Request, res: Response) => {
   try {
     const attendee = await wedofService.createAttendee(req.body);
     res.json({ success: true, data: attendee });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -269,7 +270,7 @@ router.get('/training-actions', async (req: Request, res: Response) => {
   try {
     const actions = await wedofService.listTrainingActions(req.query);
     res.json({ success: true, data: actions });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -282,7 +283,7 @@ router.get('/sessions', async (req: Request, res: Response) => {
   try {
     const sessions = await wedofService.listSessions(req.query);
     res.json({ success: true, data: sessions });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -299,7 +300,7 @@ router.get('/webhooks', async (req: Request, res: Response) => {
   try {
     const webhooks = await wedofService.listWebhooks();
     res.json({ success: true, data: webhooks });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -321,7 +322,7 @@ router.post('/webhooks', async (req: Request, res: Response) => {
 
     const webhook = await wedofService.createWebhook({ url, events });
     res.json({ success: true, data: webhook });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -335,7 +336,7 @@ router.delete('/webhooks/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     await wedofService.deleteWebhook(id);
     res.json({ success: true, message: 'Webhook deleted successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -373,7 +374,7 @@ router.post('/sync/import-folder', async (req: Request, res: Response) => {
       },
       message: 'Folder imported successfully',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });

@@ -22,6 +22,7 @@ import { sendWelcomeEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
 import { setAuthCookies, clearAuthCookies } from '../utils/cookieHelper.js';
 import { generateCsrfToken, setCsrfToken, clearCsrfToken } from '../utils/csrfHelper.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -171,7 +172,7 @@ router.post('/register', async (req: Request, res: Response) => {
         ...tokens, // Also return in body for backward compatibility
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Register error:', error);
 
     // Handle duplicate email constraint
@@ -325,7 +326,7 @@ router.post('/login', async (req: Request, res: Response) => {
         ...tokens, // Also return in body for backward compatibility
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Login error:', error);
 
     res.status(500).json({
@@ -438,7 +439,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
       message: 'Token refreshed successfully',
       data: tokens, // Also return in body for backward compatibility
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Refresh token error:', error);
 
     res.status(500).json({
@@ -476,7 +477,7 @@ router.post('/logout', async (req: Request, res: Response) => {
       status: 'success',
       message: 'Logout successful',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Logout error:', error);
 
     res.status(500).json({
@@ -561,7 +562,7 @@ router.get('/verify', async (req: Request, res: Response) => {
         },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Token verification error:', error);
 
     res.status(500).json({

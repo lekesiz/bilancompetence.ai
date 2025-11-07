@@ -1,5 +1,6 @@
 import { Server as HTTPServer } from 'http';
 import { Server, Socket } from 'socket.io';
+import jwt from 'jsonwebtoken';
 
 /**
  * Real-time Service - WebSocket communication
@@ -64,20 +65,21 @@ class RealtimeService {
 
         const token = accessTokenCookie.split('=')[1];
 
-        // Note: In production, verify JWT token here
-        // const jwt = require('jsonwebtoken');
-        // const decoded = jwt.verify(token, this.JWT_SECRET);
-        // socket.data.userId = decoded.id;
+        // ✅ SECURITY FIX: Proper JWT verification for WebSocket authentication
+        try {
+          const decoded = jwt.verify(token, this.JWT_SECRET) as { id: string; email: string };
 
-        // For now, use userId from auth if available (development)
-        // TODO: Remove this fallback after implementing JWT verification
-        const userId = socket.handshake.auth.userId;
-        if (!userId) {
-          return next(new Error('Authentication error: User ID not found'));
+          if (!decoded || !decoded.id) {
+            return next(new Error('Authentication error: Invalid token payload'));
+          }
+
+          socket.data.userId = decoded.id;
+          socket.data.userEmail = decoded.email;
+          next();
+        } catch (jwtError: any) {
+          console.error('JWT verification failed:', jwtError.message);
+          return next(new Error('Authentication error: Invalid or expired token'));
         }
-
-        socket.data.userId = userId;
-        next();
       } catch (error) {
         console.error('Socket authentication error:', error);
         next(new Error('Authentication failed'));

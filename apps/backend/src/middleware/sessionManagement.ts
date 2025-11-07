@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import jwt from 'jsonwebtoken';
 import { logger } from '../utils/logger.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 // 🔒 SECURITY: Validate JWT_SECRET at startup
 const JWT_SECRET = (() => {
@@ -81,11 +82,11 @@ export async function createSession(
       .single();
 
     if (error) {
-      throw new Error(`Erreur lors de la création de la session: ${error.message}`);
+      throw new Error(`Erreur lors de la création de la session: ${getErrorMessage(error)}`);
     }
 
     return session;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur createSession:', error);
     throw error;
   }
@@ -142,7 +143,7 @@ export async function validateSession(token: string, req: Request): Promise<Sess
     }
 
     return session;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur validateSession:', error);
     return null;
   }
@@ -159,7 +160,7 @@ async function updateSessionActivity(sessionId: string): Promise<void> {
         last_activity: new Date().toISOString(),
       })
       .eq('id', sessionId);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur updateSessionActivity:', error);
   }
 }
@@ -175,7 +176,7 @@ export async function revokeSession(sessionId: string): Promise<void> {
         is_active: false,
       })
       .eq('id', sessionId);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur revokeSession:', error);
     throw error;
   }
@@ -201,7 +202,7 @@ export async function revokeAllUserSessions(
     }
 
     await query;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur revokeAllUserSessions:', error);
     throw error;
   }
@@ -234,7 +235,7 @@ async function cleanupOldSessions(userId: string): Promise<void> {
         await supabase.from('user_sessions').update({ is_active: false }).in('id', sessionIds);
       }
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur cleanupOldSessions:', error);
   }
 }
@@ -252,11 +253,11 @@ export async function getUserActiveSessions(userId: string): Promise<SessionData
       .order('last_activity', { ascending: false });
 
     if (error) {
-      throw new Error(`Erreur lors de la récupération des sessions: ${error.message}`);
+      throw new Error(`Erreur lors de la récupération des sessions: ${getErrorMessage(error)}`);
     }
 
     return sessions || [];
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur getUserActiveSessions:', error);
     return [];
   }
@@ -329,7 +330,7 @@ export async function cleanupExpiredSessions(): Promise<void> {
       .eq('is_active', true);
 
     console.log('Sessions expirées nettoyées');
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur cleanupExpiredSessions:', error);
   }
 }

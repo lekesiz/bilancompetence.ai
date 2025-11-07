@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import * as chatService from '../services/chatService.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.get('/conversations', authenticateToken, async (req: Request, res: Respon
     const conversations = await chatService.getUserConversations(userId);
 
     res.status(200).json({ conversations });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/conversations:', error);
     res
       .status(500)
@@ -83,7 +84,7 @@ router.post('/conversations', authenticateToken, async (req: Request, res: Respo
     const conversation = await chatService.getOrCreateConversation(userId, recipientId);
 
     res.status(200).json({ conversation });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/conversations POST:', error);
     res
       .status(500)
@@ -140,7 +141,7 @@ router.get(
       const messages = await chatService.getConversationMessages(conversationId, limit, offset);
 
       res.status(200).json({ messages });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur /chat/conversations/:id/messages:', error);
       res
         .status(500)
@@ -215,9 +216,13 @@ router.post('/messages', authenticateToken, async (req: Request, res: Response) 
     });
 
     res.status(201).json({ message: newMessage });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/messages POST:', error);
-    res.status(500).json({ error: error.message || "Erreur lors de l'envoi du message" });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -255,9 +260,13 @@ router.put('/messages/:messageId/read', authenticateToken, async (req: Request, 
     await chatService.markMessageAsRead(messageId);
 
     res.status(200).json({ message: 'Message marqué comme lu' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/messages/:id/read:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors du marquage du message' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -298,7 +307,7 @@ router.put(
       await chatService.markConversationAsRead(conversationId, userId);
 
       res.status(200).json({ message: 'Conversation marquée comme lue' });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur /chat/conversations/:id/read:', error);
       res
         .status(500)
@@ -333,9 +342,13 @@ router.get('/unread-count', authenticateToken, async (req: Request, res: Respons
     const count = await chatService.getUnreadMessagesCount(userId);
 
     res.status(200).json({ count });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/unread-count:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors du comptage des messages' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -373,9 +386,13 @@ router.delete('/messages/:messageId', authenticateToken, async (req: Request, re
     await chatService.deleteMessage(messageId, userId);
 
     res.status(200).json({ message: 'Message supprimé' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/messages/:id DELETE:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de la suppression du message' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -419,9 +436,13 @@ router.get('/search', authenticateToken, async (req: Request, res: Response) => 
     const messages = await chatService.searchMessages(userId, q);
 
     res.status(200).json({ messages });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/search:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de la recherche' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -480,9 +501,13 @@ router.post('/upload', authenticateToken, async (req: Request, res: Response) =>
     const fileUrl = await chatService.uploadChatFile(fileBuffer, fileName, conversationId);
 
     res.status(200).json({ fileUrl });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /chat/upload:', error);
-    res.status(500).json({ error: error.message || "Erreur lors de l'upload du fichier" });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 

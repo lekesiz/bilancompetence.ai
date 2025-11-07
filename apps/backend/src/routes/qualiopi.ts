@@ -11,6 +11,7 @@ import SatisfactionSurveyService from '../services/satisfactionSurveyService.js'
 import DocumentArchiveService from '../services/documentArchiveService.js';
 import ComplianceReportService from '../services/complianceReportService.js';
 import { logger } from '../utils/logger.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -158,7 +159,7 @@ router.get('/indicators', authMiddleware, requireAdminRole, async (req: Request,
       data: indicators,
       count: indicators.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching indicators:', error);
     res.status(500).json({
       success: false,
@@ -213,7 +214,7 @@ router.get(
         data: coreIndicators,
         count: coreIndicators.length,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching core indicators:', error);
       res.status(500).json({
         success: false,
@@ -274,7 +275,7 @@ router.get(
         success: true,
         data: details,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching indicator details:', error);
       res.status(500).json({
         success: false,
@@ -367,7 +368,7 @@ router.put(
         data: updated,
         message: `Indicator ${indicatorId} status updated to ${status}`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error updating indicator:', error);
       res.status(500).json({
         success: false,
@@ -424,7 +425,7 @@ router.post(
         data: evidence,
         message: `Evidence added to indicator ${indicatorId}`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error adding evidence:', error);
       res.status(500).json({
         success: false,
@@ -481,7 +482,7 @@ router.get('/compliance', authMiddleware, requireAdminRole, async (req: Request,
       success: true,
       data: metrics,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching compliance metrics:', error);
     res.status(500).json({
       success: false,
@@ -529,7 +530,7 @@ router.post('/bilans/:bilanId/survey', authMiddleware, async (req: Request, res:
       success: true,
       message: 'Survey response submitted successfully',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error submitting survey:', error);
     res.status(500).json({
       success: false,
@@ -562,7 +563,7 @@ router.get('/surveys', authMiddleware, requireAdminRole, async (req: Request, re
       success: true,
       data: analytics,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching surveys:', error);
     res.status(500).json({
       success: false,
@@ -590,7 +591,7 @@ router.get(
         success: true,
         data: analytics,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching analytics:', error);
       res.status(500).json({
         success: false,
@@ -629,7 +630,7 @@ router.get('/documents', authMiddleware, requireAdminRole, async (req: Request, 
       data: documents,
       count: documents.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching documents:', error);
     res.status(500).json({
       success: false,
@@ -658,7 +659,7 @@ router.get(
         success: true,
         data: details,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching document details:', error);
       res.status(500).json({
         success: false,
@@ -690,7 +691,7 @@ router.get(
         data: accessLog,
         count: accessLog.length,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching access log:', error);
       res.status(500).json({
         success: false,
@@ -719,7 +720,7 @@ router.get(
         success: true,
         data: stats,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error fetching archive stats:', error);
       res.status(500).json({
         success: false,
@@ -775,7 +776,7 @@ router.get(
 
       res.setHeader('Content-Type', contentType);
       res.send(responseData);
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error generating report:', error);
       res.status(500).json({
         success: false,
@@ -809,7 +810,7 @@ router.post(
         error: 'PDF generation not yet implemented',
         message: 'Use JSON or CSV format for now',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Error generating PDF report:', error);
       res.status(500).json({
         success: false,
@@ -836,7 +837,7 @@ router.get('/audit-log', authMiddleware, requireAdminRole, async (req: Request, 
       data: auditLog,
       count: auditLog.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error fetching audit log:', error);
     res.status(500).json({
       success: false,

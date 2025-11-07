@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import * as sessionManagement from '../middleware/sessionManagement.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -66,9 +67,13 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
     }));
 
     res.status(200).json({ sessions: sanitizedSessions });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /sessions:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de la récupération des sessions' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -125,9 +130,13 @@ router.delete('/:sessionId', authenticateToken, async (req: Request, res: Respon
     await sessionManagement.revokeSession(sessionId);
 
     res.status(200).json({ message: 'Session révoquée avec succès' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /sessions/:id DELETE:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de la révocation de la session' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -167,9 +176,13 @@ router.delete('/all/except-current', authenticateToken, async (req: Request, res
     await sessionManagement.revokeAllUserSessions(userId, currentSession?.id);
 
     res.status(200).json({ message: 'Toutes les autres sessions ont été révoquées' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erreur /sessions/all DELETE:', error);
-    res.status(500).json({ error: error.message || 'Erreur lors de la révocation des sessions' });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 

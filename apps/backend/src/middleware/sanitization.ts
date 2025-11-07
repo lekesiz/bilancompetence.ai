@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 /**
  * Middleware de sanitization pour protéger contre XSS et SQL Injection
@@ -159,11 +160,11 @@ export function sanitizeInput(options: SanitizationOptions = {}) {
       }
 
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur de sanitization:', error);
       res.status(400).json({
         error: 'Données invalides',
-        message: error.message,
+        message: getErrorMessage(error),
       });
     }
   };

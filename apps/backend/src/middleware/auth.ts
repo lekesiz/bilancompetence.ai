@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../services/authService.js';
 import { validateJWTPayload, JWTPayload } from './jwtValidation.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 /**
  * Extend Express Request type to include user
@@ -51,11 +52,11 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
       const validatedPayload = validateJWTPayload(decoded);
       req.user = validatedPayload;
       next();
-    } catch (error: any) {
+    } catch (error: unknown) {
       return res.status(401).json({
         status: 'error',
         message: 'Invalid token payload',
-        details: error.errors || error.message,
+        details: error.errors || getErrorMessage(error),
       });
     }
   } catch (error) {

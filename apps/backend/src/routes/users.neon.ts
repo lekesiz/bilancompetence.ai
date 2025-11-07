@@ -13,6 +13,7 @@ import {
 } from '../services/userServiceNeon.js';
 import { uploadCV, deleteCV } from '../services/cvServiceNeon.js';
 import { logger } from '../utils/logger.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -95,7 +96,7 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
         updated_at: user.updated_at,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get user profile error:', error);
     res.status(500).json({
       status: 'error',
@@ -144,7 +145,7 @@ router.get('/profile', authMiddleware, async (req: Request, res: Response) => {
       status: 'success',
       data: profile,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get profile error:', error);
     res.status(500).json({
       status: 'error',
@@ -227,7 +228,7 @@ router.put('/profile', authMiddleware, async (req: Request, res: Response) => {
       message: 'Profile updated successfully',
       data: updatedProfile,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Update profile error:', error);
     res.status(500).json({
       status: 'error',
@@ -308,7 +309,7 @@ router.post(
           cv_uploaded_at: updatedUser.cv_uploaded_at,
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('CV upload error:', error);
       res.status(500).json({
         status: 'error',
@@ -373,7 +374,7 @@ router.delete('/delete-cv', authMiddleware, async (req: Request, res: Response) 
       status: 'success',
       message: 'CV deleted successfully',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('CV delete error:', error);
     res.status(500).json({
       status: 'error',
@@ -416,7 +417,7 @@ router.get('/', authMiddleware, requireRole('ADMIN'), async (req: Request, res: 
       status: 'success',
       data: users,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get all users error:', error);
     res.status(500).json({
       status: 'error',
@@ -471,7 +472,7 @@ router.get(
         status: 'success',
         data: users,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Get organization users error:', error);
       res.status(500).json({
         status: 'error',

@@ -3,6 +3,7 @@ import { updateUserCV, deleteUserCV, getUserById } from './userServiceNeon.js';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { logger } from '../utils/logger.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 interface UploadResult {
   cv_url: string;
@@ -116,7 +117,7 @@ export async function uploadCV(userId: string, file: Express.Multer.File): Promi
       cv_url: updatedUser.cv_url!,
       cv_uploaded_at: updatedUser.cv_uploaded_at!,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Upload CV error', { error, userId });
     throw error;
   }
@@ -159,7 +160,7 @@ export async function deleteCV(userId: string): Promise<void> {
     }
 
     logger.info('CV deleted successfully', { userId });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Delete CV error', { error, userId });
     throw error;
   }

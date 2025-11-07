@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import pennylaneService from '../services/pennylaneService.js';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -30,7 +31,7 @@ router.post('/invoices', async (req: Request, res: Response) => {
   try {
     const invoice = await pennylaneService.createCustomerInvoice(req.body);
     res.json({ success: true, data: invoice });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -60,7 +61,7 @@ router.get('/invoices/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const invoice = await pennylaneService.getCustomerInvoice(id);
     res.json({ success: true, data: invoice });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -78,7 +79,7 @@ router.get('/invoices', async (req: Request, res: Response) => {
       filter: filter as string,
     });
     res.json({ success: true, data: invoices });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -92,7 +93,7 @@ router.put('/invoices/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const invoice = await pennylaneService.updateCustomerInvoice(id, req.body);
     res.json({ success: true, data: invoice });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -106,7 +107,7 @@ router.put('/invoices/:id/finalize', async (req: Request, res: Response) => {
     const { id } = req.params;
     const invoice = await pennylaneService.finalizeCustomerInvoice(id);
     res.json({ success: true, data: invoice });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -123,7 +124,7 @@ router.get('/invoices/:id/pdf', async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="invoice-${id}.pdf"`);
     res.send(pdf);
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -140,7 +141,7 @@ router.post('/customers', async (req: Request, res: Response) => {
   try {
     const customer = await pennylaneService.createCustomer(req.body);
     res.json({ success: true, data: customer });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -154,7 +155,7 @@ router.get('/customers/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const customer = await pennylaneService.getCustomer(id);
     res.json({ success: true, data: customer });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -172,7 +173,7 @@ router.get('/customers', async (req: Request, res: Response) => {
       filter: filter as string,
     });
     res.json({ success: true, data: customers });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -186,7 +187,7 @@ router.put('/customers/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const customer = await pennylaneService.updateCustomer(id, req.body);
     res.json({ success: true, data: customer });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -203,7 +204,7 @@ router.post('/products', async (req: Request, res: Response) => {
   try {
     const product = await pennylaneService.createProduct(req.body);
     res.json({ success: true, data: product });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -220,7 +221,7 @@ router.get('/products', async (req: Request, res: Response) => {
       per_page: per_page ? parseInt(per_page as string) : undefined,
     });
     res.json({ success: true, data: products });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -237,7 +238,7 @@ router.post('/supplier-invoices', async (req: Request, res: Response) => {
   try {
     const invoice = await pennylaneService.createSupplierInvoice(req.body);
     res.json({ success: true, data: invoice });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -254,7 +255,7 @@ router.get('/supplier-invoices', async (req: Request, res: Response) => {
       per_page: per_page ? parseInt(per_page as string) : undefined,
     });
     res.json({ success: true, data: invoices });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -271,7 +272,7 @@ router.post('/accounting-entries', async (req: Request, res: Response) => {
   try {
     const entry = await pennylaneService.createAccountingEntry(req.body);
     res.json({ success: true, data: entry });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -292,7 +293,7 @@ router.get('/balance-sheet', async (req: Request, res: Response) => {
       end_date: end_date as string,
     });
     res.json({ success: true, data: balance });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -325,7 +326,7 @@ router.post('/bilan/create-invoice', async (req: Request, res: Response) => {
     });
 
     res.json({ success: true, data: invoice });
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(500).json({ success: false, error: error.message });
   }
 });

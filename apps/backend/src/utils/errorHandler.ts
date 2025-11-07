@@ -97,47 +97,52 @@ export function asyncHandler(fn: Function) {
 /**
  * Handle database errors
  */
-export function handleDatabaseError(error: any, operation: string): never {
+export function handleDatabaseError(error: unknown, operation: string): never {
   logger.error(`Database error during ${operation}`, error);
 
-  if (error.message?.includes('unique violation')) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  if (errorMessage?.includes('unique violation')) {
     throw new ValidationError('Duplicate entry found', { operation });
   }
 
-  if (error.message?.includes('foreign key')) {
+  if (errorMessage?.includes('foreign key')) {
     throw new ValidationError('Invalid reference', { operation });
   }
 
-  if (error.message?.includes('timeout')) {
+  if (errorMessage?.includes('timeout')) {
     throw new ServiceError('Database', 'Request timeout');
   }
 
-  throw new DatabaseError(`Failed to ${operation}`, { originalError: error.message });
+  throw new DatabaseError(`Failed to ${operation}`, { originalError: errorMessage });
 }
 
 /**
  * Handle API errors
  */
-export function handleApiError(error: any, endpoint: string): never {
+export function handleApiError(error: unknown, endpoint: string): never {
   logger.error(`API error at ${endpoint}`, error);
 
-  if (error.statusCode === 401) {
+  const statusCode = (error as any)?.statusCode || 500;
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  if (statusCode === 401) {
     throw new AuthenticationError('Invalid credentials');
   }
 
-  if (error.statusCode === 403) {
+  if (statusCode === 403) {
     throw new AuthorizationError('Insufficient permissions');
   }
 
-  if (error.statusCode === 404) {
+  if (statusCode === 404) {
     throw new NotFoundError('Resource');
   }
 
-  if (error.statusCode >= 500) {
+  if (statusCode >= 500) {
     throw new ServiceError('External API', 'Service unavailable');
   }
 
-  throw new AppError(error.message || 'API request failed', error.statusCode || 500);
+  throw new AppError(errorMessage || 'API request failed', statusCode);
 }
 
 /**
@@ -166,7 +171,7 @@ export function safeJsonParse(json: string, defaultValue: any = null): any {
 /**
  * Log and throw error
  */
-export function logAndThrow(message: string, error: any, statusCode: number = 500): never {
+export function logAndThrow(message: string, error: unknown, statusCode: number = 500): never {
   logger.error(message, {
     error: error instanceof Error ? error.message : String(error),
     stack: error instanceof Error ? error.stack : undefined,

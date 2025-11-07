@@ -276,8 +276,8 @@ export function errorLoggerMiddleware(err: any, req: any, res: any, next: any) {
  */
 export function asyncHandler(fn: Function) {
   return (req: any, res: any, next: any) => {
-    Promise.resolve(fn(req, res, next)).catch((error: any) => {
-      log.error('Async route error', error, {
+    Promise.resolve(fn(req, res, next)).catch((error: unknown) => {
+      log.error('Async route error', error instanceof Error ? error : new Error(String(error)), {
         requestId: req.requestId,
         userId: req.user?.id,
         endpoint: `${req.method} ${req.path}`,

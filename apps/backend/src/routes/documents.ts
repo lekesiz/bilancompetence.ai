@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -77,9 +78,13 @@ router.post('/synthese', async (req: Request, res: Response) => {
       filename: path.basename(filepath),
       downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Synthese generation error:', error);
-    res.status(500).json({ error: error.message });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -133,9 +138,13 @@ router.post('/attestation', async (req: Request, res: Response) => {
       filename: path.basename(filepath),
       downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Attestation generation error:', error);
-    res.status(500).json({ error: error.message });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -159,9 +168,13 @@ router.post('/action-plan', async (req: Request, res: Response) => {
       filename: path.basename(filepath),
       downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Action plan generation error:', error);
-    res.status(500).json({ error: error.message });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -184,9 +197,13 @@ router.get('/download/:filename', (req: Request, res: Response) => {
         res.status(500).json({ error: 'Download failed' });
       }
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Download error:', error);
-    res.status(500).json({ error: error.message });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -211,9 +228,13 @@ router.get('/list', (req: Request, res: Response) => {
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     res.json({ documents });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('List documents error:', error);
-    res.status(500).json({ error: error.message });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 
@@ -233,9 +254,13 @@ router.delete('/:filename', (req: Request, res: Response) => {
     fs.unlinkSync(filepath);
 
     res.json({ message: 'Document deleted successfully' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Delete document error:', error);
-    res.status(500).json({ error: error.message });
+    
+          const statusCode = getErrorStatusCode(error);
+          const message = getErrorMessage(error);
+          res.status(statusCode).json({ error: message });
+        
   }
 });
 

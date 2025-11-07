@@ -12,6 +12,7 @@ import {
 } from '../services/consentServiceNeon.js';
 import { logger } from '../utils/logger.js';
 import { z } from 'zod';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 const router = Router();
 
@@ -128,7 +129,7 @@ router.post('/', authenticateToken, async (req: Request, res: Response) => {
         },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Grant consent error:', error);
     res.status(500).json({
       status: 'error',
@@ -188,7 +189,7 @@ router.post('/multiple', authenticateToken, async (req: Request, res: Response) 
         })),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Grant multiple consents error:', error);
     res.status(500).json({
       status: 'error',
@@ -228,7 +229,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
         })),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get consents error:', error);
     res.status(500).json({
       status: 'error',
@@ -270,7 +271,7 @@ router.get('/:type', authenticateToken, async (req: Request, res: Response) => {
           : null,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get consent error:', error);
     res.status(500).json({
       status: 'error',
@@ -320,7 +321,7 @@ router.delete('/:type', authenticateToken, async (req: Request, res: Response) =
         },
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Withdraw consent error:', error);
     res.status(500).json({
       status: 'error',
@@ -359,7 +360,7 @@ router.get('/log', authenticateToken, async (req: Request, res: Response) => {
         })),
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get consent log error:', error);
     res.status(500).json({
       status: 'error',
@@ -398,7 +399,7 @@ router.get('/statistics', authenticateToken, async (req: Request, res: Response)
         statistics,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Get consent statistics error:', error);
     res.status(500).json({
       status: 'error',

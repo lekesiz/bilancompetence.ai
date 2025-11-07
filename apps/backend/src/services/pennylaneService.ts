@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 
 interface PennylaneConfig {
   apiKey: string;
@@ -63,7 +64,7 @@ class PennylaneService {
     try {
       const response = await this.client.post('/customer_invoices', invoice);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -75,7 +76,7 @@ class PennylaneService {
     try {
       const response = await this.client.get(`/customer_invoices/${invoiceId}`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -91,7 +92,7 @@ class PennylaneService {
     try {
       const response = await this.client.get('/customer_invoices', { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -103,7 +104,7 @@ class PennylaneService {
     try {
       const response = await this.client.put(`/customer_invoices/${invoiceId}`, data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -115,7 +116,7 @@ class PennylaneService {
     try {
       const response = await this.client.put(`/customer_invoices/${invoiceId}/finalize`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -129,7 +130,7 @@ class PennylaneService {
         responseType: 'arraybuffer',
       });
       return Buffer.from(response.data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -145,7 +146,7 @@ class PennylaneService {
     try {
       const response = await this.client.post('/customers', customer);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -157,7 +158,7 @@ class PennylaneService {
     try {
       const response = await this.client.get(`/customers/${customerId}`);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -173,7 +174,7 @@ class PennylaneService {
     try {
       const response = await this.client.get('/customers', { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -185,7 +186,7 @@ class PennylaneService {
     try {
       const response = await this.client.put(`/customers/${customerId}`, data);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -206,7 +207,7 @@ class PennylaneService {
     try {
       const response = await this.client.post('/products', product);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -218,7 +219,7 @@ class PennylaneService {
     try {
       const response = await this.client.get('/products', { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -240,7 +241,7 @@ class PennylaneService {
     try {
       const response = await this.client.post('/supplier_invoices', invoice);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -252,7 +253,7 @@ class PennylaneService {
     try {
       const response = await this.client.get('/supplier_invoices', { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -277,7 +278,7 @@ class PennylaneService {
     try {
       const response = await this.client.post('/accounting_entries', entry);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -293,7 +294,7 @@ class PennylaneService {
     try {
       const response = await this.client.get('/balance_sheet', { params });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Pennylane API Error: ${error.response?.data?.message || error.message}`);
     }
   }
@@ -347,7 +348,7 @@ class PennylaneService {
       };
 
       return await this.createCustomerInvoice(invoice);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(`Failed to create bilan invoice: ${error.message}`);
     }
   }
