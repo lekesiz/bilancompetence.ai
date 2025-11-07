@@ -171,13 +171,15 @@ router.post('/confirm', async (req: Request, res: Response) => {
       });
     }
 
-    // Check if new password is different from old
-    const isSamePassword = await comparePassword(newPassword, user.password_hash);
-    if (isSamePassword) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'New password must be different from current password',
-      });
+    // Check if new password is different from old (if password exists)
+    if (user.password_hash) {
+      const isSamePassword = await comparePassword(newPassword, user.password_hash);
+      if (isSamePassword) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'New password must be different from current password',
+        });
+      }
     }
 
     // Hash new password

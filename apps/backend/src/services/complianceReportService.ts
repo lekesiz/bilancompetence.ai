@@ -73,12 +73,12 @@ interface AuditReadinessAssessment {
 }
 
 export class ComplianceReportService {
-  private organizationId: string;
+  private organizationId: string | null;
   private qualioptService: QualioptService;
   private surveyService: SatisfactionSurveyService;
   private archiveService: DocumentArchiveService;
 
-  constructor(organizationId: string) {
+  constructor(organizationId: string | null) {
     this.organizationId = organizationId;
     this.qualioptService = new QualioptService(organizationId);
     this.surveyService = new SatisfactionSurveyService(organizationId);
@@ -145,7 +145,7 @@ export class ComplianceReportService {
         report_id: this.generateReportId(),
         generated_at: new Date().toISOString(),
         organization_name: o.name,
-        organization_id: this.organizationId,
+        organization_id: this.organizationId || 'GLOBAL',
         overall_compliance_percentage: complianceMetrics.overall_percentage,
         audit_readiness: auditReadiness.is_ready,
         summary: {

@@ -173,6 +173,7 @@ export async function hasConsent(
   // Consent must be granted and not withdrawn
   return (
     consent.granted &&
+    consent.granted_at !== null &&
     (consent.withdrawn_at === null || consent.granted_at > consent.withdrawn_at)
   );
 }

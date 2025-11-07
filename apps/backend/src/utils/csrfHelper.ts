@@ -56,7 +56,7 @@ export function generateCsrfMiddleware(req: Request, res: Response, next: NextFu
  * Middleware to validate CSRF token
  * Use this on all state-changing endpoints (POST, PUT, DELETE, PATCH)
  */
-export function validateCsrfMiddleware(req: Request, res: Response, next: NextFunction): void {
+export function validateCsrfMiddleware(req: Request, res: Response, next: NextFunction): void | Response {
   // Skip CSRF validation for safe methods (GET, HEAD, OPTIONS)
   const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
   if (safeMethods.includes(req.method)) {
