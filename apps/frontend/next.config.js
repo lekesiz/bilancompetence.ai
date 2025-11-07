@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 
 // Validate required environment variables
+// ✅ NOTE: Migrated from Supabase to Neon PostgreSQL
+// Frontend only needs API_URL, all database access goes through backend
 const requiredEnvVars = [
   'NEXT_PUBLIC_API_URL',
-  'NEXT_PUBLIC_SUPABASE_URL',
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
 ];
 
 // In production, fail fast if required vars are missing
