@@ -12,14 +12,12 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";
 
-// Dynamic routing - no static generation for locale routes
-// Client components cannot be prerendered
-export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
-
 // ✅ Sprint 1.3 FIX: Generate static params for all locales
 // This prevents NEXT_NOT_FOUND errors by explicitly telling Next.js
 // which [locale] paths are valid
+// NOTE: Removed 'force-dynamic' as it conflicts with generateStaticParams
+// The pages can be statically generated at build time for better performance
+export const dynamicParams = true; // Allow runtime locales beyond the static ones
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
