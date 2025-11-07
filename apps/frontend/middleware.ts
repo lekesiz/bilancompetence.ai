@@ -1,21 +1,20 @@
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n-config';
-import { NextRequest, NextResponse } from 'next/server';
 
+// ✅ Sprint 1.2: Re-enable i18n middleware for locale routing
 const intlMiddleware = createMiddleware({
   locales,
   defaultLocale,
-  // Temporarily disable automatic locale handling via middleware
-  localeDetection: false,
+  localePrefix: 'always', // Always show locale in URL (/fr/*, /en/*)
+  localeDetection: true, // Auto-detect user's preferred language
 });
 
-export default function middleware(request: NextRequest) {
-  // Bypass middleware behavior for now
-  return NextResponse.next();
-}
+export default intlMiddleware;
 
 export const config = {
-  // Disable matching to avoid intercepting any routes
-  matcher: ['/__disable_mw__'],
+  // Match all routes except:
+  // - API routes (/api/*)
+  // - Next.js internals (_next/*)
+  // - Static files (*.*)
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 };
-

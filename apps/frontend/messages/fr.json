@@ -226,6 +226,105 @@
         }
       ]
     }
+  },
+  "dashboard": {
+    "welcome": "Bienvenue",
+    "myAssessment": "Mon Bilan de Compétences",
+    "progress": "Progression",
+    "nextSession": "Prochaine séance",
+    "documents": "Documents",
+    "tests": "Tests psychométriques",
+    "recommendations": "Recommandations",
+    "beneficiary": {
+      "title": "Tableau de bord Bénéficiaire",
+      "startJourney": "Commencer votre parcours",
+      "discoverCareers": "Découvrir les métiers",
+      "continueAssessment": "Continuer mon bilan"
+    },
+    "consultant": {
+      "title": "Tableau de bord Consultant",
+      "myClients": "Mes clients",
+      "pendingReviews": "Évaluations en attente",
+      "upcomingSessions": "Séances à venir"
+    },
+    "admin": {
+      "title": "Tableau de bord Admin",
+      "users": "Utilisateurs",
+      "assessments": "Bilans",
+      "reports": "Rapports",
+      "settings": "Paramètres"
+    }
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "personalInfo": "Informations personnelles",
+    "accountSettings": "Paramètres du compte",
+    "uploadCV": "Télécharger mon CV",
+    "uploadPhoto": "Choisir une photo",
+    "whyUploadCV": "Pourquoi télécharger votre CV ?",
+    "cvBenefits": "Votre CV nous aide à mieux comprendre votre parcours professionnel et à personnaliser vos recommandations.",
+    "changePassword": "Changer le mot de passe",
+    "twoFactor": "Authentification à deux facteurs",
+    "dangerZone": "Zone dangereuse",
+    "deleteAccount": "Supprimer mon compte"
+  },
+  "assessments": {
+    "title": "Bilans de Compétences",
+    "myAssessments": "Mes bilans",
+    "create": "Créer un nouveau bilan",
+    "status": {
+      "draft": "Brouillon",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "archived": "Archivé"
+    },
+    "phase": {
+      "preliminary": "Phase préliminaire",
+      "investigation": "Phase d'investigation",
+      "conclusion": "Phase de conclusion"
+    },
+    "wizard": {
+      "step1": "Informations générales",
+      "step2": "Objectifs professionnels",
+      "step3": "Tests psychométriques",
+      "step4": "Analyse de compétences",
+      "step5": "Synthèse et plan d'action"
+    }
+  },
+  "tests": {
+    "mbti": {
+      "title": "Test de Personnalité MBTI",
+      "description": "Découvrez votre type de personnalité selon le modèle Myers-Briggs",
+      "start": "Commencer le test",
+      "questions": "questions",
+      "duration": "Durée estimée : 15 minutes"
+    },
+    "riasec": {
+      "title": "Test d'Intérêts Professionnels RIASEC",
+      "description": "Identifiez vos intérêts professionnels et les métiers qui vous correspondent",
+      "start": "Commencer le test",
+      "questions": "questions",
+      "duration": "Durée estimée : 10 minutes"
+    }
+  },
+  "errors": {
+    "pageNotFound": "Page non trouvée",
+    "accessDenied": "Accès refusé",
+    "unauthorized": "Non autorisé",
+    "serverError": "Erreur serveur",
+    "goHome": "Retour à l'accueil",
+    "tryAgain": "Réessayer",
+    "whyBlocked": "Pourquoi suis-je bloqué ?",
+    "reasons": "Vous n'avez pas les permissions nécessaires pour accéder à cette page. Contactez votre administrateur si vous pensez qu'il s'agit d'une erreur."
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "emailInvalid": "Email invalide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "phoneInvalid": "Numéro de téléphone invalide",
+    "urlInvalid": "URL invalide",
+    "minLength": "Minimum {min} caractères",
+    "maxLength": "Maximum {max} caractères"
   }
 }
-

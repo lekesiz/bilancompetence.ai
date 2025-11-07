@@ -226,6 +226,105 @@
         }
       ]
     }
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "myAssessment": "My Skills Assessment",
+    "progress": "Progress",
+    "nextSession": "Next Session",
+    "documents": "Documents",
+    "tests": "Psychometric Tests",
+    "recommendations": "Recommendations",
+    "beneficiary": {
+      "title": "Beneficiary Dashboard",
+      "startJourney": "Start your journey",
+      "discoverCareers": "Discover careers",
+      "continueAssessment": "Continue my assessment"
+    },
+    "consultant": {
+      "title": "Consultant Dashboard",
+      "myClients": "My clients",
+      "pendingReviews": "Pending reviews",
+      "upcomingSessions": "Upcoming sessions"
+    },
+    "admin": {
+      "title": "Admin Dashboard",
+      "users": "Users",
+      "assessments": "Assessments",
+      "reports": "Reports",
+      "settings": "Settings"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "personalInfo": "Personal information",
+    "accountSettings": "Account settings",
+    "uploadCV": "Upload my CV",
+    "uploadPhoto": "Choose a photo",
+    "whyUploadCV": "Why upload your CV?",
+    "cvBenefits": "Your CV helps us better understand your professional journey and customize your recommendations.",
+    "changePassword": "Change password",
+    "twoFactor": "Two-factor authentication",
+    "dangerZone": "Danger zone",
+    "deleteAccount": "Delete my account"
+  },
+  "assessments": {
+    "title": "Skills Assessments",
+    "myAssessments": "My assessments",
+    "create": "Create new assessment",
+    "status": {
+      "draft": "Draft",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "phase": {
+      "preliminary": "Preliminary phase",
+      "investigation": "Investigation phase",
+      "conclusion": "Conclusion phase"
+    },
+    "wizard": {
+      "step1": "General information",
+      "step2": "Professional goals",
+      "step3": "Psychometric tests",
+      "step4": "Skill analysis",
+      "step5": "Synthesis and action plan"
+    }
+  },
+  "tests": {
+    "mbti": {
+      "title": "MBTI Personality Test",
+      "description": "Discover your personality type according to the Myers-Briggs model",
+      "start": "Start test",
+      "questions": "questions",
+      "duration": "Estimated duration: 15 minutes"
+    },
+    "riasec": {
+      "title": "RIASEC Career Interest Test",
+      "description": "Identify your professional interests and matching careers",
+      "start": "Start test",
+      "questions": "questions",
+      "duration": "Estimated duration: 10 minutes"
+    }
+  },
+  "errors": {
+    "pageNotFound": "Page not found",
+    "accessDenied": "Access denied",
+    "unauthorized": "Unauthorized",
+    "serverError": "Server error",
+    "goHome": "Go to home",
+    "tryAgain": "Try again",
+    "whyBlocked": "Why am I blocked?",
+    "reasons": "You do not have the necessary permissions to access this page. Contact your administrator if you think it is an error."
+  },
+  "validation": {
+    "required": "This field is required",
+    "emailInvalid": "Invalid email",
+    "passwordTooShort": "Password must be at least 8 characters long",
+    "passwordMismatch": "Passwords do not match",
+    "phoneInvalid": "Invalid phone number",
+    "urlInvalid": "Invalid URL",
+    "minLength": "Minimum {min} characters",
+    "maxLength": "Maximum {max} characters"
   }
 }
-

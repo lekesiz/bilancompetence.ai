@@ -1,0 +1,164 @@
+{
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "close": "Kapat",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "submit": "Gönder",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "noData": "Veri yok"
+  },
+  "auth": {
+    "login": "Giriş yap",
+    "logout": "Çıkış yap",
+    "register": "Kayıt ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifremi unuttum?",
+    "rememberMe": "Beni hatırla",
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "noAccount": "Henüz hesabınız yok mu?",
+    "createAccount": "Hesap oluştur"
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "about": "Hakkımızda",
+    "services": "Hizmetler",
+    "contact": "İletişim",
+    "dashboard": "Panel",
+    "profile": "Profil",
+    "settings": "Ayarlar",
+    "startAssessment": "Değerlendirmeme başla",
+    "whatIsAssessment": "Değerlendirme nedir?",
+    "methodology": "Metodoloji",
+    "funding": "Finansman",
+    "remoteAssessment": "Uzaktan değerlendirme",
+    "faq": "SSS"
+  },
+  "footer": {
+    "brand": {
+      "title": "BilanCompetence.ai",
+      "description": "Profesyonel gelişim ve yetkinlik geliştirme ortağınız."
+    },
+    "quickLinks": "Hızlı Bağlantılar",
+    "legal": "Yasal Bilgiler",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Genel Koşullar",
+    "rights": "Tüm hakları saklıdır",
+    "currentYear": "2025"
+  },
+  "language": {
+    "french": "Français",
+    "english": "English",
+    "turkish": "Türkçe",
+    "switch": "Dili değiştir"
+  },
+  "dashboard": {
+    "welcome": "Hoş geldiniz",
+    "myAssessment": "Yetkinlik Değerlendirmem",
+    "progress": "İlerleme",
+    "nextSession": "Sonraki Seans",
+    "documents": "Belgeler",
+    "tests": "Psikometrik Testler",
+    "recommendations": "Öneriler",
+    "beneficiary": {
+      "title": "Katılımcı Panosu",
+      "startJourney": "Yolculuğunuza başlayın",
+      "discoverCareers": "Kariyer Yollarını Keşfedin",
+      "continueAssessment": "Değerlendirmeme devam et"
+    },
+    "consultant": {
+      "title": "Danışman Panosu",
+      "myClients": "Müşterilerim",
+      "pendingReviews": "Bekleyen Değerlendirmeler",
+      "upcomingSessions": "Yaklaşan Seanslar"
+    },
+    "admin": {
+      "title": "Yönetici Panosu",
+      "users": "Kullanıcılar",
+      "assessments": "Değerlendirmeler",
+      "reports": "Raporlar",
+      "settings": "Ayarlar"
+    }
+  },
+  "profile": {
+    "title": "Profilim",
+    "personalInfo": "Kişisel bilgiler",
+    "accountSettings": "Hesap ayarları",
+    "uploadCV": "CV'mi yükle",
+    "uploadPhoto": "Fotoğraf seç",
+    "whyUploadCV": "Neden CV yüklemeliyim?",
+    "cvBenefits": "CV'niz profesyonel yolculuğunuzu daha iyi anlamamıza ve önerilerinizi kişiselleştirmemize yardımcı olur.",
+    "changePassword": "Şifre değiştir",
+    "twoFactor": "İki faktörlü kimlik doğrulama",
+    "dangerZone": "Tehlike bölgesi",
+    "deleteAccount": "Hesabımı sil"
+  },
+  "assessments": {
+    "title": "Yetkinlik Değerlendirmeleri",
+    "myAssessments": "Değerlendirmelerim",
+    "create": "Yeni değerlendirme oluştur",
+    "status": {
+      "draft": "Taslak",
+      "inProgress": "Devam ediyor",
+      "completed": "Tamamlandı",
+      "archived": "Arşivlendi"
+    },
+    "phase": {
+      "preliminary": "Ön hazırlık aşaması",
+      "investigation": "Araştırma aşaması",
+      "conclusion": "Sonuç aşaması"
+    },
+    "wizard": {
+      "step1": "Genel bilgiler",
+      "step2": "Profesyonel hedefler",
+      "step3": "Psikometrik testler",
+      "step4": "Yetkinlik analizi",
+      "step5": "Sentez ve eylem planı"
+    }
+  },
+  "tests": {
+    "mbti": {
+      "title": "MBTI Kişilik Testi",
+      "description": "Myers-Briggs modeline göre kişilik tipinizi keşfedin",
+      "start": "Teste başla",
+      "questions": "sorular",
+      "duration": "Tahmini süre: 15 dakika"
+    },
+    "riasec": {
+      "title": "RIASEC Kariyer İlgi Testi",
+      "description": "Mesleki ilgi alanlarınızı ve size uygun kariyerleri belirleyin",
+      "start": "Teste başla",
+      "questions": "sorular",
+      "duration": "Tahmini süre: 10 dakika"
+    }
+  },
+  "errors": {
+    "pageNotFound": "Sayfa bulunamadı",
+    "accessDenied": "Erişim reddedildi",
+    "unauthorized": "Yetkisiz",
+    "serverError": "Sunucu hatası",
+    "goHome": "Ana sayfaya dön",
+    "tryAgain": "Tekrar dene",
+    "whyBlocked": "Neden engelledim?",
+    "reasons": "Bu sayfaya erişmek için gerekli izinlere sahip değilsiniz. Bir hata olduğunu düşünüyorsanız yöneticinize başvurun."
+  },
+  "validation": {
+    "required": "Bu alan zorunludur",
+    "emailInvalid": "Geçersiz e-posta",
+    "passwordTooShort": "Şifre en az 8 karakter olmalıdır",
+    "passwordMismatch": "Şifreler eşleşmiyor",
+    "phoneInvalid": "Geçersiz telefon numarası",
+    "urlInvalid": "Geçersiz URL",
+    "minLength": "Minimum {min} karakter",
+    "maxLength": "Maksimum {max} karakter"
+  }
+}
