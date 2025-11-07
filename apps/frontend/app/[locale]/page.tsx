@@ -7,7 +7,8 @@ import StructuredData from '@/components/seo/StructuredData';
 import Button from '@/components/qualiopi/Button';
 import Card from '@/components/qualiopi/Card';
 
-export const dynamic = 'force-dynamic';
+// ✅ Sprint 1.3 FIX: Removed force-dynamic to allow static generation
+// This was causing NEXT_NOT_FOUND errors with [locale] dynamic routes
 
 export default function HomePage() {
   const t = useTranslations();
