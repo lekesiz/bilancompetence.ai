@@ -203,6 +203,8 @@ export async function revokeAllUserSessions(
   exceptSessionId?: string
 ): Promise<void> {
   try {
+    if (!supabase) return;
+    
     let query = supabase
       .from('user_sessions')
       .update({
