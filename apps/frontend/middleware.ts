@@ -3,14 +3,15 @@ import { locales, defaultLocale } from './i18n-config';
 
 // ✅ Sprint 1.2: Re-enable i18n middleware for locale routing
 // ✅ Sprint 1.3: Enhanced with language preference persistence
-// ✅ Sprint 1.3 FIX: Changed localePrefix to 'as-needed' to avoid infinite redirects
-//    - 'as-needed' only adds locale prefix for non-default locales (en, tr)
-//    - Default locale (fr) has no prefix in URL
-//    - This matches the existing URL structure and prevents redirect loops
+// ✅ Sprint 1.3 FIX V2: Use 'always' to match [locale] folder structure
+//    - app/[locale]/ structure REQUIRES localePrefix: 'always'
+//    - All URLs have locale: /fr/*, /en/*, /tr/*
+//    - Root / auto-redirects to /fr (handled by middleware)
+//    - Removed manual redirect from app/page.tsx to prevent conflicts
 export default createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed', // Only show locale in URL for non-default locales
+  localePrefix: 'always', // Required for [locale] folder structure
   localeDetection: true, // Auto-detect user's preferred language from browser/cookie
 });
 
