@@ -17,6 +17,13 @@ import { Toaster } from "sonner";
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
+// ✅ Sprint 1.3 FIX: Generate static params for all locales
+// This prevents NEXT_NOT_FOUND errors by explicitly telling Next.js
+// which [locale] paths are valid
+export async function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function LocaleLayout({
   children,
   params: { locale },
