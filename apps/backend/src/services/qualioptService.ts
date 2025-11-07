@@ -8,7 +8,7 @@
  * - Indicator 22: Document Archive
  */
 
-import { pool } from '../config.js';
+import { pool } from '../config/neon.js';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 interface IndicatorStatus {

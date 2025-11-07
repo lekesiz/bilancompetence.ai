@@ -45,6 +45,9 @@ export async function comparePassword(password: string, hash: string): Promise<b
  * Generate JWT access token
  */
 export function generateAccessToken(user: UserPayload): string {
+  if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured');
+  }
   return jwt.sign(user, JWT_SECRET, {
     expiresIn: JWT_EXPIRES_IN,
     algorithm: 'HS256',
@@ -55,6 +58,9 @@ export function generateAccessToken(user: UserPayload): string {
  * Generate JWT refresh token
  */
 export function generateRefreshToken(userId: string): string {
+  if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured');
+  }
   return jwt.sign({ userId }, JWT_SECRET, {
     expiresIn: REFRESH_EXPIRES_IN,
     algorithm: 'HS256',
@@ -80,8 +86,11 @@ export function generateTokenPair(user: UserPayload): TokenPair {
  */
 export function verifyToken(token: string): UserPayload | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as UserPayload;
-    return decoded;
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded as UserPayload;
   } catch (error) {
     return null;
   }
@@ -92,8 +101,11 @@ export function verifyToken(token: string): UserPayload | null {
  */
 export function verifyRefreshToken(token: string): { userId: string } | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-    return decoded;
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded as { userId: string };
   } catch (error) {
     return null;
   }

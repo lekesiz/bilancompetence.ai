@@ -316,7 +316,7 @@ router.put(
         return res.status(400).json({ error: 'Invalid request body', details: validation.error });
       }
 
-      const { supabase } = await import('../services/supabaseService.js');
+      const { supabase } = await import('../config/supabase.js');
 
       // Verify ownership
       const { data: slot, error: fetchError } = await supabase
@@ -371,7 +371,7 @@ router.delete(
       const organizationId = await getOrganizationId(req);
       const { slotId } = req.params;
 
-      const { supabase } = await import('../services/supabaseService.js');
+      const { supabase } = await import('../config/supabase.js');
 
       // Verify ownership
       const { data: slot, error: fetchError } = await supabase

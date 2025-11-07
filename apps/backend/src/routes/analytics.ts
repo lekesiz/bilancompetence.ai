@@ -6,14 +6,15 @@ import {
   getOrganizationStats,
   getAssessmentStats,
 } from '../services/analyticsServiceNeon.js';
-import {
-  getAssessmentAnalytics,
-  getAssessmentsTimeSeries,
-  getAssessmentTypeDistribution,
-  getRecommendationEffectiveness,
-  getSkillProficiency,
-  generateReportData,
-} from '../services/analyticsService.js';
+// TODO: These functions are not yet implemented in analyticsServiceNeon
+// import {
+//   getAssessmentAnalytics,
+//   getAssessmentsTimeSeries,
+//   getAssessmentTypeDistribution,
+//   getRecommendationEffectiveness,
+//   getSkillProficiency,
+//   generateReportData,
+// } from '../services/analyticsService.js';
 
 const router = Router();
 
