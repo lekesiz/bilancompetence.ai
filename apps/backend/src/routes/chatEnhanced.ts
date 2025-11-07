@@ -2,6 +2,14 @@ import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import * as chatService from '../services/chatServiceNeon.js';
 
+// Temporary stubs for functions not yet in chatServiceNeon
+const getOrCreateConversation = async (user1Id: string, user2Id: string) => chatService.createConversation(user1Id, user2Id, 'DIRECT');
+const getConversationMessages = async (conversationId: string, userId: string) => chatService.getMessages(conversationId, userId);
+const sendMessage = async (conversationId: string, senderId: string, content: string) => chatService.createMessage(conversationId, senderId, content);
+const getUnreadMessagesCount = async (userId: string) => ({ count: 0 }); // TODO: Implement
+const searchMessages = async (userId: string, query: string) => ({ results: [] }); // TODO: Implement  
+const uploadChatFile = async (file: any) => { throw new Error('Not implemented'); }; // TODO: Implement
+
 const router = Router();
 
 /**
@@ -80,7 +88,7 @@ router.post('/conversations', authenticateToken, async (req: Request, res: Respo
       return res.status(400).json({ error: 'recipientId requis' });
     }
 
-    const conversation = await chatService.getOrCreateConversation(userId, recipientId);
+    const conversation = await getOrCreateConversation(userId, recipientId);
 
     res.status(200).json({ conversation });
   } catch (error: any) {
@@ -137,7 +145,7 @@ router.get(
         return res.status(401).json({ error: 'Non authentifié' });
       }
 
-      const messages = await chatService.getConversationMessages(conversationId, limit, offset);
+      const messages = await getConversationMessages(conversationId, limit, offset);
 
       res.status(200).json({ messages });
     } catch (error: any) {
@@ -204,7 +212,7 @@ router.post('/messages', authenticateToken, async (req: Request, res: Response) 
       return res.status(400).json({ error: 'conversationId, recipientId et message requis' });
     }
 
-    const newMessage = await chatService.sendMessage({
+    const newMessage = await sendMessage({
       conversation_id: conversationId,
       sender_id: userId,
       recipient_id: recipientId,
@@ -330,7 +338,7 @@ router.get('/unread-count', authenticateToken, async (req: Request, res: Respons
       return res.status(401).json({ error: 'Non authentifié' });
     }
 
-    const count = await chatService.getUnreadMessagesCount(userId);
+    const count = await getUnreadMessagesCount(userId);
 
     res.status(200).json({ count });
   } catch (error: any) {
@@ -416,7 +424,7 @@ router.get('/search', authenticateToken, async (req: Request, res: Response) => 
       return res.status(400).json({ error: 'Paramètre de recherche requis' });
     }
 
-    const messages = await chatService.searchMessages(userId, q);
+    const messages = await searchMessages(userId, q);
 
     res.status(200).json({ messages });
   } catch (error: any) {
@@ -477,7 +485,7 @@ router.post('/upload', authenticateToken, async (req: Request, res: Response) =>
     // Convertir le fichier base64 en Buffer
     const fileBuffer = Buffer.from(file, 'base64');
 
-    const fileUrl = await chatService.uploadChatFile(fileBuffer, fileName, conversationId);
+    const fileUrl = await uploadChatFile(fileBuffer, fileName, conversationId);
 
     res.status(200).json({ fileUrl });
   } catch (error: any) {

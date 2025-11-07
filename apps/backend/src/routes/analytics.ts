@@ -16,6 +16,14 @@ import {
 //   generateReportData,
 // } from '../services/analyticsService.js';
 
+// Temporary stub functions until analytics service is fully migrated
+const getAssessmentAnalytics = async (...args: any[]) => { throw new Error('Not yet implemented'); };
+const getAssessmentsTimeSeries = async (...args: any[]) => { throw new Error('Not yet implemented'); };
+const getAssessmentTypeDistribution = async (...args: any[]) => { throw new Error('Not yet implemented'); };
+const getRecommendationEffectiveness = async (...args: any[]) => { throw new Error('Not yet implemented'); };
+const getSkillProficiency = async (...args: any[]) => { throw new Error('Not yet implemented'); };
+const generateReportData = async (...args: any[]) => { throw new Error('Not yet implemented'); };
+
 const router = Router();
 
 /**
