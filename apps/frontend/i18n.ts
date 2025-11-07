@@ -1,11 +1,10 @@
-import { notFound } from 'next/navigation';
 import { getRequestConfig } from 'next-intl/server';
-import { locales, type Locale } from './i18n-config';
+import { type Locale } from './i18n-config';
 
+// ✅ Sprint 1.3 FIX: Removed notFound() - validation happens in layout.tsx
+// Double validation was causing NEXT_NOT_FOUND errors
 export default getRequestConfig(async ({ locale }) => {
-  // Validate that the incoming `locale` parameter is valid
   const validLocale = locale as Locale;
-  if (!locales.includes(validLocale)) notFound();
 
   return {
     locale: validLocale,
