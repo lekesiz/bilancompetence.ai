@@ -3,14 +3,18 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslations } from 'next-intl';
 import RegisterForm from './components/RegisterForm';
 import Link from 'next/link';
 import Card from '@/components/qualiopi/Card';
+
+export const dynamic = 'force-dynamic';
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register: authRegister, isLoading, error, clearError } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
+  const t = useTranslations('auth');
 
   const handleRegister = async (data: {
     email: string;
@@ -42,10 +46,10 @@ export default function RegisterPage() {
             </div>
           </Link>
           <h1 className="text-4xl font-bold text-white mb-3">
-            Créer un compte
+            {t('registerTitle')}
           </h1>
           <p className="text-xl text-white/80">
-            Commencez votre bilan de compétences
+            {t('registerSubtitle')}
           </p>
         </div>
 
@@ -62,7 +66,7 @@ export default function RegisterPage() {
                     onClick={clearError}
                     className="text-red-600 dark:text-red-400 text-xs mt-2 hover:text-red-700 dark:hover:text-red-300 font-semibold"
                   >
-                    Fermer
+                    {t('closeError')}
                   </button>
                 </div>
               </div>
@@ -84,7 +88,7 @@ export default function RegisterPage() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
-                Déjà un compte ?
+                {t('alreadyHaveAccount')}
               </span>
             </div>
           </div>
@@ -92,7 +96,7 @@ export default function RegisterPage() {
           {/* Login Link */}
           <Link href="/login" className="block">
             <button className="w-full px-6 py-3 border-2 border-primary-600 text-primary-600 dark:text-primary-400 dark:border-primary-400 rounded-xl font-semibold hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all flex items-center justify-center gap-2">
-              Se connecter
+              {t('loginButton')}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
@@ -109,7 +113,7 @@ export default function RegisterPage() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Retour à l'accueil
+            {t('backToHome')}
           </Link>
         </div>
       </div>

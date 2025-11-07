@@ -4,25 +4,16 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useTranslations } from 'next-intl';
 import Button from '@/components/qualiopi/Button';
 
-// Validation schema
-const registerSchema = z.object({
-  email: z.string().email('Format d\'email invalide'),
-  password: z.string()
-    .min(12, 'Le mot de passe doit contenir au moins 12 caractères')
-    .regex(/[A-Z]/, 'Le mot de passe doit contenir une majuscule')
-    .regex(/[a-z]/, 'Le mot de passe doit contenir une minuscule')
-    .regex(/\d/, 'Le mot de passe doit contenir un chiffre')
-    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Le mot de passe doit contenir un caractère spécial'),
-  confirmPassword: z.string(),
-  fullName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Les mots de passe ne correspondent pas',
-  path: ['confirmPassword'],
-});
-
-type RegisterFormData = z.infer<typeof registerSchema>;
+// Validation schema - moved inside component to access translations
+type RegisterFormData = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  fullName: string;
+};
 
 interface RegisterFormProps {
   onSubmit: (data: { email: string; password: string; fullName: string }) => Promise<void>;
@@ -39,6 +30,24 @@ export default function RegisterForm({
 }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const t = useTranslations('auth');
+  const tValidation = useTranslations('validation');
+
+  // ✅ Sprint 1.2: Localized validation schema
+  const registerSchema = z.object({
+    email: z.string().email(t('invalidEmail')),
+    password: z.string()
+      .min(12, t('passwordTooShort12'))
+      .regex(/[A-Z]/, t('passwordNeedsUppercase'))
+      .regex(/[a-z]/, t('passwordNeedsLowercase'))
+      .regex(/\d/, t('passwordNeedsNumber'))
+      .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, t('passwordNeedsSpecial')),
+    confirmPassword: z.string(),
+    fullName: z.string().min(2, t('fullNameTooShort')),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: tValidation('passwordMismatch'),
+    path: ['confirmPassword'],
+  });
 
   const {
     register,
@@ -93,7 +102,7 @@ export default function RegisterForm({
               <div className={`text-xs font-semibold ${
                 step <= currentStep ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'
               }`}>
-                {step === 1 ? 'Email' : step === 2 ? 'Mot de passe' : 'Détails'}
+                {step === 1 ? t('email') : step === 2 ? t('password') : t('fullName')}
               </div>
             </div>
             <div
@@ -112,21 +121,21 @@ export default function RegisterForm({
         <div className="space-y-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Étape 1 : Votre email
+              {t('step1Title')}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Nous utiliserons cet email pour vous connecter
+              {t('step1Description')}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              Adresse email
+              {t('emailAddress')}
             </label>
             <input
               {...register('email')}
               type="email"
-              placeholder="vous@exemple.com"
+              placeholder={t('emailPlaceholder')}
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
               autoFocus
@@ -147,7 +156,7 @@ export default function RegisterForm({
             size="lg"
             className="w-full"
           >
-            Continuer
+            {t('continueButton')}
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
@@ -160,22 +169,22 @@ export default function RegisterForm({
         <div className="space-y-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Étape 2 : Mot de passe sécurisé
+              {t('step2Title')}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Créez un mot de passe fort pour protéger votre compte
+              {t('step2Description')}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              Mot de passe
+              {t('passwordLabel')}
             </label>
             <div className="relative">
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••••••"
+                placeholder={t('passwordPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
                 disabled={isLoading}
               />
@@ -207,38 +216,38 @@ export default function RegisterForm({
             {password && (
               <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                 <p className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-3">
-                  Force du mot de passe :
+                  {t('passwordStrength')}
                 </p>
                 <div className="space-y-2">
                   <div className={`flex items-center gap-2 text-xs ${
                     password.length >= 12 ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     <span className="text-base">{password.length >= 12 ? '✅' : '⭕'}</span>
-                    <span>Au moins 12 caractères</span>
+                    <span>{t('passwordRule12Chars')}</span>
                   </div>
                   <div className={`flex items-center gap-2 text-xs ${
                     /[A-Z]/.test(password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     <span className="text-base">{/[A-Z]/.test(password) ? '✅' : '⭕'}</span>
-                    <span>Une lettre majuscule</span>
+                    <span>{t('passwordRuleUppercase')}</span>
                   </div>
                   <div className={`flex items-center gap-2 text-xs ${
                     /[a-z]/.test(password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     <span className="text-base">{/[a-z]/.test(password) ? '✅' : '⭕'}</span>
-                    <span>Une lettre minuscule</span>
+                    <span>{t('passwordRuleLowercase')}</span>
                   </div>
                   <div className={`flex items-center gap-2 text-xs ${
                     /\d/.test(password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     <span className="text-base">{/\d/.test(password) ? '✅' : '⭕'}</span>
-                    <span>Un chiffre</span>
+                    <span>{t('passwordRuleNumber')}</span>
                   </div>
                   <div className={`flex items-center gap-2 text-xs ${
                     /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     <span className="text-base">{/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) ? '✅' : '⭕'}</span>
-                    <span>Un caractère spécial</span>
+                    <span>{t('passwordRuleSpecial')}</span>
                   </div>
                 </div>
               </div>
@@ -247,13 +256,13 @@ export default function RegisterForm({
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              Confirmer le mot de passe
+              {t('confirmPassword')}
             </label>
             <div className="relative">
               <input
                 {...register('confirmPassword')}
                 type={showConfirmPassword ? 'text' : 'password'}
-                placeholder="••••••••••••"
+                placeholder={t('passwordPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
                 disabled={isLoading}
               />
@@ -294,7 +303,7 @@ export default function RegisterForm({
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              Retour
+              {t('backButton')}
             </Button>
             <Button
               type="button"
@@ -309,7 +318,7 @@ export default function RegisterForm({
               size="lg"
               className="flex-1"
             >
-              Continuer
+              {t('continueButton')}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -323,21 +332,21 @@ export default function RegisterForm({
         <div className="space-y-6">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Étape 3 : Vos informations
+              {t('step3Title')}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-sm">
-              Dernière étape avant de commencer !
+              {t('step3Description')}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-              Nom complet
+              {t('fullName')}
             </label>
             <input
               {...register('fullName')}
               type="text"
-              placeholder="Jean Dupont"
+              placeholder={t('fullNamePlaceholder')}
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             />
@@ -353,7 +362,7 @@ export default function RegisterForm({
             <div className="flex items-start gap-3">
               <span className="text-2xl">📋</span>
               <p className="text-sm text-primary-800 dark:text-primary-200 font-medium">
-                En créant un compte, vous acceptez nos <a href="/terms" className="underline font-bold">Conditions d'utilisation</a> et notre <a href="/privacy" className="underline font-bold">Politique de confidentialité</a>.
+                {t('termsAccept')} <a href="/terms" className="underline font-bold">{t('termsLink')}</a> {t('and')} <a href="/privacy" className="underline font-bold">{t('privacyLink')}</a>.
               </p>
             </div>
           </div>
@@ -370,7 +379,7 @@ export default function RegisterForm({
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              Retour
+              {t('backButton')}
             </Button>
             <Button
               type="submit"
@@ -385,11 +394,11 @@ export default function RegisterForm({
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Création en cours...
+                  {t('creatingAccount')}
                 </>
               ) : (
                 <>
-                  Créer mon compte
+                  {t('createMyAccount')}
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>

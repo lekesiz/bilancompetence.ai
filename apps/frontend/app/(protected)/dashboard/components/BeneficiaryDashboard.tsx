@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useBeneficiaryDashboardData } from '../hooks/useDashboardData';
 import {
   StatCard,
@@ -14,6 +15,8 @@ import Card from '@/components/qualiopi/Card';
 
 export function BeneficiaryDashboard() {
   const { data, loading, error } = useBeneficiaryDashboardData();
+  const t = useTranslations('dashboard');
+  const tCommon = useTranslations('common');
 
   if (error) {
     return (
@@ -23,7 +26,7 @@ export function BeneficiaryDashboard() {
             <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
               <span className="text-2xl">⚠️</span>
             </div>
-            <h2 className="text-xl font-bold text-red-800 dark:text-red-400">Erreur de chargement</h2>
+            <h2 className="text-xl font-bold text-red-800 dark:text-red-400">{t('loadingError')}</h2>
           </div>
           <p className="text-red-600 dark:text-red-400">{error.message}</p>
         </div>
@@ -52,14 +55,14 @@ export function BeneficiaryDashboard() {
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-8 h-8 text-accent-yellow" />
             <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
-              Bienvenue !
+              {t('welcomeBadge')}
             </span>
           </div>
           <h1 className="text-hero-mobile md:text-hero font-bold text-white mb-4">
-            Bon retour sur votre espace
+            {t('welcomeTitle')}
           </h1>
           <p className="text-xl text-white/90 max-w-2xl">
-            Suivez votre progression, découvrez vos recommandations personnalisées et continuez votre parcours professionnel
+            {t('welcomeSubtitle')}
           </p>
         </div>
       </Card>
@@ -69,7 +72,7 @@ export function BeneficiaryDashboard() {
         <div className="flex items-center gap-3 mb-6">
           <Target className="w-8 h-8 text-primary-600" />
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-            Votre progression
+            {t('yourProgress')}
           </h2>
         </div>
         
@@ -86,7 +89,7 @@ export function BeneficiaryDashboard() {
               )}
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-              Total Bilans
+              {t('totalAssessments')}
             </p>
             {loading ? (
               <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -96,7 +99,7 @@ export function BeneficiaryDashboard() {
               </p>
             )}
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              Depuis le début
+              {t('sinceBeginning')}
             </p>
           </Card>
 
