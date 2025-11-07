@@ -170,6 +170,109 @@
       }
     }
   },
+  "faq": {
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "Yetkinlik değerlendirmesi hakkındaki sorularınıza hızlıca yanıt bulun",
+    "allCategories": "Tümü",
+    "stillHaveQuestions": "Hala sorularınız mı var?",
+    "teamHere": "Ekibimiz size yardımcı olmak için burada",
+    "contactUs": "Bize ulaşın",
+    "categories": {
+      "generalites": "Genel",
+      "deroulement": "Süreç",
+      "financement": "Finansman",
+      "resultats": "Sonuçlar",
+      "pratique": "Pratik"
+    },
+    "questions": {
+      "generalites": [
+        {
+          "question": "Yetkinlik değerlendirmesi nedir?",
+          "answer": "Yetkinlik değerlendirmesi, profesyonel ve kişisel becerilerinizi, yeteneklerinizi ve motivasyonlarınızı analiz etmenizi sağlayan bireysel bir destek sürecidir. Gerçekçi ve motive edici bir kariyer projesi tanımlamanıza veya bir eğitim projesini doğrulamanıza yardımcı olur."
+        },
+        {
+          "question": "Yetkinlik değerlendirmesi ne kadar sürer?",
+          "answer": "Bir yetkinlik değerlendirmesi genellikle 2 ila 3 ay içinde dağıtılmış 20 ila 24 saat sürer. Bu süre, tempounuza ve müsaitliğinize uyum sağlarken derinlemesine destek sağlar."
+        },
+        {
+          "question": "Yetkinlik değerlendirmesi gizli midir?",
+          "answer": "Evet, kesinlikle! Değerlendirme tamamen gizlidir. Sonuçlar size aittir ve yazılı onayınız olmadan herhangi bir üçüncü tarafla (işvereniniz dahil) paylaşılamaz. Bu gizlilik yasalarla garanti edilir."
+        },
+        {
+          "question": "Yetkinlik değerlendirmesini kimler yapabilir?",
+          "answer": "Her aktif kişi yetkinlik değerlendirmesi yapabilir: özel sektör çalışanları, kamu görevlileri, iş arayanlar, serbest çalışanlar. Yaş veya kıdem gereksinimleri yoktur."
+        }
+      ],
+      "deroulement": [
+        {
+          "question": "Yetkinlik değerlendirmesi nasıl çalışır?",
+          "answer": "Değerlendirme 3 aşamada gerçekleşir: 1) İhtiyaçlarınızı ve hedeflerinizi tanımlamak için ön aşama (4-6sa), 2) Becerilerinizi ve kariyer yollarınızı keşfetmek için araştırma aşaması (12-16sa), 3) Projenizi ve eylem planınızı geliştirmek için sonuç aşaması (4-6sa)."
+        },
+        {
+          "question": "Değerlendirmemi uzaktan yapabilir miyim?",
+          "answer": "Evet! %100 uzaktan, yüz yüze veya karma format değerlendirmeler sunuyoruz. Uzaktan değerlendirmeler video konferans aracılığıyla yapılır ve yüz yüze değerlendirmeler kadar etkilidir."
+        },
+        {
+          "question": "Randevular ne sıklıkta gerçekleşir?",
+          "answer": "Randevular genellikle her seans arasında kişisel çalışmalarınızı tamamlamanız için 1 ila 2 hafta ara ile yapılır. Tempo, müsaitliğinize ve kısıtlamalarınıza göre ayarlanır."
+        },
+        {
+          "question": "Hangi testleri yapacağım?",
+          "answer": "Bilimsel olarak doğrulanmış birkaç psikometrik test yapacaksınız: MBTI kişilik testi, RIASEC mesleki ilgi testi, beceri envanteri ve profesyonel değerler testi. Bu testler düşünme araçlarıdır."
+        }
+      ],
+      "financement": [
+        {
+          "question": "Yetkinlik değerlendirmesinin maliyeti ne kadardır?",
+          "answer": "Bir yetkinlik değerlendirmesinin maliyeti süre ve koşullara bağlı olarak 1.500 € ile 3.000 € arasında değişir. BilanCompetence.AI'da fiyatlarımız şeffaftır ve finansman başvurunuzu hazırlamanıza yardımcı oluruz."
+        },
+        {
+          "question": "Değerlendirmemi finanse etmek için CPF'mi kullanabilir miyim?",
+          "answer": "Evet! Yetkinlik değerlendirmesi CPF (Kişisel Eğitim Hesabı) için uygundur. Haklarınızı moncompteformation.gouv.fr'de kontrol edebilir ve doğrudan çevrimiçi kayıt olabilirsiniz. İşveren izni gerekmez."
+        },
+        {
+          "question": "CPF'im tüm maliyeti karşılamazsa ne olur?",
+          "answer": "Birkaç çözüm vardır: İş arıyorsanız Pôle Emploi tarafından ek ödeme, OPCO'nuz tarafından ek finansman veya beceri geliştirme planı aracılığıyla işveren katılımı. En iyi çözümü bulmanıza yardımcı oluyoruz."
+        },
+        {
+          "question": "CPF'mi kullanırsam işverenim bilgilendirilir mi?",
+          "answer": "Hayır, değerlendirmenizi çalışma saatleri dışında yapıyor ve CPF'niz aracılığıyla finanse ediyorsanız, işvereniniz bilgilendirilmez. Süreciniz tamamen gizli kalır."
+        }
+      ],
+      "resultats": [
+        {
+          "question": "Değerlendirme sonunda ne alacağım?",
+          "answer": "Becerilerinizi, motivasyonlarınızı, kariyer projenizi ve detaylı eylem planınızı özetleyen gizli bir özet belgesi alacaksınız. Ayrıca değerlendirme tamamlama sertifikası alacaksınız."
+        },
+        {
+          "question": "Değerlendirme iş bulma garantisi veriyor mu?",
+          "answer": "Değerlendirme bir iş yerleştirme hizmeti değil, bir karar verme aracıdır. Projenizi netleştirmenize, güçlü yanlarınızı belirlemenize ve somut bir eylem planı oluşturmanıza yardımcı olur. Bu planı uygulamak size kalmıştır."
+        },
+        {
+          "question": "Değerlendirme sonrasında desteklenebilir miyim?",
+          "answer": "Evet, değerlendirme sonrası destek hizmetleri sunuyoruz: iş arama yardımı, görüşme hazırlığı, girişimcilik desteği, vb. Bu hizmetler isteğe bağlıdır ve teklifle yapılır."
+        }
+      ],
+      "pratique": [
+        {
+          "question": "Değerlendirmemi çalışma saatleri içinde yapabilir miyim?",
+          "answer": "Evet, işvereniniz kabul ederse. Yetkinlik değerlendirme izni talep edebilir veya beceri geliştirme planının bir parçası olarak değerlendirmeyi yapabilirsiniz. Aksi takdirde, izin almadan çalışma saatleri dışında yapabilirsiniz."
+        },
+        {
+          "question": "Bir değerlendirmeye başlamak ne kadar sürer?",
+          "answer": "CPF ile çok hızlı başlayabilirsiniz (başvurunuzun onaylanmasından sonra 2 hafta içinde). Diğer finansman için, finansman kuruluşuna bağlı olarak 2 ila 6 hafta süre tanıyın."
+        },
+        {
+          "question": "Danışmanlarınız sertifikalı mı?",
+          "answer": "Evet, tüm danışmanlarımız profesyonel destekte sertifikalı ve deneyimlidir. Kuruluşumuz, Devlet tarafından tanınan bir kalite garantisi olan Qualiopi sertifikasına sahiptir."
+        },
+        {
+          "question": "Değerlendirme sırasında danışman değiştirebilir miyim?",
+          "answer": "Herhangi bir nedenle danışmanınızla anlaşamazsanız, değişiklik talep edebilirsiniz. Memnuniyetiniz ve rahatlığınız, değerlendirmenizin başarısı için önemlidir."
+        }
+      ]
+    }
+  },
   "dashboard": {
     "welcome": "Hoş geldiniz",
     "myAssessment": "Yetkinlik Değerlendirmem",
