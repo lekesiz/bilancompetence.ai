@@ -26,7 +26,21 @@
     "rememberMe": "Se souvenir de moi",
     "alreadyHaveAccount": "Vous avez déjà un compte?",
     "noAccount": "Pas encore de compte?",
-    "createAccount": "Créer un compte"
+    "createAccount": "Créer un compte",
+    "welcomeBack": "Bon retour !",
+    "loginToAccount": "Connectez-vous à votre compte",
+    "emailAddress": "Adresse email",
+    "emailPlaceholder": "vous@exemple.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••••••",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "closeError": "Fermer",
+    "loggingIn": "Connexion en cours...",
+    "loginButton": "Se connecter",
+    "backToHome": "Retour à l'accueil",
+    "invalidEmail": "Format d'email invalide",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères"
   },
   "consent": {
     "title": "Gestion des Cookies et Consentement RGPD",

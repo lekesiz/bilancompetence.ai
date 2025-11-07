@@ -26,7 +26,21 @@
     "rememberMe": "Beni hatırla",
     "alreadyHaveAccount": "Zaten hesabınız var mı?",
     "noAccount": "Henüz hesabınız yok mu?",
-    "createAccount": "Hesap oluştur"
+    "createAccount": "Hesap oluştur",
+    "welcomeBack": "Tekrar hoş geldiniz!",
+    "loginToAccount": "Hesabınıza giriş yapın",
+    "emailAddress": "E-posta adresi",
+    "emailPlaceholder": "siz@ornek.com",
+    "passwordLabel": "Şifre",
+    "passwordPlaceholder": "••••••••••••",
+    "showPassword": "Şifreyi göster",
+    "hidePassword": "Şifreyi gizle",
+    "closeError": "Kapat",
+    "loggingIn": "Giriş yapılıyor...",
+    "loginButton": "Giriş yap",
+    "backToHome": "Ana sayfaya dön",
+    "invalidEmail": "Geçersiz e-posta formatı",
+    "passwordMinLength": "Şifre en az 8 karakter olmalıdır"
   },
   "navigation": {
     "home": "Ana Sayfa",

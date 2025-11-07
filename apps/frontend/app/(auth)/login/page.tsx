@@ -6,23 +6,27 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Button from '@/components/qualiopi/Button';
 import Card from '@/components/qualiopi/Card';
 
 export const dynamic = 'force-dynamic';
 
-const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
-
 export default function LoginPage() {
   const router = useRouter();
   const { login: authLogin, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const t = useTranslations('auth');
+  const tCommon = useTranslations('common');
+
+  // ✅ Sprint 1.2: Localized validation schema
+  const loginSchema = z.object({
+    email: z.string().email(t('invalidEmail')),
+    password: z.string().min(8, t('passwordMinLength')),
+  });
+
+  type LoginFormData = z.infer<typeof loginSchema>;
 
   const {
     register,
@@ -57,10 +61,10 @@ export default function LoginPage() {
             </div>
           </Link>
           <h1 className="text-4xl font-bold text-white mb-3">
-            Bon retour !
+            {t('welcomeBack')}
           </h1>
           <p className="text-xl text-white/80">
-            Connectez-vous à votre compte
+            {t('loginToAccount')}
           </p>
         </div>
 
@@ -80,9 +84,9 @@ export default function LoginPage() {
                   <button
                     onClick={clearError}
                     className="text-red-600 dark:text-red-400 text-xs mt-2 hover:text-red-700 dark:hover:text-red-300 font-semibold"
-                    aria-label="Fermer le message d'erreur"
+                    aria-label={t('closeError')}
                   >
-                    Fermer
+                    {t('closeError')}
                   </button>
                 </div>
               </div>
@@ -94,13 +98,13 @@ export default function LoginPage() {
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-                Adresse email
+                {t('emailAddress')}
               </label>
               <input
                 {...register('email')}
                 id="email"
                 type="email"
-                placeholder="vous@exemple.com"
+                placeholder={t('emailPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading}
                 aria-invalid={!!errors.email}
@@ -118,13 +122,13 @@ export default function LoginPage() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                  Mot de passe
+                  {t('passwordLabel')}
                 </label>
                 <Link
                   href="/forgot-password"
                   className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold"
                 >
-                  Mot de passe oublié ?
+                  {t('forgotPassword')}
                 </Link>
               </div>
               <div className="relative">
@@ -132,7 +136,7 @@ export default function LoginPage() {
                   {...register('password')}
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••••••"
+                  placeholder={t('passwordPlaceholder')}
                   className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
                   disabled={isLoading}
                   aria-invalid={!!errors.password}
@@ -142,7 +146,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  aria-label={showPassword ? t('hidePassword') : t('showPassword')}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +176,7 @@ export default function LoginPage() {
                 className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded-lg cursor-pointer"
               />
               <label htmlFor="remember" className="ml-3 block text-sm text-gray-700 dark:text-gray-200 font-medium cursor-pointer">
-                Se souvenir de moi
+                {t('rememberMe')}
               </label>
             </div>
 
@@ -190,11 +194,11 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Connexion en cours...
+                  {t('loggingIn')}
                 </>
               ) : (
                 <>
-                  Se connecter
+                  {t('loginButton')}
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -210,7 +214,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
-                Pas encore de compte ?
+                {t('noAccount')}
               </span>
             </div>
           </div>
@@ -218,7 +222,7 @@ export default function LoginPage() {
           {/* Sign Up Link */}
           <Link href="/register">
             <Button variant="outline" size="lg" className="w-full">
-              Créer un compte
+              {t('createAccount')}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
@@ -235,11 +239,10 @@ export default function LoginPage() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            Retour à l'accueil
+            {t('backToHome')}
           </Link>
         </div>
       </div>
     </div>
   );
 }
-

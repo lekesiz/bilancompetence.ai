@@ -26,7 +26,21 @@
     "rememberMe": "Remember me",
     "alreadyHaveAccount": "Already have an account?",
     "noAccount": "Don't have an account?",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "welcomeBack": "Welcome back!",
+    "loginToAccount": "Log in to your account",
+    "emailAddress": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••••••",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "closeError": "Close",
+    "loggingIn": "Logging in...",
+    "loginButton": "Log in",
+    "backToHome": "Back to home",
+    "invalidEmail": "Invalid email format",
+    "passwordMinLength": "Password must be at least 8 characters"
   },
   "consent": {
     "title": "Cookie Management and RGPD Consent",
