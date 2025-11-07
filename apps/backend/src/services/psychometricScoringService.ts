@@ -4,6 +4,7 @@
  */
 
 import { pool } from '../config/neon.js';
+import { supabase } from '../config/supabase.js';
 
 // ============================================================================
 // MBTI SCORING
@@ -68,15 +69,13 @@ export async function calculateMBTI(responses: MBTIResponse[]): Promise<MBTIResu
 
       if (score >= 4) {
         // Agree with this pole
-        dimensionScores[dimension as keyof typeof dimensionScores][
-          pole as 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P'
-        ] += score - 3;
+        const dimensionScore = dimensionScores[dimension as keyof typeof dimensionScores] as Record<string, number>;
+        dimensionScore[pole] = (dimensionScore[pole] || 0) + (score - 3);
       } else if (score <= 2) {
         // Disagree with this pole (favor the opposite)
         const oppositePole = getOppositePole(dimension, pole);
-        dimensionScores[dimension as keyof typeof dimensionScores][
-          oppositePole as 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P'
-        ] += 3 - score;
+        const dimensionScore = dimensionScores[dimension as keyof typeof dimensionScores] as Record<string, number>;
+        dimensionScore[oppositePole] = (dimensionScore[oppositePole] || 0) + (3 - score);
       }
       // score === 3 (neutral) adds nothing
     }

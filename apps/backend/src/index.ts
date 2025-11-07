@@ -153,16 +153,16 @@ app.get('/api/version', (req, res) => {
 
 // Performance monitoring endpoint (admin only) - ✅ SECURITY FIX: Added authentication
 const monitoringEndpoint = createMonitoringEndpoint();
-app.get('/api/admin/monitoring/stats', authMiddleware, requireRole(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/stats', authMiddleware, requireRole('ADMIN'), (req, res) => {
   res.json(monitoringEndpoint.stats());
 });
 
-app.get('/api/admin/monitoring/slow-queries', authMiddleware, requireRole(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/slow-queries', authMiddleware, requireRole('ADMIN'), (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.slowQueries(limit));
 });
 
-app.get('/api/admin/monitoring/frequent-queries', authMiddleware, requireRole(['ADMIN']), (req, res) => {
+app.get('/api/admin/monitoring/frequent-queries', authMiddleware, requireRole('ADMIN'), (req, res) => {
   const limit = parseInt((req.query.limit as string) || '10', 10);
   res.json(monitoringEndpoint.frequentQueries(limit));
 });

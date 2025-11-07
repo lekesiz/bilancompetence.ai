@@ -11,6 +11,7 @@
 
 import { logger } from '../utils/logger.js';
 import { pool } from '../config/neon.js';
+import { supabase } from '../config/supabase.js';
 
 // ============================================================================
 // TYPES & INTERFACES
