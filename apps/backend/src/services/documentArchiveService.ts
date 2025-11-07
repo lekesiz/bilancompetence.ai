@@ -59,10 +59,10 @@ const DOCUMENT_TYPES = [
 
 // HYBRID ARCHITECTURE: DB queries use Neon, Storage uses Supabase
 export class DocumentArchiveService {
-  private organizationId: string;
+  private organizationId: string | null;
   private supabase: SupabaseClient;
 
-  constructor(organizationId: string) {
+  constructor(organizationId: string | null) {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
