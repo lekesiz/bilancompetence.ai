@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { getCsrfToken } from '@/lib/csrfHelper';
+import { useTranslations } from 'next-intl';
 
 interface DashboardStats {
   total_users: number;
@@ -29,6 +30,8 @@ interface RecentActivity {
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const t = useTranslations('dashboard.admin');
+  const tCommon = useTranslations('common');
   const [stats, setStats] = useState<DashboardStats>({
     total_users: 0,
     total_bilans: 0,
@@ -94,7 +97,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-textSecondary">Chargement du tableau de bord...</p>
+          <p className="text-textSecondary">{t('loadingDashboard')}</p>
         </div>
       </div>
     );
@@ -106,38 +109,38 @@ export default function AdminDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-textPrimary mb-2">
-            Tableau de Bord Administrateur
+            {t('pageTitle')}
           </h1>
           <p className="text-textSecondary">
-            Vue d'ensemble de la plateforme BilanCompetence.AI
+            {t('pageSubtitle')}
           </p>
         </div>
 
         {/* Main Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
-            title="Total Utilisateurs"
+            title={t('totalUsers')}
             value={stats.total_users}
             icon="👥"
             color="bg-blue-100 text-blue-800"
             trend="+12%"
           />
           <StatCard
-            title="Bilans Actifs"
+            title={t('activeAssessments')}
             value={stats.bilans_in_progress}
             icon="📊"
             color="bg-yellow-100 text-yellow-800"
             trend="+8%"
           />
           <StatCard
-            title="Bilans Complétés"
+            title={t('completedAssessments')}
             value={stats.bilans_completed}
             icon="✅"
             color="bg-green-100 text-green-800"
             trend="+15%"
           />
           <StatCard
-            title="Taux de Complétion"
+            title={t('completionRate')}
             value={`${stats.completion_rate}%`}
             icon="📈"
             color="bg-purple-100 text-purple-800"
@@ -148,54 +151,54 @@ export default function AdminDashboard() {
         {/* Secondary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-textPrimary mb-4">Répartition Utilisateurs</h3>
+            <h3 className="text-lg font-semibold text-textPrimary mb-4">{t('userDistribution')}</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Bénéficiaires</span>
+                <span className="text-textSecondary">{t('beneficiaries')}</span>
                 <span className="font-semibold text-textPrimary">{stats.total_beneficiaires}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Consultants</span>
+                <span className="text-textSecondary">{t('consultants')}</span>
                 <span className="font-semibold text-textPrimary">{stats.total_consultants}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Administrateurs</span>
+                <span className="text-textSecondary">{t('administrators')}</span>
                 <span className="font-semibold text-textPrimary">3</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-textPrimary mb-4">Performance</h3>
+            <h3 className="text-lg font-semibold text-textPrimary mb-4">{t('performance')}</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Durée Moyenne</span>
-                <span className="font-semibold text-textPrimary">{stats.average_duration} jours</span>
+                <span className="text-textSecondary">{t('averageDuration')}</span>
+                <span className="font-semibold text-textPrimary">{stats.average_duration} {t('days')}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Satisfaction</span>
+                <span className="text-textSecondary">{t('satisfaction')}</span>
                 <span className="font-semibold text-textPrimary">4.8/5</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Taux de Réussite</span>
+                <span className="text-textSecondary">{t('successRate')}</span>
                 <span className="font-semibold text-textPrimary">92%</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-textPrimary mb-4">Conformité Qualiopi</h3>
+            <h3 className="text-lg font-semibold text-textPrimary mb-4">{t('qualiopiCompliance')}</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Indicateurs</span>
+                <span className="text-textSecondary">{t('indicators')}</span>
                 <span className="font-semibold text-success-600">32/32 ✓</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Conformité</span>
+                <span className="text-textSecondary">{t('compliance')}</span>
                 <span className="font-semibold text-success-600">100%</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-textSecondary">Dernier Audit</span>
+                <span className="text-textSecondary">{t('lastAudit')}</span>
                 <span className="font-semibold text-textPrimary">15/10/2025</span>
               </div>
             </div>
@@ -209,8 +212,8 @@ export default function AdminDashboard() {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">👥</div>
-            <h3 className="text-lg font-semibold text-textPrimary">Utilisateurs</h3>
-            <p className="text-sm text-textSecondary">Gérer les comptes</p>
+            <h3 className="text-lg font-semibold text-textPrimary">{t('users')}</h3>
+            <p className="text-sm text-textSecondary">{t('manageAccounts')}</p>
           </Link>
 
           <Link
@@ -218,8 +221,8 @@ export default function AdminDashboard() {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📊</div>
-            <h3 className="text-lg font-semibold text-textPrimary">Tous les Bilans</h3>
-            <p className="text-sm text-textSecondary">Vue d'ensemble</p>
+            <h3 className="text-lg font-semibold text-textPrimary">{t('allAssessments')}</h3>
+            <p className="text-sm text-textSecondary">{t('overview')}</p>
           </Link>
 
           <Link
@@ -227,8 +230,8 @@ export default function AdminDashboard() {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📋</div>
-            <h3 className="text-lg font-semibold text-textPrimary">Qualiopi</h3>
-            <p className="text-sm text-textSecondary">Conformité & Audit</p>
+            <h3 className="text-lg font-semibold text-textPrimary">{t('qualiopiTitle')}</h3>
+            <p className="text-sm text-textSecondary">{t('qualiopiDesc')}</p>
           </Link>
 
           <Link
@@ -236,8 +239,8 @@ export default function AdminDashboard() {
             className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow text-center"
           >
             <div className="text-3xl mb-2">📈</div>
-            <h3 className="text-lg font-semibold text-textPrimary">Statistiques</h3>
-            <p className="text-sm text-textSecondary">Analytics détaillées</p>
+            <h3 className="text-lg font-semibold text-textPrimary">{t('statistics')}</h3>
+            <p className="text-sm text-textSecondary">{t('detailedAnalytics')}</p>
           </Link>
 
           <Link
@@ -245,8 +248,8 @@ export default function AdminDashboard() {
             className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg shadow-md p-6 hover:shadow-lg transition-all text-center border-2 border-purple-200"
           >
             <div className="text-3xl mb-2">🎓</div>
-            <h3 className="text-lg font-semibold text-purple-800">Wedof</h3>
-            <p className="text-sm text-purple-600">Gestion formation</p>
+            <h3 className="text-lg font-semibold text-purple-800">{t('wedof')}</h3>
+            <p className="text-sm text-purple-600">{t('wedofDesc')}</p>
           </Link>
 
           <Link
@@ -254,21 +257,21 @@ export default function AdminDashboard() {
             className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-md p-6 hover:shadow-lg transition-all text-center border-2 border-blue-200"
           >
             <div className="text-3xl mb-2">💰</div>
-            <h3 className="text-lg font-semibold text-blue-800">Pennylane</h3>
-            <p className="text-sm text-blue-600">Facturation</p>
+            <h3 className="text-lg font-semibold text-blue-800">{t('pennylane')}</h3>
+            <p className="text-sm text-blue-600">{t('pennylaneDesc')}</p>
           </Link>
         </div>
 
         {/* Recent Activity */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-2xl font-semibold text-textPrimary">Activité Récente</h2>
+            <h2 className="text-2xl font-semibold text-textPrimary">{t('recentActivity')}</h2>
           </div>
-          
+
           <div className="divide-y divide-gray-200">
             {recentActivity.length === 0 ? (
               <div className="p-8 text-center text-textSecondary">
-                Aucune activité récente
+                {t('noRecentActivity')}
               </div>
             ) : (
               recentActivity.map((activity) => (
@@ -290,7 +293,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <button className="text-primary hover:text-primary/80 text-sm font-medium">
-                      Voir détails
+                      {t('viewDetails')}
                     </button>
                   </div>
                 </div>
