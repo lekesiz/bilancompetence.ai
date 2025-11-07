@@ -29,8 +29,8 @@ export const viewport: Viewport = {
   ],
 };
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
+// ✅ Sprint 1.3 FIX: Removed force-dynamic to allow static generation
+// This was preventing proper build and causing <Html> import errors
 
 export default function RootLayout({
   children,
