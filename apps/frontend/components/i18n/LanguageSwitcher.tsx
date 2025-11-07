@@ -5,11 +5,13 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/qualiopi';
 import { Globe } from 'lucide-react';
 import { useState } from 'react';
-import { locales } from '@/i18n-config';
+import { locales, type Locale } from '@/i18n-config';
+import { saveLanguagePreference } from '@/lib/languagePreference';
 
 const languages = [
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
 ];
 
 export default function LanguageSwitcher() {
@@ -19,6 +21,9 @@ export default function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
 
   const switchLanguage = (newLocale: string) => {
+    // Save language preference to localStorage and cookie
+    saveLanguagePreference(newLocale as Locale);
+
     // Remove current locale from pathname if present (for all locales)
     let pathWithoutLocale = pathname;
     locales.forEach((loc) => {
@@ -27,9 +32,9 @@ export default function LanguageSwitcher() {
       }
     });
     if (pathWithoutLocale === '') pathWithoutLocale = '/';
-    
+
     // Add new locale (but not for default locale 'fr')
-    const newPath = newLocale === 'fr' 
+    const newPath = newLocale === 'fr'
       ? pathWithoutLocale
       : `/${newLocale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
 

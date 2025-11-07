@@ -9,5 +9,11 @@
   "scripts": {
     "dev": "npm run dev --workspace=apps/frontend",
     "build": "npm run build --workspace=apps/frontend"
+  },
+  "dependencies": {
+    "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6"
   }
 }
