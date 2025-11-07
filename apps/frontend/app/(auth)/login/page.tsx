@@ -11,7 +11,8 @@ import Link from 'next/link';
 import Button from '@/components/qualiopi/Button';
 import Card from '@/components/qualiopi/Card';
 
-export const dynamic = 'force-dynamic';
+// ✅ Sprint 1.3 FIX: Removed force-dynamic to allow static generation
+// This was causing prerender errors during Vercel build
 
 export default function LoginPage() {
   const router = useRouter();

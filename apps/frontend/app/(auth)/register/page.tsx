@@ -8,7 +8,8 @@ import RegisterForm from './components/RegisterForm';
 import Link from 'next/link';
 import Card from '@/components/qualiopi/Card';
 
-export const dynamic = 'force-dynamic';
+// ✅ Sprint 1.3 FIX: Removed force-dynamic to allow static generation
+// This was causing prerender errors during Vercel build
 
 export default function RegisterPage() {
   const router = useRouter();
