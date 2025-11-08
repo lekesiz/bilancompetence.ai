@@ -799,6 +799,79 @@ router.get('/:id/progress', authMiddleware, async (req: Request, res: Response) 
 });
 
 /**
+ * POST /api/assessments/:id/wizard/save-step
+ * Alias for frontend compatibility - saves step with or without validation
+ * Body: { step_number, section, answers, competencies?, is_auto_save? }
+ */
+router.post('/:id/wizard/save-step', authMiddleware, async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        status: 'error',
+        message: 'Authentication required',
+      });
+    }
+
+    const { id } = req.params;
+    const { step_number, section, answers, competencies, is_auto_save } = req.body;
+
+    // Validate step number
+    if (!step_number || step_number < 0 || step_number > 5) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid step number. Must be 0-5',
+      });
+    }
+
+    // Verify assessment belongs to user
+    const assessment = await getAssessment(id);
+    if (!assessment || assessment.beneficiary_id !== req.user.id) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Unauthorized',
+      });
+    }
+
+    let result;
+
+    if (is_auto_save) {
+      // Auto-save without validation
+      result = await autoSaveDraft(id, step_number, answers);
+    } else {
+      // Full save with validation
+      result = await saveDraftStep(id, step_number, section, answers, competencies);
+
+      await createAuditLog(
+        req.user.id,
+        'ASSESSMENT_STEP_SAVED',
+        'bilan',
+        id,
+        { step: step_number, section },
+        req.ip
+      );
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: is_auto_save ? 'Auto-saved' : `Step ${step_number} saved`,
+      data: {
+        ...result,
+        savedAt: new Date().toISOString(),
+        currentStep: step_number,
+        progressPercentage: (step_number / 5) * 100,
+      },
+    });
+  } catch (error) {
+    logger.error('Save step error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to save step',
+      error: error instanceof Error ? error.message : undefined,
+    });
+  }
+});
+
+/**
  * POST /api/assessments/:id/submit
  * Submit assessment for review
  * Validates all steps are complete before submission
