@@ -8,13 +8,53 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-poppins" });
 
 export const metadata: Metadata = {
-  title: "Bilan de Compétences | BilanCompetence.ai",
-  description: "Donnez un nouveau souffle à votre carrière avec un bilan de compétences personnalisé.",
+  title: "Bilan de Compétences en ligne | 100% Finançable CPF | BilanCompetence.ai",
+  description: "Faites le point sur vos compétences, identifiez vos motivations et construisez un projet professionnel qui vous ressemble. Certifié Qualiopi. Financement CPF. Accompagnement personnalisé en présentiel ou à distance.",
+  keywords: "bilan de compétences, CPF, reconversion professionnelle, orientation professionnelle, bilan professionnel, formation CPF, Qualiopi, accompagnement carrière, projet professionnel, tests psychométriques, MBTI, RIASEC",
+  authors: [{ name: "BilanCompetence.ai" }],
+  creator: "BilanCompetence.ai",
+  publisher: "BilanCompetence.ai",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: 'https://app.bilancompetence.ai',
+    siteName: 'BilanCompetence.ai',
+    title: 'Bilan de Compétences en ligne | 100% Finançable CPF',
+    description: 'Donnez un nouveau souffle à votre carrière avec le bilan de compétences. Certifié Qualiopi, finançable par le CPF, accompagnement personnalisé.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'BilanCompetence.ai - Bilan de Compétences en ligne',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Bilan de Compétences en ligne | BilanCompetence.ai',
+    description: 'Certifié Qualiopi. 100% Finançable CPF. Accompagnement personnalisé.',
+    images: ['/og-image.jpg'],
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "BilanCompetence.AI",
+  },
+  verification: {
+    google: 'your-google-site-verification-code',
   },
 };
 
