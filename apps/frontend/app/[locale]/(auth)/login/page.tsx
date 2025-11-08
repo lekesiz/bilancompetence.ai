@@ -42,7 +42,7 @@ export default function LoginPage() {
     const success = await authLogin(data.email, data.password);
 
     if (success) {
-      router.push('/dashboard');
+      router.push('/fr/dashboard');
     }
   };
 
@@ -222,7 +222,7 @@ export default function LoginPage() {
           </div>
 
           {/* Sign Up Link */}
-          <Link href="/register">
+          <Link href="/fr/register">
             <Button variant="outline" size="lg" className="w-full">
               {t('createAccount')}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
