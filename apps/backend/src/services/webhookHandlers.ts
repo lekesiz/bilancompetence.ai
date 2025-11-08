@@ -1,6 +1,6 @@
 import { pool } from '../config/neon.js';
 import { logger } from '../utils/logger.js';
-import { sendEmail } from './emailService.js';
+import { resendService } from './resendService.js';
 
 /**
  * Webhook Handlers Service
@@ -35,7 +35,7 @@ export async function handlePaymentSuccess(paymentIntent: any): Promise<void> {
 
       if (user && user.email) {
         // Send confirmation email
-        await sendEmail({
+        await resendService.sendEmail({
           to: user.email,
           subject: 'Confirmation de paiement - BilanCompetence.AI',
           html: `
@@ -82,7 +82,7 @@ export async function handlePaymentFailure(paymentIntent: any): Promise<void> {
       const user = result.rows[0];
 
       if (user && user.email) {
-        await sendEmail({
+        await resendService.sendEmail({
           to: user.email,
           subject: 'Échec du paiement - BilanCompetence.AI',
           html: `
@@ -212,7 +212,7 @@ export async function handleInvoicePaid(invoice: any): Promise<void> {
       const user = result.rows[0];
 
       if (user && user.email) {
-        await sendEmail({
+        await resendService.sendEmail({
           to: user.email,
           subject: 'Reçu de paiement - BilanCompetence.AI',
           html: `
@@ -250,7 +250,7 @@ export async function handleInvoicePaymentFailed(invoice: any): Promise<void> {
       const user = result.rows[0];
 
       if (user && user.email) {
-        await sendEmail({
+        await resendService.sendEmail({
           to: user.email,
           subject: 'Échec du paiement de facture - BilanCompetence.AI',
           html: `

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
-import * as chatService from '../services/chatService.js';
+import * as chatService from '../services/chatServiceNeon.js';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 import { logger } from '../utils/logger.js';
 

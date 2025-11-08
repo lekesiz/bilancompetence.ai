@@ -7,7 +7,7 @@
 
 import { Router, Request, Response } from 'express';
 import { getAITeamService, AITeamTask, AITeamMode } from '../services/aiTeamService';
-import { authenticateToken } from '../middleware/authMiddleware';
+import { authenticateToken } from '../middleware/auth.js';
 import { logger } from '../utils/logger.js';
 
 const router = Router();

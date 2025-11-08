@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
-import stripeService from '../services/stripeService.js';
+import { stripeService } from '../services/stripeService.js';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
 import { logger } from '../utils/logger.js';
 import {
