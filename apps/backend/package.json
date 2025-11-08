@@ -13,9 +13,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:auth": "tsx src/scripts/test-auth-flow.ts",
-    "test:load": "artillery run performance-tests/load-test.yml",
-    "test:stress": "artillery run performance-tests/stress-test.yml",
-    "test:perf": "npm run test:load && npm run test:stress",
     "migrate": "tsx src/scripts/run-migrations.ts",
     "seed:demo": "tsx src/scripts/seed-demo-data.ts",
     "prepare": "husky"
@@ -81,7 +78,6 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
-    "artillery": "^2.0.26",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
