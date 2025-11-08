@@ -15,7 +15,7 @@
     "test:auth": "tsx src/scripts/test-auth-flow.ts",
     "migrate": "tsx src/scripts/run-migrations.ts",
     "seed:demo": "tsx src/scripts/seed-demo-data.ts",
-    "prepare": "husky"
+    "prepare": "node -e \"try { require('husky') } catch (e) { process.exit(0) }\""
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
