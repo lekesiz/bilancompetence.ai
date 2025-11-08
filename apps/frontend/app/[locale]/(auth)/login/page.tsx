@@ -77,15 +77,15 @@ export default function LoginPage() {
             <div
               role="alert"
               aria-live="assertive"
-              className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl"
+              className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl"
             >
               <div className="flex items-start gap-3">
                 <span className="text-2xl" aria-hidden="true">⚠️</span>
                 <div className="flex-1">
-                  <p className="text-red-800 dark:text-red-200 text-sm font-medium">{error}</p>
+                  <p className="text-red-800 text-sm font-medium">{error}</p>
                   <button
                     onClick={clearError}
-                    className="text-red-600 dark:text-red-400 text-xs mt-2 hover:text-red-700 dark:hover:text-red-300 font-semibold"
+                    className="text-red-600 text-xs mt-2 hover:text-red-700 font-semibold"
                     aria-label={t('closeError')}
                   >
                     {t('closeError')}
@@ -99,7 +99,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                 {t('emailAddress')}
               </label>
               <input
@@ -107,13 +107,13 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder={t('emailPlaceholder')}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading}
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? 'email-error' : undefined}
               />
               {errors.email && (
-                <p id="email-error" role="alert" className="text-red-600 dark:text-red-400 text-sm mt-2 flex items-center gap-1">
+                <p id="email-error" role="alert" className="text-red-600 text-sm mt-2 flex items-center gap-1">
                   <span aria-hidden="true">⚠️</span>
                   {errors.email.message}
                 </p>
@@ -123,12 +123,12 @@ export default function LoginPage() {
             {/* Password Field */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
                   {t('passwordLabel')}
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-semibold"
+                  className="text-sm text-primary-600 hover:text-primary-700 font-semibold"
                 >
                   {t('forgotPassword')}
                 </Link>
@@ -139,7 +139,7 @@ export default function LoginPage() {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t('passwordPlaceholder')}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
                   disabled={isLoading}
                   aria-invalid={!!errors.password}
                   aria-describedby={errors.password ? 'password-error' : undefined}
@@ -147,7 +147,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-900 transition-colors"
                   aria-label={showPassword ? t('hidePassword') : t('showPassword')}
                 >
                   {showPassword ? (
@@ -163,7 +163,7 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p id="password-error" role="alert" className="text-red-600 dark:text-red-400 text-sm mt-2 flex items-center gap-1">
+                <p id="password-error" role="alert" className="text-red-600 text-sm mt-2 flex items-center gap-1">
                   <span aria-hidden="true">⚠️</span>
                   {errors.password.message}
                 </p>
@@ -177,7 +177,7 @@ export default function LoginPage() {
                 id="remember"
                 className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded-lg cursor-pointer"
               />
-              <label htmlFor="remember" className="ml-3 block text-sm text-gray-700 dark:text-gray-200 font-medium cursor-pointer">
+              <label htmlFor="remember" className="ml-3 block text-sm text-gray-700 font-medium cursor-pointer">
                 {t('rememberMe')}
               </label>
             </div>
@@ -212,10 +212,10 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-gray-200 dark:border-gray-700"></div>
+              <div className="w-full border-t-2 border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
+              <span className="px-4 bg-white text-gray-500 font-medium">
                 {t('noAccount')}
               </span>
             </div>
