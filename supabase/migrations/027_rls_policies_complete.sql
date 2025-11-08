@@ -133,7 +133,7 @@ CREATE POLICY "assessments_select_policy"
 ON assessments
 FOR SELECT
 USING (
-  user_id = auth.uid()
+  beneficiary_id = auth.uid()
   OR
   consultant_id = auth.uid()
   OR
@@ -148,14 +148,14 @@ USING (
 CREATE POLICY "assessments_insert_policy"
 ON assessments
 FOR INSERT
-WITH CHECK (user_id = auth.uid());
+WITH CHECK (beneficiary_id = auth.uid());
 
 -- UPDATE: Propriétaire + consultant + admins
 CREATE POLICY "assessments_update_policy"
 ON assessments
 FOR UPDATE
 USING (
-  user_id = auth.uid()
+  beneficiary_id = auth.uid()
   OR consultant_id = auth.uid()
   OR EXISTS (
     SELECT 1 FROM users u
@@ -169,7 +169,7 @@ CREATE POLICY "assessments_delete_policy"
 ON assessments
 FOR DELETE
 USING (
-  user_id = auth.uid()
+  beneficiary_id = auth.uid()
   OR EXISTS (
     SELECT 1 FROM users u
     WHERE u.id = auth.uid()
