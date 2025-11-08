@@ -1,17 +1,18 @@
 # Nixpacks configuration for Railway deployment
-# This ensures only production dependencies are installed
+# Install all deps (including devDeps for build), then build, then prune for production
 
 [phases.setup]
 nixPkgs = ["nodejs_20", "pnpm"]
 
 [phases.install]
 cmds = [
-  "pnpm install --frozen-lockfile --prod --ignore-scripts"
+  "pnpm install --frozen-lockfile --ignore-scripts"
 ]
 
 [phases.build]
 cmds = [
-  "cd apps/backend && pnpm run build"
+  "cd apps/backend && pnpm run build",
+  "pnpm prune --prod"
 ]
 
 [start]
