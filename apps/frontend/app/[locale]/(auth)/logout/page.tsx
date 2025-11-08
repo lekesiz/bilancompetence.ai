@@ -15,11 +15,11 @@ export default function LogoutPage() {
       try {
         await logout();
         // Redirect to homepage after successful logout
-        router.push('/');
+        router.push('/fr');
       } catch (error) {
         console.error('Logout error:', error);
         // Even if logout fails, redirect to homepage
-        router.push('/');
+        router.push('/fr');
       }
     };
 

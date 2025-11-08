@@ -30,7 +30,7 @@ export default function ProtectedLayout({
     // (loading is done and still no user)
     if (!isLoading && !user) {
       console.log('Protected route: Redirecting to login (no authenticated user)');
-      router.push('/login');
+      router.push('/fr/login');
     }
   }, [user, isLoading, router]);
 

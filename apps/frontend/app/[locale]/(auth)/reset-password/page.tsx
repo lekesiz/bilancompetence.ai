@@ -115,7 +115,7 @@ export default function ResetPasswordPage() {
 
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        router.push('/login');
+        router.push('/fr/login');
       }, 3000);
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue. Veuillez réessayer.');

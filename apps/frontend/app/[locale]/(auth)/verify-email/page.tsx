@@ -46,7 +46,7 @@ export default function VerifyEmailPage() {
 
         // Redirect to dashboard after 3 seconds
         setTimeout(() => {
-          router.push('/dashboard');
+          router.push('/fr/dashboard');
         }, 3000);
       } catch (err: any) {
         setError(err.message || 'Token invalide ou expiré');
