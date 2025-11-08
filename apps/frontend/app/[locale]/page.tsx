@@ -65,12 +65,12 @@ export default function HomePage() {
               {t('home.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register">
+              <Link href="/fr/register">
                 <Button size="lg">
                   {t('home.hero.cta')}
                 </Button>
               </Link>
-              <Link href="/quest-ce-quun-bilan">
+              <Link href="/fr/quest-ce-quun-bilan">
                 <Button variant="outline" size="lg">
                   {t('home.hero.learnMore')}
                 </Button>

@@ -25,11 +25,11 @@ export const apiLimiter = rateLimit({
 
 /**
  * Strict rate limiter for authentication endpoints
- * Limits: 5 requests per 15 minutes per IP
+ * Limits: 20 requests per 15 minutes per IP (increased for development)
  */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per windowMs
+  max: 20, // Limit each IP to 20 requests per windowMs (increased from 5)
   message: {
     error: 'Too many authentication attempts, please try again later.',
     retryAfter: '15 minutes',

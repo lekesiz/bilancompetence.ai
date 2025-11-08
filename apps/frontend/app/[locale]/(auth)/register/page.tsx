@@ -42,7 +42,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-6">
+          <Link href="/fr" className="inline-block mb-6">
             <div className="text-4xl font-bold text-white">
               BilanCompetence<span className="text-yellow-400">.AI</span>
             </div>

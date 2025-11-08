@@ -57,7 +57,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-6">
+          <Link href="/fr" className="inline-block mb-6">
             <div className="text-4xl font-bold text-white">
               BilanCompetence<span className="text-yellow-400">.AI</span>
             </div>
@@ -235,7 +235,7 @@ export default function LoginPage() {
         {/* Back to Home */}
         <div className="text-center mt-6">
           <Link
-            href="/"
+            href="/fr"
             className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-semibold transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
