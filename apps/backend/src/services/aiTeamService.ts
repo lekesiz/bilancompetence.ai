@@ -13,6 +13,7 @@
  */
 
 import { getGeminiService, GeminiResponse } from './geminiAIService';
+import { getOpenAIService, OpenAIResponse } from './openaiAIService.js';
 
 export interface AITeamMember {
   name: string;
@@ -66,7 +67,7 @@ class AITeamService {
       name: 'GPT-4',
       provider: 'openai',
       specialization: ['general-knowledge', 'problem-solving', 'code-generation', 'planning'],
-      enabled: false, // Requires API key
+      enabled: !!process.env.OPENAI_API_KEY,
       priority: 3,
     },
     {
@@ -208,20 +209,20 @@ class AITeamService {
     const startTime = Date.now();
 
     try {
-      let response: GeminiResponse;
+      let response: GeminiResponse | OpenAIResponse;
 
       switch (member.provider) {
         case 'gemini':
           response = await this.executeGemini(task);
           break;
 
+        case 'openai':
+          response = await this.executeOpenAI(task);
+          break;
+
         case 'claude':
           // TODO: Implement Claude API
           throw new Error('Claude API not yet implemented');
-
-        case 'openai':
-          // TODO: Implement OpenAI API
-          throw new Error('OpenAI API not yet implemented');
 
         case 'ollama':
           // TODO: Implement Ollama API
@@ -277,6 +278,67 @@ class AITeamService {
       case 'general':
       default:
         return gemini.generateResponse(task.task, task.context);
+    }
+  }
+
+  /**
+   * Execute with OpenAI GPT-4
+   */
+  private async executeOpenAI(task: AITeamTask): Promise<OpenAIResponse> {
+    const openai = getOpenAIService();
+
+    switch (task.type) {
+      case 'code-review':
+        if (!task.code || !task.language) {
+          throw new Error('Code and language required for code review');
+        }
+        const reviewResult = await openai.analyzeCode(task.code, task.language, task.context);
+        return {
+          text: reviewResult,
+          model: openai.getConfig().model,
+          tokensUsed: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+          finishReason: 'stop',
+        };
+
+      case 'debug':
+        if (!task.code || !task.error || !task.language) {
+          throw new Error('Code, error, and language required for debugging');
+        }
+        const debugResult = await openai.debugCode(task.code, task.error, task.language);
+        return {
+          text: debugResult,
+          model: openai.getConfig().model,
+          tokensUsed: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+          finishReason: 'stop',
+        };
+
+      case 'analysis':
+        if (!task.code || !task.language) {
+          throw new Error('Code and language required for analysis');
+        }
+        const analysisResult = await openai.analyzeCode(task.code, task.language, task.task);
+        return {
+          text: analysisResult,
+          model: openai.getConfig().model,
+          tokensUsed: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+          finishReason: 'stop',
+        };
+
+      case 'documentation':
+        if (!task.code || !task.language) {
+          throw new Error('Code and language required for documentation');
+        }
+        const docResult = await openai.generateDocumentation(task.code, task.language);
+        return {
+          text: docResult,
+          model: openai.getConfig().model,
+          tokensUsed: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+          finishReason: 'stop',
+        };
+
+      case 'general':
+      default:
+        return openai.generateResponse(task.task, task.context);
     }
   }
 
