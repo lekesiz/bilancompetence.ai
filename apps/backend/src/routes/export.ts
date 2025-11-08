@@ -10,7 +10,7 @@ import {
   exportAnalyticsSummaryToCSV,
   generateCSVFilename,
 } from '../services/csvService.js';
-import { getUserActivityStats } from '../services/analyticsService.js';
+import { getUserActivityStats } from '../services/analyticsServiceNeon.js';
 import { logger } from '../utils/logger.js';
 import {
   generateAssessmentPDF,

@@ -7,14 +7,14 @@ import {
   getAssessmentStats,
 } from '../services/analyticsServiceNeon.js';
 import { logger } from '../utils/logger.js';
-import {
-  getAssessmentAnalytics,
-  getAssessmentsTimeSeries,
-  getAssessmentTypeDistribution,
-  getRecommendationEffectiveness,
-  getSkillProficiency,
-  generateReportData,
-} from '../services/analyticsService.js';
+
+// TODO: Temporary stubs - implement these in analyticsServiceNeon.js
+const getAssessmentAnalytics = async (id: string) => ({ message: 'Not implemented yet' });
+const getAssessmentsTimeSeries = async (userId: string, weeks: number) => ({ message: 'Not implemented yet' });
+const getAssessmentTypeDistribution = async () => ({ message: 'Not implemented yet' });
+const getRecommendationEffectiveness = async (userId: string) => ({ message: 'Not implemented yet' });
+const getSkillProficiency = async (userId: string) => ({ message: 'Not implemented yet' });
+const generateReportData = async (userId: string, reportType: string) => ({ message: 'Not implemented yet' });
 
 const router = Router();
 
