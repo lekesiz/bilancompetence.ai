@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Button from '@/components/qualiopi/Button';
 import Card from '@/components/qualiopi/Card';
@@ -17,6 +17,7 @@ export const dynamic = 'force-dynamic';
 
 export default function LoginPage() {
   const router = useRouter();
+  const locale = useLocale();
   const { login: authLogin, isLoading, error, clearError } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const t = useTranslations('auth');
@@ -42,7 +43,7 @@ export default function LoginPage() {
     const success = await authLogin(data.email, data.password);
 
     if (success) {
-      router.push('/fr/dashboard');
+      router.push(`/${locale}/dashboard`);
     }
   };
 
@@ -57,7 +58,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/fr" className="inline-block mb-6">
+          <Link href={`/${locale}`} className="inline-block mb-6">
             <div className="text-4xl font-bold text-white">
               BilanCompetence<span className="text-yellow-400">.AI</span>
             </div>
@@ -106,6 +107,7 @@ export default function LoginPage() {
                 {...register('email')}
                 id="email"
                 type="email"
+                autoComplete="email"
                 placeholder={t('emailPlaceholder')}
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isLoading}
@@ -127,7 +129,7 @@ export default function LoginPage() {
                   {t('passwordLabel')}
                 </label>
                 <Link
-                  href="/forgot-password"
+                  href={`/${locale}/forgot-password`}
                   className="text-sm text-primary-600 hover:text-primary-700 font-semibold"
                 >
                   {t('forgotPassword')}
@@ -138,6 +140,7 @@ export default function LoginPage() {
                   {...register('password')}
                   id="password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   placeholder={t('passwordPlaceholder')}
                   className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed pr-12"
                   disabled={isLoading}
@@ -222,7 +225,7 @@ export default function LoginPage() {
           </div>
 
           {/* Sign Up Link */}
-          <Link href="/fr/register">
+          <Link href={`/${locale}/register`}>
             <Button variant="outline" size="lg" className="w-full">
               {t('createAccount')}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +238,7 @@ export default function LoginPage() {
         {/* Back to Home */}
         <div className="text-center mt-6">
           <Link
-            href="/fr"
+            href={`/${locale}`}
             className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-semibold transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
