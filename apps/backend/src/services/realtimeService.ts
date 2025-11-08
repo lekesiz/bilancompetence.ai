@@ -1,6 +1,7 @@
 import { Server as HTTPServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
+import { logger } from '../utils/logger.js';
 
 /**
  * Real-time Service - WebSocket communication
@@ -77,11 +78,11 @@ class RealtimeService {
           socket.data.userEmail = decoded.email;
           next();
         } catch (jwtError: any) {
-          console.error('JWT verification failed:', jwtError.message);
+          logger.error('JWT verification failed:', jwtError.message);
           return next(new Error('Authentication error: Invalid or expired token'));
         }
       } catch (error) {
-        console.error('Socket authentication error:', error);
+        logger.error('Socket authentication error:', error);
         next(new Error('Authentication failed'));
       }
     });
@@ -93,7 +94,7 @@ class RealtimeService {
   private setupEventHandlers() {
     this.io.on('connection', (socket: Socket) => {
       const userId = socket.data.userId;
-      console.log(`User ${userId} connected via socket ${socket.id}`);
+      logger.info(`User ${userId} connected via socket ${socket.id}`);
 
       // Store connection
       this.registerUserConnection(userId, socket.id);
@@ -110,7 +111,7 @@ class RealtimeService {
 
       // Handle custom events
       socket.on('notification_ack', (data) => {
-        console.log(`Notification ACK from ${userId}:`, data);
+        logger.info(`Notification ACK from ${userId}:`, data);
       });
 
       socket.on('message', (data) => {
@@ -122,12 +123,12 @@ class RealtimeService {
       });
 
       socket.on('disconnect', () => {
-        console.log(`User ${userId} disconnected`);
+        logger.info(`User ${userId} disconnected`);
         this.removeUserConnection(userId, socket.id);
       });
 
       socket.on('error', (error) => {
-        console.error(`Socket error for user ${userId}:`, error);
+        logger.error(`Socket error for user ${userId}:`, error);
       });
     });
   }
@@ -178,7 +179,7 @@ class RealtimeService {
     });
 
     // Store message in database (in production)
-    console.log(`Message from ${userId} to ${recipientId}: ${message}`);
+    logger.info(`Message from ${userId} to ${recipientId}: ${message}`);
   }
 
   /**

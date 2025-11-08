@@ -6,6 +6,7 @@ import {
   getOrganizationStats,
   getAssessmentStats,
 } from '../services/analyticsServiceNeon.js';
+import { logger } from '../utils/logger.js';
 import {
   getAssessmentAnalytics,
   getAssessmentsTimeSeries,
@@ -83,7 +84,7 @@ router.get('/user-activity', authMiddleware, async (req: Request, res: Response)
       data: stats,
     });
   } catch (error) {
-    console.error('User activity error:', error);
+    logger.error('User activity error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch user activity',
@@ -125,7 +126,7 @@ router.get(
         data: stats,
       });
     } catch (error) {
-      console.error('Organization stats error:', error);
+      logger.error('Organization stats error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch organization statistics',
@@ -149,7 +150,7 @@ router.get('/assessment/:assessmentId', authMiddleware, async (req: Request, res
       data: analytics,
     });
   } catch (error) {
-    console.error('Assessment analytics error:', error);
+    logger.error('Assessment analytics error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch assessment analytics',
@@ -178,7 +179,7 @@ router.get('/time-series', authMiddleware, async (req: Request, res: Response) =
       data: timeSeries,
     });
   } catch (error) {
-    console.error('Time series error:', error);
+    logger.error('Time series error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch time series data',
@@ -199,7 +200,7 @@ router.get('/assessment-types', authMiddleware, async (req: Request, res: Respon
       data: distribution,
     });
   } catch (error) {
-    console.error('Assessment types error:', error);
+    logger.error('Assessment types error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch assessment type distribution',
@@ -227,7 +228,7 @@ router.get('/recommendation-effectiveness', authMiddleware, async (req: Request,
       data: effectiveness,
     });
   } catch (error) {
-    console.error('Recommendation effectiveness error:', error);
+    logger.error('Recommendation effectiveness error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch recommendation effectiveness',
@@ -255,7 +256,7 @@ router.get('/skills', authMiddleware, async (req: Request, res: Response) => {
       data: skills,
     });
   } catch (error) {
-    console.error('Skills error:', error);
+    logger.error('Skills error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch skills',
@@ -284,7 +285,7 @@ router.get('/report', authMiddleware, async (req: Request, res: Response) => {
       data: reportData,
     });
   } catch (error) {
-    console.error('Report error:', error);
+    logger.error('Report error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to generate report',

@@ -6,6 +6,7 @@ import multer from 'multer';
 // const pdfParse = require('pdf-parse');
 import mammoth from 'mammoth';
 import { authenticateToken } from '../middleware/auth.js';
+import { logger } from '../utils/logger.js';
 import {
   saveCVAnalysis,
   saveJobRecommendation,
@@ -151,7 +152,7 @@ router.post(
           return res.status(400).json({ error: 'Unsupported file type' });
         }
       } catch (extractError) {
-        console.error('Error extracting text from file:', extractError);
+        logger.error('Error extracting text from file:', extractError);
         return res.status(500).json({ error: 'Failed to extract text from CV file' });
       }
 
@@ -194,7 +195,7 @@ ${cv_text}`;
 
       res.json({ analysis });
     } catch (error) {
-      console.error('Error analyzing CV:', error);
+      logger.error('Error analyzing CV:', error);
       res.status(500).json({ error: 'Failed to analyze CV' });
     }
   }
@@ -315,7 +316,7 @@ Pour chaque métier, fournis au format JSON:
 
     res.json({ recommendations });
   } catch (error) {
-    console.error('Error getting job recommendations:', error);
+    logger.error('Error getting job recommendations:', error);
     res.status(500).json({ error: 'Failed to get recommendations' });
   }
 });
@@ -429,7 +430,7 @@ Fournis une analyse au format JSON:
 
     res.json({ analysis });
   } catch (error) {
-    console.error('Error analyzing personality:', error);
+    logger.error('Error analyzing personality:', error);
     res.status(500).json({ error: 'Failed to analyze personality' });
   }
 });
@@ -575,7 +576,7 @@ Fournis un plan au format JSON:
 
     res.json({ action_plan: actionPlan });
   } catch (error) {
-    console.error('Error generating action plan:', error);
+    logger.error('Error generating action plan:', error);
     res.status(500).json({ error: 'Failed to generate action plan' });
   }
 });
@@ -629,7 +630,7 @@ async function callGeminiAPI(prompt: string): Promise<any> {
       return { result: text };
     }
   } catch (error) {
-    console.error('Gemini API call failed:', error);
+    logger.error('Gemini API call failed:', error);
     throw error;
   }
 }

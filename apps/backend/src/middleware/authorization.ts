@@ -5,6 +5,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { supabase } from '../config/supabase.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Type de ressource à autoriser
@@ -86,7 +87,7 @@ export const authorizeResource = (resourceType: ResourceType) => {
 
       next();
     } catch (error) {
-      console.error('Authorization error:', error);
+      logger.error('Authorization error:', error);
       res.status(500).json({ error: 'Internal server error during authorization' });
     }
   };
@@ -128,7 +129,7 @@ async function checkAuthorization(
       return await checkActionPlanAuthorization(resourceId, userId, userRole);
 
     default:
-      console.warn(`Unknown resource type: ${resourceType}`);
+      logger.warn(`Unknown resource type: ${resourceType}`);
       return false;
   }
 }
@@ -152,7 +153,7 @@ async function checkBilanAuthorization(
     .single();
 
   if (error || !bilan) {
-    console.error('Error fetching bilan:', error);
+    logger.error('Error fetching bilan:', error);
     return false;
   }
 
@@ -191,7 +192,7 @@ async function checkAssessmentAuthorization(
     .single();
 
   if (error || !assessment) {
-    console.error('Error fetching assessment:', error);
+    logger.error('Error fetching assessment:', error);
     return false;
   }
 
@@ -225,7 +226,7 @@ async function checkAppointmentAuthorization(
     .single();
 
   if (error || !appointment) {
-    console.error('Error fetching appointment:', error);
+    logger.error('Error fetching appointment:', error);
     return false;
   }
 
@@ -250,7 +251,7 @@ async function checkDocumentAuthorization(
     .single();
 
   if (error || !document) {
-    console.error('Error fetching document:', error);
+    logger.error('Error fetching document:', error);
     return false;
   }
 
@@ -282,7 +283,7 @@ async function checkCVAnalysisAuthorization(
     .single();
 
   if (error || !analysis) {
-    console.error('Error fetching CV analysis:', error);
+    logger.error('Error fetching CV analysis:', error);
     return false;
   }
 
@@ -304,7 +305,7 @@ async function checkJobRecommendationAuthorization(
     .single();
 
   if (error || !recommendation) {
-    console.error('Error fetching job recommendation:', error);
+    logger.error('Error fetching job recommendation:', error);
     return false;
   }
 
@@ -326,7 +327,7 @@ async function checkPersonalityAnalysisAuthorization(
     .single();
 
   if (error || !analysis) {
-    console.error('Error fetching personality analysis:', error);
+    logger.error('Error fetching personality analysis:', error);
     return false;
   }
 
@@ -348,7 +349,7 @@ async function checkActionPlanAuthorization(
     .single();
 
   if (error || !plan) {
-    console.error('Error fetching action plan:', error);
+    logger.error('Error fetching action plan:', error);
     return false;
   }
 

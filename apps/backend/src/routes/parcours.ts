@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
+import { logger } from '../utils/logger.js';
 import {
   getAssessmentWithParcours,
   completePhase,
@@ -68,7 +69,7 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
       overall_progress: calculateOverallProgress(phases),
     });
   } catch (error) {
-    console.error('Error fetching parcours:', error);
+    logger.error('Error fetching parcours:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -125,7 +126,7 @@ router.post(
         next_phase: 'investigation',
       });
     } catch (error) {
-      console.error('Error completing phase:', error);
+      logger.error('Error completing phase:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   }
@@ -154,7 +155,7 @@ router.post(
         next_phase: 'conclusion',
       });
     } catch (error) {
-      console.error('Error completing phase:', error);
+      logger.error('Error completing phase:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   }
@@ -183,7 +184,7 @@ router.post(
         status: 'completed',
       });
     } catch (error) {
-      console.error('Error completing phase:', error);
+      logger.error('Error completing phase:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   }
@@ -209,7 +210,7 @@ router.post('/:assessmentId/answers', authenticateToken, async (req: Request, re
 
     res.json({ answer });
   } catch (error) {
-    console.error('Error saving answer:', error);
+    logger.error('Error saving answer:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

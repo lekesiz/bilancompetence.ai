@@ -18,12 +18,12 @@ const ENVIRONMENT = process.env.NODE_ENV || 'development';
  * DISABLED: Use initSentry() from utils/errors.ts instead
  */
 export function initSentry() {
-  console.log('Sentry config disabled - use initSentry() from utils/errors.ts instead');
+  logger.info('Sentry config disabled - use initSentry() from utils/errors.ts instead');
   return;
 
   /* COMMENTED OUT - Install @sentry/node to re-enable
   if (!SENTRY_DSN) {
-    console.log('Sentry DSN not provided, error tracking disabled');
+    logger.info('Sentry DSN not provided, error tracking disabled');
     return;
   }
 
@@ -92,7 +92,7 @@ export function captureApiError(
   }
 ) {
   // Log to console instead of Sentry
-  console.error('API Error:', error, context);
+  logger.error('API Error:', error, context);
   return;
 
   /* COMMENTED OUT - Install @sentry/node to re-enable
@@ -135,7 +135,7 @@ export function captureDatabaseError(
   }
 ) {
   // Log to console instead of Sentry
-  console.error('Database Error:', error, context);
+  logger.error('Database Error:', error, context);
   return;
 
   /* COMMENTED OUT - Install @sentry/node to re-enable
@@ -174,7 +174,7 @@ export function captureServiceError(
   }
 ) {
   // Log to console instead of Sentry
-  console.error('Service Error:', error, context);
+  logger.error('Service Error:', error, context);
   return;
 
   /* COMMENTED OUT - Install @sentry/node to re-enable

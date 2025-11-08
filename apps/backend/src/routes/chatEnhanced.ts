@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import * as chatService from '../services/chatService.js';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -32,7 +33,7 @@ router.get('/conversations', authenticateToken, async (req: Request, res: Respon
 
     res.status(200).json({ conversations });
   } catch (error: unknown) {
-    console.error('Erreur /chat/conversations:', error);
+    logger.error('Erreur /chat/conversations:', error);
     res
       .status(500)
       .json({ error: error.message || 'Erreur lors de la récupération des conversations' });
@@ -85,7 +86,7 @@ router.post('/conversations', authenticateToken, async (req: Request, res: Respo
 
     res.status(200).json({ conversation });
   } catch (error: unknown) {
-    console.error('Erreur /chat/conversations POST:', error);
+    logger.error('Erreur /chat/conversations POST:', error);
     res
       .status(500)
       .json({ error: error.message || 'Erreur lors de la création de la conversation' });
@@ -142,7 +143,7 @@ router.get(
 
       res.status(200).json({ messages });
     } catch (error: unknown) {
-      console.error('Erreur /chat/conversations/:id/messages:', error);
+      logger.error('Erreur /chat/conversations/:id/messages:', error);
       res
         .status(500)
         .json({ error: error.message || 'Erreur lors de la récupération des messages' });
@@ -217,7 +218,7 @@ router.post('/messages', authenticateToken, async (req: Request, res: Response) 
 
     res.status(201).json({ message: newMessage });
   } catch (error: unknown) {
-    console.error('Erreur /chat/messages POST:', error);
+    logger.error('Erreur /chat/messages POST:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -261,7 +262,7 @@ router.put('/messages/:messageId/read', authenticateToken, async (req: Request, 
 
     res.status(200).json({ message: 'Message marqué comme lu' });
   } catch (error: unknown) {
-    console.error('Erreur /chat/messages/:id/read:', error);
+    logger.error('Erreur /chat/messages/:id/read:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -308,7 +309,7 @@ router.put(
 
       res.status(200).json({ message: 'Conversation marquée comme lue' });
     } catch (error: unknown) {
-      console.error('Erreur /chat/conversations/:id/read:', error);
+      logger.error('Erreur /chat/conversations/:id/read:', error);
       res
         .status(500)
         .json({ error: error.message || 'Erreur lors du marquage de la conversation' });
@@ -343,7 +344,7 @@ router.get('/unread-count', authenticateToken, async (req: Request, res: Respons
 
     res.status(200).json({ count });
   } catch (error: unknown) {
-    console.error('Erreur /chat/unread-count:', error);
+    logger.error('Erreur /chat/unread-count:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -387,7 +388,7 @@ router.delete('/messages/:messageId', authenticateToken, async (req: Request, re
 
     res.status(200).json({ message: 'Message supprimé' });
   } catch (error: unknown) {
-    console.error('Erreur /chat/messages/:id DELETE:', error);
+    logger.error('Erreur /chat/messages/:id DELETE:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -437,7 +438,7 @@ router.get('/search', authenticateToken, async (req: Request, res: Response) => 
 
     res.status(200).json({ messages });
   } catch (error: unknown) {
-    console.error('Erreur /chat/search:', error);
+    logger.error('Erreur /chat/search:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -502,7 +503,7 @@ router.post('/upload', authenticateToken, async (req: Request, res: Response) =>
 
     res.status(200).json({ fileUrl });
   } catch (error: unknown) {
-    console.error('Erreur /chat/upload:', error);
+    logger.error('Erreur /chat/upload:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);

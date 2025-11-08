@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
 import * as sessionManagement from '../middleware/sessionManagement.js';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -68,7 +69,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 
     res.status(200).json({ sessions: sanitizedSessions });
   } catch (error: unknown) {
-    console.error('Erreur /sessions:', error);
+    logger.error('Erreur /sessions:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -131,7 +132,7 @@ router.delete('/:sessionId', authenticateToken, async (req: Request, res: Respon
 
     res.status(200).json({ message: 'Session révoquée avec succès' });
   } catch (error: unknown) {
-    console.error('Erreur /sessions/:id DELETE:', error);
+    logger.error('Erreur /sessions/:id DELETE:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -177,7 +178,7 @@ router.delete('/all/except-current', authenticateToken, async (req: Request, res
 
     res.status(200).json({ message: 'Toutes les autres sessions ont été révoquées' });
   } catch (error: unknown) {
-    console.error('Erreur /sessions/all DELETE:', error);
+    logger.error('Erreur /sessions/all DELETE:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);

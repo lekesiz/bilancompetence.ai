@@ -2,6 +2,7 @@ import express, { Request, Response, Router } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
 import stripeService from '../services/stripeService.js';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 import {
   handlePaymentSuccess,
   handlePaymentFailure,
@@ -99,7 +100,7 @@ router.post('/create-payment-intent', async (req: Request, res: Response) => {
       paymentIntentId: paymentIntent.id,
     });
   } catch (error: unknown) {
-    console.error('Create payment intent error:', error);
+    logger.error('Create payment intent error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -138,7 +139,7 @@ router.post('/create-subscription', async (req: Request, res: Response) => {
       status: subscription.status,
     });
   } catch (error: unknown) {
-    console.error('Create subscription error:', error);
+    logger.error('Create subscription error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -181,7 +182,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       url: session.url,
     });
   } catch (error: unknown) {
-    console.error('Create checkout session error:', error);
+    logger.error('Create checkout session error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -210,7 +211,7 @@ router.post('/cancel-subscription', async (req: Request, res: Response) => {
       canceledAt: subscription.canceled_at,
     });
   } catch (error: unknown) {
-    console.error('Cancel subscription error:', error);
+    logger.error('Cancel subscription error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -237,7 +238,7 @@ router.get('/subscription/:subscriptionId', async (req: Request, res: Response) 
       items: subscription.items.data,
     });
   } catch (error: unknown) {
-    console.error('Get subscription error:', error);
+    logger.error('Get subscription error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -264,7 +265,7 @@ router.post('/customer-portal', async (req: Request, res: Response) => {
       url: session.url,
     });
   } catch (error: unknown) {
-    console.error('Customer portal error:', error);
+    logger.error('Customer portal error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -292,7 +293,7 @@ router.get('/prices', async (req: Request, res: Response) => {
       })),
     });
   } catch (error: unknown) {
-    console.error('List prices error:', error);
+    logger.error('List prices error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -324,7 +325,7 @@ router.get('/invoices/:customerId', async (req: Request, res: Response) => {
       })),
     });
   } catch (error: unknown) {
-    console.error('List invoices error:', error);
+    logger.error('List invoices error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -378,12 +379,12 @@ router.post('/webhook', async (req: Request, res: Response) => {
         break;
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        logger.info(`Unhandled event type: ${event.type}`);
     }
 
     res.json({ received: true });
   } catch (error: unknown) {
-    console.error('Webhook error:', error);
+    logger.error('Webhook error:', error);
     res.status(400).json({ error: error.message });
   }
 });

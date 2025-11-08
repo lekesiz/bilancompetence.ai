@@ -9,6 +9,7 @@
  */
 
 import { pool } from '../config/neon.js';
+import { logger } from '../utils/logger.js';
 
 interface IndicatorStatus {
   indicator_id: number;
@@ -106,7 +107,7 @@ export class QualioptService {
         reviewed_by_name: indicator.organization_qualiopi_status[0]?.users?.full_name || null,
       }));
     } catch (error) {
-      console.error('Error in getIndicators:', error);
+      logger.error('Error in getIndicators:', error);
       throw error;
     }
   }
@@ -161,7 +162,7 @@ export class QualioptService {
         evidence: evidence || [],
       };
     } catch (error) {
-      console.error('Error in getIndicatorDetails:', error);
+      logger.error('Error in getIndicatorDetails:', error);
       throw error;
     }
   }
@@ -205,7 +206,7 @@ export class QualioptService {
 
       return data?.[0];
     } catch (error) {
-      console.error('Error in updateIndicatorStatus:', error);
+      logger.error('Error in updateIndicatorStatus:', error);
       throw error;
     }
   }
@@ -248,7 +249,7 @@ export class QualioptService {
 
       return data?.[0];
     } catch (error) {
-      console.error('Error in addEvidence:', error);
+      logger.error('Error in addEvidence:', error);
       throw error;
     }
   }
@@ -290,7 +291,7 @@ export class QualioptService {
         created_at: item.created_at,
       }));
     } catch (error) {
-      console.error('Error in getEvidenceForIndicator:', error);
+      logger.error('Error in getEvidenceForIndicator:', error);
       throw error;
     }
   }
@@ -324,7 +325,7 @@ export class QualioptService {
         .single();
 
       if (orgError && orgError.code !== 'PGRST116') {
-        console.error('Error fetching org data:', orgError);
+        logger.error('Error fetching org data:', orgError);
       }
 
       const org = orgData as any;
@@ -336,7 +337,7 @@ export class QualioptService {
         last_audit_date: org?.qualiopi_last_audit_date || null,
       };
     } catch (error) {
-      console.error('Error in getCompliancePercentage:', error);
+      logger.error('Error in getCompliancePercentage:', error);
       throw error;
     }
   }
@@ -350,7 +351,7 @@ export class QualioptService {
       const allIndicators = await this.getIndicators();
       return allIndicators.filter((ind: any) => coreIndicatorIds.includes(ind.indicator_id));
     } catch (error) {
-      console.error('Error in getCoreIndicators:', error);
+      logger.error('Error in getCoreIndicators:', error);
       throw error;
     }
   }
@@ -376,7 +377,7 @@ export class QualioptService {
         details,
       });
     } catch (error) {
-      console.error('Error logging audit event:', error);
+      logger.error('Error logging audit event:', error);
       // Don't throw - audit logging shouldn't fail the main operation
     }
   }
@@ -409,7 +410,7 @@ export class QualioptService {
 
       return data || [];
     } catch (error) {
-      console.error('Error in getAuditLog:', error);
+      logger.error('Error in getAuditLog:', error);
       throw error;
     }
   }

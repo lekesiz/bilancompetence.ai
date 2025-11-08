@@ -87,7 +87,7 @@ export async function createSession(
 
     return session;
   } catch (error: unknown) {
-    console.error('Erreur createSession:', error);
+    logger.error('Erreur createSession:', error);
     throw error;
   }
 }
@@ -138,13 +138,13 @@ export async function validateSession(token: string, req: Request): Promise<Sess
     const currentUserAgent = req.headers['user-agent'] || '';
 
     if (session.ip_address !== currentIp || session.user_agent !== currentUserAgent) {
-      console.warn(`Session suspecte détectée pour l'utilisateur ${userId}`);
+      logger.warn(`Session suspecte détectée pour l'utilisateur ${userId}`);
       // En production, envoyer une alerte email
     }
 
     return session;
   } catch (error: unknown) {
-    console.error('Erreur validateSession:', error);
+    logger.error('Erreur validateSession:', error);
     return null;
   }
 }
@@ -161,7 +161,7 @@ async function updateSessionActivity(sessionId: string): Promise<void> {
       })
       .eq('id', sessionId);
   } catch (error: unknown) {
-    console.error('Erreur updateSessionActivity:', error);
+    logger.error('Erreur updateSessionActivity:', error);
   }
 }
 
@@ -177,7 +177,7 @@ export async function revokeSession(sessionId: string): Promise<void> {
       })
       .eq('id', sessionId);
   } catch (error: unknown) {
-    console.error('Erreur revokeSession:', error);
+    logger.error('Erreur revokeSession:', error);
     throw error;
   }
 }
@@ -203,7 +203,7 @@ export async function revokeAllUserSessions(
 
     await query;
   } catch (error: unknown) {
-    console.error('Erreur revokeAllUserSessions:', error);
+    logger.error('Erreur revokeAllUserSessions:', error);
     throw error;
   }
 }
@@ -236,7 +236,7 @@ async function cleanupOldSessions(userId: string): Promise<void> {
       }
     }
   } catch (error: unknown) {
-    console.error('Erreur cleanupOldSessions:', error);
+    logger.error('Erreur cleanupOldSessions:', error);
   }
 }
 
@@ -258,7 +258,7 @@ export async function getUserActiveSessions(userId: string): Promise<SessionData
 
     return sessions || [];
   } catch (error: unknown) {
-    console.error('Erreur getUserActiveSessions:', error);
+    logger.error('Erreur getUserActiveSessions:', error);
     return [];
   }
 }
@@ -287,7 +287,7 @@ export function sessionValidationMiddleware(req: Request, res: Response, next: N
       next();
     })
     .catch((error) => {
-      console.error('Erreur de validation de session:', error);
+      logger.error('Erreur de validation de session:', error);
       res.status(500).json({ error: 'Erreur de validation de session' });
     });
 }
@@ -329,9 +329,9 @@ export async function cleanupExpiredSessions(): Promise<void> {
       .lt('expires_at', new Date().toISOString())
       .eq('is_active', true);
 
-    console.log('Sessions expirées nettoyées');
+    logger.info('Sessions expirées nettoyées');
   } catch (error: unknown) {
-    console.error('Erreur cleanupExpiredSessions:', error);
+    logger.error('Erreur cleanupExpiredSessions:', error);
   }
 }
 

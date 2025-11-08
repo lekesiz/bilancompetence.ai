@@ -8,6 +8,7 @@
 import { Router, Request, Response } from 'express';
 import { getAITeamService, AITeamTask, AITeamMode } from '../services/aiTeamService';
 import { authenticateToken } from '../middleware/authMiddleware';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -82,7 +83,7 @@ router.post('/execute', authenticateToken, async (req: Request, res: Response) =
       data: result,
     });
   } catch (error: any) {
-    console.error('[AITeam] Execute error:', error);
+    logger.error('[AITeam] Execute error:', error);
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to execute AI team task',
@@ -118,7 +119,7 @@ router.get('/members', authenticateToken, async (req: Request, res: Response) =>
       },
     });
   } catch (error: any) {
-    console.error('[AITeam] Get members error:', error);
+    logger.error('[AITeam] Get members error:', error);
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to get team members',
@@ -150,7 +151,7 @@ router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
       data: stats,
     });
   } catch (error: any) {
-    console.error('[AITeam] Get stats error:', error);
+    logger.error('[AITeam] Get stats error:', error);
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to get team stats',
@@ -213,7 +214,7 @@ router.post('/analyze-code', authenticateToken, async (req: Request, res: Respon
       data: result,
     });
   } catch (error: any) {
-    console.error('[AITeam] Analyze code error:', error);
+    logger.error('[AITeam] Analyze code error:', error);
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to analyze code',
@@ -273,7 +274,7 @@ router.post('/review-code', authenticateToken, async (req: Request, res: Respons
       data: result,
     });
   } catch (error: any) {
-    console.error('[AITeam] Review code error:', error);
+    logger.error('[AITeam] Review code error:', error);
     res.status(500).json({
       success: false,
       error: error.message || 'Failed to review code',

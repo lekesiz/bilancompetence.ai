@@ -11,6 +11,7 @@ import {
   generateCSVFilename,
 } from '../services/csvService.js';
 import { getUserActivityStats } from '../services/analyticsService.js';
+import { logger } from '../utils/logger.js';
 import {
   generateAssessmentPDF,
   generateUserAssessmentsSummary,
@@ -54,7 +55,7 @@ router.get('/assessments', authMiddleware, async (req: Request, res: Response) =
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.send(csv);
   } catch (error) {
-    console.error('Export assessments error:', error);
+    logger.error('Export assessments error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to export assessments',
@@ -93,7 +94,7 @@ router.get('/recommendations', authMiddleware, async (req: Request, res: Respons
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.send(csv);
   } catch (error) {
-    console.error('Export recommendations error:', error);
+    logger.error('Export recommendations error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to export recommendations',
@@ -132,7 +133,7 @@ router.get('/user-data', authMiddleware, async (req: Request, res: Response) => 
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.send(csv);
   } catch (error) {
-    console.error('Export user data error:', error);
+    logger.error('Export user data error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to export user data',
@@ -180,7 +181,7 @@ router.get(
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(csv);
     } catch (error) {
-      console.error('Export organization users error:', error);
+      logger.error('Export organization users error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to export organization users',
@@ -225,7 +226,7 @@ router.get(
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(csv);
     } catch (error) {
-      console.error('Export assessment results error:', error);
+      logger.error('Export assessment results error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to export assessment results',
@@ -266,7 +267,7 @@ router.get('/analytics', authMiddleware, async (req: Request, res: Response) => 
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.send(csv);
   } catch (error) {
-    console.error('Export analytics error:', error);
+    logger.error('Export analytics error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to export analytics',
@@ -378,7 +379,7 @@ router.post(
       res.setHeader('Content-Length', pdfBuffer.length);
       res.send(pdfBuffer);
     } catch (error) {
-      console.error('Export assessment PDF error:', error);
+      logger.error('Export assessment PDF error:', error);
 
       // Check if error is due to insufficient assessment data
       if (
@@ -452,7 +453,7 @@ router.post('/assessments/summary/pdf', authMiddleware, async (req: Request, res
     res.setHeader('Content-Length', pdfBuffer.length);
     res.send(pdfBuffer);
   } catch (error) {
-    console.error('Export assessments summary PDF error:', error);
+    logger.error('Export assessments summary PDF error:', error);
 
     // Check if error is due to missing assessments
     if ((error as Error).message.includes('No assessments found')) {

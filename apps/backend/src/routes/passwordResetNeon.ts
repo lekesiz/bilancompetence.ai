@@ -11,6 +11,7 @@ import {
 } from '../services/authFlowServiceNeon.js';
 import { generateToken, sendPasswordResetEmail } from '../services/emailService.js';
 import { passwordResetLimiter } from '../middleware/rateLimit.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -93,7 +94,7 @@ router.post('/request', passwordResetLimiter, async (req: Request, res: Response
         await sendPasswordResetEmail(email, resetToken, user.full_name);
         emailSent = true;
       } catch (emailError) {
-        console.warn('Failed to send password reset email:', emailError);
+        logger.warn('Failed to send password reset email:', emailError);
       }
     }
 
@@ -118,7 +119,7 @@ router.post('/request', passwordResetLimiter, async (req: Request, res: Response
       },
     });
   } catch (error) {
-    console.error('Password reset request error:', error);
+    logger.error('Password reset request error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to process password reset request',
@@ -219,7 +220,7 @@ router.post('/confirm', async (req: Request, res: Response) => {
       message: 'Password reset successful',
     });
   } catch (error) {
-    console.error('Password reset confirm error:', error);
+    logger.error('Password reset confirm error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to reset password',
@@ -280,7 +281,7 @@ router.post('/validate-token', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Token validation error:', error);
+    logger.error('Token validation error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to validate token',

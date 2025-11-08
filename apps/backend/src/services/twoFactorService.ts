@@ -1,5 +1,6 @@
 import { pool } from '../config/neon.js';
 import * as crypto from 'crypto';
+import { logger } from '../utils/logger.js';
 
 /**
  * Service de gestion de l'authentification à deux facteurs (2FA)
@@ -63,7 +64,7 @@ export async function generateTwoFactorSecret(userId: string): Promise<TwoFactor
       backupCodes, // Retourner les codes en clair (une seule fois)
     };
   } catch (error) {
-    console.error('Erreur generateTwoFactorSecret:', error);
+    logger.error('Erreur generateTwoFactorSecret:', error);
     throw error;
   }
 }
@@ -107,7 +108,7 @@ export async function enableTwoFactor(
 
     return { isValid: true, message: '2FA activé avec succès' };
   } catch (error) {
-    console.error('Erreur enableTwoFactor:', error);
+    logger.error('Erreur enableTwoFactor:', error);
     throw error;
   }
 }
@@ -165,7 +166,7 @@ export async function verifyTwoFactorToken(
 
     return { isValid: false, message: 'Code invalide' };
   } catch (error) {
-    console.error('Erreur verifyTwoFactorToken:', error);
+    logger.error('Erreur verifyTwoFactorToken:', error);
     throw error;
   }
 }
@@ -177,7 +178,7 @@ export async function disableTwoFactor(userId: string): Promise<void> {
   try {
     await pool.query('DELETE FROM user_two_factor WHERE user_id = $1', [userId]);
   } catch (error) {
-    console.error('Erreur disableTwoFactor:', error);
+    logger.error('Erreur disableTwoFactor:', error);
     throw error;
   }
 }
@@ -198,7 +199,7 @@ export async function isTwoFactorEnabled(userId: string): Promise<boolean> {
 
     return result.rows[0].is_enabled || false;
   } catch (error) {
-    console.error('Erreur isTwoFactorEnabled:', error);
+    logger.error('Erreur isTwoFactorEnabled:', error);
     return false;
   }
 }

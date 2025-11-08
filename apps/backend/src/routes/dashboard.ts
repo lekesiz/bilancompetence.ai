@@ -11,6 +11,7 @@ import {
   getRecentActivityByOrganization,
 } from '../services/dashboardServiceNeon.js';
 import { BilanStatus } from '../types/enums.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -65,7 +66,7 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Dashboard error:', error);
+    logger.error('Dashboard error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch dashboard',
@@ -136,7 +137,7 @@ router.get(
         },
       });
     } catch (error) {
-      console.error('Beneficiary dashboard error:', error);
+      logger.error('Beneficiary dashboard error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch beneficiary dashboard',
@@ -211,7 +212,7 @@ router.get(
         },
       });
     } catch (error) {
-      console.error('Consultant dashboard error:', error);
+      logger.error('Consultant dashboard error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch consultant dashboard',
@@ -275,7 +276,7 @@ router.get(
         },
       });
     } catch (error) {
-      console.error('Admin dashboard error:', error);
+      logger.error('Admin dashboard error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch admin dashboard',
@@ -428,7 +429,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       data: dashboardData,
     });
   } catch (error) {
-    console.error('Dashboard error:', error);
+    logger.error('Dashboard error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch dashboard data',
@@ -467,7 +468,7 @@ router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Stats error:', error);
+    logger.error('Stats error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch statistics',

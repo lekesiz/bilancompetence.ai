@@ -1,12 +1,13 @@
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { httpIntegration, expressIntegration } from '@sentry/node';
+import { logger } from '../utils/logger.js';
 
 export const initSentry = () => {
   const sentryDsn = process.env.SENTRY_DSN;
 
   if (!sentryDsn) {
-    console.warn('⚠️ SENTRY_DSN not configured. Error tracking disabled.');
+    logger.warn('⚠️ SENTRY_DSN not configured. Error tracking disabled.');
     return;
   }
 
@@ -37,7 +38,7 @@ export const initSentry = () => {
     },
   });
 
-  console.log('✅ Sentry initialized for error tracking');
+  logger.info('✅ Sentry initialized for error tracking');
 };
 
 export { Sentry };

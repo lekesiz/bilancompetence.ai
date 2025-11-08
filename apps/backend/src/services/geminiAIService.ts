@@ -12,6 +12,7 @@
  */
 
 import { GoogleGenerativeAI, GenerativeModel, GenerationConfig } from '@google/generative-ai';
+import { logger } from '../utils/logger.js';
 
 export interface GeminiConfig {
   apiKey: string;
@@ -97,7 +98,7 @@ class GeminiAIService {
         safetyRatings: response.candidates?.[0]?.safetyRatings,
       };
     } catch (error) {
-      console.error('[GeminiAIService] Error generating response:', error);
+      logger.error('[GeminiAIService] Error generating response:', error);
       throw error;
     }
   }
@@ -149,7 +150,7 @@ class GeminiAIService {
         safetyRatings: response.candidates?.[0]?.safetyRatings,
       };
     } catch (error) {
-      console.error('[GeminiAIService] Error in chat:', error);
+      logger.error('[GeminiAIService] Error in chat:', error);
       throw error;
     }
   }
@@ -264,7 +265,7 @@ Provide structured feedback:
       const result = await this.model.countTokens(text);
       return result.totalTokens;
     } catch (error) {
-      console.error('[GeminiAIService] Error counting tokens:', error);
+      logger.error('[GeminiAIService] Error counting tokens:', error);
       // Fallback: rough estimate (1 token ≈ 4 characters)
       return Math.ceil(text.length / 4);
     }

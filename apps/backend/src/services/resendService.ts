@@ -35,7 +35,7 @@ export class ResendService {
 
       return { id: result.data?.id || '' };
     } catch (error: unknown) {
-      console.error('Resend email error:', error);
+      logger.error('Resend email error:', error);
       throw new Error(`Failed to send email: ${error.message}`);
     }
   }

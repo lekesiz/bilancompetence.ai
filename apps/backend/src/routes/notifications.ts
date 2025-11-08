@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
+import { logger } from '../utils/logger.js';
 import {
   getUserNotifications,
   getUnreadCount,
@@ -49,7 +50,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       data: notifications,
     });
   } catch (error) {
-    console.error('Get notifications error:', error);
+    logger.error('Get notifications error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch notifications',
@@ -88,7 +89,7 @@ router.get('/unread/count', authMiddleware, async (req: Request, res: Response) 
       data: { unreadCount: count },
     });
   } catch (error) {
-    console.error('Get unread count error:', error);
+    logger.error('Get unread count error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch unread count',
@@ -130,7 +131,7 @@ router.put('/:id/read', authMiddleware, async (req: Request, res: Response) => {
       data: notification,
     });
   } catch (error) {
-    console.error('Mark as read error:', error);
+    logger.error('Mark as read error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to mark notification as read',
@@ -169,7 +170,7 @@ router.put('/read-all', authMiddleware, async (req: Request, res: Response) => {
       message: 'All notifications marked as read',
     });
   } catch (error) {
-    console.error('Mark all as read error:', error);
+    logger.error('Mark all as read error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to mark all notifications as read',
@@ -210,7 +211,7 @@ router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
       message: 'Notification deleted',
     });
   } catch (error) {
-    console.error('Delete notification error:', error);
+    logger.error('Delete notification error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to delete notification',

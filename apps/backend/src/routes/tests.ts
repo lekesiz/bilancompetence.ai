@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticateToken } from '../middleware/auth.js';
+import { logger } from '../utils/logger.js';
 import {
   getMBTIQuestions,
   getRIASECQuestions,
@@ -33,7 +34,7 @@ router.get('/mbti/questions', async (req: Request, res: Response) => {
     const questions = await getMBTIQuestions();
     res.json(questions || []);
   } catch (error) {
-    console.error('Error fetching MBTI questions:', error);
+    logger.error('Error fetching MBTI questions:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -62,7 +63,7 @@ router.get('/riasec/questions', async (req: Request, res: Response) => {
     const questions = await getRIASECQuestions();
     res.json(questions || []);
   } catch (error) {
-    console.error('Error fetching RIASEC questions:', error);
+    logger.error('Error fetching RIASEC questions:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -81,7 +82,7 @@ router.get('/:assessmentId', authenticateToken, async (req: Request, res: Respon
 
     res.json({ tests });
   } catch (error) {
-    console.error('Error fetching tests:', error);
+    logger.error('Error fetching tests:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -168,7 +169,7 @@ router.post('/:assessmentId/mbti', authenticateToken, async (req: Request, res: 
       description,
     });
   } catch (error) {
-    console.error('Error saving MBTI test:', error);
+    logger.error('Error saving MBTI test:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -209,7 +210,7 @@ router.post('/:assessmentId/riasec', authenticateToken, async (req: Request, res
       top_three: topThree,
     });
   } catch (error) {
-    console.error('Error saving RIASEC test:', error);
+    logger.error('Error saving RIASEC test:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -244,7 +245,7 @@ router.post(
 
       res.json({ test });
     } catch (error) {
-      console.error('Error saving competences test:', error);
+      logger.error('Error saving competences test:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   }
@@ -277,7 +278,7 @@ router.post('/:assessmentId/valeurs', authenticateToken, async (req: Request, re
 
     res.json({ test });
   } catch (error) {
-    console.error('Error saving valeurs test:', error);
+    logger.error('Error saving valeurs test:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

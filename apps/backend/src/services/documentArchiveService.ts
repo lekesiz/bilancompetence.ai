@@ -12,6 +12,7 @@
 
 import { pool } from '../config/neon.js';
 import crypto from 'crypto';
+import { logger } from '../utils/logger.js';
 
 interface ArchivedDocument {
   id: string;
@@ -150,7 +151,7 @@ export class DocumentArchiveService {
         retention_until: doc.retention_until,
       };
     } catch (error) {
-      console.error('Error in archiveDocument:', error);
+      logger.error('Error in archiveDocument:', error);
       throw error;
     }
   }
@@ -230,7 +231,7 @@ export class DocumentArchiveService {
         retention_until: doc.retention_until,
       }));
     } catch (error) {
-      console.error('Error in getArchivedDocuments:', error);
+      logger.error('Error in getArchivedDocuments:', error);
       throw error;
     }
   }
@@ -280,7 +281,7 @@ export class DocumentArchiveService {
         access_count: accessLog?.length || 0,
       };
     } catch (error) {
-      console.error('Error in getDocumentDetails:', error);
+      logger.error('Error in getDocumentDetails:', error);
       throw error;
     }
   }
@@ -308,7 +309,7 @@ export class DocumentArchiveService {
 
       if (error) throw new Error(`Failed to log access: ${error.message}`);
     } catch (error) {
-      console.error('Error in logAccess:', error);
+      logger.error('Error in logAccess:', error);
       // Don't throw - logging shouldn't fail the main operation
     }
   }
@@ -347,7 +348,7 @@ export class DocumentArchiveService {
         notes: entry.notes,
       }));
     } catch (error) {
-      console.error('Error in getAccessLog:', error);
+      logger.error('Error in getAccessLog:', error);
       throw error;
     }
   }
@@ -397,7 +398,7 @@ export class DocumentArchiveService {
         documents_expiring_soon: expiringsoon,
       };
     } catch (error) {
-      console.error('Error in getArchiveStats:', error);
+      logger.error('Error in getArchiveStats:', error);
       throw error;
     }
   }
@@ -421,10 +422,10 @@ export class DocumentArchiveService {
 
       const deletedCount = (data || []).length;
 
-      console.log(`Retention policy applied: ${deletedCount} documents marked for deletion`);
+      logger.info(`Retention policy applied: ${deletedCount} documents marked for deletion`);
       return deletedCount;
     } catch (error) {
-      console.error('Error in applyRetentionPolicy:', error);
+      logger.error('Error in applyRetentionPolicy:', error);
       throw error;
     }
   }
@@ -445,7 +446,7 @@ export class DocumentArchiveService {
       const doc = document as any;
       return doc.file_hash === currentHash;
     } catch (error) {
-      console.error('Error in verifyDocumentIntegrity:', error);
+      logger.error('Error in verifyDocumentIntegrity:', error);
       return false;
     }
   }
@@ -457,7 +458,7 @@ export class DocumentArchiveService {
     try {
       return await this.getArchivedDocuments({ bilanId });
     } catch (error) {
-      console.error('Error in getDocumentsForBilan:', error);
+      logger.error('Error in getDocumentsForBilan:', error);
       throw error;
     }
   }
@@ -494,7 +495,7 @@ export class DocumentArchiveService {
         createdByUserId
       );
     } catch (error) {
-      console.error('Error in autoArchiveDocument:', error);
+      logger.error('Error in autoArchiveDocument:', error);
       throw error;
     }
   }

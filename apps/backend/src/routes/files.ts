@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
+import { logger } from '../utils/logger.js';
 import {
   uploadFile,
   uploadAvatar,
@@ -78,7 +79,7 @@ router.post('/upload', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    logger.error('Upload error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to upload file',
@@ -118,7 +119,7 @@ router.post('/avatar', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Avatar upload error:', error);
+    logger.error('Avatar upload error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to upload avatar',
@@ -167,7 +168,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       data: files,
     });
   } catch (error) {
-    console.error('Get files error:', error);
+    logger.error('Get files error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch files',
@@ -196,7 +197,7 @@ router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
       message: 'File deleted',
     });
   } catch (error) {
-    console.error('Delete file error:', error);
+    logger.error('Delete file error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to delete file',
@@ -223,7 +224,7 @@ router.get('/:id/download', authMiddleware, async (req: Request, res: Response) 
       },
     });
   } catch (error) {
-    console.error('Get download URL error:', error);
+    logger.error('Get download URL error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to generate download URL',
@@ -267,7 +268,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error('Document upload error:', error);
+      logger.error('Document upload error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to upload document',
@@ -294,7 +295,7 @@ router.get(
         data: documents,
       });
     } catch (error) {
-      console.error('Get documents error:', error);
+      logger.error('Get documents error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch documents',

@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 
 // Make Stripe optional - only initialize if API key is provided
 const stripeApiKey = process.env.STRIPE_SECRET_KEY;
@@ -49,7 +50,7 @@ export class StripeService {
 
       return paymentIntent;
     } catch (error: unknown) {
-      console.error('Stripe payment intent error:', error);
+      logger.error('Stripe payment intent error:', error);
       throw new Error(`Failed to create payment intent: ${error.message}`);
     }
   }
@@ -81,7 +82,7 @@ export class StripeService {
 
       return customer;
     } catch (error: unknown) {
-      console.error('Stripe customer error:', error);
+      logger.error('Stripe customer error:', error);
       throw new Error(`Failed to create/get customer: ${error.message}`);
     }
   }
@@ -103,7 +104,7 @@ export class StripeService {
 
       return subscription;
     } catch (error: unknown) {
-      console.error('Stripe subscription error:', error);
+      logger.error('Stripe subscription error:', error);
       throw new Error(`Failed to create subscription: ${error.message}`);
     }
   }
@@ -117,7 +118,7 @@ export class StripeService {
       const subscription = await stripe!.subscriptions.cancel(subscriptionId);
       return subscription;
     } catch (error: unknown) {
-      console.error('Stripe cancel subscription error:', error);
+      logger.error('Stripe cancel subscription error:', error);
       throw new Error(`Failed to cancel subscription: ${error.message}`);
     }
   }
@@ -131,7 +132,7 @@ export class StripeService {
       const subscription = await stripe!.subscriptions.retrieve(subscriptionId);
       return subscription;
     } catch (error: unknown) {
-      console.error('Stripe get subscription error:', error);
+      logger.error('Stripe get subscription error:', error);
       throw new Error(`Failed to get subscription: ${error.message}`);
     }
   }
@@ -148,7 +149,7 @@ export class StripeService {
       const subscription = await stripe!.subscriptions.update(subscriptionId, updates);
       return subscription;
     } catch (error: unknown) {
-      console.error('Stripe update subscription error:', error);
+      logger.error('Stripe update subscription error:', error);
       throw new Error(`Failed to update subscription: ${error.message}`);
     }
   }
@@ -164,7 +165,7 @@ export class StripeService {
       const event = stripe!.webhooks.constructEvent(payload, signature, webhookSecret);
       return event;
     } catch (error: unknown) {
-      console.error('Stripe webhook error:', error);
+      logger.error('Stripe webhook error:', error);
       throw new Error(`Webhook signature verification failed: ${error.message}`);
     }
   }
@@ -185,7 +186,7 @@ export class StripeService {
 
       return session;
     } catch (error: unknown) {
-      console.error('Stripe portal session error:', error);
+      logger.error('Stripe portal session error:', error);
       throw new Error(`Failed to create portal session: ${error.message}`);
     }
   }
@@ -219,7 +220,7 @@ export class StripeService {
 
       return session;
     } catch (error: unknown) {
-      console.error('Stripe checkout session error:', error);
+      logger.error('Stripe checkout session error:', error);
       throw new Error(`Failed to create checkout session: ${error.message}`);
     }
   }
@@ -237,7 +238,7 @@ export class StripeService {
 
       return prices.data;
     } catch (error: unknown) {
-      console.error('Stripe list prices error:', error);
+      logger.error('Stripe list prices error:', error);
       throw new Error(`Failed to list prices: ${error.message}`);
     }
   }
@@ -251,7 +252,7 @@ export class StripeService {
       const invoice = await stripe!.invoices.retrieve(invoiceId);
       return invoice;
     } catch (error: unknown) {
-      console.error('Stripe get invoice error:', error);
+      logger.error('Stripe get invoice error:', error);
       throw new Error(`Failed to get invoice: ${error.message}`);
     }
   }
@@ -269,7 +270,7 @@ export class StripeService {
 
       return invoices.data;
     } catch (error: unknown) {
-      console.error('Stripe list invoices error:', error);
+      logger.error('Stripe list invoices error:', error);
       throw new Error(`Failed to list invoices: ${error.message}`);
     }
   }

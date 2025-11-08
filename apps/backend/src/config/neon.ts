@@ -1,10 +1,11 @@
 import { Pool, PoolClient } from 'pg';
+import { logger } from '../utils/logger.js';
 
 // Configuration de la connexion Neon PostgreSQL
 const DATABASE_URL = process.env.DATABASE_URL || process.env.NEON_DATABASE_URL;
 
 if (!DATABASE_URL) {
-  console.warn('⚠️  DATABASE_URL not configured. Database operations will fail.');
+  logger.warn('⚠️  DATABASE_URL not configured. Database operations will fail.');
 }
 
 // Créer le pool de connexions PostgreSQL
@@ -20,7 +21,7 @@ export const pool = new Pool({
 
 // Gérer les erreurs du pool
 pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
+  logger.error('❌ Unexpected error on idle client', err);
   process.exit(-1);
 });
 
@@ -142,10 +143,10 @@ export async function checkConnection(): Promise<boolean> {
     const client = await pool.connect();
     await client.query('SELECT 1');
     client.release();
-    console.log('✅ Connected to Neon PostgreSQL');
+    logger.info('✅ Connected to Neon PostgreSQL');
     return true;
   } catch (error) {
-    console.error('❌ Failed to connect to Neon PostgreSQL:', error);
+    logger.error('❌ Failed to connect to Neon PostgreSQL:', error);
     return false;
   }
 }
@@ -155,7 +156,7 @@ export async function checkConnection(): Promise<boolean> {
  */
 export async function closePool(): Promise<void> {
   await pool.end();
-  console.log('🔒 Neon PostgreSQL pool closed');
+  logger.info('🔒 Neon PostgreSQL pool closed');
 }
 
 // Vérifier la connexion au démarrage

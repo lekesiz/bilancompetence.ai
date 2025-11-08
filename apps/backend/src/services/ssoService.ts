@@ -1,6 +1,7 @@
 import { pool } from '../config/neon.js';
 import axios from 'axios';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Service de gestion SSO (Single Sign-On)
@@ -42,7 +43,7 @@ export async function exchangeGoogleCode(code: string): Promise<string> {
 
     return response.data.access_token;
   } catch (error: unknown) {
-    console.error('Erreur exchangeGoogleCode:', error.response?.data || error.message);
+    logger.error('Erreur exchangeGoogleCode:', error.response?.data || error.message);
     throw new Error("Échec de l'échange du code Google");
   }
 }
@@ -60,7 +61,7 @@ export async function getGoogleUserInfo(accessToken: string): Promise<GoogleUser
 
     return response.data;
   } catch (error: unknown) {
-    console.error('Erreur getGoogleUserInfo:', error.response?.data || error.message);
+    logger.error('Erreur getGoogleUserInfo:', error.response?.data || error.message);
     throw new Error('Échec de la récupération des informations Google');
   }
 }
@@ -131,7 +132,7 @@ export async function authenticateWithGoogle(code: string): Promise<SSOAuthResul
       isNewUser,
     };
   } catch (error: unknown) {
-    console.error('Erreur authenticateWithGoogle:', error);
+    logger.error('Erreur authenticateWithGoogle:', error);
     throw error;
   }
 }
@@ -162,7 +163,7 @@ export async function exchangeMicrosoftCode(code: string): Promise<string> {
 
     return response.data.access_token;
   } catch (error: unknown) {
-    console.error('Erreur exchangeMicrosoftCode:', error.response?.data || error.message);
+    logger.error('Erreur exchangeMicrosoftCode:', error.response?.data || error.message);
     throw new Error("Échec de l'échange du code Microsoft");
   }
 }
@@ -180,7 +181,7 @@ export async function getMicrosoftUserInfo(accessToken: string): Promise<any> {
 
     return response.data;
   } catch (error: unknown) {
-    console.error('Erreur getMicrosoftUserInfo:', error.response?.data || error.message);
+    logger.error('Erreur getMicrosoftUserInfo:', error.response?.data || error.message);
     throw new Error('Échec de la récupération des informations Microsoft');
   }
 }
@@ -248,7 +249,7 @@ export async function authenticateWithMicrosoft(code: string): Promise<SSOAuthRe
       isNewUser,
     };
   } catch (error: unknown) {
-    console.error('Erreur authenticateWithMicrosoft:', error);
+    logger.error('Erreur authenticateWithMicrosoft:', error);
     throw error;
   }
 }
@@ -290,7 +291,7 @@ export async function revokeSSOAccess(
       [userId]
     );
   } catch (error: unknown) {
-    console.error('Erreur revokeSSOAccess:', error);
+    logger.error('Erreur revokeSSOAccess:', error);
     throw error;
   }
 }

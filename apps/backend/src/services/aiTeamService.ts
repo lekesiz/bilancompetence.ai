@@ -14,6 +14,7 @@
 
 import { getGeminiService, GeminiResponse } from './geminiAIService';
 import { getOpenAIService, OpenAIResponse } from './openaiAIService.js';
+import { logger } from '../utils/logger.js';
 
 export interface AITeamMember {
   name: string;
@@ -140,7 +141,7 @@ class AITeamService {
         strategy,
       };
     } catch (error) {
-      console.error('[AITeamService] Error executing task:', error);
+      logger.error('[AITeamService] Error executing task:', error);
       throw error;
     }
   }
@@ -179,7 +180,7 @@ class AITeamService {
         const result = await this.executeSingleMember(member, task);
         results.push(result);
       } catch (error) {
-        console.error(`[AITeamService] Error with ${member.name}:`, error);
+        logger.error(`[AITeamService] Error with ${member.name}:`, error);
         // Continue to next member
       }
     }
@@ -239,7 +240,7 @@ class AITeamService {
         executionTime: Date.now() - startTime,
       };
     } catch (error: any) {
-      console.error(`[AITeamService] Error with ${member.name}:`, error);
+      logger.error(`[AITeamService] Error with ${member.name}:`, error);
       throw error;
     }
   }

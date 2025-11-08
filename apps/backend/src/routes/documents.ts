@@ -5,6 +5,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -79,7 +80,7 @@ router.post('/synthese', async (req: Request, res: Response) => {
       downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
   } catch (error: unknown) {
-    console.error('Synthese generation error:', error);
+    logger.error('Synthese generation error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -139,7 +140,7 @@ router.post('/attestation', async (req: Request, res: Response) => {
       downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
   } catch (error: unknown) {
-    console.error('Attestation generation error:', error);
+    logger.error('Attestation generation error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -169,7 +170,7 @@ router.post('/action-plan', async (req: Request, res: Response) => {
       downloadUrl: `/api/documents/download/${path.basename(filepath)}`,
     });
   } catch (error: unknown) {
-    console.error('Action plan generation error:', error);
+    logger.error('Action plan generation error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -193,12 +194,12 @@ router.get('/download/:filename', (req: Request, res: Response) => {
 
     res.download(filepath, filename, (err) => {
       if (err) {
-        console.error('Download error:', err);
+        logger.error('Download error:', err);
         res.status(500).json({ error: 'Download failed' });
       }
     });
   } catch (error: unknown) {
-    console.error('Download error:', error);
+    logger.error('Download error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -229,7 +230,7 @@ router.get('/list', (req: Request, res: Response) => {
 
     res.json({ documents });
   } catch (error: unknown) {
-    console.error('List documents error:', error);
+    logger.error('List documents error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);
@@ -255,7 +256,7 @@ router.delete('/:filename', (req: Request, res: Response) => {
 
     res.json({ message: 'Document deleted successfully' });
   } catch (error: unknown) {
-    console.error('Delete document error:', error);
+    logger.error('Delete document error:', error);
     
           const statusCode = getErrorStatusCode(error);
           const message = getErrorMessage(error);

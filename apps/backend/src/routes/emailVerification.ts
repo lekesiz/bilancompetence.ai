@@ -14,6 +14,7 @@ import {
   sendAccountConfirmationEmail,
 } from '../services/emailService.js';
 import { emailVerificationLimiter } from '../middleware/rateLimit.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -85,7 +86,7 @@ router.post(
         message: 'Verification email sent',
       });
     } catch (error) {
-      console.error('Send verification email error:', error);
+      logger.error('Send verification email error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to send verification email',
@@ -180,7 +181,7 @@ router.post('/verify', async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Email verification error:', error);
+    logger.error('Email verification error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to verify email',
@@ -250,7 +251,7 @@ router.get('/status', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Email status check error:', error);
+    logger.error('Email status check error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to check verification status',

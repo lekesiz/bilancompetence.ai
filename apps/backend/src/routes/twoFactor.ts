@@ -4,6 +4,7 @@ import * as twoFactorService from '../services/twoFactorService.js';
 import { comparePassword } from '../services/authService.js';
 import { pool } from '../config/neon.js';
 import { getErrorMessage, getErrorStatusCode } from '../types/errors.js';
+import { logger } from '../utils/logger.js';
 
 const router = Router();
 
@@ -56,7 +57,7 @@ router.post('/setup', authenticateToken, async (req: Request, res: Response) => 
       backupCodes: twoFactorData.backupCodes,
     });
   } catch (error: unknown) {
-    console.error('Erreur /2fa/setup:', error);
+    logger.error('Erreur /2fa/setup:', error);
     
     const statusCode = getErrorStatusCode(error);
     const message = getErrorMessage(error);
@@ -115,7 +116,7 @@ router.post('/enable', authenticateToken, async (req: Request, res: Response) =>
 
     res.status(200).json({ message: result.message });
   } catch (error: unknown) {
-    console.error('Erreur /2fa/enable:', error);
+    logger.error('Erreur /2fa/enable:', error);
     
     const statusCode = getErrorStatusCode(error);
     const message = getErrorMessage(error);
@@ -171,7 +172,7 @@ router.post('/verify', async (req: Request, res: Response) => {
 
     res.status(200).json({ message: result.message, isValid: true });
   } catch (error: unknown) {
-    console.error('Erreur /2fa/verify:', error);
+    logger.error('Erreur /2fa/verify:', error);
     
     const statusCode = getErrorStatusCode(error);
     const message = getErrorMessage(error);
@@ -244,7 +245,7 @@ router.post('/disable', authenticateToken, async (req: Request, res: Response) =
 
     res.status(200).json({ message: '2FA désactivé avec succès' });
   } catch (error: unknown) {
-    console.error('Erreur /2fa/disable:', error);
+    logger.error('Erreur /2fa/disable:', error);
     
     const statusCode = getErrorStatusCode(error);
     const message = getErrorMessage(error);
@@ -269,7 +270,7 @@ router.get('/status', authenticateToken, async (req: Request, res: Response) => 
 
     res.status(200).json({ isEnabled });
   } catch (error: unknown) {
-    console.error('Erreur /2fa/status:', error);
+    logger.error('Erreur /2fa/status:', error);
     res
       .status(500)
       .json({ error: error.message || 'Erreur lors de la vérification du statut 2FA' });

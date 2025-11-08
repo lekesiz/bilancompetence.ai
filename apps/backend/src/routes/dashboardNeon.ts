@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware, requireRole } from '../middleware/auth.js';
 import { getUserById } from '../services/userServiceNeon.js';
+import { logger } from '../utils/logger.js';
 import {
   getBilansByBeneficiary,
   getRecommendationsByBeneficiary,
@@ -65,7 +66,7 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Dashboard /me error:', error);
+    logger.error('Dashboard /me error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch user profile',
@@ -134,7 +135,7 @@ router.get(
         },
       });
     } catch (error) {
-      console.error('Beneficiary dashboard error:', error);
+      logger.error('Beneficiary dashboard error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch beneficiary dashboard',
@@ -209,7 +210,7 @@ router.get(
         },
       });
     } catch (error) {
-      console.error('Consultant dashboard error:', error);
+      logger.error('Consultant dashboard error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch consultant dashboard',
@@ -308,7 +309,7 @@ router.get(
         },
       });
     } catch (error) {
-      console.error('Admin dashboard error:', error);
+      logger.error('Admin dashboard error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch admin dashboard',
@@ -365,7 +366,7 @@ router.get('/stats', authMiddleware, async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Stats error:', error);
+    logger.error('Stats error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch statistics',
@@ -504,7 +505,7 @@ router.get('/', authMiddleware, async (req: Request, res: Response) => {
       data: dashboardData,
     });
   } catch (error) {
-    console.error('Dashboard error:', error);
+    logger.error('Dashboard error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch dashboard data',

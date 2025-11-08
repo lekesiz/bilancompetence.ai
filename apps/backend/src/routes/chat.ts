@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth.js';
+import { logger } from '../utils/logger.js';
 import {
   createConversation,
   getUserConversations,
@@ -73,7 +74,7 @@ router.post('/conversations', authMiddleware, async (req: Request, res: Response
       data: conversation,
     });
   } catch (error) {
-    console.error('Create conversation error:', error);
+    logger.error('Create conversation error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to create conversation',
@@ -132,7 +133,7 @@ router.get('/conversations', authMiddleware, async (req: Request, res: Response)
       data: conversations,
     });
   } catch (error) {
-    console.error('Get conversations error:', error);
+    logger.error('Get conversations error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Failed to fetch conversations',
@@ -172,7 +173,7 @@ router.get(
         data: conversation,
       });
     } catch (error) {
-      console.error('Get conversation error:', error);
+      logger.error('Get conversation error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch conversation',
@@ -248,7 +249,7 @@ router.post(
         data: message,
       });
     } catch (error) {
-      console.error('Send message error:', error);
+      logger.error('Send message error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to send message',
@@ -308,7 +309,7 @@ router.get(
         data: messages.reverse(), // Reverse to get chronological order
       });
     } catch (error) {
-      console.error('Get messages error:', error);
+      logger.error('Get messages error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to fetch messages',
@@ -349,7 +350,7 @@ router.delete(
         message: 'Conversation deleted',
       });
     } catch (error) {
-      console.error('Delete conversation error:', error);
+      logger.error('Delete conversation error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to delete conversation',
@@ -384,7 +385,7 @@ router.post(
         message: 'Messages marked as read',
       });
     } catch (error) {
-      console.error('Mark as read error:', error);
+      logger.error('Mark as read error:', error);
       res.status(500).json({
         status: 'error',
         message: 'Failed to mark messages as read',
