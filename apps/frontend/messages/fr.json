@@ -143,30 +143,125 @@
   },
   "home": {
     "hero": {
-      "title": "Donnez un nouveau souffle à votre carrière",
-      "subtitle": "Bilan de compétences personnalisé avec IA et accompagnement expert",
+      "title": "Donnez un nouveau souffle à votre carrière avec le bilan de compétences",
+      "subtitle": "Faites le point sur vos compétences, identifiez vos motivations et construisez un projet professionnel qui vous ressemble. Financé par votre CPF.",
       "cta": "Commencer mon bilan",
       "learnMore": "En savoir plus"
     },
     "stats": {
-      "users": "Utilisateurs",
+      "users": "Utilisateurs accompagnés",
       "bilans": "Bilans réalisés",
-      "satisfaction": "Satisfaction"
+      "satisfaction": "Satisfaction client"
     },
     "features": {
       "title": "Pourquoi choisir BilanCompetence.AI ?",
       "ai": {
-        "title": "Intelligence Artificielle",
-        "description": "Analyse approfondie de vos compétences avec des algorithmes IA avancés"
+        "title": "Analyse approfondie",
+        "description": "Un diagnostic complet de vos compétences professionnelles et personnelles, vos aptitudes et vos motivations profondes."
       },
       "personalized": {
-        "title": "100% Personnalisé",
-        "description": "Recommandations adaptées à votre profil et vos aspirations"
+        "title": "Projet sur mesure",
+        "description": "Un accompagnement 100% personnalisé pour définir un projet professionnel réaliste et motivant, adapté à votre profil unique."
       },
       "expert": {
-        "title": "Accompagnement Expert",
-        "description": "Conseillers certifiés pour vous guider dans votre évolution professionnelle"
+        "title": "Accompagnement personnalisé",
+        "description": "Des consultants certifiés Qualiopi vous accompagnent tout au long de votre démarche, en présentiel ou à distance."
+      },
+      "funding": {
+        "title": "Financement facilité",
+        "description": "Éligible au CPF (Compte Personnel de Formation). Inscription simple et rapide, sans accord de votre employeur."
       }
+    },
+    "benefits": {
+      "title": "Les bénéfices concrets d'un bilan de compétences",
+      "subtitle": "Plus qu'une simple évaluation, un véritable tremplin pour votre carrière",
+      "items": {
+        "clarity": {
+          "title": "Clarté professionnelle",
+          "description": "Identifiez vos forces, vos talents cachés et vos axes d'amélioration pour mieux vous positionner sur le marché du travail."
+        },
+        "project": {
+          "title": "Projet concret",
+          "description": "Construisez un projet professionnel cohérent avec vos valeurs, vos compétences et vos aspirations personnelles."
+        },
+        "confidence": {
+          "title": "Confiance renforcée",
+          "description": "Prenez conscience de votre valeur professionnelle et gagnez en assurance pour vos démarches de reconversion ou d'évolution."
+        },
+        "action": {
+          "title": "Plan d'action détaillé",
+          "description": "Repartez avec une feuille de route précise : formations à suivre, compétences à développer, démarches concrètes à entreprendre."
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Ils ont franchi le pas",
+      "subtitle": "Découvrez les témoignages de ceux qui ont transformé leur carrière",
+      "items": [
+        {
+          "name": "Sophie M.",
+          "role": "Reconversion après 15 ans dans la banque",
+          "text": "Le bilan m'a permis de découvrir que mes compétences relationnelles pouvaient s'appliquer dans le conseil. Aujourd'hui je suis formatrice en développement personnel et je m'épanouis enfin !",
+          "rating": 5
+        },
+        {
+          "name": "Marc L.",
+          "role": "Évolution professionnelle",
+          "text": "J'hésitais à demander une promotion. Le bilan m'a donné confiance en mes capacités managériales. J'ai obtenu le poste de chef d'équipe 3 mois après !",
+          "rating": 5
+        },
+        {
+          "name": "Amélie D.",
+          "role": "Retour à l'emploi après congé parental",
+          "text": "Après 5 ans d'absence, je ne savais plus quelle direction prendre. Le bilan m'a aidée à valoriser mes compétences et à me repositionner. Je suis maintenant chef de projet digital.",
+          "rating": 5
+        }
+      ]
+    },
+    "process": {
+      "title": "Comment se déroule votre bilan ?",
+      "subtitle": "Un parcours en 3 phases pour construire votre avenir professionnel",
+      "phase1": {
+        "title": "Phase préliminaire",
+        "duration": "4-6 heures",
+        "description": "Analyse de votre parcours, identification de vos besoins et définition des objectifs de votre bilan.",
+        "items": [
+          "Entretien individuel approfondi",
+          "Analyse de votre CV et parcours",
+          "Définition de vos attentes",
+          "Présentation de la méthodologie"
+        ]
+      },
+      "phase2": {
+        "title": "Phase d'investigation",
+        "duration": "12-16 heures",
+        "description": "Exploration approfondie de vos compétences, motivations, valeurs et pistes professionnelles.",
+        "items": [
+          "Tests psychométriques (MBTI, RIASEC)",
+          "Inventaire de compétences détaillé",
+          "Exploration des pistes métiers",
+          "Enquêtes métiers sur le terrain",
+          "Analyse du marché de l'emploi"
+        ]
+      },
+      "phase3": {
+        "title": "Phase de conclusion",
+        "duration": "4-6 heures",
+        "description": "Synthèse de votre bilan et élaboration d'un plan d'action concret et réaliste.",
+        "items": [
+          "Document de synthèse personnalisé",
+          "Plan d'action détaillé et chiffré",
+          "Identification des formations",
+          "Stratégie de mise en œuvre",
+          "Entretien de restitution"
+        ]
+      }
+    },
+    "cta": {
+      "title": "Prêt à donner un nouveau souffle à votre carrière ?",
+      "subtitle": "Prenez rendez-vous pour un premier échange gratuit et sans engagement",
+      "button": "Réserver mon rendez-vous gratuit",
+      "guarantee": "100% finançable par le CPF • Certifié Qualiopi • Accompagnement personnalisé"
     }
   },
   "faq": {
